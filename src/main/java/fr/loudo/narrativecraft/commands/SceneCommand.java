@@ -6,13 +6,11 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-
-import java.io.IOException;
 
 public class SceneCommand {
 
@@ -39,20 +37,19 @@ public class SceneCommand {
             return 0;
         }
 
-        if(NarrativeCraft.getSceneManager().sceneExists(sceneName)) {
-            Scene scene = NarrativeCraft.getSceneManager().getSceneByName(sceneName);
+        Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
+
+        if(chapter.sceneExists(sceneName)) {
+            Scene scene = chapter.getSceneByName(sceneName);
             context.getSource().sendFailure(Translation.message("scene.already_exists", scene.getName(), scene.getChapter().getIndex()));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
-
         Scene scene = new Scene(chapter, sceneName);
-        try {
-            chapter.addScene(scene);
+        if(chapter.addScene(scene)) {
             context.getSource().sendSuccess(() -> Translation.message("scene.create.success", scene.getName(), chapter.getIndex()), true);
-        } catch (IOException e) {
-            context.getSource().sendSuccess(() -> Translation.message("scene.create.fail", scene.getName(), chapter.getIndex(), e), true);
+        } else {
+            context.getSource().sendSuccess(() -> Translation.message("scene.create.fail", scene.getName(), chapter.getIndex()), true);
         }
 
         return Command.SINGLE_SUCCESS;

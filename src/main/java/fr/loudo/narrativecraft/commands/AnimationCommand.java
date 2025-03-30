@@ -7,12 +7,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-
-import java.io.IOException;
 
 public class AnimationCommand {
 
@@ -23,7 +22,7 @@ public class AnimationCommand {
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
                                         .suggests(NarrativeCraft.getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
-                                                .suggests(NarrativeCraft.getSceneManager().getSceneSuggestionsByChapter())
+                                                .suggests(NarrativeCraft.getChapterManager().getSceneSuggestionsByChapter())
                                                 .then(Commands.argument("animation_name", StringArgumentType.string())
                                                         .executes(context -> {
                                                             int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
@@ -47,12 +46,14 @@ public class AnimationCommand {
             return 0;
         }
 
-        if(!NarrativeCraft.getSceneManager().sceneExists(sceneName)) {
+        Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
+
+        if(!chapter.sceneExists(sceneName)) {
             context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));
             return 0;
         }
 
-        Scene scene = NarrativeCraft.getSceneManager().getSceneByName(sceneName);
+        Scene scene = chapter.getSceneByName(sceneName);
 
         if(scene.animationExists(animationName)) {
             Animation animation = scene.getAnimationByName(animationName);
@@ -61,13 +62,11 @@ public class AnimationCommand {
         }
 
         Animation animation = new Animation(scene, animationName);
-        try {
-            scene.addAnimation(animation);
+        if(scene.addAnimation(animation)) {
             context.getSource().sendSuccess(() -> Translation.message("animation.create.success", animation.getName(), scene.getName(), chapterIndex), true);
-        } catch (IOException e) {
-            context.getSource().sendSuccess(() -> Translation.message("animation.create.fail", animation.getName(), scene.getName(), chapterIndex, e), true);
+        } else {
+            context.getSource().sendSuccess(() -> Translation.message("animation.create.fail", animation.getName(), scene.getName(), chapterIndex), true);
         }
-
         return Command.SINGLE_SUCCESS;
     }
 

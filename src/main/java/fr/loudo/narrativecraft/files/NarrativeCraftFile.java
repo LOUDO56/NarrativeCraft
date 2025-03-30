@@ -10,56 +10,63 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NarrativeCraftFile {
 
     private static final String DIRECTORY_NAME = NarrativeCraft.MODID;
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
-    private static final String SCENE_DIRECTORY_NAME = "scenes";
-    private static final String ANIMATION_DIRECTORY_NAME = "animations";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
     private static final String EXTENSTION_FILE = ".json";
 
     public static File mainDirectory;
     public static File chapterDirectory;
-    public static File sceneDirectory;
     public static File characterDirectory;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
-        sceneDirectory = createDirectory(mainDirectory, SCENE_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
+
+        NarrativeCraft.getChapterManager().setChapters(getChaptersFromDirectory());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {
         File file = createFile(chapterDirectory, String.valueOf(chapter.getIndex()));
-        save(chapter, file, true);
+        save(chapter, file);
     }
 
-    public static void saveScene(Scene scene) throws IOException {
-        File chapterDirectoryOfScene = createDirectory(sceneDirectory, String.valueOf(scene.getChapter().getIndex()));
-        File file = createFile(chapterDirectoryOfScene, scene.getName().toLowerCase());
-        save(scene, file, true);
-    }
-
-    public static void saveAnimation(Animation animation) throws IOException {
-        String chapterDirectoryName = String.valueOf(animation.getScene().getChapter().getIndex());
-        File sceneDirectoryOfAnimation = createDirectory(new File(sceneDirectory, chapterDirectoryName), ANIMATION_DIRECTORY_NAME);
-        File file = createFile(sceneDirectoryOfAnimation, animation.getName().toLowerCase());
-        save(animation, file, false);
-    }
-
-    private static void save(Object element, File file, boolean prettyString) throws IOException {
-        Gson gson;
-        if(prettyString) {
-            gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .create();
-        } else {
-            gson = new GsonBuilder()
-                    .create();
+    //TODO: method to load chapter individually, for better performance. for instance if a player player play first chapter, then only deserialize first chapter.
+    public static List<Chapter> getChaptersFromDirectory() {
+        List<Chapter> finalList = new ArrayList<>();
+        File directory = NarrativeCraftFile.chapterDirectory;
+        File[] files = directory.listFiles();
+        if(files == null) {
+            NarrativeCraft.LOGGER.warn("Couldn't retrieve chapters file!");
+            return finalList;
         }
+        Gson gson = new GsonBuilder().create();
+        for(File file : files) {
+            try(Reader reader = new BufferedReader(new FileReader(file))) {
+                Chapter chapter = gson.fromJson(reader, Chapter.class);
+                for(Scene scene : chapter.getScenes()) {
+                    scene.setChapter(chapter);
+                    for(Animation animation : scene.getAnimations()) {
+                        animation.setScene(scene);
+                    }
+                }
+                finalList.add(chapter);
+            } catch (IOException e) {
+                NarrativeCraft.LOGGER.warn("File {} couldn't be opened", file.getName());
+            }
+        }
+
+        return finalList;
+    }
+
+    private static void save(Object element, File file) throws IOException {
+        Gson gson = new GsonBuilder().create();
         try(Writer writer = new BufferedWriter(new FileWriter(file))) {
             gson.toJson(element, writer);
         }

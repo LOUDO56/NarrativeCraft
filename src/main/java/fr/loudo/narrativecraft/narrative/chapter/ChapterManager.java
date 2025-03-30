@@ -1,7 +1,9 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.io.IOException;
@@ -57,11 +59,26 @@ public class ChapterManager {
      * @param newChapter the new chapter to add.
      * @return true if the chapter was added, false if it already exists.
      */
-    public boolean addChapter(Chapter newChapter) throws IOException {
+    public boolean addChapter(Chapter newChapter) {
         if (chapters.contains(newChapter)) return false;
-        NarrativeCraftFile.saveChapter(newChapter);
-        chapters.add(newChapter);
-        return true;
+        try {
+            chapters.add(newChapter);
+            NarrativeCraftFile.saveChapter(newChapter);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't save chapter " + newChapter.getIndex() + " file: " + e);
+        }
+    }
+
+    public SuggestionProvider<CommandSourceStack> getSceneSuggestionsByChapter() {
+        return (context, builder) -> {
+            int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
+            Chapter chapter = getChapterByIndex(chapterIndex);
+            for (Scene scene : chapter.getScenes()) {
+                builder.suggest(scene.getName());
+            }
+            return builder.buildFuture();
+        };
     }
 
     /**
@@ -77,6 +94,10 @@ public class ChapterManager {
             }
         }
         return null;
+    }
+
+    public void setChapters(List<Chapter> chapters) {
+        this.chapters = chapters;
     }
 
 }

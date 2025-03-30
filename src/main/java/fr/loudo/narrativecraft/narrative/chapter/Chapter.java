@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
-import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 
 import java.io.IOException;
@@ -25,11 +25,15 @@ public class Chapter {
     }
 
 
-    public boolean addScene(Scene newScene) throws IOException {
+    public boolean addScene(Scene newScene) {
         if(scenes.contains(newScene)) return false;
-        NarrativeCraft.getSceneManager().addScene(newScene);
-        scenes.add(newScene);
-        return true;
+        try {
+            scenes.add(newScene);
+            NarrativeCraftFile.saveChapter(this);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't save chapter " + index + " file: " + e);
+        }
     }
 
     public List<Scene> getScenes() {

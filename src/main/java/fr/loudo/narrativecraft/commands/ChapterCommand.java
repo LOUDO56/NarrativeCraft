@@ -11,8 +11,6 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
-import java.io.IOException;
-
 public class ChapterCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -54,11 +52,10 @@ public class ChapterCommand {
             chapter = new Chapter(index, name);
         }
 
-        try {
-            NarrativeCraft.getChapterManager().addChapter(chapter);
+        if(NarrativeCraft.getChapterManager().addChapter(chapter)) {
             context.getSource().sendSuccess(() -> Translation.message("chapter.create.success", chapter.getIndex()), true);
-        } catch (IOException e) {
-            context.getSource().sendSuccess(() -> Translation.message("chapter.create.fail", chapter.getIndex(), e), true);
+        } else {
+            context.getSource().sendSuccess(() -> Translation.message("chapter.create.fail", chapter.getIndex()), true);
         }
 
         return Command.SINGLE_SUCCESS;

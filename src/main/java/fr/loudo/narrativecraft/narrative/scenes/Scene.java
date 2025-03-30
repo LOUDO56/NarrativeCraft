@@ -11,13 +11,11 @@ import java.util.List;
 public class Scene {
 
     private transient Chapter chapter;
-    private int chapterIndex;
-    private List<Animation> animations;
     private String name;
+    private List<Animation> animations;
 
     public Scene(Chapter chapter, String name) {
         this.chapter = chapter;
-        this.chapterIndex = chapter.getIndex();
         this.animations = new ArrayList<>();
         this.name = name;
     }
@@ -30,15 +28,23 @@ public class Scene {
         return chapter;
     }
 
+    public void setChapter(Chapter chapter) {
+        this.chapter = chapter;
+    }
+
     public List<Animation> getAnimations() {
         return animations;
     }
 
-    public boolean addAnimation(Animation newAnimation) throws IOException {
-        if(animations.contains(newAnimation)) return false;
-        NarrativeCraftFile.saveAnimation(newAnimation);
-        animations.add(newAnimation);
-        return true;
+    public boolean addAnimation(Animation newAnimation) {
+        if(animations.contains(newAnimation)) return false;;
+        try {
+            animations.add(newAnimation);
+            NarrativeCraftFile.saveChapter(chapter);
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Couldn't save chapter " + chapter.getIndex() + " file: " + e);
+        }
     }
 
     public Animation getAnimationByName(String animationName) {
