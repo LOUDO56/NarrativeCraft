@@ -1,14 +1,13 @@
-package fr.loudo.narrativecraft.scenes.commands;
+package fr.loudo.narrativecraft.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.scenes.Scene;
-import fr.loudo.narrativecraft.story.Chapter;
+import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -34,13 +33,13 @@ public class SceneCommand {
     private static int createScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
 
         if(!NarrativeCraft.getChapterManager().chapterExists(chapterIndex)) {
-            context.getSource().sendFailure(Translation.message("chapter.create.no_exists", chapterIndex));
+            context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
         if(NarrativeCraft.getSceneManager().sceneExists(sceneName)) {
             Scene scene = NarrativeCraft.getSceneManager().getSceneByName(sceneName);
-            context.getSource().sendFailure(Translation.message("scene.create.exists", scene.getName(), scene.getChapter().getIndex()));
+            context.getSource().sendFailure(Translation.message("scene.already_exists", scene.getName(), scene.getChapter().getIndex()));
             return 0;
         }
 

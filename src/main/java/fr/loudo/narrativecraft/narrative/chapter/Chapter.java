@@ -1,8 +1,8 @@
-package fr.loudo.narrativecraft.story;
+package fr.loudo.narrativecraft.narrative.chapter;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.scenes.Scene;
-import fr.loudo.narrativecraft.scenes.SceneManager;
+import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.scenes.SceneManager;
 
 import java.util.ArrayList;
 import java.util.List;

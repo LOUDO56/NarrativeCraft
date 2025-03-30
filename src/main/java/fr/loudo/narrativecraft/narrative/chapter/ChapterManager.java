@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.story;
+package fr.loudo.narrativecraft.narrative.chapter;
 
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import net.minecraft.commands.CommandSourceStack;

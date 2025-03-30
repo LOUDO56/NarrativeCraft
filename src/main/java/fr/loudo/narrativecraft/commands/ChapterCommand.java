@@ -1,17 +1,15 @@
-package fr.loudo.narrativecraft.story.commands;
+package fr.loudo.narrativecraft.commands;
 
-import com.bladecoder.ink.runtime.Story;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.story.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.network.chat.Component;
 
 public class ChapterCommand {
 
@@ -43,7 +41,7 @@ public class ChapterCommand {
 
         if(NarrativeCraft.getChapterManager().chapterExists(index)) {
             Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(index);
-            context.getSource().sendFailure(Translation.message("chapter.create.exists", chapter.getIndex()));
+            context.getSource().sendFailure(Translation.message("chapter.already_exists", chapter.getIndex()));
             return 0;
         }
 

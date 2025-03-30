@@ -1,7 +1,7 @@
-package fr.loudo.narrativecraft.scenes;
+package fr.loudo.narrativecraft.narrative.scenes;
 
-import fr.loudo.narrativecraft.animations.Animation;
-import fr.loudo.narrativecraft.story.Chapter;
+import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 
 import java.util.ArrayList;
 import java.util.List;

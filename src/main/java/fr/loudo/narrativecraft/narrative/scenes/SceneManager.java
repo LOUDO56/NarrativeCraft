@@ -1,8 +1,7 @@
-package fr.loudo.narrativecraft.scenes;
+package fr.loudo.narrativecraft.narrative.scenes;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import fr.loudo.narrativecraft.story.Chapter;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.util.ArrayList;

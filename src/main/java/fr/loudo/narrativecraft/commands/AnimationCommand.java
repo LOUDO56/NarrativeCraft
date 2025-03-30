@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.animations.commands;
+package fr.loudo.narrativecraft.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
@@ -6,9 +6,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.animations.Animation;
-import fr.loudo.narrativecraft.scenes.Scene;
-import fr.loudo.narrativecraft.story.Chapter;
+import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -42,12 +41,12 @@ public class AnimationCommand {
     private static int createAnimation(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, String animationName) {
 
         if(!NarrativeCraft.getChapterManager().chapterExists(chapterIndex)) {
-            context.getSource().sendFailure(Translation.message("chapter.create.no_exists", chapterIndex));
+            context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
         if(!NarrativeCraft.getSceneManager().sceneExists(sceneName)) {
-            context.getSource().sendFailure(Translation.message("scene.create.no_exists", sceneName, chapterIndex));
+            context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));
             return 0;
         }
 
@@ -55,7 +54,7 @@ public class AnimationCommand {
 
         if(scene.animationExists(animationName)) {
             Animation animation = scene.getAnimationByName(animationName);
-            context.getSource().sendFailure(Translation.message("animation.create.exists", animation.getName(), scene.getName(), chapterIndex));
+            context.getSource().sendFailure(Translation.message("animation.already_exists", animation.getName(), scene.getName(), chapterIndex));
             return 0;
         }
 
