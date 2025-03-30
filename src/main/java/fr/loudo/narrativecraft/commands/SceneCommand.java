@@ -12,6 +12,8 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
+import java.io.IOException;
+
 public class SceneCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -46,8 +48,12 @@ public class SceneCommand {
         Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
 
         Scene scene = new Scene(chapter, sceneName);
-        chapter.addScene(scene);
-        context.getSource().sendSuccess(() -> Translation.message("scene.create.success", scene.getName(), chapter.getIndex()), true);
+        try {
+            chapter.addScene(scene);
+            context.getSource().sendSuccess(() -> Translation.message("scene.create.success", scene.getName(), chapter.getIndex()), true);
+        } catch (IOException e) {
+            context.getSource().sendSuccess(() -> Translation.message("scene.create.fail", scene.getName(), chapter.getIndex(), e), true);
+        }
 
         return Command.SINGLE_SUCCESS;
     }

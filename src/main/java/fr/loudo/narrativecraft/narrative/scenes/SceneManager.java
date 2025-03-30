@@ -2,8 +2,10 @@ package fr.loudo.narrativecraft.narrative.scenes;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import net.minecraft.commands.CommandSourceStack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,8 +75,9 @@ public class SceneManager {
      *
      * @param scene the new scene to add.
      */
-    public void addScene(Scene scene) {
+    public void addScene(Scene scene) throws IOException {
         if (!scenes.contains(scene)) {
+            NarrativeCraftFile.saveScene(scene);
             scenes.add(scene);
         }
     }

@@ -1,8 +1,10 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import net.minecraft.commands.CommandSourceStack;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,8 +57,9 @@ public class ChapterManager {
      * @param newChapter the new chapter to add.
      * @return true if the chapter was added, false if it already exists.
      */
-    public boolean addChapter(Chapter newChapter) {
+    public boolean addChapter(Chapter newChapter) throws IOException {
         if (chapters.contains(newChapter)) return false;
+        NarrativeCraftFile.saveChapter(newChapter);
         chapters.add(newChapter);
         return true;
     }

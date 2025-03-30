@@ -4,12 +4,14 @@ import fr.loudo.narrativecraft.narrative.scenes.Scene;
 
 public class Animation {
 
-    private Scene scene;
+    private transient Scene scene;
+    private String sceneName;
     private String name;
     private Character character;
 
     public Animation(Scene scene, String name){
         this.scene = scene;
+        this.sceneName = scene.getName();
         this.name = name;
     }
 

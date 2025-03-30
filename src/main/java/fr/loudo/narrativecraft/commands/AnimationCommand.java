@@ -12,6 +12,8 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 
+import java.io.IOException;
+
 public class AnimationCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
@@ -59,8 +61,12 @@ public class AnimationCommand {
         }
 
         Animation animation = new Animation(scene, animationName);
-        scene.addAnimation(animation);
-        context.getSource().sendSuccess(() -> Translation.message("animation.create.success", animation.getName(), scene.getName(), chapterIndex), true);
+        try {
+            scene.addAnimation(animation);
+            context.getSource().sendSuccess(() -> Translation.message("animation.create.success", animation.getName(), scene.getName(), chapterIndex), true);
+        } catch (IOException e) {
+            context.getSource().sendSuccess(() -> Translation.message("animation.create.fail", animation.getName(), scene.getName(), chapterIndex, e), true);
+        }
 
         return Command.SINGLE_SUCCESS;
     }

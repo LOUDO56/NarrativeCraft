@@ -2,14 +2,12 @@ package fr.loudo.narrativecraft.narrative.chapter;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.scenes.SceneManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Chapter {
-
-    private final SceneManager sceneManager = NarrativeCraft.getSceneManager();
 
     private int index;
     private String name;
@@ -27,9 +25,9 @@ public class Chapter {
     }
 
 
-    public boolean addScene(Scene newScene) {
+    public boolean addScene(Scene newScene) throws IOException {
         if(scenes.contains(newScene)) return false;
-        sceneManager.addScene(newScene);
+        NarrativeCraft.getSceneManager().addScene(newScene);
         scenes.add(newScene);
         return true;
     }
