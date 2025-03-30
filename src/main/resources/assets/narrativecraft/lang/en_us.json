@@ -1,0 +1,11 @@
+{
+  "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
+  "narrativecraft.chapter.create.exists": "Chapter %d already exists.",
+  "narrativecraft.chapter.create.no_exists": "Chapter %d does not exists.",
+  "narrativecraft.scene.create.success": "Scene %s for chapter %d created successfully.",
+  "narrativecraft.scene.create.exists": "Scene %s for chapter %d already exists.",
+  "narrativecraft.scene.create.no_exists": "Scene %s for chapter %d does not exists.",
+  "narrativecraft.animation.create.success": "Animation %s for scene %s of chapter %d created successfully.",
+  "narrativecraft.animation.create.exists": "Animation %s for scene %s of chapter %d already exists.",
+  "narrativecraft.animation.create.no_exists": "Animation %s for scene %s of chapter %d does not exists."
+}
