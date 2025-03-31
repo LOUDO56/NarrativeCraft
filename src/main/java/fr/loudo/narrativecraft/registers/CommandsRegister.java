@@ -1,10 +1,7 @@
 package fr.loudo.narrativecraft.registers;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.commands.AnimationCommand;
-import fr.loudo.narrativecraft.commands.CharacterCommand;
-import fr.loudo.narrativecraft.commands.SceneCommand;
-import fr.loudo.narrativecraft.commands.ChapterCommand;
+import fr.loudo.narrativecraft.commands.*;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,6 +15,8 @@ public class CommandsRegister {
         SceneCommand.register(event.getDispatcher());
         AnimationCommand.register(event.getDispatcher());
         CharacterCommand.register(event.getDispatcher());
+        RecordCommand.register(event.getDispatcher());
+        SessionCommand.register(event.getDispatcher());
     }
 
 }

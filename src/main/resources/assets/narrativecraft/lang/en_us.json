@@ -1,4 +1,8 @@
 {
+  "key.categories.narrativecraft": "Narrative Craft Animation",
+  "key.animation.record.start": "Start Animation Recording",
+  "key.animation.record.stop": "Stop Animation Recording",
+
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! %s",
   "narrativecraft.chapter.already_exists": "Chapter %d already exists.",
@@ -9,15 +13,20 @@
   "narrativecraft.scene.already_exists": "Scene %s for chapter %d already exists.",
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 
-  "narrativecraft.animation.create.success": "Animation %s for scene %s of chapter %d created successfully.",
-  "narrativecraft.animation.create.fail": "Animation %s for scene %s of chapter %d couldn't be created! %s",
   "narrativecraft.animation.already_exists": "Animation %s for scene %s of chapter %d already exists.",
   "narrativecraft.animation.no_exists": "Animation %s for scene %s of chapter %d does not exists.",
 
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
   "narrativecraft.character.already_exists": "Character %s already exists.",
 
-  "key.categories.narrativecraft": "Narrative Craft Animation",
-  "key.animation.record.start": "Start Animation Recording",
-  "key.animation.record.stop": "Stop Animation Recording"
+  "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
+
+  "narrativecraft.record.start.success": "Record started...",
+  "narrativecraft.record.start.already_recording": "You are currently recording.",
+  "narrativecraft.record.start.no_session": "You need to set the chapter and scene session.",
+  "narrativecraft.record.stop.success": "Record stopped.",
+  "narrativecraft.record.stop.no_recording": "You are not recording.",
+  "narrativecraft.record.save.success": "Record saved to animation %s for scene %s of chapter %d.",
+  "narrativecraft.record.save.fail": "Error while saving animation %s for scene %s of chapter %d!"
+
 }
