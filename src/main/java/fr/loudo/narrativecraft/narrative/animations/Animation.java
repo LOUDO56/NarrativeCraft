@@ -8,7 +8,7 @@ import java.util.List;
 
 public class Animation {
 
-    private transient Scene scene;
+    private Scene scene;
     private String name;
     private Character character;
     private List<Location> locations;

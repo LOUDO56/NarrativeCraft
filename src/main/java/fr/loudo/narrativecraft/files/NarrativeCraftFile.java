@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.files;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
@@ -18,15 +19,18 @@ public class NarrativeCraftFile {
     private static final String DIRECTORY_NAME = NarrativeCraft.MODID;
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
+    private static final String ANIMATION_DIRECTORY_NAME = "animations";
     private static final String EXTENSTION_FILE = ".json";
 
     public static File mainDirectory;
     public static File chapterDirectory;
+    public static File animationDirectory;
     public static File characterDirectory;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
+        animationDirectory = createDirectory(mainDirectory, ANIMATION_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
         NarrativeCraft.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
@@ -37,7 +41,28 @@ public class NarrativeCraftFile {
         save(chapter, file);
     }
 
-    //TODO: method to load chapter individually, for better performance. for instance if a player player play first chapter, then only deserialize first chapter.
+    public static void saveAnimation(Animation animation) throws IOException {
+        File file = createFile(animationDirectory, animation.getName().toLowerCase());
+        save(animation, file);
+    }
+
+    public static boolean animationFileExists(String animationName) {
+        return new File(animationDirectory, animationName + EXTENSTION_FILE).exists();
+    }
+
+    public static Animation getAnimationFromFile(String animationName) {
+        File file = new File(animationDirectory, animationName + EXTENSTION_FILE);
+        if(file.exists()) {
+            Gson gson = new GsonBuilder().create();
+            try(Reader reader = new BufferedReader(new FileReader(file))) {
+                return gson.fromJson(reader, Animation.class);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
     public static List<Chapter> getChaptersFromDirectory() {
         List<Chapter> finalList = new ArrayList<>();
         File directory = NarrativeCraftFile.chapterDirectory;
@@ -52,9 +77,6 @@ public class NarrativeCraftFile {
                 Chapter chapter = gson.fromJson(reader, Chapter.class);
                 for(Scene scene : chapter.getScenes()) {
                     scene.setChapter(chapter);
-                    for(Animation animation : scene.getAnimations()) {
-                        animation.setScene(scene);
-                    }
                 }
                 finalList.add(chapter);
             } catch (IOException e) {

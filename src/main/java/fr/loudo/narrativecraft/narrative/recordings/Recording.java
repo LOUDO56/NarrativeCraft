@@ -41,9 +41,8 @@ public class Recording {
         if(isRecording) return false;
         try {
             animation.setLocations(locations);
-            animation.getScene().addAnimation(animation);
             recordingHandler.getRecordings().remove(this);
-            NarrativeCraftFile.saveChapter(animation.getScene().getChapter());
+            NarrativeCraftFile.saveAnimation(animation);
             return true;
         } catch (IOException e) {
             throw new RuntimeException("Error while saving record animation: " + e);

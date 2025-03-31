@@ -2,10 +2,10 @@ package fr.loudo.narrativecraft.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -61,11 +61,15 @@ public class RecordCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         if(!NarrativeCraft.getInstance().getRecordingHandler().isPlayerRecording(player)) {
-            context.getSource().sendFailure(Translation.message("record.stop.fail"));
+            context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
         }
 
         Recording recording = NarrativeCraft.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
+        if(!recording.isRecording()) {
+            context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
+            return 0;
+        }
         recording.stop();
 
         context.getSource().sendSuccess(() -> Translation.message("record.stop.success"), true);
@@ -85,9 +89,9 @@ public class RecordCommand {
         PlayerSession playerSession = NarrativeCraft.getInstance().getPlayerSessionManager().getPlayerSession(player);
 
         Animation animation;
-        if (playerSession.getScene().animationExists(newAnimationName)) {
+        if (NarrativeCraftFile.animationFileExists(newAnimationName)) {
             if (playerSession.isOverwriteState()) {
-                animation = playerSession.getScene().getAnimationByName(newAnimationName);
+                animation = NarrativeCraftFile.getAnimationFromFile(newAnimationName);
                 playerSession.setOverwriteState(false);
             } else {
                 context.getSource().sendFailure(Translation.message("record.save.overwrite", newAnimationName, playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
