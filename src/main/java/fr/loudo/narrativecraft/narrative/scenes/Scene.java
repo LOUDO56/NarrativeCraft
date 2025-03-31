@@ -11,6 +11,7 @@ import java.util.List;
 public class Scene {
 
     private transient Chapter chapter;
+    private int chapterIndex; // For deserialization stuff
     private List<String> animationFilesName;
     private String name;
 
