@@ -20,42 +20,67 @@ public class ChapterCommand {
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
                                         .then(Commands.argument("chapter_name", StringArgumentType.string())
                                                 .executes(context -> {
-
                                                     int index = IntegerArgumentType.getInteger(context, "chapter_index");
                                                     String name = StringArgumentType.getString(context, "chapter_name");
-
                                                     return createChapter(context, index, name);
-                                                }))
+                                                })
+                                        )
                                         .executes(context -> {
-
                                             int index = IntegerArgumentType.getInteger(context, "chapter_index");
-
                                             return createChapter(context, index, "");
-                                        }))
+                                        })
                                 )
                         )
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
+                                        .suggests(NarrativeCraft.getInstance().getChapterManager().getChapterSuggestions())
+                                        .executes(context -> {
+                                            int index = IntegerArgumentType.getInteger(context, "chapter_index");
+                                            return removeChapter(context, index);
+                                        })
+                                )
+                        )
+                )
         );
     }
 
-    private static int createChapter(CommandContext<CommandSourceStack> context, int index, String name) {
+    private static int createChapter(CommandContext<CommandSourceStack> context, int chapterIndex, String name) {
 
-        if(NarrativeCraft.getInstance().getChapterManager().chapterExists(index)) {
-            Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(index);
+        if(NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+            Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
             context.getSource().sendFailure(Translation.message("chapter.already_exists", chapter.getIndex()));
             return 0;
         }
 
         Chapter chapter;
         if(name.isEmpty()) {
-            chapter = new Chapter(index);
+            chapter = new Chapter(chapterIndex);
         } else {
-            chapter = new Chapter(index, name);
+            chapter = new Chapter(chapterIndex, name);
         }
 
         if(NarrativeCraft.getInstance().getChapterManager().addChapter(chapter)) {
             context.getSource().sendSuccess(() -> Translation.message("chapter.create.success", chapter.getIndex()), true);
         } else {
-            context.getSource().sendSuccess(() -> Translation.message("chapter.create.fail", chapter.getIndex()), true);
+            context.getSource().sendFailure(Translation.message("chapter.create.fail", chapter.getIndex()));
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int removeChapter(CommandContext<CommandSourceStack> context, int chapterIndex) {
+
+        if(!NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+            context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
+            return 0;
+        }
+
+        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        if(NarrativeCraft.getInstance().getChapterManager().removeChapter(chapter)) {
+            context.getSource().sendSuccess(() -> Translation.message("chapter.delete.success", chapter.getIndex()), true);
+        } else {
+            context.getSource().sendFailure(Translation.message("chapter.delete.fail", chapter.getIndex()));
+
         }
 
         return Command.SINGLE_SUCCESS;

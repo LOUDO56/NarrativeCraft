@@ -72,6 +72,18 @@ public class ChapterManager {
         }
     }
 
+    public boolean removeChapter(Chapter chapter) {
+        if (!chapters.contains(chapter)) return false;
+        try {
+            chapters.remove(chapter);
+            NarrativeCraftFile.removeChapter(chapter);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraft.LOGGER.warn("Couldn't remove chapter " + chapter.getIndex() + " file: " + e);
+            return false;
+        }
+    }
+
     public SuggestionProvider<CommandSourceStack> getSceneSuggestionsByChapter() {
         return (context, builder) -> {
             int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");

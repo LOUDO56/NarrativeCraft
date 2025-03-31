@@ -43,8 +43,25 @@ public class NarrativeCraftFile {
         save(chapter, file);
     }
 
+    public static void removeChapter(Chapter chapter) throws IOException {
+        File file = createFile(chapterDirectory, String.valueOf(chapter.getIndex()));
+        if(!file.delete()) {
+            NarrativeCraft.LOGGER.warn("Couldn't remove chapter file " + file.getName() + ".");
+        }
+        for(Scene scene : chapter.getScenes()) {
+            for(String animationFileName : scene.getAnimationFiles()) {
+                File fileAnim = new File(animationDirectory, animationFileName);
+                if(!fileAnim.delete()) {
+                    NarrativeCraft.LOGGER.warn("Couldn't remove animation file " + fileAnim.getName() + ".");
+                }
+            }
+        }
+    }
+
     public static void saveAnimation(Animation animation) throws IOException {
         File file = createFile(animationDirectory, animation.getName().toLowerCase());
+        animation.getScene().getAnimationFiles().add(animation.getName().toLowerCase() + EXTENSTION_FILE);
+        saveChapter(animation.getScene().getChapter());
         save(animation, file);
     }
 
