@@ -42,7 +42,7 @@ public class Chapter {
         if(!scenes.contains(scene)) return false;
         try {
             scenes.remove(scene);
-            NarrativeCraftFile.removeAnimationFileByScene(scene);
+            NarrativeCraftFile.removeAnimationsFileByScene(scene);
             NarrativeCraftFile.saveChapter(this);
             return true;
         } catch (IOException e) {

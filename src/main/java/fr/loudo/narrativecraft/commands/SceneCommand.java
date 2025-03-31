@@ -38,7 +38,6 @@ public class SceneCommand {
         );
     }
 
-
     private static int createScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
 
         if(!NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
@@ -54,7 +53,7 @@ public class SceneCommand {
             return 0;
         }
 
-        Scene scene = chapter.getSceneByName(sceneName);
+        Scene scene = new Scene(chapter, sceneName);
         if(chapter.addScene(scene)) {
             context.getSource().sendSuccess(() -> Translation.message("scene.create.success", scene.getName(), chapter.getIndex()), true);
         } else {

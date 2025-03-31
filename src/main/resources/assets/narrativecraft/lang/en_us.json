@@ -17,6 +17,8 @@
   "narrativecraft.scene.already_exists": "Scene %s for chapter %d already exists.",
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 
+  "narrativecraft.animation.delete.success": "Animation %s for scene %s of chapter %d deleted successfully.",
+  "narrativecraft.animation.delete.fail": "Animation %s for scene %s of chapter %d couldn't be deleted.",
   "narrativecraft.animation.already_exists": "Animation %s for scene %s of chapter %d already exists.",
   "narrativecraft.animation.no_exists": "Animation %s for scene %s of chapter %d does not exists.",
 

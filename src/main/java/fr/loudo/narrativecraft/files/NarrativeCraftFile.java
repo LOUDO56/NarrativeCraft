@@ -12,7 +12,6 @@ import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class NarrativeCraftFile {
@@ -49,22 +48,24 @@ public class NarrativeCraftFile {
             NarrativeCraft.LOGGER.warn("Couldn't remove chapter file " + file.getName() + ".");
         }
         for(Scene scene : chapter.getScenes()) {
-            removeAnimationFileByScene(scene);
+            removeAnimationsFileByScene(scene);
         }
     }
 
-    public static void removeAnimationFileByScene(Scene scene) {
-        for(String animationFileName : scene.getAnimationFiles()) {
-            File fileAnim = new File(animationDirectory, animationFileName);
-            if(!fileAnim.delete()) {
-                NarrativeCraft.LOGGER.warn("Couldn't remove animation file " + fileAnim.getName() + ".");
-            }
+    public static void removeAnimationsFileByScene(Scene scene) throws IOException {
+        for(String animationFileName : scene.getAnimationFilesName()) {
+            removeAnimationFile(animationFileName);
         }
+    }
+
+    public static boolean removeAnimationFile(String animationName) throws IOException {
+        File fileAnim = new File(animationDirectory, animationName + EXTENSTION_FILE);
+        return fileAnim.delete();
     }
 
     public static void saveAnimation(Animation animation) throws IOException {
         File file = createFile(animationDirectory, animation.getName().toLowerCase());
-        animation.getScene().getAnimationFiles().add(animation.getName().toLowerCase() + EXTENSTION_FILE);
+        animation.getScene().addAnimation(animation.getName().toLowerCase());
         saveChapter(animation.getScene().getChapter());
         save(animation, file);
     }

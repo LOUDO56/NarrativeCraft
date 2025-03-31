@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
@@ -90,6 +91,19 @@ public class ChapterManager {
             Chapter chapter = getChapterByIndex(chapterIndex);
             for (Scene scene : chapter.getScenes()) {
                 builder.suggest(scene.getName());
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    public SuggestionProvider<CommandSourceStack> getAnimationSuggestionByScene() {
+        return (context, builder) -> {
+            int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
+            String sceneName = StringArgumentType.getString(context, "scene_name");
+            Chapter chapter = getChapterByIndex(chapterIndex);
+            Scene scene = chapter.getSceneByName(sceneName);
+            for (String animationName : scene.getAnimationFilesName()) {
+                builder.suggest(animationName);
             }
             return builder.buildFuture();
         };
