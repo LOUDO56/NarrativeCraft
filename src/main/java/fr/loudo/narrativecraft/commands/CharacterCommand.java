@@ -33,8 +33,11 @@ public class CharacterCommand {
         }
 
         Character character = new Character(characterName);
-        NarrativeCraft.getInstance().getCharacterManager().addCharacter(character);
-        context.getSource().sendSuccess(() -> Translation.message("character.create.success", characterName, characterName.toLowerCase()), true);
+        if(NarrativeCraft.getInstance().getCharacterManager().addCharacter(character)) {
+            context.getSource().sendSuccess(() -> Translation.message("character.create.success", characterName, characterName.toLowerCase()), true);
+        } else {
+            context.getSource().sendFailure(Translation.message("character.create.fail"));
+        }
 
         return Command.SINGLE_SUCCESS;
     }

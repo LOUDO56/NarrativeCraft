@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.commands.CommandSourceStack;
@@ -66,7 +67,8 @@ public class ChapterManager {
             NarrativeCraftFile.saveChapter(newChapter);
             return true;
         } catch (IOException e) {
-            throw new RuntimeException("Couldn't save chapter " + newChapter.getIndex() + " file: " + e);
+            NarrativeCraft.LOGGER.warn("Couldn't save chapter " + newChapter.getIndex() + " file: " + e);
+            return false;
         }
     }
 

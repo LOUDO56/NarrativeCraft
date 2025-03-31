@@ -1,5 +1,9 @@
 package fr.loudo.narrativecraft.narrative.character;
 
+import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,12 +35,22 @@ public class CharacterManager {
 
     public boolean addCharacter(Character newCharacter) {
         if(characters.contains(newCharacter)) return false;
-        characters.add(newCharacter);
-        return true;
+        try {
+            characters.add(newCharacter);
+            NarrativeCraftFile.saveCharacter(newCharacter);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraft.LOGGER.warn("Couldn't save character to file: " + e);
+            return false;
+        }
     }
 
     public boolean removeCharacter(Character character) {
         characters.remove(character);
         return true;
+    }
+
+    public void setCharacters(List<Character> characters) {
+        this.characters = characters;
     }
 }

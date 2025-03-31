@@ -4,12 +4,12 @@
   "key.animation.record.stop": "Stop Animation Recording",
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
-  "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! %s",
+  "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
   "narrativecraft.chapter.already_exists": "Chapter %d already exists.",
   "narrativecraft.chapter.no_exists": "Chapter %d does not exists.",
 
   "narrativecraft.scene.create.success": "Scene %s for chapter %d created successfully.",
-  "narrativecraft.scene.create.fail": "Scene %s for chapter %d couldn't be created! %s",
+  "narrativecraft.scene.create.fail": "Scene %s for chapter %d couldn't be created! %s Please check if your chapter file in your map world directory exists!",
   "narrativecraft.scene.already_exists": "Scene %s for chapter %d already exists.",
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 
@@ -17,6 +17,7 @@
   "narrativecraft.animation.no_exists": "Animation %s for scene %s of chapter %d does not exists.",
 
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
+  "narrativecraft.character.create.fail": "An unexpected error occurred while creating the character! Check if characters in your map world directory exists!",
   "narrativecraft.character.already_exists": "Character %s already exists.",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",

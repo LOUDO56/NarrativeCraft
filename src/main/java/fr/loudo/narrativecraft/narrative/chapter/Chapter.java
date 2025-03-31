@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
+import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 
@@ -32,7 +33,8 @@ public class Chapter {
             NarrativeCraftFile.saveChapter(this);
             return true;
         } catch (IOException e) {
-            throw new RuntimeException("Couldn't save chapter " + index + " file: " + e);
+            NarrativeCraft.LOGGER.warn("Couldn't save chapter " + index + " file: " + e);
+            return false;
         }
     }
 

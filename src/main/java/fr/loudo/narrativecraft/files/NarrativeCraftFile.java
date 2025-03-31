@@ -2,16 +2,17 @@ package fr.loudo.narrativecraft.files;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.character.Character;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class NarrativeCraftFile {
@@ -34,6 +35,7 @@ public class NarrativeCraftFile {
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
         NarrativeCraft.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
+        NarrativeCraft.getInstance().getCharacterManager().setCharacters(getCharactersFromDirectory());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {
@@ -44,6 +46,11 @@ public class NarrativeCraftFile {
     public static void saveAnimation(Animation animation) throws IOException {
         File file = createFile(animationDirectory, animation.getName().toLowerCase());
         save(animation, file);
+    }
+
+    public static void saveCharacter(Character character) throws IOException {
+        File file = createFile(characterDirectory, character.getName().toLowerCase());
+        save(character, file, true);
     }
 
     public static boolean animationFileExists(String animationName) {
@@ -63,12 +70,33 @@ public class NarrativeCraftFile {
         return null;
     }
 
+    public static List<Character> getCharactersFromDirectory() {
+        List<Character> finalList = new ArrayList<>();
+        File directory = NarrativeCraftFile.characterDirectory;
+        File[] files = directory.listFiles();
+        if(files == null) {
+            NarrativeCraft.LOGGER.warn("Couldn't retrieve characters files!");
+            return finalList;
+        }
+        Gson gson = new GsonBuilder().create();
+        for(File file : files) {
+            try(Reader reader = new BufferedReader(new FileReader(file))) {
+                Character character = gson.fromJson(reader, Character.class);
+                finalList.add(character);
+            } catch (IOException e) {
+                NarrativeCraft.LOGGER.warn("File {} couldn't be opened", file.getName());
+            }
+        }
+
+        return finalList;
+    }
+
     public static List<Chapter> getChaptersFromDirectory() {
         List<Chapter> finalList = new ArrayList<>();
         File directory = NarrativeCraftFile.chapterDirectory;
         File[] files = directory.listFiles();
         if(files == null) {
-            NarrativeCraft.LOGGER.warn("Couldn't retrieve chapters file!");
+            NarrativeCraft.LOGGER.warn("Couldn't retrieve chapters files!");
             return finalList;
         }
         Gson gson = new GsonBuilder().create();
@@ -89,6 +117,13 @@ public class NarrativeCraftFile {
 
     private static void save(Object element, File file) throws IOException {
         Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(file))) {
+            gson.toJson(element, writer);
+        }
+    }
+
+    private static void save(Object element, File file, boolean prettyString) throws IOException {
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try(Writer writer = new BufferedWriter(new FileWriter(file))) {
             gson.toJson(element, writer);
         }
