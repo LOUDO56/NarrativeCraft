@@ -12,5 +12,6 @@ public class LifecycleEvent {
     @SubscribeEvent
     public static void onServerStart(ServerStartedEvent startedEvent) {
         NarrativeCraftFile.init(startedEvent.getServer());
+        NarrativeCraft.server = startedEvent.getServer();
     }
 }

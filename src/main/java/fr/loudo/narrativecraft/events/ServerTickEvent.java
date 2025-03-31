@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.narrative.playback.Playback;
+import fr.loudo.narrativecraft.narrative.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.utils.Location;
@@ -12,6 +14,7 @@ import net.minecraftforge.fml.common.Mod;
 @Mod.EventBusSubscriber(modid = NarrativeCraft.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class ServerTickEvent {
     private static final RecordingHandler RECORDING_HANDLER = NarrativeCraft.getInstance().getRecordingHandler();
+    private static final PlaybackHandler PLAYBACK_HANDLER = NarrativeCraft.getInstance().getPlaybackHandler();
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
@@ -27,7 +30,11 @@ public class ServerTickEvent {
                         player.getYHeadRot()
                 );
                 recording.getLocations().add(currentLoc);
-                System.out.println("Recording...");
+            }
+        }
+        for(Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
+            if(playback.isPlaying()) {
+                playback.next();
             }
         }
     }

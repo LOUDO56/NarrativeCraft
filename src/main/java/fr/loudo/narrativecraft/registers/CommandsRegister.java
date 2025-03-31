@@ -17,6 +17,7 @@ public class CommandsRegister {
         CharacterCommand.register(event.getDispatcher());
         RecordCommand.register(event.getDispatcher());
         SessionCommand.register(event.getDispatcher());
+        StoryCommand.register(event.getDispatcher());
     }
 
 }
