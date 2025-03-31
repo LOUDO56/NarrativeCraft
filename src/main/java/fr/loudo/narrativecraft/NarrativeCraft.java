@@ -15,6 +15,7 @@ public class NarrativeCraft {
     public static final String MODID = "narrativecraft";
     public static final Logger LOGGER = LogManager.getLogger();
     private static NarrativeCraft instance = new NarrativeCraft();
+
     private ChapterManager chapterManager;
     private CharacterManager characterManager;
     private PlayerSessionManager playerSessionManager;

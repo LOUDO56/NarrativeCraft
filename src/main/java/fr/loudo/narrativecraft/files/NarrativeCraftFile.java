@@ -66,7 +66,8 @@ public class NarrativeCraftFile {
     public static void saveAnimation(Animation animation) throws IOException {
         File file = createFile(animationDirectory, animation.getName().toLowerCase());
         animation.getScene().addAnimation(animation.getName().toLowerCase());
-        saveChapter(animation.getScene().getChapter());
+        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(animation.getScene().getChapterIndex());
+        saveChapter(chapter);
         save(animation, file);
     }
 

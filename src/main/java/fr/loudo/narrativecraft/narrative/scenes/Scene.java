@@ -16,6 +16,7 @@ public class Scene {
 
     public Scene(Chapter chapter, String name) {
         this.chapter = chapter;
+        this.chapterIndex = chapter.getIndex();
         this.animationFilesName = new ArrayList<>();
         this.name = name;
     }
@@ -30,6 +31,10 @@ public class Scene {
 
     public void setChapter(Chapter chapter) {
         this.chapter = chapter;
+    }
+
+    public int getChapterIndex() {
+        return chapterIndex;
     }
 
     public List<String> getAnimationFilesName() {
