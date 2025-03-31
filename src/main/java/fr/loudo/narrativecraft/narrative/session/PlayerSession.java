@@ -9,13 +9,16 @@ public class PlayerSession {
     private ServerPlayer player;
     private Chapter chapter;
     private Scene scene;
+    private boolean overwriteState;
 
     public PlayerSession(ServerPlayer player) {
         this.player = player;
+        this.overwriteState = false;
     }
 
     public PlayerSession(ServerPlayer player, Chapter chapter, Scene scene) {
         this.player = player;
+        this.overwriteState = false;
     }
 
     public ServerPlayer getPlayer() {
@@ -36,5 +39,13 @@ public class PlayerSession {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public boolean isOverwriteState() {
+        return overwriteState;
+    }
+
+    public void setOverwriteState(boolean overwriteState) {
+        this.overwriteState = overwriteState;
     }
 }

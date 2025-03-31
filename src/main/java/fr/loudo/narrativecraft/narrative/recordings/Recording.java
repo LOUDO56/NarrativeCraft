@@ -1,21 +1,31 @@
 package fr.loudo.narrativecraft.narrative.recordings;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.utils.Location;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraft.getInstance().getRecordingHandler();
     private ServerPlayer player;
+    private List<Location> locations;
     private boolean isRecording;
 
     public Recording(ServerPlayer player) {
         this.player = player;
+        this.locations = new ArrayList<>();
         this.isRecording = false;
     }
 
     public boolean start() {
         if(isRecording) return false;
+        locations = new ArrayList<>();
         recordingHandler.getRecordings().add(this);
         isRecording = true;
         return true;
@@ -23,9 +33,25 @@ public class Recording {
 
     public boolean stop() {
         if(!isRecording) return false;
-        recordingHandler.getRecordings().remove(this);
         isRecording = false;
         return true;
+    }
+
+    public boolean save(Animation animation) {
+        if(isRecording) return false;
+        try {
+            animation.setLocations(locations);
+            animation.getScene().addAnimation(animation);
+            recordingHandler.getRecordings().remove(this);
+            NarrativeCraftFile.saveChapter(animation.getScene().getChapter());
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException("Error while saving record animation: " + e);
+        }
+    }
+
+    public List<Location> getLocations() {
+        return locations;
     }
 
     public boolean isRecording() {

@@ -3,8 +3,10 @@ package fr.loudo.narrativecraft.commands;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraft;
+import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -23,6 +25,11 @@ public class RecordCommand {
                         .then(Commands.literal("stop")
                                 .executes(RecordCommand::stopRecording)
                         )
+                        .then(Commands.literal("save")
+                                .then(Commands.argument("animation_name", StringArgumentType.string())
+                                        .executes(context -> saveRecording(context, StringArgumentType.getString(context, "animation_name")))
+                                )
+                        )
                 )
         );
     }
@@ -37,7 +44,7 @@ public class RecordCommand {
         }
 
         if(NarrativeCraft.getInstance().getRecordingHandler().isPlayerRecording(player)) {
-            context.getSource().sendFailure(Translation.message("record.start.fail"));
+            context.getSource().sendFailure(Translation.message("record.start.already_recording"));
             return 0;
         }
 
@@ -64,5 +71,41 @@ public class RecordCommand {
         context.getSource().sendSuccess(() -> Translation.message("record.stop.success"), true);
 
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static int saveRecording(CommandContext<CommandSourceStack> context, String newAnimationName) {
+        ServerPlayer player = context.getSource().getPlayer();
+
+        Recording recording = NarrativeCraft.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
+        if(recording == null) {
+            context.getSource().sendFailure(Translation.message("record.save.recorded_nothing"));
+            return 0;
+        }
+
+        PlayerSession playerSession = NarrativeCraft.getInstance().getPlayerSessionManager().getPlayerSession(player);
+
+        Animation animation;
+        if (playerSession.getScene().animationExists(newAnimationName)) {
+            if (playerSession.isOverwriteState()) {
+                animation = playerSession.getScene().getAnimationByName(newAnimationName);
+                playerSession.setOverwriteState(false);
+            } else {
+                context.getSource().sendFailure(Translation.message("record.save.overwrite", newAnimationName, playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
+                playerSession.setOverwriteState(true);
+                return 0;
+            }
+        } else {
+            animation = new Animation(playerSession.getScene(), newAnimationName);
+            playerSession.setOverwriteState(false);
+        }
+
+        if (recording.save(animation)) {
+            context.getSource().sendSuccess(() -> Translation.message("record.save.success", animation.getName(), playerSession.getChapter().getIndex(), playerSession.getScene().getName()), true);
+        } else {
+            context.getSource().sendFailure(Translation.message("record.save.fail", animation.getName(), playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
+        }
+
+        return Command.SINGLE_SUCCESS;
+
     }
 }

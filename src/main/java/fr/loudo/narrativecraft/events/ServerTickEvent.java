@@ -26,6 +26,7 @@ public class ServerTickEvent {
                         player.getYRot(),
                         player.getYHeadRot()
                 );
+                recording.getLocations().add(currentLoc);
                 System.out.println("Recording...");
             }
         }

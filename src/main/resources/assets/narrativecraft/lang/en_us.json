@@ -27,6 +27,8 @@
   "narrativecraft.record.stop.success": "Record stopped.",
   "narrativecraft.record.stop.no_recording": "You are not recording.",
   "narrativecraft.record.save.success": "Record saved to animation %s for scene %s of chapter %d.",
+  "narrativecraft.record.save.overwrite": "The animation %s for scene %s of chapter %d is already registered, overwrite? Enter the command again to overwrite.",
+  "narrativecraft.record.save.recorded_nothing": "You recorded nothing!",
   "narrativecraft.record.save.fail": "Error while saving animation %s for scene %s of chapter %d!"
 
 }

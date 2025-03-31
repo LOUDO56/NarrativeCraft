@@ -39,6 +39,10 @@ public class Animation {
         return locations;
     }
 
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
+    }
+
     public void setCharacter(Character character) {
         this.character = character;
     }
