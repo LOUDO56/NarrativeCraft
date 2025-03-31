@@ -66,8 +66,7 @@ public class NarrativeCraftFile {
     public static void saveAnimation(Animation animation) throws IOException {
         File file = createFile(animationDirectory, animation.getName().toLowerCase());
         animation.getScene().addAnimation(animation.getName().toLowerCase());
-        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(animation.getScene().getChapterIndex());
-        saveChapter(chapter);
+        saveChapter(animation.getScene().getChapter());
         save(animation, file);
     }
 
@@ -85,7 +84,12 @@ public class NarrativeCraftFile {
         if(file.exists()) {
             Gson gson = new GsonBuilder().create();
             try(Reader reader = new BufferedReader(new FileReader(file))) {
-                return gson.fromJson(reader, Animation.class);
+                Animation animation = gson.fromJson(reader, Animation.class);
+                Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(animation.getChapterIndex());
+                Scene scene = chapter.getSceneByName(animation.getSceneName());
+                scene.setChapter(chapter);
+                animation.setScene(scene);
+                return animation;
             } catch (IOException e) {
                 return null;
             }

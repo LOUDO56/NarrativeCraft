@@ -9,12 +9,16 @@ import java.util.List;
 public class Animation {
 
     private transient Scene scene;
+    private String sceneName; // For GSON deserialization
+    private int chapterIndex; // For GSON deserialization
     private String name;
     private Character character;
     private List<Location> locations;
 
     public Animation(Scene scene, String name){
         this.scene = scene;
+        this.sceneName = scene.getName();
+        this.chapterIndex = scene.getChapter().getIndex();
         this.name = name;
         this.locations = new ArrayList<>();
     }
@@ -25,6 +29,14 @@ public class Animation {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public String getSceneName() {
+        return sceneName;
+    }
+
+    public int getChapterIndex() {
+        return chapterIndex;
     }
 
     public String getName() {

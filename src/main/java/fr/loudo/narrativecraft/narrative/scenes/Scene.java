@@ -11,13 +11,11 @@ import java.util.List;
 public class Scene {
 
     private transient Chapter chapter;
-    private int chapterIndex; // For deserialization stuff
     private List<String> animationFilesName;
     private String name;
 
     public Scene(Chapter chapter, String name) {
         this.chapter = chapter;
-        this.chapterIndex = chapter.getIndex();
         this.animationFilesName = new ArrayList<>();
         this.name = name;
     }
@@ -32,10 +30,6 @@ public class Scene {
 
     public void setChapter(Chapter chapter) {
         this.chapter = chapter;
-    }
-
-    public int getChapterIndex() {
-        return chapterIndex;
     }
 
     public List<String> getAnimationFilesName() {
