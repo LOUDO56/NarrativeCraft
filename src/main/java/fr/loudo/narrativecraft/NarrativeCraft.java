@@ -11,17 +11,25 @@ public class NarrativeCraft {
 
     public static final String MODID = "narrativecraft";
     public static final Logger LOGGER = LogManager.getLogger();
+    private static NarrativeCraft instance = new NarrativeCraft();
+    private ChapterManager chapterManager;
+    private CharacterManager characterManager;
 
-    private static final ChapterManager CHAPTER_MANAGER = new ChapterManager();
-    private static final CharacterManager CHARACTER_MANAGER = new CharacterManager();
-
-
-    public static ChapterManager getChapterManager() {
-        return CHAPTER_MANAGER;
+    public NarrativeCraft() {
+        chapterManager = new ChapterManager();
+        characterManager = new CharacterManager();
     }
 
-    public static CharacterManager getCharacterManager() {
-        return CHARACTER_MANAGER;
+    public static NarrativeCraft getInstance() {
+        return instance;
+    }
+
+    public ChapterManager getChapterManager() {
+        return chapterManager;
+    }
+
+    public CharacterManager getCharacterManager() {
+        return characterManager;
     }
 
 

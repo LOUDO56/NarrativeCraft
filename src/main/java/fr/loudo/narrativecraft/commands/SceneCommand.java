@@ -19,7 +19,7 @@ public class SceneCommand {
                 .then(Commands.literal("scene")
                         .then(Commands.literal("create")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraft.getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraft.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
                                                 .executes(context -> createScene(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name")))
                                         )
@@ -32,12 +32,12 @@ public class SceneCommand {
 
     private static int createScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
 
-        if(!NarrativeCraft.getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
+        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
 
         if(chapter.sceneExists(sceneName)) {
             Scene scene = chapter.getSceneByName(sceneName);

@@ -29,7 +29,7 @@ public class NarrativeCraftFile {
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
-        NarrativeCraft.getChapterManager().setChapters(getChaptersFromDirectory());
+        NarrativeCraft.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {

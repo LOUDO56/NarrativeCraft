@@ -20,9 +20,9 @@ public class AnimationCommand {
                 .then(Commands.literal("animation")
                         .then(Commands.literal("create")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraft.getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraft.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
-                                                .suggests(NarrativeCraft.getChapterManager().getSceneSuggestionsByChapter())
+                                                .suggests(NarrativeCraft.getInstance().getChapterManager().getSceneSuggestionsByChapter())
                                                 .then(Commands.argument("animation_name", StringArgumentType.string())
                                                         .executes(context -> {
                                                             int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
@@ -41,12 +41,12 @@ public class AnimationCommand {
 
     private static int createAnimation(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, String animationName) {
 
-        if(!NarrativeCraft.getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(chapterIndex);
+        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
 
         if(!chapter.sceneExists(sceneName)) {
             context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));

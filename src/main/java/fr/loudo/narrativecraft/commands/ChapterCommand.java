@@ -39,8 +39,8 @@ public class ChapterCommand {
 
     private static int createChapter(CommandContext<CommandSourceStack> context, int index, String name) {
 
-        if(NarrativeCraft.getChapterManager().chapterExists(index)) {
-            Chapter chapter = NarrativeCraft.getChapterManager().getChapterByIndex(index);
+        if(NarrativeCraft.getInstance().getChapterManager().chapterExists(index)) {
+            Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(index);
             context.getSource().sendFailure(Translation.message("chapter.already_exists", chapter.getIndex()));
             return 0;
         }
@@ -52,7 +52,7 @@ public class ChapterCommand {
             chapter = new Chapter(index, name);
         }
 
-        if(NarrativeCraft.getChapterManager().addChapter(chapter)) {
+        if(NarrativeCraft.getInstance().getChapterManager().addChapter(chapter)) {
             context.getSource().sendSuccess(() -> Translation.message("chapter.create.success", chapter.getIndex()), true);
         } else {
             context.getSource().sendSuccess(() -> Translation.message("chapter.create.fail", chapter.getIndex()), true);

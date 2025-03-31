@@ -15,5 +15,9 @@
   "narrativecraft.animation.no_exists": "Animation %s for scene %s of chapter %d does not exists.",
 
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
-  "narrativecraft.character.already_exists": "Character %s already exists."
+  "narrativecraft.character.already_exists": "Character %s already exists.",
+
+  "key.categories.narrativecraft": "Narrative Craft Animation",
+  "key.animation.record.start": "Start Animation Recording",
+  "key.animation.record.stop": "Stop Animation Recording"
 }

@@ -26,14 +26,14 @@ public class CharacterCommand {
 
     private static int createCharacter(CommandContext<CommandSourceStack> context, String characterName) {
 
-        if(NarrativeCraft.getCharacterManager().characterExists(characterName)) {
-            Character character = NarrativeCraft.getCharacterManager().getCharacterByName(characterName);
+        if(NarrativeCraft.getInstance().getCharacterManager().characterExists(characterName)) {
+            Character character = NarrativeCraft.getInstance().getCharacterManager().getCharacterByName(characterName);
             context.getSource().sendFailure(Translation.message("character.already_exists", character.getName()));
             return 0;
         }
 
         Character character = new Character(characterName);
-        NarrativeCraft.getCharacterManager().addCharacter(character);
+        NarrativeCraft.getInstance().getCharacterManager().addCharacter(character);
         context.getSource().sendSuccess(() -> Translation.message("character.create.success", characterName, characterName.toLowerCase()), true);
 
         return Command.SINGLE_SUCCESS;
