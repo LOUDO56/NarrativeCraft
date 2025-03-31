@@ -49,11 +49,15 @@ public class NarrativeCraftFile {
             NarrativeCraft.LOGGER.warn("Couldn't remove chapter file " + file.getName() + ".");
         }
         for(Scene scene : chapter.getScenes()) {
-            for(String animationFileName : scene.getAnimationFiles()) {
-                File fileAnim = new File(animationDirectory, animationFileName);
-                if(!fileAnim.delete()) {
-                    NarrativeCraft.LOGGER.warn("Couldn't remove animation file " + fileAnim.getName() + ".");
-                }
+            removeAnimationFileByScene(scene);
+        }
+    }
+
+    public static void removeAnimationFileByScene(Scene scene) {
+        for(String animationFileName : scene.getAnimationFiles()) {
+            File fileAnim = new File(animationDirectory, animationFileName);
+            if(!fileAnim.delete()) {
+                NarrativeCraft.LOGGER.warn("Couldn't remove animation file " + fileAnim.getName() + ".");
             }
         }
     }

@@ -25,6 +25,15 @@ public class SceneCommand {
                                         )
                                 )
                         )
+                        .then(Commands.literal("remove")
+                                .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
+                                        .suggests(NarrativeCraft.getInstance().getChapterManager().getChapterSuggestions())
+                                        .then(Commands.argument("scene_name", StringArgumentType.string())
+                                                .suggests(NarrativeCraft.getInstance().getChapterManager().getSceneSuggestionsByChapter())
+                                                .executes(context -> removeScene(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name")))
+                                        )
+                                )
+                        )
                 )
         );
     }
@@ -45,11 +54,35 @@ public class SceneCommand {
             return 0;
         }
 
-        Scene scene = new Scene(chapter, sceneName);
+        Scene scene = chapter.getSceneByName(sceneName);
         if(chapter.addScene(scene)) {
             context.getSource().sendSuccess(() -> Translation.message("scene.create.success", scene.getName(), chapter.getIndex()), true);
         } else {
-            context.getSource().sendSuccess(() -> Translation.message("scene.create.fail", scene.getName(), chapter.getIndex()), true);
+            context.getSource().sendFailure(Translation.message("scene.create.fail", scene.getName(), chapter.getIndex()));
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int removeScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
+
+        if(!NarrativeCraft.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+            context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
+            return 0;
+        }
+
+        Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+
+        if(!chapter.sceneExists(sceneName)) {
+            context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));
+            return 0;
+        }
+
+        Scene scene = chapter.getSceneByName(sceneName);
+        if(chapter.removeScene(scene)) {
+            context.getSource().sendSuccess(() -> Translation.message("scene.delete.success", scene.getName(), chapter.getIndex()), true);
+        } else {
+            context.getSource().sendFailure(Translation.message("scene.delete.fail", scene.getName(), chapter.getIndex()));
         }
 
         return Command.SINGLE_SUCCESS;

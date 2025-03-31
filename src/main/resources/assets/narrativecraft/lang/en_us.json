@@ -5,13 +5,15 @@
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
-  "narrativecraft.chapter.already_exists": "Chapter %d already exists.",
-  "narrativecraft.chapter.no_exists": "Chapter %d does not exists.",
   "narrativecraft.chapter.delete.success": "Chapter %d deleted successfully.",
   "narrativecraft.chapter.delete.fail": "Couldn't remove chapter %d!",
+  "narrativecraft.chapter.already_exists": "Chapter %d already exists.",
+  "narrativecraft.chapter.no_exists": "Chapter %d does not exists.",
 
   "narrativecraft.scene.create.success": "Scene %s for chapter %d created successfully.",
   "narrativecraft.scene.create.fail": "Scene %s for chapter %d couldn't be created! %s Please check if your chapter file in your map world directory exists!",
+  "narrativecraft.scene.delete.success": "Scene %s of chapter %d deleted successfully.",
+  "narrativecraft.scene.delete.fail": "Can't remove scene %s of chapter %d!",
   "narrativecraft.scene.already_exists": "Scene %s for chapter %d already exists.",
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 

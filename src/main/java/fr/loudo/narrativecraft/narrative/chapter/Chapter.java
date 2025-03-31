@@ -38,6 +38,19 @@ public class Chapter {
         }
     }
 
+    public boolean removeScene(Scene scene) {
+        if(!scenes.contains(scene)) return false;
+        try {
+            scenes.remove(scene);
+            NarrativeCraftFile.removeAnimationFileByScene(scene);
+            NarrativeCraftFile.saveChapter(this);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraft.LOGGER.warn("Couldn't save chapter " + index + " file or delete scene animations: " + e);
+            return false;
+        }
+    }
+
     public List<Scene> getScenes() {
         return scenes;
     }
