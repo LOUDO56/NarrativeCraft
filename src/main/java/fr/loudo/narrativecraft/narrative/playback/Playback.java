@@ -56,10 +56,8 @@ public class Playback {
         };
 
         Location location = animation.getLocations().get(index);
-        fakePlayer.setXRot(location.getXRot());
-        fakePlayer.setYRot(location.getYRot());
-        fakePlayer.setYHeadRot(location.getYHeadRot());
         fakePlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYRot(), location.getXRot());
+        fakePlayer.setYHeadRot(location.getYHeadRot());
         index++;
     }
 
