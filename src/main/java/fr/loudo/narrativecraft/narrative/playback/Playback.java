@@ -9,6 +9,8 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
@@ -32,10 +34,14 @@ public class Playback {
         index = 0;
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
+        Location firstLoc = animation.getLocations().getFirst();
+        fakePlayer.moveTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
+
         for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()) {
             serverPlayer.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         }
-        serverLevel.addNewPlayer(fakePlayer);
+        serverLevel.addFreshEntity(fakePlayer);
+        fakePlayer.setOnGround(true);
         isPlaying = true;
         NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
@@ -56,8 +62,24 @@ public class Playback {
         };
 
         Location location = animation.getLocations().get(index);
-        fakePlayer.moveTo(location.getX(), location.getY(), location.getZ(), location.getYRot(), location.getXRot());
+        double vX = 0, vY = 0, vZ = 0;
+        if (index < animation.getLocations().size() - 1) {
+            Location newLoc = animation.getLocations().get(index + 1);
+            vX = newLoc.getX() - location.getX();
+            vY = newLoc.getY() - location.getY();
+            vZ = newLoc.getZ() - location.getZ();
+        }
+        fakePlayer.setXRot(location.getXRot());
+        fakePlayer.setYRot(location.getYRot());
         fakePlayer.setYHeadRot(location.getYHeadRot());
+        fakePlayer.move(MoverType.PLAYER, new Vec3(vX, vY, vZ));
+        fakePlayer.setOnGround(true);
+//
+//        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
+//        for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()) {
+//            serverPlayer.connection.send(new ClientboundEntityPositionSyncPacket(fakePlayer.getId(), positionMoveRotation, true));
+//        }
+
         index++;
     }
 

@@ -52,6 +52,11 @@ public class StoryCommand {
 
             }
 
+        }
+
+        try {
+            NarrativeCraft.story = new Story("{\"inkVersion\":21,\"root\":[[\"#\",\"^animation play chapter-1.village.village_jake\",\"/#\",\"^Once upon a time...\",\"\\n\",[\"done\",{\"#f\":5,\"#n\":\"g-0\"}],null],\"done\",{\"#f\":1}],\"listDefs\":{}}");
+        } catch (Exception ignored) {
 
         }
 
