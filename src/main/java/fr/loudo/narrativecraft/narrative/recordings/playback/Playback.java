@@ -1,16 +1,15 @@
-package fr.loudo.narrativecraft.narrative.playback;
+package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.utils.FakePlayer;
-import fr.loudo.narrativecraft.utils.Location;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.phys.Vec3;
 
 import java.util.UUID;
 
@@ -34,14 +33,10 @@ public class Playback {
         index = 0;
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
-        Location firstLoc = animation.getLocations().getFirst();
+        MovementData firstLoc = animation.getLocations().getFirst();
         fakePlayer.moveTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
-
-        for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()) {
-            serverPlayer.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        }
+        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         serverLevel.addFreshEntity(fakePlayer);
-        fakePlayer.setOnGround(true);
         isPlaying = true;
         NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
@@ -61,19 +56,16 @@ public class Playback {
             return;
         };
 
-        Location location = animation.getLocations().get(index);
-        double vX = 0, vY = 0, vZ = 0;
+        MovementData movementData = animation.getLocations().get(index);
+        MovementData movementDataNext = animation.getLocations().get(index);
         if (index < animation.getLocations().size() - 1) {
-            Location newLoc = animation.getLocations().get(index + 1);
-            vX = newLoc.getX() - location.getX();
-            vY = newLoc.getY() - location.getY();
-            vZ = newLoc.getZ() - location.getZ();
+            movementDataNext = animation.getLocations().get(index + 1);
         }
-        fakePlayer.setXRot(location.getXRot());
-        fakePlayer.setYRot(location.getYRot());
-        fakePlayer.setYHeadRot(location.getYHeadRot());
-        fakePlayer.move(MoverType.PLAYER, new Vec3(vX, vY, vZ));
-        fakePlayer.setOnGround(true);
+        fakePlayer.setXRot(movementData.getXRot());
+        fakePlayer.setYRot(movementData.getYRot());
+        fakePlayer.setYHeadRot(movementData.getYHeadRot());
+        fakePlayer.setOnGround(movementData.isOnGround());
+        fakePlayer.move(MoverType.PLAYER, MovementData.getDeltaMovement(movementData, movementDataNext));
 //
 //        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
 //        for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()) {

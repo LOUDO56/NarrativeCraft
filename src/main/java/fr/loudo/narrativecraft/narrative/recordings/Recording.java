@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
-import fr.loudo.narrativecraft.utils.Location;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.IOException;
@@ -14,18 +13,18 @@ public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraft.getInstance().getRecordingHandler();
     private ServerPlayer player;
-    private List<Location> locations;
+    private List<MovementData> movementData;
     private boolean isRecording;
 
     public Recording(ServerPlayer player) {
         this.player = player;
-        this.locations = new ArrayList<>();
+        this.movementData = new ArrayList<>();
         this.isRecording = false;
     }
 
     public boolean start() {
         if(isRecording) return false;
-        locations = new ArrayList<>();
+        movementData = new ArrayList<>();
         recordingHandler.getRecordings().add(this);
         isRecording = true;
         return true;
@@ -40,7 +39,7 @@ public class Recording {
     public boolean save(Animation animation) {
         if(isRecording) return false;
         try {
-            animation.setLocations(locations);
+            animation.setLocations(movementData);
             recordingHandler.getRecordings().remove(this);
             NarrativeCraftFile.saveAnimation(animation);
             return true;
@@ -49,8 +48,8 @@ public class Recording {
         }
     }
 
-    public List<Location> getLocations() {
-        return locations;
+    public List<MovementData> getLocations() {
+        return movementData;
     }
 
     public boolean isRecording() {

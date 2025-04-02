@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.narrative.playback;
+package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraft;
-import fr.loudo.narrativecraft.narrative.playback.Playback;
-import fr.loudo.narrativecraft.narrative.playback.PlaybackHandler;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
-import fr.loudo.narrativecraft.utils.Location;
+import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -21,13 +21,14 @@ public class ServerTickEvent {
         for(Recording recording : RECORDING_HANDLER.getRecordings()) {
             if(recording.isRecording()) {
                 ServerPlayer player = recording.getPlayer();
-                Location currentLoc = new Location(
+                MovementData currentLoc = new MovementData(
                         player.getX(),
                         player.getY(),
                         player.getZ(),
                         player.getXRot(),
                         player.getYRot(),
-                        player.getYHeadRot()
+                        player.getYHeadRot(),
+                        player.onGround()
                 );
                 recording.getLocations().add(currentLoc);
             }

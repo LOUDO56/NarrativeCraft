@@ -1,10 +1,9 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import com.bladecoder.ink.runtime.Story;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
-import fr.loudo.narrativecraft.narrative.playback.Playback;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.server.level.ServerPlayer;
 
 public class InkTagTranslators {

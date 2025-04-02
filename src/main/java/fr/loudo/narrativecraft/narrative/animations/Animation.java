@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.narrative.animations;
 
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
-import fr.loudo.narrativecraft.utils.Location;
+import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,14 +13,14 @@ public class Animation {
     private int chapterIndex; // For GSON deserialization
     private String name;
     private Character character;
-    private List<Location> locations;
+    private List<MovementData> movementData;
 
     public Animation(Scene scene, String name){
         this.scene = scene;
         this.sceneName = scene.getName();
         this.chapterIndex = scene.getChapter().getIndex();
         this.name = name;
-        this.locations = new ArrayList<>();
+        this.movementData = new ArrayList<>();
     }
 
     public Scene getScene() {
@@ -47,12 +47,12 @@ public class Animation {
         return character;
     }
 
-    public List<Location> getLocations() {
-        return locations;
+    public List<MovementData> getLocations() {
+        return movementData;
     }
 
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
+    public void setLocations(List<MovementData> movementData) {
+        this.movementData = movementData;
     }
 
     public void setCharacter(Character character) {
