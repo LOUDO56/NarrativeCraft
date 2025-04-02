@@ -6,6 +6,8 @@ import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.Character;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
@@ -82,7 +84,7 @@ public class NarrativeCraftFile {
     public static Animation getAnimationFromFile(String animationName) {
         File file = new File(animationDirectory, animationName + EXTENSTION_FILE);
         if(file.exists()) {
-            Gson gson = new GsonBuilder().create();
+            Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
             try(Reader reader = new BufferedReader(new FileReader(file))) {
                 Animation animation = gson.fromJson(reader, Animation.class);
                 Chapter chapter = NarrativeCraft.getInstance().getChapterManager().getChapterByIndex(animation.getChapterIndex());

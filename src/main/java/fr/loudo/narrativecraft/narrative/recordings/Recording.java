@@ -3,28 +3,32 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifference;
+import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraft.getInstance().getRecordingHandler();
     private ServerPlayer player;
-    private List<MovementData> movementData;
+
+    private ActionsData actionsData;
+    private ActionDifference actionDifference;
     private boolean isRecording;
+    private int tickAction;
 
     public Recording(ServerPlayer player) {
         this.player = player;
-        this.movementData = new ArrayList<>();
+        this.actionsData = new ActionsData();
+        this.actionDifference = new ActionDifference(this);
         this.isRecording = false;
+        this.tickAction = 0;
     }
 
     public boolean start() {
         if(isRecording) return false;
-        movementData = new ArrayList<>();
+        actionsData = new ActionsData();
         recordingHandler.getRecordings().add(this);
         isRecording = true;
         return true;
@@ -36,10 +40,14 @@ public class Recording {
         return true;
     }
 
+    public void addTickAction() {
+        tickAction++;
+    }
+
     public boolean save(Animation animation) {
         if(isRecording) return false;
         try {
-            animation.setLocations(movementData);
+            animation.setActionsData(actionsData);
             recordingHandler.getRecordings().remove(this);
             NarrativeCraftFile.saveAnimation(animation);
             return true;
@@ -48,8 +56,20 @@ public class Recording {
         }
     }
 
-    public List<MovementData> getLocations() {
-        return movementData;
+    public ActionsData getActionsData() {
+        return actionsData;
+    }
+
+    public ActionDifference getActionDifference() {
+        return actionDifference;
+    }
+
+    public int getTickAction() {
+        return tickAction;
+    }
+
+    public void setTickAction(int tickAction) {
+        this.tickAction = tickAction;
     }
 
     public boolean isRecording() {

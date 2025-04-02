@@ -20,17 +20,12 @@ public class ServerTickEvent {
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         for(Recording recording : RECORDING_HANDLER.getRecordings()) {
             if(recording.isRecording()) {
+                recording.addTickAction();
                 ServerPlayer player = recording.getPlayer();
-                MovementData currentLoc = new MovementData(
-                        player.getX(),
-                        player.getY(),
-                        player.getZ(),
-                        player.getXRot(),
-                        player.getYRot(),
-                        player.getYHeadRot(),
-                        player.onGround()
-                );
-                recording.getLocations().add(currentLoc);
+                recording.getActionsData().addMovement(player);
+                if(recording.getActionDifference().listenDifference(recording.getTickAction())) {
+                    recording.setTickAction(0);
+                }
             }
         }
         for(Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {

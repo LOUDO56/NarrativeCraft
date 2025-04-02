@@ -20,16 +20,6 @@ public class MovementData {
         this.isOnGround = isOnGround;
     }
 
-    public static Vec3 getDeltaMovement(MovementData loc1, MovementData loc2) {
-        double dX, dY, dZ;
-        dX = loc2.getX() - loc1.getX();
-        dY = loc2.getY() - loc1.getY();
-        dZ = loc2.getZ() - loc1.getZ();
-
-        return new Vec3(dX, dY, dZ);
-
-    }
-
     public double getX() {
         return x;
     }
