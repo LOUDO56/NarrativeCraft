@@ -2,7 +2,9 @@ package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import com.google.gson.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 
 import java.lang.reflect.Type;
@@ -32,8 +34,14 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 return new HurtAction(waitTick, actionType);
             }
             case ITEM_CHANGE -> {
+                String equipmentSlot = jsonObject.get("equipmentSlot").getAsString();
                 int itemId = jsonObject.get("itemId").getAsInt();
-                return new ItemChangeAction(waitTick, actionType, itemId);
+                JsonElement data = jsonObject.get("data");
+                if(data != null) {
+                    return new ItemChangeAction(waitTick, actionType, itemId, equipmentSlot, data.getAsString());
+                } else {
+                    return new ItemChangeAction(waitTick, actionType, equipmentSlot, itemId);
+                }
             }
 //            case ITEM_USED -> {
 //                InteractionHand interactionHand = InteractionHand.valueOf(jsonObject.get("interactionHand").getAsString());

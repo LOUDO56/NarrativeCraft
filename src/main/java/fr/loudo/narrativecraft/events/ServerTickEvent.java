@@ -23,7 +23,7 @@ public class ServerTickEvent {
                 recording.addTickAction();
                 ServerPlayer player = recording.getPlayer();
                 recording.getActionsData().addMovement(player);
-                recording.getActionDifference().listenDifference(recording.getTickAction());
+                recording.getActionDifference().listenDifference();
             }
         }
         for(Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
