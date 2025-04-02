@@ -31,6 +31,14 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
             case HURT -> {
                 return new HurtAction(waitTick, actionType);
             }
+            case ITEM_CHANGE -> {
+                int itemId = jsonObject.get("itemId").getAsInt();
+                return new ItemChangeAction(waitTick, actionType, itemId);
+            }
+//            case ITEM_USED -> {
+//                InteractionHand interactionHand = InteractionHand.valueOf(jsonObject.get("interactionHand").getAsString());
+//                return new ItemUsedAction(waitTick, actionType, interactionHand);
+//            }
 
         }
 

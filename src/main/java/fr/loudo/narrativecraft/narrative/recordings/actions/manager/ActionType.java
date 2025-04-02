@@ -5,5 +5,6 @@ public enum ActionType {
     POSE,
     ENTITY_BYTE,
     ITEM_CHANGE,
-    HURT
+    HURT,
+    ITEM_USED
 }

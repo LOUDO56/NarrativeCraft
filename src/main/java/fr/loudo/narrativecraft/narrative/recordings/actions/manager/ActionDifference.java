@@ -1,14 +1,13 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
-import fr.loudo.narrativecraft.narrative.recordings.actions.EntityByteAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.HurtAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.SwingAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
 public class ActionDifference {
@@ -46,18 +45,26 @@ public class ActionDifference {
             recording.getActionsData().addAction(entityByteAction);
         }
 
-//        ItemStack currentItem = player.getItemInHand(InteractionHand.MAIN_HAND);
-//        if(!currentItem.equals(itemStackState)) {
-//            itemStackState = currentItem;
-//            ItemChangeAction itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, currentItem);
-//            recording.getActionsData().addAction(itemChangeAction);
-//            return true
-//        }
+        ItemStack currentItem = player.getItemInHand(InteractionHand.MAIN_HAND);
+        if(!currentItem.equals(itemStackState)) {
+            itemStackState = currentItem;
+            for(Object dataComponents : currentItem.getComponents()) {
+                System.out.println(dataComponents.toString());
+            }
+            ItemChangeAction itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, Item.getId(currentItem.getItem()));
+            recording.getActionsData().addAction(itemChangeAction);
+        }
 
         if(player.hurtMarked) {
             HurtAction hurtAction = new HurtAction(tick, ActionType.HURT);
             recording.getActionsData().addAction(hurtAction);
         }
+
+//        if(player.isUsingItem()) {
+//            ItemUsedAction itemUsedAction = new ItemUsedAction(tick, ActionType.ITEM_USED, player.getUsedItemHand());
+//            recording.getActionsData().addAction(itemUsedAction);
+//        }
+
 
 
     }
