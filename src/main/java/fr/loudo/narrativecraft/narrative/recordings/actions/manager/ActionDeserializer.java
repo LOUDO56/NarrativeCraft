@@ -1,10 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import com.google.gson.*;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.EntityByteAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.SwingAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Pose;
 
@@ -16,7 +13,7 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
     public Action deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         ActionType actionType = ActionType.valueOf(jsonObject.get("actionType").getAsString());
-        int waitTick = jsonObject.get("waitTick").getAsInt();
+        int waitTick = jsonObject.get("tick").getAsInt();
 
         switch (actionType) {
             case SWING -> {
@@ -31,6 +28,10 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 byte entityByte = jsonObject.get("entityByte").getAsByte();
                 return new EntityByteAction(waitTick, actionType, entityByte);
             }
+            case HURT -> {
+                return new HurtAction(waitTick, actionType);
+            }
+
         }
 
         return new Action(waitTick, actionType);

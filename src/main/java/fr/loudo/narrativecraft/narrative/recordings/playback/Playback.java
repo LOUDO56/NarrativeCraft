@@ -5,7 +5,6 @@ import fr.loudo.narrativecraft.NarrativeCraft;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionExecution;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -24,9 +23,7 @@ public class Playback {
     private boolean isPlaying;
 
     private int indexMovement;
-    private int indexAction;
-    private int waitTickAction;
-    private Action currentAction;
+    private int tick;
 
     public Playback(Animation animation, ServerLevel serverLevel) {
         this.animation = animation;
@@ -37,22 +34,16 @@ public class Playback {
     public boolean start() {
         if(isPlaying) return false;
         indexMovement = 0;
+        tick = 0;
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
         fakePlayer.moveTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         serverLevel.addFreshEntity(fakePlayer);
-        currentAction = getFirst();
-        indexAction = 0;
-        waitTickAction = animation.getActionsData().getActions().getFirst().getWaitTick();
         isPlaying = true;
         NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
-    }
-
-    private Action getFirst() {
-        return animation.getActionsData().getActions().getFirst();
     }
 
     public boolean stop() {
@@ -75,11 +66,12 @@ public class Playback {
         if (indexMovement < movementDataList.size() - 1) {
             movementDataNext = movementDataList.get(indexMovement + 1);
         }
+        fakePlayer.move(MoverType.PLAYER, MovementUtils.getDeltaMovement(movementData, movementDataNext));
         fakePlayer.setXRot(movementData.getXRot());
         fakePlayer.setYRot(movementData.getYRot());
         fakePlayer.setYHeadRot(movementData.getYHeadRot());
         fakePlayer.setOnGround(movementData.isOnGround());
-        fakePlayer.move(MoverType.PLAYER, MovementUtils.getDeltaMovement(movementData, movementDataNext));
+        fakePlayer.moveTo(movementData.getX(), movementData.getY(), movementData.getZ(), movementData.getYRot(), movementData.getXRot());
         actionListener();
 //
 //        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
@@ -88,21 +80,14 @@ public class Playback {
 //        }
 
         indexMovement++;
+        tick++;
     }
 
     public void actionListener() {
-        if(waitTickAction == 0) {
-            ActionExecution.execute(fakePlayer, currentAction);
-            if(indexAction < animation.getActionsData().getActions().size() - 1) {
-                Action nextAction = animation.getActionsData().getActions().get(indexAction + 1);
-                currentAction = nextAction;
-                waitTickAction = nextAction.getWaitTick();
-                indexAction++;
-            } else {
-                waitTickAction = -1;
-            }
+        List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
+        for(Action action : actionToBePlayed) {
+            action.execute(fakePlayer);
         }
-        waitTickAction--;
     }
 
 

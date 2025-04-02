@@ -48,8 +48,8 @@ public class StoryCommand {
                         InkTagTranslators.execute(command);
                     }
                 }
-            } catch (Exception ignored) {
-
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
         }
