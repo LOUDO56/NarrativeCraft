@@ -8,7 +8,7 @@ neoForge {
     // Automatically enable neoforge AccessTransformers if the file exists
     def at = project(':common').file('src/main/resources/META-INF/accesstransformer.cfg')
     if (at.exists()) {
-        accessTransformers.add(at.absolutePath)
+        accessTransformers.from(at.absolutePath)
     }
     parchment {
         minecraftVersion = parchment_minecraft
@@ -23,7 +23,7 @@ neoForge {
             client()
         }
         data {
-            data()
+            clientData()
         }
         server {
             server()
@@ -34,6 +34,15 @@ neoForge {
             sourceSet sourceSets.main
         }
     }
+}
+
+dependencies {
+    jarJar(implementation("com.bladecoder.ink:blade-ink")) {
+        version {
+            prefer '1.2.0'
+        }
+    }
+    additionalRuntimeClasspath 'com.bladecoder.ink:blade-ink:1.2.0'
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

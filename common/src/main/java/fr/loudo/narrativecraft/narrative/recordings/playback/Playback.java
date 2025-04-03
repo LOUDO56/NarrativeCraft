@@ -38,7 +38,7 @@ public class Playback {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
-        fakePlayer.moveTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
+        fakePlayer.teleportTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         serverLevel.addFreshEntity(fakePlayer);
         isPlaying = true;
@@ -71,7 +71,7 @@ public class Playback {
         fakePlayer.setYRot(movementData.getYRot());
         fakePlayer.setYHeadRot(movementData.getYHeadRot());
         fakePlayer.setOnGround(movementData.isOnGround());
-        fakePlayer.moveTo(movementData.getX(), movementData.getY(), movementData.getZ(), movementData.getYRot(), movementData.getXRot());
+        fakePlayer.teleportTo(movementData.getX(), movementData.getY(), movementData.getZ());
         actionListener();
 //
 //        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());

@@ -71,7 +71,7 @@ public class ItemChangeAction extends Action {
     // https://github.com/mt1006/mc-mocap-mod/blob/1.21.1/common/src/main/java/net/mt1006/mocap/utils/Utils.java#L61
     private CompoundTag nbtFromString(String nbtString) throws CommandSyntaxException
     {
-        return new TagParser(new StringReader(nbtString)).readStruct();
+        return TagParser.parseCompoundAsArgument(new StringReader(nbtString));
     }
 
 }
