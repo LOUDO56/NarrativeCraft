@@ -10,7 +10,9 @@ public class ServerTickEvent {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
-        OnServerTick.serverTick();
+        if(event.phase == TickEvent.Phase.END) {
+            OnServerTick.serverTick();
+        }
     }
 
 }
