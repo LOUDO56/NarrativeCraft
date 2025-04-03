@@ -4,7 +4,7 @@ package fr.loudo.narrativecraft;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 
-@Mod(Constants.MOD_ID)
+@Mod(NarrativeCraftMod.MOD_ID)
 public class NarrativeCraftNeoForge {
 
     public NarrativeCraftNeoForge(IEventBus eventBus) {
@@ -13,7 +13,7 @@ public class NarrativeCraftNeoForge {
         // project.
 
         // Use NeoForge to bootstrap the Common mod.
-        Constants.LOG.info("Hello NeoForge world!");
+        NarrativeCraftMod.LOG.info("Hello NeoForge world!");
         CommonClass.init();
     }
 }

@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.chapter;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.commands.CommandSourceStack;
@@ -68,7 +68,7 @@ public class ChapterManager {
             NarrativeCraftFile.saveChapter(newChapter);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't save chapter " + newChapter.getIndex() + " file: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't save chapter " + newChapter.getIndex() + " file: " + e);
             return false;
         }
     }
@@ -80,7 +80,7 @@ public class ChapterManager {
             NarrativeCraftFile.removeChapter(chapter);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't remove chapter " + chapter.getIndex() + " file: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't remove chapter " + chapter.getIndex() + " file: " + e);
             return false;
         }
     }

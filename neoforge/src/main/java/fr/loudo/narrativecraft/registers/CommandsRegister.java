@@ -1,13 +1,13 @@
 package fr.loudo.narrativecraft.registers;
 
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.commands.*;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
-@Mod(Constants.MOD_ID)
+@Mod(NarrativeCraftMod.MOD_ID)
 public class CommandsRegister {
 
     public CommandsRegister(IEventBus eventBus) {

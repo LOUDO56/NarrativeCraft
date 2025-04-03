@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.keys;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.client.KeyMapping;
 
 public class ModKeys {
@@ -14,7 +14,7 @@ public class ModKeys {
                 translationKey,
                 InputConstants.Type.KEYSYM,
                 code,
-                "key.categories." + Constants.MOD_ID
+                "key.categories." + NarrativeCraftMod.MOD_ID
         );
     }
 

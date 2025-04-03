@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.scenes;
 
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 
@@ -50,7 +50,7 @@ public class Scene {
             NarrativeCraftFile.saveChapter(chapter);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't remove animation " + animationName + " file: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't remove animation " + animationName + " file: " + e);
             return false;
         }
     }

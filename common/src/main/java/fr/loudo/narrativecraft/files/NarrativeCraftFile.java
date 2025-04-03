@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.files;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
@@ -19,7 +19,7 @@ import java.util.List;
 
 public class NarrativeCraftFile {
 
-    private static final String DIRECTORY_NAME = Constants.MOD_ID;
+    private static final String DIRECTORY_NAME = NarrativeCraftMod.MOD_ID;
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
     private static final String ANIMATION_DIRECTORY_NAME = "animations";
@@ -48,7 +48,7 @@ public class NarrativeCraftFile {
     public static void removeChapter(Chapter chapter) throws IOException {
         File file = createFile(chapterDirectory, String.valueOf(chapter.getIndex()));
         if(!file.delete()) {
-            Constants.LOG.warn("Couldn't remove chapter file " + file.getName() + ".");
+            NarrativeCraftMod.LOG.warn("Couldn't remove chapter file " + file.getName() + ".");
         }
         for(Scene scene : chapter.getScenes()) {
             removeAnimationsFileByScene(scene);
@@ -105,7 +105,7 @@ public class NarrativeCraftFile {
         File directory = NarrativeCraftFile.characterDirectory;
         File[] files = directory.listFiles();
         if(files == null) {
-            Constants.LOG.warn("Couldn't retrieve characters files!");
+            NarrativeCraftMod.LOG.warn("Couldn't retrieve characters files!");
             return finalList;
         }
         Gson gson = new GsonBuilder().create();
@@ -114,7 +114,7 @@ public class NarrativeCraftFile {
                 Character character = gson.fromJson(reader, Character.class);
                 finalList.add(character);
             } catch (IOException e) {
-                Constants.LOG.warn("File {} couldn't be opened", file.getName());
+                NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
             }
         }
 
@@ -126,7 +126,7 @@ public class NarrativeCraftFile {
         File directory = NarrativeCraftFile.chapterDirectory;
         File[] files = directory.listFiles();
         if(files == null) {
-            Constants.LOG.warn("Couldn't retrieve chapters files!");
+            NarrativeCraftMod.LOG.warn("Couldn't retrieve chapters files!");
             return finalList;
         }
         Gson gson = new GsonBuilder().create();
@@ -138,7 +138,7 @@ public class NarrativeCraftFile {
                 }
                 finalList.add(chapter);
             } catch (IOException e) {
-                Constants.LOG.warn("File {} couldn't be opened", file.getName());
+                NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
             }
         }
 
@@ -162,7 +162,7 @@ public class NarrativeCraftFile {
     private static File createDirectory(File parent, String name) {
         File directory = new File(parent, name);
         if(!directory.exists()) {
-            if(!directory.mkdir()) Constants.LOG.warn("Couldn't create directory {}!", name);
+            if(!directory.mkdir()) NarrativeCraftMod.LOG.warn("Couldn't create directory {}!", name);
         }
         return directory;
     }
@@ -171,7 +171,7 @@ public class NarrativeCraftFile {
         File file = new File(parent, name + EXTENSTION_FILE);
         if(!file.exists()) {
             try {
-                if(!file.createNewFile()) Constants.LOG.warn("Couldn't create file {}!", file.getAbsoluteFile());
+                if(!file.createNewFile()) NarrativeCraftMod.LOG.warn("Couldn't create file {}!", file.getAbsoluteFile());
             } catch (IOException e) {
                 throw new RuntimeException("Couldn't create file: " + e);
             }

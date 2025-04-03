@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.character;
 
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 
 import java.io.IOException;
@@ -40,7 +40,7 @@ public class CharacterManager {
             NarrativeCraftFile.saveCharacter(newCharacter);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't save character to file: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't save character to file: " + e);
             return false;
         }
     }

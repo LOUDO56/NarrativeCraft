@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.mixin;
 
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.TitleScreen;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ public class MixinTitleScreen {
 
     @Inject(at = @At("HEAD"), method = "init()V")
     private void init(CallbackInfo info) {
-        Constants.LOG.info("This line is printed by the NarrativeCraft mixin from NeoForge!");
-        Constants.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
+        NarrativeCraftMod.LOG.info("This line is printed by the NarrativeCraft mixin from NeoForge!");
+        NarrativeCraftMod.LOG.info("MC Version: {}", Minecraft.getInstance().getVersionType());
     }
 }

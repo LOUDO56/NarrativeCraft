@@ -7,8 +7,15 @@ import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
 import net.minecraft.server.MinecraftServer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NarrativeCraftMod {
+
+    public static final String MOD_ID = "narrativecraft";
+    public static final String MOD_NAME = "NarrativeCraft";
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+
     public static Story story;
     public static MinecraftServer server;
     private static NarrativeCraftMod instance = new NarrativeCraftMod();

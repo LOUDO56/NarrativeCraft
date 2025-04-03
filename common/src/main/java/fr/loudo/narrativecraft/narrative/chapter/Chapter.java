@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
-import fr.loudo.narrativecraft.Constants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 
@@ -33,7 +33,7 @@ public class Chapter {
             NarrativeCraftFile.saveChapter(this);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't save chapter " + index + " file: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't save chapter " + index + " file: " + e);
             return false;
         }
     }
@@ -46,7 +46,7 @@ public class Chapter {
             NarrativeCraftFile.saveChapter(this);
             return true;
         } catch (IOException e) {
-            Constants.LOG.warn("Couldn't save chapter " + index + " file or delete scene animations: " + e);
+            NarrativeCraftMod.LOG.warn("Couldn't save chapter " + index + " file or delete scene animations: " + e);
             return false;
         }
     }

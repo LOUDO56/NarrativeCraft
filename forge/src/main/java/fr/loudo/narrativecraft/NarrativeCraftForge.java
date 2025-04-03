@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft;
 
 import net.minecraftforge.fml.common.Mod;
 
-@Mod(Constants.MOD_ID)
+@Mod(NarrativeCraftMod.MOD_ID)
 public class NarrativeCraftForge {
 
     public NarrativeCraftForge() {
@@ -11,7 +11,7 @@ public class NarrativeCraftForge {
         // project.
 
         // Use Forge to bootstrap the Common mod.
-        Constants.LOG.info("Hello Forge world!");
+        NarrativeCraftMod.LOG.info("Hello Forge world!");
         CommonClass.init();
 
     }
