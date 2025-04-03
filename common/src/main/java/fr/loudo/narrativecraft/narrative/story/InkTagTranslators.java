@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -27,7 +27,7 @@ public class InkTagTranslators {
             finalName = animationName;
         }
         Animation animation = NarrativeCraftFile.getAnimationFromFile(finalName);
-        ServerPlayer serverPlayer = NarrativeCraftManager.server.getPlayerList().getPlayers().getFirst();
+        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayers().getFirst();
         Playback playback = new Playback(animation, serverPlayer.serverLevel());
         playback.start();
     }

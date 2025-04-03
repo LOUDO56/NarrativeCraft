@@ -5,7 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
@@ -20,11 +20,11 @@ public class AnimationCommand {
                 .then(Commands.literal("animation")
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraftManager.getInstance().getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
-                                                .suggests(NarrativeCraftManager.getInstance().getChapterManager().getSceneSuggestionsByChapter())
+                                                .suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
                                                 .then(Commands.argument("animation_name", StringArgumentType.string())
-                                                        .suggests(NarrativeCraftManager.getInstance().getChapterManager().getAnimationSuggestionByScene())
+                                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getAnimationSuggestionByScene())
                                                         .executes(context -> {
                                                             int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
                                                             String sceneName = StringArgumentType.getString(context, "scene_name");
@@ -41,12 +41,12 @@ public class AnimationCommand {
 
     private static int removeAnimation(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, String animationName) {
 
-        if(!NarrativeCraftManager.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraftMod.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
 
         if(!chapter.sceneExists(sceneName)) {
             context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));

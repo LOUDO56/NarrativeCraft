@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
@@ -37,13 +37,13 @@ public class RecordCommand {
     private static int startRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = NarrativeCraftManager.getInstance().getPlayerSessionManager().getPlayerSession(player);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
         if(playerSession.getChapter() == null || playerSession.getScene() == null) {
             context.getSource().sendFailure(Translation.message("record.start.no_session"));
             return 0;
         }
 
-        if(NarrativeCraftManager.getInstance().getRecordingHandler().isPlayerRecording(player)) {
+        if(NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.start.already_recording"));
             return 0;
         }
@@ -60,12 +60,12 @@ public class RecordCommand {
     private static int stopRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        if(!NarrativeCraftManager.getInstance().getRecordingHandler().isPlayerRecording(player)) {
+        if(!NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
         }
 
-        Recording recording = NarrativeCraftManager.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
+        Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
         if(!recording.isRecording()) {
             context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
@@ -80,13 +80,13 @@ public class RecordCommand {
     private static int saveRecording(CommandContext<CommandSourceStack> context, String newAnimationName) {
         ServerPlayer player = context.getSource().getPlayer();
 
-        Recording recording = NarrativeCraftManager.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
+        Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
         if(recording == null) {
             context.getSource().sendFailure(Translation.message("record.save.recorded_nothing"));
             return 0;
         }
 
-        PlayerSession playerSession = NarrativeCraftManager.getInstance().getPlayerSessionManager().getPlayerSession(player);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
 
         Animation animation;
         if (NarrativeCraftFile.animationFileExists(newAnimationName)) {

@@ -4,7 +4,7 @@ import com.bladecoder.ink.runtime.Story;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.story.InkTagTranslators;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -27,7 +27,7 @@ public class StoryCommand {
 
     private static int playStory(CommandContext<CommandSourceStack> context) {
 
-        Story story = NarrativeCraftManager.story;
+        Story story = NarrativeCraftMod.story;
         List<String> tags = new ArrayList<>();
         String dialogue = "";
 
@@ -54,7 +54,7 @@ public class StoryCommand {
         }
 
         try {
-            NarrativeCraftManager.story = new Story("{\"inkVersion\":21,\"root\":[[\"#\",\"^animation play chapter-1.village.village_jake\",\"/#\",\"^Once upon a time...\",\"\\n\",[\"done\",{\"#f\":5,\"#n\":\"g-0\"}],null],\"done\",{\"#f\":1}],\"listDefs\":{}}");
+            NarrativeCraftMod.story = new Story("{\"inkVersion\":21,\"root\":[[\"#\",\"^animation play chapter-1.village.village_jake\",\"/#\",\"^Once upon a time...\",\"\\n\",[\"done\",{\"#f\":5,\"#n\":\"g-0\"}],null],\"done\",{\"#f\":1}],\"listDefs\":{}}");
         } catch (Exception ignored) {
 
         }

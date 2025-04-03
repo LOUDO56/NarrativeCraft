@@ -5,7 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -19,7 +19,7 @@ public class SceneCommand {
                 .then(Commands.literal("scene")
                         .then(Commands.literal("create")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraftManager.getInstance().getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
                                                 .executes(context -> createScene(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name")))
                                         )
@@ -27,9 +27,9 @@ public class SceneCommand {
                         )
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraftManager.getInstance().getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
-                                                .suggests(NarrativeCraftManager.getInstance().getChapterManager().getSceneSuggestionsByChapter())
+                                                .suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
                                                 .executes(context -> removeScene(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name")))
                                         )
                                 )
@@ -40,12 +40,12 @@ public class SceneCommand {
 
     private static int createScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
 
-        if(!NarrativeCraftManager.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraftMod.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
 
         if(chapter.sceneExists(sceneName)) {
             Scene scene = chapter.getSceneByName(sceneName);
@@ -65,12 +65,12 @@ public class SceneCommand {
 
     private static int removeScene(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName) {
 
-        if(!NarrativeCraftManager.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraftMod.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
 
         if(!chapter.sceneExists(sceneName)) {
             context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));

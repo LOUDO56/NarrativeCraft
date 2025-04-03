@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.Constants;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.Character;
@@ -36,8 +36,8 @@ public class NarrativeCraftFile {
         animationDirectory = createDirectory(mainDirectory, ANIMATION_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
-        NarrativeCraftManager.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
-        NarrativeCraftManager.getInstance().getCharacterManager().setCharacters(getCharactersFromDirectory());
+        NarrativeCraftMod.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
+        NarrativeCraftMod.getInstance().getCharacterManager().setCharacters(getCharactersFromDirectory());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {
@@ -88,7 +88,7 @@ public class NarrativeCraftFile {
             Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
             try(Reader reader = new BufferedReader(new FileReader(file))) {
                 Animation animation = gson.fromJson(reader, Animation.class);
-                Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(animation.getChapterIndex());
+                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(animation.getChapterIndex());
                 Scene scene = chapter.getSceneByName(animation.getSceneName());
                 scene.setChapter(chapter);
                 animation.setScene(scene);

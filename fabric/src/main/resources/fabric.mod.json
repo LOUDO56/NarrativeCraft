@@ -16,7 +16,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "fr.loudo.narrativecraft.NarrativeCraftManager"
+      "fr.loudo.narrativecraft.NarrativeCraftFabric"
     ]
   },
   "mixins": [

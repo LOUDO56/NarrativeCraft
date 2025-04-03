@@ -8,10 +8,10 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
 import net.minecraft.server.MinecraftServer;
 
-public class NarrativeCraftManager {
+public class NarrativeCraftMod {
     public static Story story;
     public static MinecraftServer server;
-    private static NarrativeCraftManager instance = new NarrativeCraftManager();
+    private static NarrativeCraftMod instance = new NarrativeCraftMod();
 
     static {
         try {
@@ -27,7 +27,7 @@ public class NarrativeCraftManager {
     private RecordingHandler recordingHandler;
     private PlaybackHandler playbackHandler;
 
-    public NarrativeCraftManager() {
+    public NarrativeCraftMod() {
         chapterManager = new ChapterManager();
         characterManager = new CharacterManager();
         recordingHandler = new RecordingHandler();
@@ -35,7 +35,7 @@ public class NarrativeCraftManager {
         playbackHandler = new PlaybackHandler();
     }
 
-    public static NarrativeCraftManager getInstance() {
+    public static NarrativeCraftMod getInstance() {
         return instance;
     }
 

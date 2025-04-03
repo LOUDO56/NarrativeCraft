@@ -3,9 +3,9 @@ package fr.loudo.narrativecraft;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(Constants.MOD_ID)
-public class NarrativeCraft {
+public class NarrativeCraftForge {
 
-    public NarrativeCraft() {
+    public NarrativeCraftForge() {
         // This method is invoked by the Forge mod loader when it is ready
         // to load your mod. You can access Forge and Common code in this
         // project.

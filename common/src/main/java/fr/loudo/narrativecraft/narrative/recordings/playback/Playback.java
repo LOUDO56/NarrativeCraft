@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
@@ -42,7 +42,7 @@ public class Playback {
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         serverLevel.addFreshEntity(fakePlayer);
         isPlaying = true;
-        NarrativeCraftManager.getInstance().getPlaybackHandler().getPlaybacks().add(this);
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
     }
 

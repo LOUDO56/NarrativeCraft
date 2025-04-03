@@ -5,7 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
@@ -33,7 +33,7 @@ public class ChapterCommand {
                         )
                         .then(Commands.literal("remove")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        .suggests(NarrativeCraftManager.getInstance().getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .executes(context -> {
                                             int index = IntegerArgumentType.getInteger(context, "chapter_index");
                                             return removeChapter(context, index);
@@ -46,8 +46,8 @@ public class ChapterCommand {
 
     private static int createChapter(CommandContext<CommandSourceStack> context, int chapterIndex, String name) {
 
-        if(NarrativeCraftManager.getInstance().getChapterManager().chapterExists(chapterIndex)) {
-            Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        if(NarrativeCraftMod.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+            Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
             context.getSource().sendFailure(Translation.message("chapter.already_exists", chapter.getIndex()));
             return 0;
         }
@@ -59,7 +59,7 @@ public class ChapterCommand {
             chapter = new Chapter(chapterIndex, name);
         }
 
-        if(NarrativeCraftManager.getInstance().getChapterManager().addChapter(chapter)) {
+        if(NarrativeCraftMod.getInstance().getChapterManager().addChapter(chapter)) {
             context.getSource().sendSuccess(() -> Translation.message("chapter.create.success", chapter.getIndex()), true);
         } else {
             context.getSource().sendFailure(Translation.message("chapter.create.fail", chapter.getIndex()));
@@ -70,13 +70,13 @@ public class ChapterCommand {
 
     private static int removeChapter(CommandContext<CommandSourceStack> context, int chapterIndex) {
 
-        if(!NarrativeCraftManager.getInstance().getChapterManager().chapterExists(chapterIndex)) {
+        if(!NarrativeCraftMod.getInstance().getChapterManager().chapterExists(chapterIndex)) {
             context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
             return 0;
         }
 
-        Chapter chapter = NarrativeCraftManager.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
-        if(NarrativeCraftManager.getInstance().getChapterManager().removeChapter(chapter)) {
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        if(NarrativeCraftMod.getInstance().getChapterManager().removeChapter(chapter)) {
             context.getSource().sendSuccess(() -> Translation.message("chapter.delete.success", chapter.getIndex()), true);
         } else {
             context.getSource().sendFailure(Translation.message("chapter.delete.fail", chapter.getIndex()));

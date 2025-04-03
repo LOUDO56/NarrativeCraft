@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.recordings;
 
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifference;
@@ -10,7 +10,7 @@ import net.minecraft.server.level.ServerPlayer;
 import java.io.IOException;
 public class Recording {
 
-    private final RecordingHandler recordingHandler = NarrativeCraftManager.getInstance().getRecordingHandler();
+    private final RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
     private ServerPlayer player;
 
     private ActionsData actionsData;

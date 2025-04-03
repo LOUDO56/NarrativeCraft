@@ -4,7 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
-import fr.loudo.narrativecraft.NarrativeCraftManager;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.character.Character;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
@@ -26,14 +26,14 @@ public class CharacterCommand {
 
     private static int createCharacter(CommandContext<CommandSourceStack> context, String characterName) {
 
-        if(NarrativeCraftManager.getInstance().getCharacterManager().characterExists(characterName)) {
-            Character character = NarrativeCraftManager.getInstance().getCharacterManager().getCharacterByName(characterName);
+        if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(characterName)) {
+            Character character = NarrativeCraftMod.getInstance().getCharacterManager().getCharacterByName(characterName);
             context.getSource().sendFailure(Translation.message("character.already_exists", character.getName()));
             return 0;
         }
 
         Character character = new Character(characterName);
-        if(NarrativeCraftManager.getInstance().getCharacterManager().addCharacter(character)) {
+        if(NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(character)) {
             context.getSource().sendSuccess(() -> Translation.message("character.create.success", characterName, characterName.toLowerCase()), true);
         } else {
             context.getSource().sendFailure(Translation.message("character.create.fail"));
