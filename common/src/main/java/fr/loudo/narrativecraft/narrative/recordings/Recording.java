@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifference;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -14,14 +14,14 @@ public class Recording {
     private ServerPlayer player;
 
     private ActionsData actionsData;
-    private ActionDifference actionDifference;
+    private ActionDifferenceListener actionDifferenceListener;
     private boolean isRecording;
     private int tickAction;
 
     public Recording(ServerPlayer player) {
         this.player = player;
         this.actionsData = new ActionsData();
-        this.actionDifference = new ActionDifference(this);
+        this.actionDifferenceListener = new ActionDifferenceListener(this);
         this.isRecording = false;
         this.tickAction = 0;
     }
@@ -60,8 +60,8 @@ public class Recording {
         return actionsData;
     }
 
-    public ActionDifference getActionDifference() {
-        return actionDifference;
+    public ActionDifferenceListener getActionDifference() {
+        return actionDifferenceListener;
     }
 
     public int getTickAction() {

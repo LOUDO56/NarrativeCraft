@@ -94,7 +94,7 @@ public class RecordCommand {
                 animation = NarrativeCraftFile.getAnimationFromFile(newAnimationName);
                 playerSession.setOverwriteState(false);
             } else {
-                context.getSource().sendFailure(Translation.message("record.save.overwrite", newAnimationName, playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
+                context.getSource().sendFailure(Translation.message("record.save.overwrite", newAnimationName, playerSession.getScene().getName(), playerSession.getChapter().getIndex()));
                 playerSession.setOverwriteState(true);
                 return 0;
             }
