@@ -64,8 +64,6 @@ public class ActionDifferenceListener {
         entityByteListener(tick);
         livingEntityByteListener(tick);
         itemListener(tick);
-        hurtListener(tick);
-
         recording.addTickAction();
 
     }
@@ -137,7 +135,6 @@ public class ActionDifferenceListener {
             itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, Item.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }
         recording.getActionsData().addAction(itemChangeAction);
-        System.out.println(recording.getActionsData().getActions().toString());
     }
 
     private void hurtListener(int tick) {

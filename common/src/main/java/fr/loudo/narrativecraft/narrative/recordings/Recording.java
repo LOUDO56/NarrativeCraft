@@ -21,7 +21,6 @@ public class Recording {
     public Recording(ServerPlayer player) {
         this.player = player;
         this.actionsData = new ActionsData();
-        this.actionDifferenceListener = new ActionDifferenceListener(this);
         this.isRecording = false;
         this.tickAction = 0;
     }
@@ -29,8 +28,9 @@ public class Recording {
     public boolean start() {
         if(isRecording) return false;
         actionsData = new ActionsData();
-        recordingHandler.getRecordings().add(this);
+        this.actionDifferenceListener = new ActionDifferenceListener(this);
         isRecording = true;
+        recordingHandler.addRecording(this);
         return true;
     }
 
@@ -48,7 +48,7 @@ public class Recording {
         if(isRecording) return false;
         try {
             animation.setActionsData(actionsData);
-            recordingHandler.getRecordings().remove(this);
+            recordingHandler.removeRecording(this);
             NarrativeCraftFile.saveAnimation(animation);
             return true;
         } catch (IOException e) {

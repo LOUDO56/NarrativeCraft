@@ -31,7 +31,7 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 return new EntityByteAction(tick, actionType, entityByte);
             }
             case LIVING_ENTITY_BYTE -> {
-                byte livingEntityByte = jsonObject.get("entityByte").getAsByte();
+                byte livingEntityByte = jsonObject.get("livingEntityByte").getAsByte();
                 return new LivingEntityByteAction(tick, actionType, livingEntityByte);
             }
             case HURT -> {

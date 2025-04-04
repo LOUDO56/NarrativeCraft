@@ -4,10 +4,10 @@
   "package": "fr.loudo.narrativecraft.mixin",
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
-  "mixins": [],
-  "client": [
-    "MixinMinecraft"
+  "mixins": [
+    "EntityMixin"
   ],
+  "client": [],
   "server": [],
   "injectors": {
     "defaultRequire": 1

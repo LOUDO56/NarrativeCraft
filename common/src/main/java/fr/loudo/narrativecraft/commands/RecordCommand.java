@@ -48,7 +48,10 @@ public class RecordCommand {
             return 0;
         }
 
-        Recording recording = new Recording(context.getSource().getPlayer());
+        Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
+        if(recording == null) {
+            recording = new Recording(context.getSource().getPlayer());
+        }
         recording.start();
 
         context.getSource().sendSuccess(() -> Translation.message("record.start.success"), true);
@@ -65,11 +68,7 @@ public class RecordCommand {
             return 0;
         }
 
-        Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
-        if(!recording.isRecording()) {
-            context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
-            return 0;
-        }
+        Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
         recording.stop();
 
         context.getSource().sendSuccess(() -> Translation.message("record.stop.success"), true);
@@ -85,6 +84,13 @@ public class RecordCommand {
             context.getSource().sendFailure(Translation.message("record.save.recorded_nothing"));
             return 0;
         }
+
+        if(recording.isRecording()) {
+            context.getSource().sendFailure(Translation.message("record.save.stop_record_before_save"));
+            return 0;
+        }
+
+        recording.stop();
 
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
 
@@ -104,7 +110,7 @@ public class RecordCommand {
         }
 
         if (recording.save(animation)) {
-            context.getSource().sendSuccess(() -> Translation.message("record.save.success", animation.getName(), playerSession.getChapter().getIndex(), playerSession.getScene().getName()), true);
+            context.getSource().sendSuccess(() -> Translation.message("record.save.success", playerSession.getChapter().getIndex(), animation.getName(), playerSession.getScene().getName()), true);
         } else {
             context.getSource().sendFailure(Translation.message("record.save.fail", animation.getName(), playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
         }

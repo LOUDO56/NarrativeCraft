@@ -16,6 +16,18 @@ public class RecordingHandler {
         return recordings;
     }
 
+    public boolean addRecording(Recording recording) {
+        if(recordings.contains(recording)) return false;
+        recordings.add(recording);
+        return true;
+    }
+
+    public boolean removeRecording(Recording recording) {
+        if(!recordings.contains(recording)) return false;
+        recordings.remove(recording);
+        return true;
+    }
+
     public Recording getRecordingOfPlayer(ServerPlayer player) {
         for(Recording recording : recordings) {
             if(recording.getPlayer().getName().getString().equals(player.getName().getString())) {
@@ -27,7 +39,7 @@ public class RecordingHandler {
 
     public boolean isPlayerRecording(ServerPlayer player) {
         for(Recording recording : recordings) {
-            if(recording.getPlayer().getName().getString().equals(player.getName().getString())) {
+            if(recording.getPlayer().getName().getString().equals(player.getName().getString()) && recording.isRecording()) {
                 return true;
             }
         }
