@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerPlayer;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,23 +36,22 @@ public class ActionDifferenceListener {
     private Recording recording;
     private ServerPlayer player;
     private Pose poseState;
+    private int swingCooldown;
     private byte entityByteState;
     private byte livingEntityByteState;
     private HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
-    private boolean isUsingItem;
 
     public ActionDifferenceListener(Recording recording) {
         this.player = recording.getPlayer();
         this.recording = recording;
         this.currentItemInEquipmentSlot = new HashMap<>();
-        this.isUsingItem = false;
+        this.swingCooldown = 0;
         initItemSlot();
     }
 
     private void initItemSlot() {
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
-            ItemStack currentItemFromSlot = player.getItemBySlot(equipmentSlot);
-            currentItemInEquipmentSlot.put(equipmentSlot, currentItemFromSlot);
+            currentItemInEquipmentSlot.put(equipmentSlot, new ItemStack(Items.AIR));
         }
     }
 
@@ -65,17 +66,22 @@ public class ActionDifferenceListener {
         itemListener(tick);
         hurtListener(tick);
 
-        if(isUsingItem != player.isUsingItem()) {
-            isUsingItem = player.isUsingItem();
-            ItemUsedAction itemUsedAction = new ItemUsedAction(tick, ActionType.ITEM_USED, player.getUsedItemHand(), player.getUseItemRemainingTicks());
-            recording.getActionsData().addAction(itemUsedAction);
-        }
+        recording.addTickAction();
+
     }
 
     private void swingListener(int tick) {
-        if(player.swinging) {
+        if(player.swinging && swingCooldown <= 0) {
             SwingAction action = new SwingAction(tick, ActionType.SWING, player.swingingArm);
             recording.getActionsData().addAction(action);
+            // Add a second on time on same tick if player is spam clicking
+            if(player.swingTime >= 3) {
+                recording.getActionsData().addAction(action);
+            }
+            swingCooldown = 6;
+        }
+        if(swingCooldown > 0) {
+            swingCooldown--;
         }
     }
 
@@ -100,7 +106,7 @@ public class ActionDifferenceListener {
         byte livingEntityCurrentByte = player.getEntityData().get(livingEntityFlagByte);
         if(livingEntityByteState != livingEntityCurrentByte) {
             livingEntityByteState = livingEntityCurrentByte;
-            EntityByteAction livingEntityByteAction = new EntityByteAction(tick, ActionType.LIVING_ENTITY_BYTE, livingEntityCurrentByte);
+            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(tick, ActionType.LIVING_ENTITY_BYTE, livingEntityCurrentByte);
             recording.getActionsData().addAction(livingEntityByteAction);
         }
     }
@@ -131,6 +137,7 @@ public class ActionDifferenceListener {
             itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, Item.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }
         recording.getActionsData().addAction(itemChangeAction);
+        System.out.println(recording.getActionsData().getActions().toString());
     }
 
     private void hurtListener(int tick) {

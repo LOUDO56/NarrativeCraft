@@ -7,5 +7,6 @@ public enum ActionType {
     LIVING_ENTITY_BYTE,
     ITEM_CHANGE,
     HURT,
-    ITEM_USED
+    ITEM_USED,
+    BLOCK_PLACE
 }

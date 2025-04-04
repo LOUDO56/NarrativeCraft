@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
+  "id": "narrativecraft",
   "version": "${version}",
   "name": "${mod_name}",
   "description": "${description}",
@@ -12,7 +12,7 @@
     "sources": "https://github.com/FabricMC/fabric-example-mod"
   },
   "license": "${license}",
-  "icon": "${mod_id}.png",
+  "icon": "narrativecraft.png",
   "environment": "*",
   "entrypoints": {
     "main": [
@@ -20,8 +20,8 @@
     ]
   },
   "mixins": [
-    "${mod_id}.mixins.json",
-    "${mod_id}.fabric.mixins.json"
+    "narrativecraft.mixins.json",
+    "narrativecraft.fabric.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${fabric_loader_version}",

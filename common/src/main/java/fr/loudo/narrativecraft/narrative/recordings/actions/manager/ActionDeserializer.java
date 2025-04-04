@@ -15,42 +15,49 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
     public Action deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
         JsonObject jsonObject = json.getAsJsonObject();
         ActionType actionType = ActionType.valueOf(jsonObject.get("actionType").getAsString());
-        int waitTick = jsonObject.get("tick").getAsInt();
+        int tick = jsonObject.get("tick").getAsInt();
 
         switch (actionType) {
             case SWING -> {
                 InteractionHand interactionHand = InteractionHand.valueOf(jsonObject.get("interactionHand").getAsString());
-                return new SwingAction(waitTick, actionType, interactionHand);
+                return new SwingAction(tick, actionType, interactionHand);
             }
             case POSE -> {
                 Pose pose = Pose.valueOf(jsonObject.get("pose").getAsString());
-                return new PoseAction(waitTick, actionType, pose);
+                return new PoseAction(tick, actionType, pose);
             }
             case ENTITY_BYTE -> {
                 byte entityByte = jsonObject.get("entityByte").getAsByte();
-                return new EntityByteAction(waitTick, actionType, entityByte);
+                return new EntityByteAction(tick, actionType, entityByte);
             }
             case LIVING_ENTITY_BYTE -> {
                 byte livingEntityByte = jsonObject.get("entityByte").getAsByte();
-                return new LivingEntityByteAction(waitTick, actionType, livingEntityByte);
+                return new LivingEntityByteAction(tick, actionType, livingEntityByte);
             }
             case HURT -> {
-                return new HurtAction(waitTick, actionType);
+                return new HurtAction(tick, actionType);
             }
             case ITEM_CHANGE -> {
                 String equipmentSlot = jsonObject.get("equipmentSlot").getAsString();
                 int itemId = jsonObject.get("itemId").getAsInt();
                 JsonElement data = jsonObject.get("data");
                 if(data != null) {
-                    return new ItemChangeAction(waitTick, actionType, itemId, equipmentSlot, data.getAsString());
+                    return new ItemChangeAction(tick, actionType, itemId, equipmentSlot, data.getAsString());
                 } else {
-                    return new ItemChangeAction(waitTick, actionType, equipmentSlot, itemId);
+                    return new ItemChangeAction(tick, actionType, equipmentSlot, itemId);
                 }
+            }
+            case BLOCK_PLACE -> {
+                int x = jsonObject.get("x").getAsInt();
+                int y = jsonObject.get("y").getAsInt();
+                int z = jsonObject.get("z").getAsInt();
+                String data = jsonObject.get("data").getAsString();
+                return new PlaceBlockAction(tick, actionType, x, y, z, data);
             }
 
         }
 
-        return new Action(waitTick, actionType);
+        return new Action(tick, actionType);
 
     }
 }
