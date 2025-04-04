@@ -1,7 +1,5 @@
 package fr.loudo.narrativecraft.narrative.recordings;
 
-import net.minecraft.world.phys.Vec3;
-
 public class MovementData {
 
     private double x, y, z;

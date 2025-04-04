@@ -15,7 +15,6 @@ public class OnServerTick {
     public static void serverTick() {
         for(Recording recording : RECORDING_HANDLER.getRecordings()) {
             if(recording.isRecording()) {
-                recording.addTickAction();
                 ServerPlayer player = recording.getPlayer();
                 recording.getActionsData().addMovement(player);
                 recording.getActionDifference().listenDifference();
