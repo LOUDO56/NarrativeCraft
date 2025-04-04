@@ -5,6 +5,8 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.BreakBlockAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -88,7 +90,13 @@ public class Playback {
     public void actionListener() {
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            action.execute(fakePlayer);
+            if(action instanceof PlaceBlockAction placeBlockAction) {
+                placeBlockAction.execute(fakePlayer, serverLevel);
+            } else if( action instanceof BreakBlockAction breakBlockAction) {
+                breakBlockAction.execute(serverLevel);
+            } else {
+                action.execute(fakePlayer);
+            }
         }
     }
 

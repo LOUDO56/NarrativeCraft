@@ -8,5 +8,6 @@ public enum ActionType {
     ITEM_CHANGE,
     HURT,
     ITEM_USED,
-    BLOCK_PLACE
+    BLOCK_PLACE,
+    BLOCK_BREAK
 }

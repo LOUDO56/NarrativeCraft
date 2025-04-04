@@ -28,20 +28,16 @@ public class PlaceBlockAction extends Action {
         this.data = data;
     }
 
-    @Override
-    public void execute(LivingEntity entity) {
+    public void execute(LivingEntity entity, ServerLevel serverLevel) {
         try {
             CompoundTag compoundTag = Utils.nbtFromString(data);
             RegistryAccess registryAccess = entity.registryAccess();
             BlockState blockState = NbtUtils.readBlockState(registryAccess.lookupOrThrow(Registries.BLOCK), compoundTag);
-            if(entity instanceof FakePlayer player){
-                ServerLevel serverLevel = player.serverLevel();
-                BlockPos blockPos = new BlockPos(x, y, z);
-                serverLevel.setBlock(blockPos, blockState, 3);
-                SoundType soundType = blockState.getSoundType();
-                player.serverLevel().playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
-                        SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
-            }
+            BlockPos blockPos = new BlockPos(x, y, z);
+            serverLevel.setBlock(blockPos, blockState, 3);
+            SoundType soundType = blockState.getSoundType();
+            serverLevel.playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
+                    SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);
         }
