@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
@@ -40,7 +41,7 @@ public class Playback {
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
         fakePlayer.teleportTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        serverLevel.addFreshEntity(fakePlayer);
+        serverLevel.addNewPlayer(fakePlayer);
         isPlaying = true;
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
@@ -49,6 +50,7 @@ public class Playback {
     public boolean stop() {
         if(!isPlaying) return false;
         fakePlayer.remove(Entity.RemovalReason.KILLED);
+        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
         isPlaying = false;
         //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
         return true;

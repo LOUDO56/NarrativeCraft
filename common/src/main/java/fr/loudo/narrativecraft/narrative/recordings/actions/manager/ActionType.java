@@ -4,6 +4,7 @@ public enum ActionType {
     SWING,
     POSE,
     ENTITY_BYTE,
+    LIVING_ENTITY_BYTE,
     ITEM_CHANGE,
     HURT,
     ITEM_USED

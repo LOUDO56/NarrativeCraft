@@ -30,6 +30,10 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 byte entityByte = jsonObject.get("entityByte").getAsByte();
                 return new EntityByteAction(waitTick, actionType, entityByte);
             }
+            case LIVING_ENTITY_BYTE -> {
+                byte livingEntityByte = jsonObject.get("entityByte").getAsByte();
+                return new LivingEntityByteAction(waitTick, actionType, livingEntityByte);
+            }
             case HURT -> {
                 return new HurtAction(waitTick, actionType);
             }
@@ -43,10 +47,6 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                     return new ItemChangeAction(waitTick, actionType, equipmentSlot, itemId);
                 }
             }
-//            case ITEM_USED -> {
-//                InteractionHand interactionHand = InteractionHand.valueOf(jsonObject.get("interactionHand").getAsString());
-//                return new ItemUsedAction(waitTick, actionType, interactionHand);
-//            }
 
         }
 

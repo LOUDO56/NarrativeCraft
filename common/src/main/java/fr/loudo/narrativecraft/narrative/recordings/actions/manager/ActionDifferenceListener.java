@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerPlayer;
@@ -29,18 +28,22 @@ public class ActionDifferenceListener {
             EquipmentSlot.FEET,
             EquipmentSlot.SADDLE
     );
-    private final EntityDataAccessor<Byte> entityMaskByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+    private final EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+    private final EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
 
     private Recording recording;
     private ServerPlayer player;
     private Pose poseState;
     private byte entityByteState;
+    private byte livingEntityByteState;
     private HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
+    private boolean isUsingItem;
 
     public ActionDifferenceListener(Recording recording) {
         this.player = recording.getPlayer();
         this.recording = recording;
         this.currentItemInEquipmentSlot = new HashMap<>();
+        this.isUsingItem = false;
         initItemSlot();
     }
 
@@ -57,14 +60,16 @@ public class ActionDifferenceListener {
 
         swingListener(tick);
         poseListener(tick);
-        byteListener(tick);
+        entityByteListener(tick);
+        livingEntityByteListener(tick);
         itemListener(tick);
         hurtListener(tick);
 
-//        if(player.isUsingItem()) {
-//            ItemUsedAction itemUsedAction = new ItemUsedAction(tick, ActionType.ITEM_USED, player.getUsedItemHand());
-//            recording.getActionsData().addAction(itemUsedAction);
-//        }
+        if(isUsingItem != player.isUsingItem()) {
+            isUsingItem = player.isUsingItem();
+            ItemUsedAction itemUsedAction = new ItemUsedAction(tick, ActionType.ITEM_USED, player.getUsedItemHand(), player.getUseItemRemainingTicks());
+            recording.getActionsData().addAction(itemUsedAction);
+        }
     }
 
     private void swingListener(int tick) {
@@ -82,12 +87,21 @@ public class ActionDifferenceListener {
         }
     }
 
-    private void byteListener(int tick) {
-        byte currentByte = player.getEntityData().get(entityMaskByte);
-        if(entityByteState != currentByte) {
-            entityByteState = currentByte;
-            EntityByteAction entityByteAction = new EntityByteAction(tick, ActionType.ENTITY_BYTE, currentByte);
+    private void entityByteListener(int tick) {
+        byte entityCurrentByte = player.getEntityData().get(entityFlagByte);
+        if(entityByteState != entityCurrentByte) {
+            entityByteState = entityCurrentByte;
+            EntityByteAction entityByteAction = new EntityByteAction(tick, ActionType.ENTITY_BYTE, entityCurrentByte);
             recording.getActionsData().addAction(entityByteAction);
+        }
+    }
+
+    private void livingEntityByteListener(int tick) {
+        byte livingEntityCurrentByte = player.getEntityData().get(livingEntityFlagByte);
+        if(livingEntityByteState != livingEntityCurrentByte) {
+            livingEntityByteState = livingEntityCurrentByte;
+            EntityByteAction livingEntityByteAction = new EntityByteAction(tick, ActionType.LIVING_ENTITY_BYTE, livingEntityCurrentByte);
+            recording.getActionsData().addAction(livingEntityByteAction);
         }
     }
 
