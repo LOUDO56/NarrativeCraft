@@ -9,5 +9,6 @@ public enum ActionType {
     HURT,
     ITEM_USED,
     BLOCK_PLACE,
-    BLOCK_BREAK
+    BLOCK_BREAK,
+    DESTROY_BLOCK_STAGE
 }
