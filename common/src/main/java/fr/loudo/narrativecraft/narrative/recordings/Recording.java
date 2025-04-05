@@ -16,19 +16,17 @@ public class Recording {
     private ActionsData actionsData;
     private ActionDifferenceListener actionDifferenceListener;
     private boolean isRecording;
-    private int tickAction;
 
     public Recording(ServerPlayer player) {
         this.player = player;
         this.actionsData = new ActionsData();
         this.isRecording = false;
-        this.tickAction = 0;
     }
 
     public boolean start() {
         if(isRecording) return false;
         actionsData = new ActionsData();
-        this.actionDifferenceListener = new ActionDifferenceListener(this);
+        actionDifferenceListener = new ActionDifferenceListener(this);
         isRecording = true;
         recordingHandler.addRecording(this);
         return true;
@@ -38,10 +36,6 @@ public class Recording {
         if(!isRecording) return false;
         isRecording = false;
         return true;
-    }
-
-    public void addTickAction() {
-        tickAction++;
     }
 
     public boolean save(Animation animation) {
@@ -62,14 +56,6 @@ public class Recording {
 
     public ActionDifferenceListener getActionDifference() {
         return actionDifferenceListener;
-    }
-
-    public int getTickAction() {
-        return tickAction;
-    }
-
-    public void setTickAction(int tickAction) {
-        this.tickAction = tickAction;
     }
 
     public boolean isRecording() {

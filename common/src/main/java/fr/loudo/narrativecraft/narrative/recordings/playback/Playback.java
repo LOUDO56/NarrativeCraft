@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.BreakBlockAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.DestroyBlockStageAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
@@ -41,7 +42,7 @@ public class Playback {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
-        fakePlayer.teleportTo(firstLoc.getX(), firstLoc.getY(), firstLoc.getZ());
+        moveEntitySilent(fakePlayer, firstLoc);
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         serverLevel.addNewPlayer(fakePlayer);
         isPlaying = true;
@@ -70,12 +71,7 @@ public class Playback {
         if (indexMovement < movementDataList.size() - 1) {
             movementDataNext = movementDataList.get(indexMovement + 1);
         }
-        fakePlayer.move(MoverType.PLAYER, MovementUtils.getDeltaMovement(movementData, movementDataNext));
-        fakePlayer.setXRot(movementData.getXRot());
-        fakePlayer.setYRot(movementData.getYRot());
-        fakePlayer.setYHeadRot(movementData.getYHeadRot());
-        fakePlayer.setOnGround(movementData.isOnGround());
-        fakePlayer.teleportTo(movementData.getX(), movementData.getY(), movementData.getZ());
+        moveEntity(fakePlayer, movementData, movementDataNext);
         actionListener();
 //
 //        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
@@ -92,12 +88,27 @@ public class Playback {
         for(Action action : actionToBePlayed) {
             if(action instanceof PlaceBlockAction placeBlockAction) {
                 placeBlockAction.execute(fakePlayer, serverLevel);
-            } else if( action instanceof BreakBlockAction breakBlockAction) {
+            } else if(action instanceof BreakBlockAction breakBlockAction) {
                 breakBlockAction.execute(serverLevel);
+            } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
+                destroyBlockStageAction.execute(serverLevel);
             } else {
                 action.execute(fakePlayer);
             }
         }
+    }
+
+    private void moveEntity(Entity entity, MovementData movementData, MovementData movementDataNext) {
+        moveEntitySilent(entity, movementData);
+        entity.move(MoverType.SELF, MovementUtils.getDeltaMovement(movementData, movementDataNext));
+    }
+
+    private void moveEntitySilent(Entity entity, MovementData movementData) {
+        entity.setXRot(movementData.getXRot());
+        entity.setYRot(movementData.getYRot());
+        entity.setYHeadRot(movementData.getYHeadRot());
+        entity.setOnGround(movementData.isOnGround());
+        entity.teleportTo(movementData.getX(), movementData.getY(), movementData.getZ());
     }
 
 

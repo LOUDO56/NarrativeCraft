@@ -33,10 +33,10 @@ public class ActionDifferenceListener {
     private final EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
     private final EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
 
+    private int tick;
     private Recording recording;
     private ServerPlayer player;
     private Pose poseState;
-    private int swingCooldown;
     private byte entityByteState;
     private byte livingEntityByteState;
     private HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
@@ -45,7 +45,7 @@ public class ActionDifferenceListener {
         this.player = recording.getPlayer();
         this.recording = recording;
         this.currentItemInEquipmentSlot = new HashMap<>();
-        this.swingCooldown = 0;
+        this.tick = 0;
         initItemSlot();
     }
 
@@ -57,33 +57,16 @@ public class ActionDifferenceListener {
 
     public void listenDifference() {
 
-        int tick = recording.getTickAction();
+        poseListener();
+        entityByteListener();
+        livingEntityByteListener();
+        itemListener();
 
-        swingListener(tick);
-        poseListener(tick);
-        entityByteListener(tick);
-        livingEntityByteListener(tick);
-        itemListener(tick);
-        recording.addTickAction();
+        tick++;
 
     }
 
-    private void swingListener(int tick) {
-        if(player.swinging && swingCooldown <= 0) {
-            SwingAction action = new SwingAction(tick, ActionType.SWING, player.swingingArm);
-            recording.getActionsData().addAction(action);
-            // Add a second on time on same tick if player is spam clicking
-            if(player.swingTime >= 3) {
-                recording.getActionsData().addAction(action);
-            }
-            swingCooldown = 6;
-        }
-        if(swingCooldown > 0) {
-            swingCooldown--;
-        }
-    }
-
-    private void poseListener(int tick) {
+    private void poseListener() {
         if(player.getPose() != poseState) {
             poseState = player.getPose();
             PoseAction action = new PoseAction(tick, ActionType.POSE, player.getPose());
@@ -91,7 +74,7 @@ public class ActionDifferenceListener {
         }
     }
 
-    private void entityByteListener(int tick) {
+    private void entityByteListener() {
         byte entityCurrentByte = player.getEntityData().get(entityFlagByte);
         if(entityByteState != entityCurrentByte) {
             entityByteState = entityCurrentByte;
@@ -100,7 +83,7 @@ public class ActionDifferenceListener {
         }
     }
 
-    private void livingEntityByteListener(int tick) {
+    private void livingEntityByteListener() {
         byte livingEntityCurrentByte = player.getEntityData().get(livingEntityFlagByte);
         if(livingEntityByteState != livingEntityCurrentByte) {
             livingEntityByteState = livingEntityCurrentByte;
@@ -109,13 +92,18 @@ public class ActionDifferenceListener {
         }
     }
 
-    private void itemListener(int tick) {
+    private void itemListener() {
 
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             ItemStack itemFromSlot = currentItemInEquipmentSlot.get(equipmentSlot);
             ItemStack currentItemFromSlot = player.getItemBySlot(equipmentSlot);
-            if(!itemFromSlot.equals(currentItemFromSlot)) {
-                currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot);
+            if(equipmentSlot == EquipmentSlot.MAINHAND) {
+                System.out.println("CurrentItem:" + currentItemFromSlot.getItem().getName().getString());
+                System.out.println("Item Slot:" + itemFromSlot.getItem().getName().getString());
+                System.out.println("same?: " + (Item.getId(itemFromSlot.getItem()) == Item.getId(currentItemFromSlot.getItem())));
+            }
+            if(Item.getId(itemFromSlot.getItem()) != Item.getId(currentItemFromSlot.getItem())) {
+                currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot.copy());
                 onItemChange(currentItemFromSlot, equipmentSlot, tick);
             }
         }
@@ -137,12 +125,7 @@ public class ActionDifferenceListener {
         recording.getActionsData().addAction(itemChangeAction);
     }
 
-    private void hurtListener(int tick) {
-        if(player.hurtMarked) {
-            HurtAction hurtAction = new HurtAction(tick, ActionType.HURT);
-            recording.getActionsData().addAction(hurtAction);
-        }
+    public int getTick() {
+        return tick;
     }
-
-
 }

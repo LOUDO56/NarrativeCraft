@@ -4,30 +4,34 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.actions.HurtAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.SwingAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+@Mixin(LivingEntity.class)
+public class LivingEntityMixin {
 
-@Mixin(Entity.class)
-public class EntityMixin {
+    @Shadow public InteractionHand swingingArm;
 
-    @Inject(method = "markHurt", at = @At("HEAD"))
-    private void mark(CallbackInfo ci) {
-
+    @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;)V", at = @At(value = "HEAD"))
+    private void onSwing(InteractionHand hand, CallbackInfo ci) {
         if((Object) this instanceof ServerPlayer player) {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
             if(recordingHandler.isPlayerRecording(player)) {
                 Recording recording = recordingHandler.getRecordingOfPlayer(player);
-                HurtAction hurtAction = new HurtAction(recording.getActionDifference().getTick(), ActionType.HURT);
-                recording.getActionsData().addAction(hurtAction);
+                SwingAction action = new SwingAction(recording.getActionDifference().getTick(), ActionType.SWING, hand);
+                recording.getActionsData().addAction(action);
+                player.sendSystemMessage(Component.literal("Swing!"));
             }
         }
-
     }
 
 }

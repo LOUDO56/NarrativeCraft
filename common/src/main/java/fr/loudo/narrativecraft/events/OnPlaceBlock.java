@@ -16,8 +16,9 @@ public class OnPlaceBlock {
 
         if (NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(serverPlayer)) {
             Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(serverPlayer);
+            int tick = recording.getActionDifference().getTick();
             String data = NbtUtils.writeBlockState(blockState).toString();
-            PlaceBlockAction placeBlockAction = new PlaceBlockAction(recording.getTickAction(), ActionType.BLOCK_PLACE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), data);
+            PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, ActionType.BLOCK_PLACE, blockPos.getX(), blockPos.getY(), blockPos.getZ(), data);
             recording.getActionsData().addAction(placeBlockAction);
         }
 
