@@ -29,7 +29,6 @@ public class LivingEntityMixin {
                 Recording recording = recordingHandler.getRecordingOfPlayer(player);
                 SwingAction action = new SwingAction(recording.getActionDifference().getTick(), ActionType.SWING, hand);
                 recording.getActionsData().addAction(action);
-                player.sendSystemMessage(Component.literal("Swing!"));
             }
         }
     }

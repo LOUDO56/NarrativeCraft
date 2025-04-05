@@ -97,11 +97,6 @@ public class ActionDifferenceListener {
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             ItemStack itemFromSlot = currentItemInEquipmentSlot.get(equipmentSlot);
             ItemStack currentItemFromSlot = player.getItemBySlot(equipmentSlot);
-            if(equipmentSlot == EquipmentSlot.MAINHAND) {
-                System.out.println("CurrentItem:" + currentItemFromSlot.getItem().getName().getString());
-                System.out.println("Item Slot:" + itemFromSlot.getItem().getName().getString());
-                System.out.println("same?: " + (Item.getId(itemFromSlot.getItem()) == Item.getId(currentItemFromSlot.getItem())));
-            }
             if(Item.getId(itemFromSlot.getItem()) != Item.getId(currentItemFromSlot.getItem())) {
                 currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot.copy());
                 onItemChange(currentItemFromSlot, equipmentSlot, tick);
