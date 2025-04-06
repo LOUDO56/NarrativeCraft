@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -11,7 +12,6 @@ public class BreakBlockEvent {
 
     @SubscribeEvent
     public static void onBreakBlock(BlockEvent.BreakEvent event) {
-        ServerPlayer serverPlayer = event.getPlayer().getServer().getPlayerList().getPlayer(event.getPlayer().getUUID());
-        OnBreakBlock.breakBlock(event.getPos(), serverPlayer);
+        OnBreakBlock.breakBlock(event.getPos(), Utils.getServerPlayerByUUID(event.getPlayer().getUUID()));
     }
 }
