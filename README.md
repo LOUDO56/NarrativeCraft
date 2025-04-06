@@ -6,6 +6,13 @@
 NarrativeCraft is an open-source minecraft mod that allows you to create interactive stories in Minecraft (Yes, like Minecraft Story Mode).
 This mod is aimed to have a user-friendly way to create stories, from player animation to cutscene and creating dialogues.
 
+Here's a prototype I made 1.5 years ago
+https://www.youtube.com/watch?v=OZl5FM3JZmA (note that it's not a mod, but made with skript with 3 plugins, but everything expect script dialogue is made from scracth here)
+
+
+**Note:** The dialog display mode will be replaced by progressive text accompanied by a small sound when a letter appears, as well as manual interaction via input to move on to the next dialog.
+
+
 # Ink support
 This mod will have [ink](https://www.inklestudios.com/ink/) as a support to create dialogues!
 Ink is a powerful scripting tool to create story driven games, with multiple choices and logic added to it, it's designed to be easy to understand!
