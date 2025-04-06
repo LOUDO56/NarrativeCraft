@@ -4,10 +4,7 @@ import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.BreakBlockAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.DestroyBlockStageAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -92,6 +89,8 @@ public class Playback {
                 breakBlockAction.execute(serverLevel);
             } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
                 destroyBlockStageAction.execute(serverLevel);
+            } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
+                rightClickBlockAction.execute(fakePlayer);
             } else {
                 action.execute(fakePlayer);
             }

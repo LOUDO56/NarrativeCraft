@@ -69,6 +69,15 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 int progress = jsonObject.get("progress").getAsInt();
                 return new DestroyBlockStageAction(tick, actionType, id, x, y, z, progress);
             }
+            case RIGHT_CLICK_BLOCK -> {
+                int x = jsonObject.get("x").getAsInt();
+                int y = jsonObject.get("y").getAsInt();
+                int z = jsonObject.get("z").getAsInt();
+                String directionName = jsonObject.get("directionName").getAsString();
+                String handName = jsonObject.get("handName").getAsString();
+                boolean inside = jsonObject.get("inside").getAsBoolean();
+                return new RightClickBlockAction(tick, actionType, x, y, z, directionName, handName, inside);
+            }
 
         }
 

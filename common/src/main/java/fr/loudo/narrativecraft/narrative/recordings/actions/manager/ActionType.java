@@ -10,5 +10,6 @@ public enum ActionType {
     ITEM_USED,
     BLOCK_PLACE,
     BLOCK_BREAK,
-    DESTROY_BLOCK_STAGE
+    DESTROY_BLOCK_STAGE,
+    RIGHT_CLICK_BLOCK
 }

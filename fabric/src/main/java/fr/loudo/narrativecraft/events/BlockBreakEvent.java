@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.events;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -10,7 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockBreakEvent {
     public static void onBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity) {
-        ServerPlayer serverPlayer = level.getServer().getPlayerList().getPlayer(player.getUUID());
+        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(player.getUUID());
         OnBreakBlock.breakBlock(blockPos, serverPlayer);
     }
 }
