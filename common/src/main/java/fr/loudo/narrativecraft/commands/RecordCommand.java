@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -37,9 +38,9 @@ public class RecordCommand {
     private static int startRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
-        if(playerSession.getChapter() == null || playerSession.getScene() == null) {
-            context.getSource().sendFailure(Translation.message("record.start.no_session"));
+        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        if(playerSession == null) {
+            context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
 
@@ -63,6 +64,12 @@ public class RecordCommand {
     private static int stopRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
+        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        if(playerSession == null) {
+            context.getSource().sendFailure(Translation.message("session.not_set"));
+            return 0;
+        }
+
         if(!NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
@@ -78,6 +85,11 @@ public class RecordCommand {
 
     private static int saveRecording(CommandContext<CommandSourceStack> context, String newAnimationName) {
         ServerPlayer player = context.getSource().getPlayer();
+        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        if(playerSession == null) {
+            context.getSource().sendFailure(Translation.message("session.not_set"));
+            return 0;
+        }
 
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(context.getSource().getPlayer());
         if(recording == null) {
@@ -91,8 +103,6 @@ public class RecordCommand {
         }
 
         recording.stop();
-
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
 
         Animation animation;
         if (NarrativeCraftFile.animationFileExists(playerSession.getChapter().getIndex(), playerSession.getScene().getName(), newAnimationName)) {

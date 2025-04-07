@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.narrative.subscene;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -15,13 +14,11 @@ public class Subscene {
     private transient Scene scene;
     private transient List<Playback> playbackList;
     private String name;
-    private String sceneName;
     private List<String> animationStringList;
 
     public Subscene(String name, Scene scene) {
         this.name = name;
         this.scene = scene;
-        this.sceneName = scene.getName();
         this.animationStringList = new ArrayList<>();
         this.playbackList = new ArrayList<>();
     }
@@ -55,4 +52,7 @@ public class Subscene {
         playbackList = new ArrayList<>();
     }
 
+    public String getName() {
+        return name;
+    }
 }

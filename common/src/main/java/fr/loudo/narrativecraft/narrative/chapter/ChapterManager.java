@@ -6,6 +6,9 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.io.IOException;
@@ -104,6 +107,16 @@ public class ChapterManager {
             Scene scene = chapter.getSceneByName(sceneName);
             for (String animationName : scene.getAnimationFilesName()) {
                 builder.suggest(animationName);
+            }
+            return builder.buildFuture();
+        };
+    }
+    public SuggestionProvider<CommandSourceStack> getSubsceneSuggestionByScene() {
+        return (context, builder) -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
+            if(playerSession == null) return builder.buildFuture();
+            for (Subscene subscene : playerSession.getScene().getSubsceneList()) {
+                builder.suggest(subscene.getName());
             }
             return builder.buildFuture();
         };

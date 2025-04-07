@@ -3,14 +3,12 @@ package fr.loudo.narrativecraft.files;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.Character;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.subscene.SubsceneManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -42,7 +40,6 @@ public class NarrativeCraftFile {
 
         NarrativeCraftMod.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
         NarrativeCraftMod.getInstance().getCharacterManager().setCharacters(getCharactersFromDirectory());
-        NarrativeCraftMod.getInstance().setSubsceneManager(getSubscenesFromFile());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {
@@ -79,11 +76,6 @@ public class NarrativeCraftFile {
         save(animation, file);
     }
 
-    public static void saveSubscene() throws IOException {
-        File file = createFile(subsceneDirectory, "subscenes.json");
-        save(NarrativeCraftMod.getInstance().getSubsceneManager(), file);
-    }
-
     public static void saveCharacter(Character character) throws IOException {
         File file = createFile(characterDirectory, character.getName().toLowerCase());
         save(character, file, true);
@@ -94,24 +86,11 @@ public class NarrativeCraftFile {
     }
 
     public static String getFileNameAnimation(Animation animation) {
-        return "ch" + animation.getScene().getChapter().getIndex() + animation.getScene().getName()  + "." + animation.getName();
+        return "ch" + animation.getScene().getChapter().getIndex() + "." + animation.getScene().getName()  + "." + animation.getName();
     }
 
     public static String getFileNameAnimation(int chapterIndex, String sceneName, String animationName) {
-        return "ch" + chapterIndex + sceneName  + "." + animationName.toLowerCase();
-    }
-
-    public static SubsceneManager getSubscenesFromFile() {
-        File file = createFile(subsceneDirectory, "subscenes.json");
-        if(file.exists()) {
-            Gson gson = new GsonBuilder().create();
-            try (Reader reader = new BufferedReader(new FileReader(file))) {
-                return gson.fromJson(reader, SubsceneManager.class);
-            } catch (IOException e) {
-                return null;
-            }
-        }
-        return null;
+        return "ch." + chapterIndex + "." + sceneName  + "." + animationName.toLowerCase();
     }
 
     public static Animation getAnimationFromFile(int chapterIndex, String sceneName, String animationName) {
@@ -126,7 +105,7 @@ public class NarrativeCraftFile {
                 animation.setScene(scene);
                 return animation;
             } catch (IOException e) {
-                return null;
+                NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
             }
         }
         return null;

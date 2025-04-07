@@ -17,6 +17,16 @@
   "narrativecraft.scene.already_exists": "Scene %s for chapter %d already exists.",
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 
+  "narrativecraft.subscene.create.success": "Subscene %s for scene %s for chapter %d created successfully.",
+  "narrativecraft.subscene.create.fail": "Subscene %s for scene %s for chapter %d couldn't be created. Be sure narrativecraft directory exists in your world save",
+  "narrativecraft.subscene.create.no_exists": "Subscene %s for scene %s for chapter %d does not exists.",
+  "narrativecraft.subscene.create.already_exists": "Subscene %s for scene %s for chapter %d already exists.",
+  "narrativecraft.subscene.delete.success": "Subscene %s for scene %s for chapter %d has been successfully deleted.",
+  "narrativecraft.subscene.delete.fail": "Subscene %s for scene %s for chapter %d couldn't be deleted. Be sure narrativecraft directory exists in your world save",
+  "narrativecraft.subscene.animation.added": "Animation %s added to subscene %s successfully.",
+  "narrativecraft.subscene.animation.already_exists": "Animation %s already exists in subscene %s.",
+  "narrativecraft.subscene.animation.no_exists": "Animation %s does not exists in subscene %s.",
+
   "narrativecraft.animation.delete.success": "Animation %s for scene %s of chapter %d deleted successfully.",
   "narrativecraft.animation.delete.fail": "Animation %s for scene %s of chapter %d couldn't be deleted.",
   "narrativecraft.animation.already_exists": "Animation %s for scene %s of chapter %d already exists.",
@@ -27,6 +37,7 @@
   "narrativecraft.character.already_exists": "Character %s already exists.",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
+  "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
 
   "narrativecraft.record.start.success": "Record started...",
   "narrativecraft.record.start.already_recording": "You are currently recording.",

@@ -1,8 +1,13 @@
 package fr.loudo.narrativecraft.narrative.scenes;
 
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +17,13 @@ public class Scene {
 
     private transient Chapter chapter;
     private List<String> animationFilesName;
+    private List<Subscene> subsceneList;
     private String name;
 
     public Scene(Chapter chapter, String name) {
         this.chapter = chapter;
         this.animationFilesName = new ArrayList<>();
+        this.subsceneList = new ArrayList<>();
         this.name = name;
     }
 
@@ -53,5 +60,62 @@ public class Scene {
             NarrativeCraftMod.LOG.warn("Couldn't remove animation " + animationName + " file: " + e);
             return false;
         }
+    }
+    
+    public boolean addSubscene(Subscene subscene) {
+        if(subsceneList.contains(subscene)) return false;
+        try {
+            subsceneList.add(subscene);
+            NarrativeCraftFile.saveChapter(chapter);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public SuggestionProvider<CommandSourceStack> getSubscenesSuggestion() {
+        return (context, builder) -> {
+            for (Subscene subscene : subsceneList) {
+                builder.suggest(subscene.getName());
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    public boolean removeSubscene(Subscene subscene) {
+        if(!subsceneList.contains(subscene)) return false;
+        try {
+            subsceneList.remove(subscene);
+            NarrativeCraftFile.saveChapter(chapter);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public Subscene getSubsceneByName(String subsceneName) {
+        for(Subscene subscene : subsceneList) {
+            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
+                return subscene;
+            }
+        }
+        return null;
+    }
+
+    public boolean subsceneExists(String subsceneName) {
+        for(Subscene subscene : subsceneList) {
+            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<Subscene> getSubsceneList() {
+        return subsceneList;
+    }
+
+    public void setSubsceneList(List<Subscene> subsceneList) {
+        this.subsceneList = subsceneList;
     }
 }

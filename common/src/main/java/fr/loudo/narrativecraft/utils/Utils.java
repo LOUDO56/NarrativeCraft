@@ -1,8 +1,11 @@
 package fr.loudo.narrativecraft.utils;
 
 import com.mojang.brigadier.StringReader;
+import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.IntTag;
@@ -36,5 +39,13 @@ public class Utils {
 
     public static ServerPlayer getServerPlayerByUUID(UUID uuid) {
         return NarrativeCraftMod.server.getPlayerList().getPlayer(uuid);
+    }
+
+    public static PlayerSession getSessionOrNull(ServerPlayer player) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
+        if(playerSession.getChapter() == null || playerSession.getScene() == null) {
+            return null;
+        }
+        return playerSession;
     }
 }
