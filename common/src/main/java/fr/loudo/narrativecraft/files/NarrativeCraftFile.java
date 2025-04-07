@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.character.Character;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -22,20 +23,17 @@ public class NarrativeCraftFile {
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
     private static final String ANIMATION_DIRECTORY_NAME = "animations";
-    private static final String SUBSCENE_DIRECTORY_NAME = "subscenes";
     private static final String EXTENSTION_FILE = ".json";
 
     public static File mainDirectory;
     public static File chapterDirectory;
     public static File animationDirectory;
-    public static File subsceneDirectory;
     public static File characterDirectory;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
         animationDirectory = createDirectory(mainDirectory, ANIMATION_DIRECTORY_NAME);
-        subsceneDirectory = createDirectory(mainDirectory, SUBSCENE_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
         NarrativeCraftMod.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
@@ -90,7 +88,7 @@ public class NarrativeCraftFile {
     }
 
     public static String getFileNameAnimation(int chapterIndex, String sceneName, String animationName) {
-        return "ch." + chapterIndex + "." + sceneName  + "." + animationName.toLowerCase();
+        return "ch" + chapterIndex + "." + sceneName  + "." + animationName.toLowerCase();
     }
 
     public static Animation getAnimationFromFile(int chapterIndex, String sceneName, String animationName) {
@@ -146,6 +144,9 @@ public class NarrativeCraftFile {
                 Chapter chapter = gson.fromJson(reader, Chapter.class);
                 for(Scene scene : chapter.getScenes()) {
                     scene.setChapter(chapter);
+                    for(Subscene subscene : scene.getSubsceneList()) {
+                        subscene.setScene(scene);
+                    }
                 }
                 finalList.add(chapter);
             } catch (IOException e) {

@@ -1,11 +1,13 @@
 package fr.loudo.narrativecraft.narrative.subscene;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,14 +27,33 @@ public class Subscene {
 
     public boolean addAnimation(String animationName) {
         if(animationStringList.contains(animationName.toLowerCase())) return false;
-        animationStringList.add(animationName.toLowerCase());
-        return true;
+        try {
+            animationStringList.add(animationName.toLowerCase());
+            NarrativeCraftFile.saveChapter(scene.getChapter());
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
     }
 
     public boolean removeAnimation(String animationName) {
         if(!animationStringList.contains(animationName.toLowerCase())) return false;
-        animationStringList.remove(animationName.toLowerCase());
-        return true;
+        try {
+            animationStringList.remove(animationName.toLowerCase());
+            NarrativeCraftFile.saveChapter(scene.getChapter());
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public boolean animationExists(String animationName) {
+        for(String animation : animationStringList) {
+            if(animation.equalsIgnoreCase(animationName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void start(ServerPlayer player) {
@@ -54,5 +75,9 @@ public class Subscene {
 
     public String getName() {
         return name;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
 }

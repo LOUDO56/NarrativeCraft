@@ -9,11 +9,16 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class RecordCommand {
 
@@ -21,6 +26,14 @@ public class RecordCommand {
         dispatcher.register(Commands.literal("nc")
                 .then(Commands.literal("record")
                         .then(Commands.literal("start")
+                                .then(Commands.literal("with")
+                                        .then(Commands.argument("subscenes", StringArgumentType.greedyString())
+                                                .executes(commandContext -> {
+                                                    String subscenes = StringArgumentType.getString(commandContext, "subscenes");
+                                                    return startRecordingWithSubscenes(commandContext, subscenes);
+                                                })
+                                        )
+                                )
                                 .executes(RecordCommand::startRecording)
                         )
                         .then(Commands.literal("stop")
@@ -44,6 +57,10 @@ public class RecordCommand {
             return 0;
         }
 
+        for(Subscene subscene : playerSession.getSubscenesPlaying()) {
+            subscene.stop();
+        }
+
         if(NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.start.already_recording"));
             return 0;
@@ -56,6 +73,44 @@ public class RecordCommand {
         recording.start();
 
         context.getSource().sendSuccess(() -> Translation.message("record.start.success"), true);
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int startRecordingWithSubscenes(CommandContext<CommandSourceStack> context, String subscenes) {
+
+        ServerPlayer player = context.getSource().getPlayer();
+        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        if(playerSession == null) {
+            context.getSource().sendFailure(Translation.message("session.not_set"));
+            return 0;
+        }
+
+        if(NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
+            context.getSource().sendFailure(Translation.message("record.start.already_recording"));
+            return 0;
+        }
+
+        List<Subscene> subsceneToPlay = new ArrayList<>();
+        String[] subsceneNameList = subscenes.split(",");
+        for(String subsceneName : subsceneNameList) {
+            Subscene subscene = playerSession.getScene().getSubsceneByName(subsceneName);
+            if(subscene != null) {
+                subsceneToPlay.add(subscene);
+            } else {
+                context.getSource().sendFailure(Translation.message("subscene.record.no_exists", subsceneName));
+            }
+        }
+
+        if(subsceneNameList.length == subsceneToPlay.size()) {
+            startRecording(context);
+            for(Subscene subscene : subsceneToPlay) {
+                subscene.start(player);
+                playerSession.getSubscenesPlaying().add(subscene);
+            }
+            context.getSource().sendSuccess(() -> Translation.message("subscene.record.start", Arrays.toString(subsceneNameList)), true);
+        }
+
 
         return Command.SINGLE_SUCCESS;
     }
@@ -73,6 +128,10 @@ public class RecordCommand {
         if(!NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
+        }
+
+        for(Subscene subscene : playerSession.getSubscenesPlaying()) {
+            subscene.stop();
         }
 
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);

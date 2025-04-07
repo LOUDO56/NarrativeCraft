@@ -2,17 +2,23 @@ package fr.loudo.narrativecraft.narrative.session;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class PlayerSession {
 
     private ServerPlayer player;
     private Chapter chapter;
     private Scene scene;
+    private List<Subscene> subscenesPlaying;
     private boolean overwriteState;
 
     public PlayerSession(ServerPlayer player) {
         this.player = player;
+        this.subscenesPlaying = new ArrayList<>();
         this.overwriteState = false;
     }
 
@@ -47,5 +53,9 @@ public class PlayerSession {
 
     public void setOverwriteState(boolean overwriteState) {
         this.overwriteState = overwriteState;
+    }
+
+    public List<Subscene> getSubscenesPlaying() {
+        return subscenesPlaying;
     }
 }

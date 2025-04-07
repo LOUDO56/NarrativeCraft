@@ -111,6 +111,20 @@ public class ChapterManager {
             return builder.buildFuture();
         };
     }
+
+    public SuggestionProvider<CommandSourceStack> getAnimationSuggestionBySceneFromSession() {
+        return (context, builder) -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
+            if(playerSession == null) return builder.buildFuture();
+            Scene scene = playerSession.getScene();
+            for (String animationName : scene.getAnimationFilesName()) {
+                String finalAnimationName = animationName.split("\\.")[2];
+                builder.suggest(finalAnimationName);
+            }
+            return builder.buildFuture();
+        };
+    }
+
     public SuggestionProvider<CommandSourceStack> getSubsceneSuggestionByScene() {
         return (context, builder) -> {
             PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
