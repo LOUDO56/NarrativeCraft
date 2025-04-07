@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.character.Character;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.subscene.SubsceneManager;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -23,21 +24,25 @@ public class NarrativeCraftFile {
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
     private static final String ANIMATION_DIRECTORY_NAME = "animations";
+    private static final String SUBSCENE_DIRECTORY_NAME = "subscenes";
     private static final String EXTENSTION_FILE = ".json";
 
     public static File mainDirectory;
     public static File chapterDirectory;
     public static File animationDirectory;
+    public static File subsceneDirectory;
     public static File characterDirectory;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
         animationDirectory = createDirectory(mainDirectory, ANIMATION_DIRECTORY_NAME);
+        subsceneDirectory = createDirectory(mainDirectory, SUBSCENE_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
         NarrativeCraftMod.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
         NarrativeCraftMod.getInstance().getCharacterManager().setCharacters(getCharactersFromDirectory());
+        NarrativeCraftMod.getInstance().setSubsceneManager(getSubscenesFromFile());
     }
 
     public static void saveChapter(Chapter chapter) throws IOException {
@@ -67,10 +72,16 @@ public class NarrativeCraftFile {
     }
 
     public static void saveAnimation(Animation animation) throws IOException {
-        File file = createFile(animationDirectory, animation.getName().toLowerCase());
-        animation.getScene().addAnimation(animation.getName().toLowerCase());
+        String fileName = getFileNameAnimation(animation);
+        File file = createFile(animationDirectory, fileName);
+        animation.getScene().addAnimation(fileName);
         saveChapter(animation.getScene().getChapter());
         save(animation, file);
+    }
+
+    public static void saveSubscene() throws IOException {
+        File file = createFile(subsceneDirectory, "subscenes.json");
+        save(NarrativeCraftMod.getInstance().getSubsceneManager(), file);
     }
 
     public static void saveCharacter(Character character) throws IOException {
@@ -78,12 +89,33 @@ public class NarrativeCraftFile {
         save(character, file, true);
     }
 
-    public static boolean animationFileExists(String animationName) {
-        return new File(animationDirectory, animationName + EXTENSTION_FILE).exists();
+    public static boolean animationFileExists(int chapterIndex, String sceneName, String animationName) {
+        return new File(animationDirectory, getFileNameAnimation(chapterIndex, sceneName, animationName) + EXTENSTION_FILE).exists();
     }
 
-    public static Animation getAnimationFromFile(String animationName) {
-        File file = new File(animationDirectory, animationName + EXTENSTION_FILE);
+    public static String getFileNameAnimation(Animation animation) {
+        return "ch" + animation.getScene().getChapter().getIndex() + animation.getScene().getName()  + "." + animation.getName();
+    }
+
+    public static String getFileNameAnimation(int chapterIndex, String sceneName, String animationName) {
+        return "ch" + chapterIndex + sceneName  + "." + animationName.toLowerCase();
+    }
+
+    public static SubsceneManager getSubscenesFromFile() {
+        File file = createFile(subsceneDirectory, "subscenes.json");
+        if(file.exists()) {
+            Gson gson = new GsonBuilder().create();
+            try (Reader reader = new BufferedReader(new FileReader(file))) {
+                return gson.fromJson(reader, SubsceneManager.class);
+            } catch (IOException e) {
+                return null;
+            }
+        }
+        return null;
+    }
+
+    public static Animation getAnimationFromFile(int chapterIndex, String sceneName, String animationName) {
+        File file = new File(animationDirectory, getFileNameAnimation(chapterIndex, sceneName, animationName) + EXTENSTION_FILE);
         if(file.exists()) {
             Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
             try(Reader reader = new BufferedReader(new FileReader(file))) {

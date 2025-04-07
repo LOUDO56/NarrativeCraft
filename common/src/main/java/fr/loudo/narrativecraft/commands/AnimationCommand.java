@@ -53,7 +53,7 @@ public class AnimationCommand {
             return 0;
         }
 
-        if(!NarrativeCraftFile.animationFileExists(animationName)) {
+        if(!NarrativeCraftFile.animationFileExists(chapterIndex, sceneName, animationName)) {
             context.getSource().sendFailure(Translation.message("animation.no_exists", animationName, sceneName, chapterIndex));
             return 0;
         }

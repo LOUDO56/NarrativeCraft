@@ -26,10 +26,10 @@ public class InkTagTranslators {
         } else {
             finalName = animationName;
         }
-        Animation animation = NarrativeCraftFile.getAnimationFromFile(finalName);
-        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayers().getFirst();
-        Playback playback = new Playback(animation, serverPlayer.serverLevel());
-        playback.start();
+        //Animation animation = NarrativeCraftFile.getAnimationFromFile(finalName);
+        //ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayers().getFirst();
+        //Playback playback = new Playback(animation, serverPlayer.serverLevel());
+        //playback.start();
     }
 
 

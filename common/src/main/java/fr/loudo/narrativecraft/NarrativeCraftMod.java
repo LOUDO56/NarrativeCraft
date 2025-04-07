@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
+import fr.loudo.narrativecraft.narrative.subscene.SubsceneManager;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,7 @@ public class NarrativeCraftMod {
 
     private ChapterManager chapterManager;
     private CharacterManager characterManager;
+    private SubsceneManager subsceneManager;
     private PlayerSessionManager playerSessionManager;
     private RecordingHandler recordingHandler;
     private PlaybackHandler playbackHandler;
@@ -37,6 +39,7 @@ public class NarrativeCraftMod {
     public NarrativeCraftMod() {
         chapterManager = new ChapterManager();
         characterManager = new CharacterManager();
+        subsceneManager = new SubsceneManager();
         recordingHandler = new RecordingHandler();
         playerSessionManager = new PlayerSessionManager();
         playbackHandler = new PlaybackHandler();
@@ -52,6 +55,14 @@ public class NarrativeCraftMod {
 
     public CharacterManager getCharacterManager() {
         return characterManager;
+    }
+
+    public SubsceneManager getSubsceneManager() {
+        return subsceneManager;
+    }
+
+    public void setSubsceneManager(SubsceneManager subsceneManager) {
+        this.subsceneManager = subsceneManager;
     }
 
     public PlayerSessionManager getPlayerSessionManager() {
