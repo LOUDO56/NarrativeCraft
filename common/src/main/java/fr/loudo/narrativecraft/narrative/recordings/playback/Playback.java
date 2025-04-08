@@ -130,4 +130,8 @@ public class Playback {
     public Animation getAnimation() {
         return animation;
     }
+
+    public FakePlayer getFakePlayer() {
+        return fakePlayer;
+    }
 }

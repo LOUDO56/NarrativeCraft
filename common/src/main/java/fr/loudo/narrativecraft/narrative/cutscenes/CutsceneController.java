@@ -1,8 +1,13 @@
 package fr.loudo.narrativecraft.narrative.cutscenes;
 
+import fr.loudo.items.ModItems;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.LivingEntity;
+
+import java.util.List;
 
 public class CutsceneController {
 
@@ -22,8 +27,18 @@ public class CutsceneController {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player);
+            for(Playback playback : subscene.getPlaybackList()) {
+                LivingEntity entity = playback.getFakePlayer();
+                for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
+                    if(!serverPlayer.getName().getString().equals(player.getName().getString())) {
+                        player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
+                    }
+                }
+            }
         }
 
+        player.getInventory().clearContent();
+        player.getInventory().setItem(4, ModItems.cutscenePause);
         pause();
 
     }

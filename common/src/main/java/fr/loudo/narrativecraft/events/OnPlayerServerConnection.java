@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.events;
 
+import fr.loudo.items.ModItems;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -14,6 +15,7 @@ public class OnPlayerServerConnection {
             PlayerSession playerSession = new PlayerSession(player);
             playerSessionManager.getPlayerSessions().add(playerSession);
         }
+        ModItems.init(player.registryAccess());
     }
 
     public static void playerLeave(ServerPlayer player) {
