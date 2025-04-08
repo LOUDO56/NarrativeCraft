@@ -23,7 +23,6 @@ public class Playback {
     private ServerLevel serverLevel;
     private boolean isPlaying;
 
-    private int indexMovement;
     private int tick;
 
     public Playback(Animation animation, ServerLevel serverLevel) {
@@ -34,7 +33,6 @@ public class Playback {
 
     public boolean start() {
         if(isPlaying) return false;
-        indexMovement = 0;
         tick = 0;
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         fakePlayer = new FakePlayer(serverLevel, gameProfile);
@@ -48,7 +46,6 @@ public class Playback {
     }
 
     public boolean stop() {
-        if(!isPlaying) return false;
         fakePlayer.remove(Entity.RemovalReason.KILLED);
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
         isPlaying = false;
@@ -58,15 +55,15 @@ public class Playback {
 
     public void next() {
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
-        if(indexMovement >= movementDataList.size() - 1) {
+        if(tick >= movementDataList.size() - 1) {
             stop();
             return;
         };
 
-        MovementData movementData = movementDataList.get(indexMovement);
-        MovementData movementDataNext = movementDataList.get(indexMovement);
-        if (indexMovement < movementDataList.size() - 1) {
-            movementDataNext = movementDataList.get(indexMovement + 1);
+        MovementData movementData = movementDataList.get(tick);
+        MovementData movementDataNext = movementDataList.get(tick);
+        if (tick < movementDataList.size() - 1) {
+            movementDataNext = movementDataList.get(tick + 1);
         }
         moveEntity(fakePlayer, movementData, movementDataNext);
         actionListener();
@@ -76,7 +73,6 @@ public class Playback {
 //            serverPlayer.connection.send(new ClientboundEntityPositionSyncPacket(fakePlayer.getId(), positionMoveRotation, true));
 //        }
 
-        indexMovement++;
         tick++;
     }
 
@@ -113,5 +109,25 @@ public class Playback {
 
     public boolean isPlaying() {
         return isPlaying;
+    }
+
+    public void changeLocationByTick(int tick) {
+        if(tick < animation.getActionsData().getMovementData().size() - 1) {
+            this.tick = tick;
+            MovementData movementData = animation.getActionsData().getMovementData().get(tick);
+            moveEntitySilent(fakePlayer, movementData);
+        }
+    }
+
+    public void setTick(int tick) {
+        this.tick = tick;
+    }
+
+    public void setPlaying(boolean playing) {
+        isPlaying = playing;
+    }
+
+    public Animation getAnimation() {
+        return animation;
     }
 }

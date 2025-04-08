@@ -149,6 +149,9 @@ public class NarrativeCraftFile {
                 Scene scene = chapter.getSceneByName(cutscene.getSceneName());
                 scene.setChapter(chapter);
                 cutscene.setScene(scene);
+                for(Subscene subscene : cutscene.getSubsceneList()) {
+                    subscene.setScene(scene);
+                }
                 return cutscene;
             } catch (IOException e) {
                 NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());

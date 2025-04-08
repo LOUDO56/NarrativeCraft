@@ -1,9 +1,12 @@
 package fr.loudo.narrativecraft.narrative.cutscenes;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.cutscenes.keyframes.KeyframePath;
+import fr.loudo.narrativecraft.narrative.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +17,7 @@ public class Cutscene {
     private int chapterIndex;
     private String sceneName;
     private List<KeyframePath> keyframePathList;
-    private List<TriggerCutscene> triggerCutsceneList;
+    private List<KeyframeTrigger> cutsceneTriggerList;
     private List<Subscene> subsceneList;
     private Subscene defaultSubcene;
 
@@ -24,8 +27,51 @@ public class Cutscene {
         this.chapterIndex = scene.getChapter().getIndex();
         this.sceneName = scene.getName();
         this.keyframePathList = new ArrayList<>();
-        this.triggerCutsceneList = new ArrayList<>();
+        this.cutsceneTriggerList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
+    }
+
+    public boolean addSubscene(Subscene subscene) {
+        if(subsceneList.contains(subscene)) return false;
+        try {
+            subsceneList.add(subscene);
+            NarrativeCraftFile.saveCutscene(this);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean removeSubscene(Subscene subscene) {
+        for(Subscene subscene1 : subsceneList) {
+            System.out.println(subscene1.getName());
+        }
+        if(!subsceneList.contains(subscene)) return false;
+        try {
+            subsceneList.remove(subscene);
+            NarrativeCraftFile.saveCutscene(this);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean subsceneExists(String subsceneName) {
+        for(Subscene subscene : subsceneList) {
+            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Subscene getSubsceneByName(String subsceneName) {
+        for(Subscene subscene : subsceneList) {
+            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
+                return subscene;
+            }
+        }
+        return null;
     }
 
     public Scene getScene() {
@@ -68,12 +114,12 @@ public class Cutscene {
         this.keyframePathList = keyframePathList;
     }
 
-    public List<TriggerCutscene> getTriggerCutsceneList() {
-        return triggerCutsceneList;
+    public List<KeyframeTrigger> getCutsceneTriggerList() {
+        return cutsceneTriggerList;
     }
 
-    public void setTriggerCutsceneList(List<TriggerCutscene> triggerCutsceneList) {
-        this.triggerCutsceneList = triggerCutsceneList;
+    public void setCutsceneTriggerList(List<KeyframeTrigger> cutsceneTriggerList) {
+        this.cutsceneTriggerList = cutsceneTriggerList;
     }
 
     public List<Subscene> getSubsceneList() {
@@ -91,4 +137,5 @@ public class Cutscene {
     public void setDefaultSubcene(Subscene defaultSubcene) {
         this.defaultSubcene = defaultSubcene;
     }
+
 }

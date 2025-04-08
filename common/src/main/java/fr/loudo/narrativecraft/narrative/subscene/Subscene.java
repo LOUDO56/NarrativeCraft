@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.narrative.subscene;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -81,5 +80,9 @@ public class Subscene {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public List<Playback> getPlaybackList() {
+        return playbackList;
     }
 }
