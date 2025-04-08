@@ -18,9 +18,9 @@
   "narrativecraft.scene.no_exists": "Scene %s for chapter %d does not exists.",
 
   "narrativecraft.subscene.create.success": "Subscene %s for scene %s for chapter %d created successfully.",
-  "narrativecraft.subscene.create.fail": "Subscene %s for scene %s for chapter %d couldn't be created. Be sure narrativecraft directory exists in your world save",
+  "narrativecraft.subscene.create.fail": "Subscene %s for scene %s for chapter %d couldn't be created. Be sure narrativecraft directory exists in your world save.",
   "narrativecraft.subscene.delete.success": "Subscene %s for scene %s for chapter %d has been successfully deleted.",
-  "narrativecraft.subscene.delete.fail": "Subscene %s for scene %s for chapter %d couldn't be deleted. Be sure narrativecraft directory exists in your world save",
+  "narrativecraft.subscene.delete.fail": "Subscene %s for scene %s for chapter %d couldn't be deleted. Be sure narrativecraft directory exists in your world save.",
   "narrativecraft.subscene.animation.added": "Animation %s added to subscene %s successfully.",
   "narrativecraft.subscene.animation.added.fail": "Animation %s couldn't be added to subscene %s.",
   "narrativecraft.subscene.animation.removed": "Animation %s removed from subscene %s successfully.",
@@ -31,6 +31,13 @@
   "narrativecraft.subscene.record.no_exists": "Subscene %s does not exists.",
   "narrativecraft.subscene.no_exists": "Subscene %s for scene %s for chapter %d does not exists.",
   "narrativecraft.subscene.already_exists": "Subscene %s for scene %s for chapter %d already exists.",
+
+  "narrativecraft.cutscene.create.success": "Cutscene %s for scene %s created successfully.",
+  "narrativecraft.cutscene.create.fail": "Cutscene %s for scene %s couldn't be created. Please check if your cutscenes directory in your map world directory exists!",
+  "narrativecraft.cutscene.delete.success": "Cutscene %s for scene %s deleted successfully.",
+  "narrativecraft.cutscene.delete.fail": "Cutscene %s couldn't be deleted from scene %s. Maybe you already deleted it?",
+  "narrativecraft.cutscene.no_exists": "Cutscene %s does not exists in scene %s.",
+  "narrativecraft.cutscene.already_exists": "Cutscene %s already exists in scene %s.",
 
   "narrativecraft.animation.delete.success": "Animation %s for scene %s of chapter %d deleted successfully.",
   "narrativecraft.animation.delete.fail": "Animation %s for scene %s of chapter %d couldn't be deleted.",

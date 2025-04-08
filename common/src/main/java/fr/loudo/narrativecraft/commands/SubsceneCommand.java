@@ -60,7 +60,7 @@ public class SubsceneCommand {
                                                         .executes(context -> {
                                                             String animationName = StringArgumentType.getString(context, "animation_name");
                                                             String subsceneName = StringArgumentType.getString(context, "subscene_name");
-                                                            return removeAnimationToSubscene(context, animationName, subsceneName);
+                                                            return removeAnimationFromSubscene(context, animationName, subsceneName);
                                                         })
                                                 )
                                         )
@@ -153,7 +153,7 @@ public class SubsceneCommand {
         return Command.SINGLE_SUCCESS;
     }
 
-    private static int removeAnimationToSubscene(CommandContext<CommandSourceStack> context, String animationName, String subsceneName) {
+    private static int removeAnimationFromSubscene(CommandContext<CommandSourceStack> context, String animationName, String subsceneName) {
 
         ServerPlayer player = context.getSource().getPlayer();
         PlayerSession playerSession = Utils.getSessionOrNull(player);

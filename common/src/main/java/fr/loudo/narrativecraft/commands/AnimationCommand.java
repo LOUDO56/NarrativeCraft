@@ -15,6 +15,7 @@ import net.minecraft.commands.Commands;
 
 public class AnimationCommand {
 
+    //TODO: manage by session
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("nc")
                 .then(Commands.literal("animation")

@@ -15,6 +15,7 @@ public class CommandsRegister {
             SessionCommand.register(commandDispatcher);
             StoryCommand.register(commandDispatcher);
             SubsceneCommand.register(commandDispatcher);
+            CutsceneCommand.register(commandDispatcher);
         });
     }
 

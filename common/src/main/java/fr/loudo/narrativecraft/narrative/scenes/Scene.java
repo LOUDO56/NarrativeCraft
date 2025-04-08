@@ -4,9 +4,8 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.io.IOException;
@@ -17,12 +16,14 @@ public class Scene {
 
     private transient Chapter chapter;
     private List<String> animationFilesName;
+    private List<String> cutsceneFilesName;
     private List<Subscene> subsceneList;
     private String name;
 
     public Scene(Chapter chapter, String name) {
         this.chapter = chapter;
         this.animationFilesName = new ArrayList<>();
+        this.cutsceneFilesName = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
         this.name = name;
     }
@@ -117,5 +118,36 @@ public class Scene {
 
     public void setSubsceneList(List<Subscene> subsceneList) {
         this.subsceneList = subsceneList;
+    }
+
+    public List<String> getCutsceneFilesName() {
+        return cutsceneFilesName;
+    }
+
+    public boolean addCutscene(String cutsceneName) {
+        String cutsceneFileName = NarrativeCraftFile.getFileNameTemplate(chapter.getIndex(), name, cutsceneName);
+        if(cutsceneFilesName.contains(cutsceneFileName)) return false;
+        try {
+            Cutscene cutscene = new Cutscene(cutsceneName, this);
+            cutsceneFilesName.add(cutsceneFileName);
+            NarrativeCraftFile.saveCutscene(cutscene);
+            NarrativeCraftFile.saveChapter(chapter);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean removeCutscene(String cutsceneName) {
+        String cutsceneFileName = NarrativeCraftFile.getFileNameTemplate(chapter.getIndex(), name, cutsceneName);
+        if(!cutsceneFilesName.contains(cutsceneFileName)) return false;
+        try {
+            cutsceneFilesName.remove(cutsceneFileName);
+            NarrativeCraftFile.removeCutsceneFile(cutsceneFileName);
+            NarrativeCraftFile.saveChapter(chapter);
+        } catch (IOException e) {
+            return false;
+        }
+        return true;
     }
 }

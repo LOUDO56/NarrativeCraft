@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.Character;
+import fr.loudo.narrativecraft.narrative.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
@@ -23,17 +24,20 @@ public class NarrativeCraftFile {
     private static final String CHAPTER_DIRECTORY_NAME = "chapters";
     private static final String CHARACTER_DIRECTORY_NAME = "characters";
     private static final String ANIMATION_DIRECTORY_NAME = "animations";
+    private static final String CUTSCENE_DIRECTORY_NAME = "cutscenes";
     private static final String EXTENSTION_FILE = ".json";
 
     public static File mainDirectory;
     public static File chapterDirectory;
     public static File animationDirectory;
+    public static File cutsceneDirectory;
     public static File characterDirectory;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chapterDirectory = createDirectory(mainDirectory, CHAPTER_DIRECTORY_NAME);
         animationDirectory = createDirectory(mainDirectory, ANIMATION_DIRECTORY_NAME);
+        cutsceneDirectory = createDirectory(mainDirectory, CUTSCENE_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTER_DIRECTORY_NAME);
 
         NarrativeCraftMod.getInstance().getChapterManager().setChapters(getChaptersFromDirectory());
@@ -52,6 +56,7 @@ public class NarrativeCraftFile {
         }
         for(Scene scene : chapter.getScenes()) {
             removeAnimationsFileByScene(scene);
+            removeCutsceneFileByScene(scene);
         }
     }
 
@@ -74,25 +79,50 @@ public class NarrativeCraftFile {
         save(animation, file);
     }
 
+    public static void removeCutsceneFileByScene(Scene scene) throws IOException {
+        for(String cutsceneFileName : scene.getCutsceneFilesName()) {
+            removeCutsceneFile(cutsceneFileName);
+        }
+    }
+
+    public static boolean removeCutsceneFile(String cutsceneName) throws IOException {
+        File fileAnim = new File(cutsceneDirectory, cutsceneName + EXTENSTION_FILE);
+        return fileAnim.delete();
+    }
+
+    public static void saveCutscene(Cutscene cutscene) throws IOException {
+        String fileName = getCutsceneFileName(cutscene);
+        File file = createFile(cutsceneDirectory, fileName);
+        save(cutscene, file);
+    }
+
     public static void saveCharacter(Character character) throws IOException {
         File file = createFile(characterDirectory, character.getName().toLowerCase());
         save(character, file, true);
     }
 
     public static boolean animationFileExists(int chapterIndex, String sceneName, String animationName) {
-        return new File(animationDirectory, getFileNameAnimation(chapterIndex, sceneName, animationName) + EXTENSTION_FILE).exists();
+        return new File(animationDirectory, getFileNameTemplate(chapterIndex, sceneName, animationName) + EXTENSTION_FILE).exists();
+    }
+
+    public static boolean cutsceneFileExists(int chapterIndex, String sceneName, String cutsceneName) {
+        return new File(cutsceneDirectory, getFileNameTemplate(chapterIndex, sceneName, cutsceneName) + EXTENSTION_FILE).exists();
     }
 
     public static String getFileNameAnimation(Animation animation) {
         return "ch" + animation.getScene().getChapter().getIndex() + "." + animation.getScene().getName()  + "." + animation.getName();
     }
 
-    public static String getFileNameAnimation(int chapterIndex, String sceneName, String animationName) {
-        return "ch" + chapterIndex + "." + sceneName  + "." + animationName.toLowerCase();
+    public static String getFileNameTemplate(int chapterIndex, String sceneName, String name) {
+        return "ch" + chapterIndex + "." + sceneName  + "." + name.toLowerCase();
+    }
+
+    public static String getCutsceneFileName(Cutscene cutscene) {
+        return "ch" + cutscene.getScene().getChapter().getIndex() + "." + cutscene.getScene().getName()  + "." + cutscene.getName();
     }
 
     public static Animation getAnimationFromFile(int chapterIndex, String sceneName, String animationName) {
-        File file = new File(animationDirectory, getFileNameAnimation(chapterIndex, sceneName, animationName) + EXTENSTION_FILE);
+        File file = new File(animationDirectory, getFileNameTemplate(chapterIndex, sceneName, animationName) + EXTENSTION_FILE);
         if(file.exists()) {
             Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
             try(Reader reader = new BufferedReader(new FileReader(file))) {
@@ -102,6 +132,24 @@ public class NarrativeCraftFile {
                 scene.setChapter(chapter);
                 animation.setScene(scene);
                 return animation;
+            } catch (IOException e) {
+                NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
+            }
+        }
+        return null;
+    }
+
+    public static Cutscene getCutsceneFromFile(int chapterIndex, String sceneName, String cutsceneName) {
+        File file = new File(cutsceneDirectory, getFileNameTemplate(chapterIndex, sceneName, cutsceneName) + EXTENSTION_FILE);
+        if(file.exists()) {
+            Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
+            try(Reader reader = new BufferedReader(new FileReader(file))) {
+                Cutscene cutscene = gson.fromJson(reader, Cutscene.class);
+                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(cutscene.getChapterIndex());
+                Scene scene = chapter.getSceneByName(cutscene.getSceneName());
+                scene.setChapter(chapter);
+                cutscene.setScene(scene);
+                return cutscene;
             } catch (IOException e) {
                 NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
             }

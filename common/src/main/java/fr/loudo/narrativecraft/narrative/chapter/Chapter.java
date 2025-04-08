@@ -43,6 +43,7 @@ public class Chapter {
         try {
             scenes.remove(scene);
             NarrativeCraftFile.removeAnimationsFileByScene(scene);
+            NarrativeCraftFile.removeCutsceneFileByScene(scene);
             NarrativeCraftFile.saveChapter(this);
             return true;
         } catch (IOException e) {

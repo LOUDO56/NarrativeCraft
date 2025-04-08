@@ -57,7 +57,9 @@ public class Subscene {
     }
 
     public void start(ServerPlayer player) {
-        playbackList = new ArrayList<>();
+        if(playbackList == null) {
+            playbackList = new ArrayList<>();
+        }
         for(String animationName : animationStringList) {
             Animation animation = NarrativeCraftFile.getAnimationFromFile(scene.getChapter().getIndex(), scene.getName(), animationName);
             Playback playback = new Playback(animation, player.serverLevel());
@@ -70,7 +72,7 @@ public class Subscene {
         for(Playback playback : playbackList) {
             playback.stop();
         }
-        playbackList = new ArrayList<>();
+        playbackList.clear();
     }
 
     public String getName() {

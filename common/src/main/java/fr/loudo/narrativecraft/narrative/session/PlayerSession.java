@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.session;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import net.minecraft.server.level.ServerPlayer;
@@ -14,6 +15,7 @@ public class PlayerSession {
     private Chapter chapter;
     private Scene scene;
     private List<Subscene> subscenesPlaying;
+    private CutsceneController cutsceneController;
     private boolean overwriteState;
 
     public PlayerSession(ServerPlayer player) {
@@ -57,5 +59,13 @@ public class PlayerSession {
 
     public List<Subscene> getSubscenesPlaying() {
         return subscenesPlaying;
+    }
+
+    public CutsceneController getCutsceneController() {
+        return cutsceneController;
+    }
+
+    public void setCutsceneController(CutsceneController cutsceneController) {
+        this.cutsceneController = cutsceneController;
     }
 }
