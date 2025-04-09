@@ -1,11 +1,5 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.animations.Animation;
-import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import net.minecraft.server.level.ServerPlayer;
-
 public class InkTagTranslators {
 
     public static void execute(String command) {

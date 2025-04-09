@@ -1,11 +1,11 @@
-package fr.loudo.narrativecraft.narrative.scenes;
+package fr.loudo.narrativecraft.narrative.chapter.scenes;
 
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.cutscenes.Cutscene;
-import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.io.IOException;

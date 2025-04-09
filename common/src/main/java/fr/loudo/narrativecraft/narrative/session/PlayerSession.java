@@ -1,9 +1,9 @@
 package fr.loudo.narrativecraft.narrative.session;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.cutscenes.CutsceneController;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;

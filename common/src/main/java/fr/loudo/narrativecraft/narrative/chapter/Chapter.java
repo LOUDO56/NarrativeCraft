@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 
 import java.io.IOException;
 import java.util.ArrayList;

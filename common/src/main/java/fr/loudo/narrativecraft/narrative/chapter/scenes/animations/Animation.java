@@ -1,7 +1,7 @@
-package fr.loudo.narrativecraft.narrative.animations;
+package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 
 public class Animation {
 

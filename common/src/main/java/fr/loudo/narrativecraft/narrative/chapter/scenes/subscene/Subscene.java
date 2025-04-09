@@ -1,10 +1,9 @@
-package fr.loudo.narrativecraft.narrative.subscene;
+package fr.loudo.narrativecraft.narrative.chapter.scenes.subscene;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.animations.Animation;
-import fr.loudo.narrativecraft.narrative.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.IOException;

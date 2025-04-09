@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import net.minecraft.server.level.ServerPlayer;

@@ -1,10 +1,10 @@
-package fr.loudo.narrativecraft.narrative.cutscenes;
+package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.cutscenes.keyframes.KeyframePath;
-import fr.loudo.narrativecraft.narrative.cutscenes.keyframes.KeyframeTrigger;
-import fr.loudo.narrativecraft.narrative.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframePath;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 
 import java.io.IOException;
 import java.util.ArrayList;
