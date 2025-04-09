@@ -79,5 +79,7 @@
   "narrativecraft.record.save.fail": "Error while saving animation %s for scene %s of chapter %d!",
 
   "narrativecraft.items.cutscene.playing.name": "§7State: §aPlaying",
-  "narrativecraft.items.cutscene.paused.name": "§7State: §cPaused"
+  "narrativecraft.items.cutscene.paused.name": "§7State: §cPaused",
+  "narrativecraft.items.cutscene.skip.plus.name": "§a+ %d seconds",
+  "narrativecraft.items.cutscene.skip.minus.name": "§c- %d seconds"
 }

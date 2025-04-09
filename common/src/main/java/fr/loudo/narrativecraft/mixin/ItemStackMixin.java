@@ -1,14 +1,14 @@
 package fr.loudo.narrativecraft.mixin;
 
-import fr.loudo.narrativecraft.items.ModItems;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.items.ModItems;
 import fr.loudo.narrativecraft.narrative.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -28,16 +28,25 @@ public class ItemStackMixin {
             if(playerSession != null) {
                 CutsceneController cutsceneController = playerSession.getCutsceneController();
                 if(cutsceneController != null) {
-                    Inventory inventory = serverPlayer.getInventory();
                     ItemStack itemStack = (ItemStack) (Object) this;
-                    if(itemStack.getCustomName().getString().equals(ModItems.cutscenePause.getCustomName().getString())) {
+                    String itemName = itemStack.getCustomName().getString();
+                    boolean isControllerItem = false;
+                    if(itemName.equals(ModItems.cutscenePause.getCustomName().getString())) {
                         cutsceneController.resume();
-                        serverPlayer.getInventory().setItem(inventory.getSelectedSlot(), ModItems.cutscenePlaying);
-                        serverPlayer.sendSystemMessage(Translation.message("cutscene.edit.resume"));
-                    } else if(itemStack.getCustomName().getString().equals(ModItems.cutscenePlaying.getCustomName().getString())) {
+                        isControllerItem = true;
+                    } else if(itemName.equals(ModItems.cutscenePlaying.getCustomName().getString())) {
                         cutsceneController.pause();
-                        serverPlayer.getInventory().setItem(inventory.getSelectedSlot(), ModItems.cutscenePause);
-                        serverPlayer.sendSystemMessage(Translation.message("cutscene.edit.pause"));
+                        isControllerItem = true;
+                    } else if (itemName.equals(ModItems.nextSecond.getCustomName().getString())) {
+                        cutsceneController.nextSecondSkip();
+                        isControllerItem = true;
+                    } else if (itemName.equals(ModItems.previousSecond.getCustomName().getString())) {
+                        cutsceneController.previousSecondSkip();
+                        isControllerItem = true;
+                    }
+
+                    if(isControllerItem) {
+                        player.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.MASTER, 0.5F, 2);
                     }
                 }
             }
