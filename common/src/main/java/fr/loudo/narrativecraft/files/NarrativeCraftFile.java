@@ -160,6 +160,28 @@ public class NarrativeCraftFile {
         return null;
     }
 
+    public static Cutscene getCutsceneFromFile(String cutsceneNameFile) {
+        File file = new File(cutsceneDirectory, cutsceneNameFile + EXTENSTION_FILE);
+        if(file.exists()) {
+            Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
+            try(Reader reader = new BufferedReader(new FileReader(file))) {
+                Cutscene cutscene = gson.fromJson(reader, Cutscene.class);
+                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(cutscene.getChapterIndex());
+                Scene scene = chapter.getSceneByName(cutscene.getSceneName());
+                scene.setChapter(chapter);
+                cutscene.setScene(scene);
+                for(Subscene subscene : cutscene.getSubsceneList()) {
+                    subscene.setScene(scene);
+                }
+                return cutscene;
+            } catch (IOException e) {
+                NarrativeCraftMod.LOG.warn("File {} couldn't be opened", file.getName());
+            }
+        }
+        return null;
+    }
+
+
     public static List<Character> getCharactersFromDirectory() {
         List<Character> finalList = new ArrayList<>();
         File directory = NarrativeCraftFile.characterDirectory;

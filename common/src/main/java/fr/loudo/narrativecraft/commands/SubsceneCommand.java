@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -13,6 +14,8 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
+
+import java.io.IOException;
 
 public class SubsceneCommand {
 
@@ -110,6 +113,7 @@ public class SubsceneCommand {
 
         Subscene subscene = playerSession.getScene().getSubsceneByName(subsceneName);
         if(playerSession.getScene().removeSubscene(subscene)) {
+            removeSubsceneFromCutscenes(playerSession, subscene);
             context.getSource().sendSuccess(() -> Translation.message("subscene.delete.success", subsceneName, playerSession.getScene().getName(), playerSession.getChapter().getIndex()), true);
         } else {
             context.getSource().sendFailure(Translation.message("subscene.delete.fail", subsceneName, playerSession.getScene().getName(), playerSession.getChapter().getIndex()));
@@ -145,6 +149,7 @@ public class SubsceneCommand {
         }
 
         if(subscene.addAnimation(animationName)) {
+            updateSubsceneFromCutscenes(playerSession, subscene);
             context.getSource().sendSuccess(() -> Translation.message("subscene.animation.added", animationName, subscene.getName()), true);
         } else {
             context.getSource().sendFailure(Translation.message("subscene.animation.added.fail", animationName, subscene.getName()));
@@ -180,12 +185,42 @@ public class SubsceneCommand {
         }
 
         if(subscene.removeAnimation(animationName)) {
+            updateSubsceneFromCutscenes(playerSession, subscene);
             context.getSource().sendSuccess(() -> Translation.message("subscene.animation.removed", animationName, subscene.getName()), true);
         } else {
             context.getSource().sendFailure(Translation.message("subscene.animation.removed.fail", animationName, subscene.getName()));
         }
 
         return Command.SINGLE_SUCCESS;
+    }
+
+    private static void updateSubsceneFromCutscenes(PlayerSession playerSession, Subscene newSubscene) {
+        for(String cutsceneFilName : playerSession.getScene().getCutsceneFilesName()) {
+            Cutscene cutscene = NarrativeCraftFile.getCutsceneFromFile(cutsceneFilName);
+            if(cutscene.subsceneExists(newSubscene.getName())) {
+                Subscene oldSubscene = cutscene.getSubsceneByName(newSubscene.getName());
+                cutscene.removeSubscene(oldSubscene);
+                cutscene.addSubscene(newSubscene);
+                try {
+                    NarrativeCraftFile.saveCutscene(cutscene);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private static void removeSubsceneFromCutscenes(PlayerSession playerSession, Subscene subscene) {
+        for(String cutsceneFilName : playerSession.getScene().getCutsceneFilesName()) {
+            Cutscene cutscene = NarrativeCraftFile.getCutsceneFromFile(cutsceneFilName);
+            Subscene subsceneToRemove = cutscene.getSubsceneByName(subscene.getName());
+            cutscene.removeSubscene(subsceneToRemove);
+            try {
+                NarrativeCraftFile.saveCutscene(cutscene);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
 }

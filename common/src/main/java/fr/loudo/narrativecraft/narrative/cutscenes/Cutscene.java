@@ -43,9 +43,6 @@ public class Cutscene {
     }
 
     public boolean removeSubscene(Subscene subscene) {
-        for(Subscene subscene1 : subsceneList) {
-            System.out.println(subscene1.getName());
-        }
         if(!subsceneList.contains(subscene)) return false;
         try {
             subsceneList.remove(subscene);
