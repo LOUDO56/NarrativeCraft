@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.cutscenes;
 
-import fr.loudo.items.ModItems;
+import fr.loudo.narrativecraft.items.ModItems;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;

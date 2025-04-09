@@ -1,4 +1,4 @@
-package fr.loudo.items;
+package fr.loudo.narrativecraft.items;
 
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;

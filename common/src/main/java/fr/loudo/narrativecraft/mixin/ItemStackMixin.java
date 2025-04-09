@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.mixin;
 
-import fr.loudo.items.ModItems;
+import fr.loudo.narrativecraft.items.ModItems;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
