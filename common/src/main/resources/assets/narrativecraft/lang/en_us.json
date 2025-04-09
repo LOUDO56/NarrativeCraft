@@ -81,5 +81,8 @@
   "narrativecraft.items.cutscene.playing.name": "§7State: §aPlaying",
   "narrativecraft.items.cutscene.paused.name": "§7State: §cPaused",
   "narrativecraft.items.cutscene.skip.plus.name": "§a+ %d seconds",
-  "narrativecraft.items.cutscene.skip.minus.name": "§c- %d seconds"
+  "narrativecraft.items.cutscene.skip.minus.name": "§c- %d seconds",
+  "narrativecraft.items.cutscene.settings.name": "§aSettings",
+
+  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds"
 }

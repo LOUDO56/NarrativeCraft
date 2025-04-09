@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.mixin;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.items.ModItems;
+import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.server.level.ServerPlayer;
@@ -30,22 +30,24 @@ public class ItemStackMixin {
                 if(cutsceneController != null) {
                     ItemStack itemStack = (ItemStack) (Object) this;
                     String itemName = itemStack.getCustomName().getString();
-                    boolean isControllerItem = false;
-                    if(itemName.equals(ModItems.cutscenePause.getCustomName().getString())) {
+                    boolean playSound = false;
+                    if(itemName.equals(CutsceneEditItems.cutscenePause.getCustomName().getString())) {
                         cutsceneController.resume();
-                        isControllerItem = true;
-                    } else if(itemName.equals(ModItems.cutscenePlaying.getCustomName().getString())) {
+                        playSound = true;
+                    } else if(itemName.equals(CutsceneEditItems.cutscenePlaying.getCustomName().getString())) {
                         cutsceneController.pause();
-                        isControllerItem = true;
-                    } else if (itemName.equals(ModItems.nextSecond.getCustomName().getString())) {
+                        playSound = true;
+                    } else if (itemName.equals(CutsceneEditItems.nextSecond.getCustomName().getString())) {
                         cutsceneController.nextSecondSkip();
-                        isControllerItem = true;
-                    } else if (itemName.equals(ModItems.previousSecond.getCustomName().getString())) {
+                        playSound = true;
+                    } else if (itemName.equals(CutsceneEditItems.previousSecond.getCustomName().getString())) {
                         cutsceneController.previousSecondSkip();
-                        isControllerItem = true;
+                        playSound = true;
+                    } else if (itemName.equals(CutsceneEditItems.settings.getCustomName().getString())) {
+                        cutsceneController.openSettings();
                     }
 
-                    if(isControllerItem) {
+                    if(playSound) {
                         player.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.MASTER, 0.5F, 2);
                     }
                 }

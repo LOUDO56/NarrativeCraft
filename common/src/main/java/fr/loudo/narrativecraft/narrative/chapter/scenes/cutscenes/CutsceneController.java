@@ -1,8 +1,10 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
-import fr.loudo.narrativecraft.items.ModItems;
+import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,9 +44,10 @@ public class CutsceneController {
         }
 
         player.getInventory().clearContent();
-        player.getInventory().setItem(3, ModItems.previousSecond);
-        player.getInventory().setItem(4, ModItems.cutscenePause);
-        player.getInventory().setItem(5, ModItems.nextSecond);
+        player.getInventory().setItem(3, CutsceneEditItems.previousSecond);
+        player.getInventory().setItem(4, CutsceneEditItems.cutscenePause);
+        player.getInventory().setItem(5, CutsceneEditItems.nextSecond);
+        player.getInventory().setItem(8, CutsceneEditItems.settings);
         pause();
 
     }
@@ -54,6 +57,7 @@ public class CutsceneController {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.stop();
         }
+        player.getInventory().clearContent();
 
         isPlaying = false;
 
@@ -62,13 +66,19 @@ public class CutsceneController {
     public void pause() {
         isPlaying = false;
         changePlayingPlaybackState();
-        changeItem(ModItems.cutscenePlaying, ModItems.cutscenePause);
+        changeItem(CutsceneEditItems.cutscenePlaying, CutsceneEditItems.cutscenePause);
     }
 
     public void resume() {
         isPlaying = true;
-        changeItem(ModItems.cutscenePause, ModItems.cutscenePlaying);
+        changeItem(CutsceneEditItems.cutscenePause, CutsceneEditItems.cutscenePlaying);
         changePlayingPlaybackState();
+    }
+
+    public void openSettings() {
+        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, player);
+        Minecraft minecraft = Minecraft.getInstance();
+        minecraft.execute(() -> minecraft.setScreen(screen));
     }
 
     private void changeItem(ItemStack previousItem, ItemStack newItem) {
@@ -114,5 +124,14 @@ public class CutsceneController {
 
     public Cutscene getCutscene() {
         return cutscene;
+    }
+
+    public void setCurrentSkipCount(int currentSkipCount) {
+        this.currentSkipCount = currentSkipCount * 20;
+        ItemStack oldPreviousSecond = CutsceneEditItems.previousSecond;
+        ItemStack oldNextSecond = CutsceneEditItems.nextSecond;
+        CutsceneEditItems.initSkipItems(player.registryAccess(), currentSkipCount);
+        changeItem(oldPreviousSecond, CutsceneEditItems.previousSecond);
+        changeItem(oldNextSecond, CutsceneEditItems.nextSecond);
     }
 }

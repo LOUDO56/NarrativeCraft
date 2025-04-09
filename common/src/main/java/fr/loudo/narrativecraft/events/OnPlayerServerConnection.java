@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.items.ModItems;
+import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
@@ -15,8 +15,8 @@ public class OnPlayerServerConnection {
             PlayerSession playerSession = new PlayerSession(player);
             playerSessionManager.getPlayerSessions().add(playerSession);
         }
-        ModItems.init(player.registryAccess());
-        ModItems.initSkipItems(player.registryAccess(), 5);
+        CutsceneEditItems.init(player.registryAccess());
+        CutsceneEditItems.initSkipItems(player.registryAccess(), 5);
     }
 
     public static void playerLeave(ServerPlayer player) {
