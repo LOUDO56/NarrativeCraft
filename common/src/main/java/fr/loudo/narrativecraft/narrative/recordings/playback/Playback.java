@@ -11,6 +11,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.UUID;
 public class Playback {
 
     private Animation animation;
-    private FakePlayer fakePlayer;
+    private LivingEntity entity;
     private ServerLevel serverLevel;
     private boolean isPlaying;
 
@@ -35,19 +36,23 @@ public class Playback {
         if(isPlaying) return false;
         tick = 0;
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
-        fakePlayer = new FakePlayer(serverLevel, gameProfile);
+        entity = new FakePlayer(serverLevel, gameProfile);
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
-        moveEntitySilent(fakePlayer, firstLoc);
-        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        serverLevel.addNewPlayer(fakePlayer);
+        moveEntitySilent(entity, firstLoc);
+        if(entity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+            serverLevel.addNewPlayer(fakePlayer);
+        } else {
+            serverLevel.addFreshEntity(entity);
+        }
         isPlaying = true;
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
         return true;
     }
 
     public boolean stop() {
-        fakePlayer.remove(Entity.RemovalReason.KILLED);
-        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
+        entity.remove(Entity.RemovalReason.KILLED);
+        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
         isPlaying = false;
         //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
         return true;
@@ -65,7 +70,7 @@ public class Playback {
         if (tick < movementDataList.size() - 1) {
             movementDataNext = movementDataList.get(tick + 1);
         }
-        moveEntity(fakePlayer, movementData, movementDataNext);
+        moveEntity(entity, movementData, movementDataNext);
         actionListener();
 //
 //        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
@@ -80,15 +85,15 @@ public class Playback {
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
             if(action instanceof PlaceBlockAction placeBlockAction) {
-                placeBlockAction.execute(fakePlayer, serverLevel);
+                placeBlockAction.execute(entity, serverLevel);
             } else if(action instanceof BreakBlockAction breakBlockAction) {
                 breakBlockAction.execute(serverLevel);
             } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
                 destroyBlockStageAction.execute(serverLevel);
             } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
-                rightClickBlockAction.execute(fakePlayer);
+                rightClickBlockAction.execute(entity);
             } else {
-                action.execute(fakePlayer);
+                action.execute(entity);
             }
         }
     }
@@ -115,7 +120,7 @@ public class Playback {
         if(tick < animation.getActionsData().getMovementData().size() - 1) {
             this.tick = tick;
             MovementData movementData = animation.getActionsData().getMovementData().get(tick);
-            moveEntitySilent(fakePlayer, movementData);
+            moveEntitySilent(entity, movementData);
         }
     }
 
@@ -131,7 +136,7 @@ public class Playback {
         return animation;
     }
 
-    public FakePlayer getFakePlayer() {
-        return fakePlayer;
+    public LivingEntity getEntity() {
+        return entity;
     }
 }

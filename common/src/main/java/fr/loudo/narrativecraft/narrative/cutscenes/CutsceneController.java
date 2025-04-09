@@ -28,7 +28,7 @@ public class CutsceneController {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player);
             for(Playback playback : subscene.getPlaybackList()) {
-                LivingEntity entity = playback.getFakePlayer();
+                LivingEntity entity = playback.getEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
                     if(!serverPlayer.getName().getString().equals(player.getName().getString())) {
                         player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
