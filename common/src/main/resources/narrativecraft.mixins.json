@@ -8,7 +8,10 @@
     "EntityMixin",
     "ServerLevelMixin",
     "LivingEntityMixin",
-    "ItemStackMixin"
+    "ItemStackMixin",
+    "fields.DisplayFields",
+    "fields.ItemDisplayFields",
+    "fields.TextDisplayFields"
   ],
   "client": [],
   "server": [],

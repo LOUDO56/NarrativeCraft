@@ -229,11 +229,15 @@ public class NarrativeCraftFile {
 
         return finalList;
     }
-
     private static void save(Object element, File file) throws IOException {
+
         Gson gson = new GsonBuilder().create();
         try(Writer writer = new BufferedWriter(new FileWriter(file))) {
-            gson.toJson(element, writer);
+            try {
+                gson.toJson(element, writer);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -31,6 +32,11 @@ public class OnServerTick {
             CutsceneController cutsceneController = playerSession.getCutsceneController();
             if(cutsceneController != null) {
                 cutsceneController.next();
+                if(NarrativeCraftMod.server.getTickCount() % 5 == 0) {
+                    for(KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
+                        keyframeGroup.showLineBetweenKeyframes(playerSession.getPlayer());
+                    }
+                }
             }
         }
     }

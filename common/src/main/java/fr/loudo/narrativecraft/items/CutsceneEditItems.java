@@ -14,6 +14,8 @@ public class CutsceneEditItems {
     private static final Property NEXT_SECOND_TEXTURE = new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU2YTM2MTg0NTllNDNiMjg3YjIyYjdlMjM1ZWM2OTk1OTQ1NDZjNmZjZDZkYzg0YmZjYTRjZjMwYWI5MzExIn19fQ==");
     private static final Property PREVIOUS_SECOND_TEXTURE = new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2E2Y2E0NWMxYjAyOTQxMDk3NWNjMGI3NjEyMTZjNGEwNTRlNzFhMWQxMjg1MWY5NDA0MjgxYTk2YTM0N2I3OSJ9fX0=");
 
+    public static ItemStack createKeyframeGroup;
+    public static ItemStack addKeyframe;
     public static ItemStack cutscenePlaying;
     public static ItemStack cutscenePause;
     public static ItemStack nextSecond;
@@ -21,6 +23,8 @@ public class CutsceneEditItems {
     public static ItemStack settings;
 
     public static void init(RegistryAccess access) {
+        createKeyframeGroup = getItem(Translation.message("items.cutscene.keyframegroup.name").getString(), access, Items.BOOK);
+        addKeyframe = getItem(Translation.message("items.cutscene.keyframe.name").getString(), access, Items.REDSTONE_TORCH);
         cutscenePlaying = getItem(Translation.message("items.cutscene.playing.name").getString(), access, Items.LIME_DYE);
         cutscenePause = getItem(Translation.message("items.cutscene.paused.name").getString(), access, Items.GRAY_DYE);
         settings = getItem(Translation.message("items.cutscene.settings.name").getString(), access, Items.NETHER_STAR);

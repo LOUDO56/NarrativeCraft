@@ -133,6 +133,7 @@ public class Scene {
             NarrativeCraftFile.saveCutscene(cutscene);
             NarrativeCraftFile.saveChapter(chapter);
         } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
         return true;

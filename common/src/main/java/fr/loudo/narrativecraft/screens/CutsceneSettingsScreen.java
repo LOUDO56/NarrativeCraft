@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.screens;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;

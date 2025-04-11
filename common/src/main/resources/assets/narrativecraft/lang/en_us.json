@@ -78,11 +78,18 @@
   "narrativecraft.record.save.stop_record_before_save": "Please, stop your record before saving.",
   "narrativecraft.record.save.fail": "Error while saving animation %s for scene %s of chapter %d!",
 
+  "narrativecraft.items.cutscene.keyframegroup.name": "§6Add a new keyframe group",
+  "narrativecraft.items.cutscene.keyframe.name": "§aAdd a keyframe",
   "narrativecraft.items.cutscene.playing.name": "§7State: §aPlaying",
   "narrativecraft.items.cutscene.paused.name": "§7State: §cPaused",
   "narrativecraft.items.cutscene.skip.plus.name": "§a+ %d seconds",
   "narrativecraft.items.cutscene.skip.minus.name": "§c- %d seconds",
   "narrativecraft.items.cutscene.settings.name": "§aSettings",
+
+  "narrativecraft.cutscene.keyframegroup.created": "Keyframe group created: ID #%d",
+  "narrativecraft.cutscene.keyframegroup.text_display": "Keyframe Group #%d",
+  "narrativecraft.cutscene.keyframe.added": "Keyframe added to keyframe group ID #%d",
+  "narrativecraft.cutscene.keyframe.added.fail": "§cYou need to select a keyframe group or create a new one.",
 
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds"
 }

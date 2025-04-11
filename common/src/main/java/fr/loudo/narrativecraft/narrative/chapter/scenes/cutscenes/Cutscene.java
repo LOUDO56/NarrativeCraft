@@ -1,9 +1,8 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframePath;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 
 import java.io.IOException;
@@ -16,18 +15,16 @@ public class Cutscene {
     private String name;
     private int chapterIndex;
     private String sceneName;
-    private List<KeyframePath> keyframePathList;
-    private List<KeyframeTrigger> cutsceneTriggerList;
+    private List<KeyframeGroup> keyframeGroupList;
     private List<Subscene> subsceneList;
-    private Subscene defaultSubcene;
+    //private Subscene defaultSubcene;
 
     public Cutscene(String name, Scene scene) {
         this.name = name;
         this.scene = scene;
         this.chapterIndex = scene.getChapter().getIndex();
         this.sceneName = scene.getName();
-        this.keyframePathList = new ArrayList<>();
-        this.cutsceneTriggerList = new ArrayList<>();
+        this.keyframeGroupList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
     }
 
@@ -103,20 +100,12 @@ public class Cutscene {
         this.sceneName = sceneName;
     }
 
-    public List<KeyframePath> getKeyframePathList() {
-        return keyframePathList;
+    public List<KeyframeGroup> getKeyframeGroupList() {
+        return keyframeGroupList;
     }
 
-    public void setKeyframePathList(List<KeyframePath> keyframePathList) {
-        this.keyframePathList = keyframePathList;
-    }
-
-    public List<KeyframeTrigger> getCutsceneTriggerList() {
-        return cutsceneTriggerList;
-    }
-
-    public void setCutsceneTriggerList(List<KeyframeTrigger> cutsceneTriggerList) {
-        this.cutsceneTriggerList = cutsceneTriggerList;
+    public void setKeyframePathList(List<KeyframeGroup> keyframeGroupList) {
+        this.keyframeGroupList = keyframeGroupList;
     }
 
     public List<Subscene> getSubsceneList() {
@@ -125,14 +114,6 @@ public class Cutscene {
 
     public void setSubsceneList(List<Subscene> subsceneList) {
         this.subsceneList = subsceneList;
-    }
-
-    public Subscene getDefaultSubcene() {
-        return defaultSubcene;
-    }
-
-    public void setDefaultSubcene(Subscene defaultSubcene) {
-        this.defaultSubcene = defaultSubcene;
     }
 
 }
