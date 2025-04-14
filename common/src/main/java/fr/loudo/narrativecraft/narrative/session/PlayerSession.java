@@ -68,4 +68,12 @@ public class PlayerSession {
     public void setCutsceneController(CutsceneController cutsceneController) {
         this.cutsceneController = cutsceneController;
     }
+
+    public void reset() {
+        chapter = null;
+        scene = null;
+        subscenesPlaying.clear();
+        cutsceneController = null;
+        overwriteState = false;
+    }
 }

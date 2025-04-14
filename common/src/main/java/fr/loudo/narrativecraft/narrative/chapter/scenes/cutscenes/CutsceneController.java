@@ -9,16 +9,21 @@ import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CutsceneController {
 
     private transient final AtomicInteger keyframeGroupCounter = new AtomicInteger();
+    private transient final AtomicInteger keyframeCounter = new AtomicInteger();
+
+    private transient List<Entity> keyframesEntity;
 
     private Cutscene cutscene;
     private ServerPlayer player;
@@ -33,6 +38,7 @@ public class CutsceneController {
         this.isPlaying = false;
         this.currentTick = 0;
         this.currentSkipCount = 5 * 20;
+        this.keyframesEntity = new ArrayList<>();
     }
 
     public void startSession() {
@@ -54,6 +60,7 @@ public class CutsceneController {
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
                 keyframe.showKeyframeToClient(player);
+                keyframesEntity.add(keyframe.getArmorStand());
             }
         }
 
@@ -107,7 +114,8 @@ public class CutsceneController {
 
     public boolean addKeyframe() {
         if(selectedKeyframeGroup == null) return false;
-        Keyframe keyframe = new Keyframe(player.position(), 0, 0);
+        int newId = keyframeCounter.incrementAndGet();
+        Keyframe keyframe = new Keyframe(newId, player.position(), 0, 0);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             keyframe.setPathTime((currentTick / 20) * 1000L);
         } else {
@@ -117,6 +125,17 @@ public class CutsceneController {
         keyframe.showKeyframeToClient(player);
         return true;
     }
+
+    public Keyframe getKeyframeByEntity(Entity entity) {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
+                if(keyframe.getArmorStand().getId() == entity.getId()) {
+                    return keyframe;
+                }
+            }
+        }
+        return null;
+     }
 
     public void openSettings() {
         CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, player);
@@ -184,5 +203,9 @@ public class CutsceneController {
 
     public AtomicInteger getKeyframeGroupCounter() {
         return keyframeGroupCounter;
+    }
+
+    public List<Entity> getKeyframesEntity() {
+        return keyframesEntity;
     }
 }

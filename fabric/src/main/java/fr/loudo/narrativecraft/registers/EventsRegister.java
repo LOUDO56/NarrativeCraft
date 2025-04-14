@@ -5,6 +5,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
+import net.fabricmc.fabric.api.event.player.UseEntityCallback;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 
 public class EventsRegister {
@@ -16,6 +17,7 @@ public class EventsRegister {
         ServerTickEvents.END_SERVER_TICK.register(ServerTickEvent::onServerTick);
         PlayerBlockBreakEvents.AFTER.register(BlockBreakEvent::onBlockBreak);
         UseBlockCallback.EVENT.register(RightClickBlock::onRightClickBlock);
+        UseEntityCallback.EVENT.register(EntityRightClick::onEntityRightClick);
     }
 
 }
