@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
+import fr.loudo.narrativecraft.utils.PlayerCoord;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,22 +28,25 @@ public class KeyframeGroup {
             Keyframe firstKeyFrame = keyframeList.get(i);
             Keyframe secondKeyFrame = keyframeList.get(i + 1);
 
-            Vec3 startPos = firstKeyFrame.getPosition();
-            Vec3 endPos = secondKeyFrame.getPosition();
+            PlayerCoord startPos = firstKeyFrame.getPosition();
+            PlayerCoord endPos = secondKeyFrame.getPosition();
+
+            Vec3 vec3StartPos = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
+            Vec3 vec3EndPod = new Vec3(endPos.getX(), endPos.getY(), endPos.getZ());
 
             int numParticles = 15;
 
             for (int j = 0; j <= numParticles; j++) {
                 double t = j / (double) numParticles;
 
-                Vec3 particlePos = startPos.add(endPos.subtract(startPos).scale(t));
+                Vec3 particlePos = vec3StartPos.add(vec3EndPod.subtract(vec3StartPos).scale(t));
 
                 player.connection.send(new ClientboundLevelParticlesPacket(
                         ParticleTypes.CRIT,
                         false,
                         false,
                         particlePos.x(),
-                        particlePos.y() + 1,
+                        particlePos.y(),
                         particlePos.z(),
                         0f,
                         0f,

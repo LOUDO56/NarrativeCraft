@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
+import fr.loudo.narrativecraft.utils.PlayerCoord;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,6 +14,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +117,9 @@ public class CutsceneController {
     public boolean addKeyframe() {
         if(selectedKeyframeGroup == null) return false;
         int newId = keyframeCounter.incrementAndGet();
-        Keyframe keyframe = new Keyframe(newId, player.position(), 0, 0);
+        Vec3 playerPos = player.position();
+        PlayerCoord playerCoord = new PlayerCoord(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot());
+        Keyframe keyframe = new Keyframe(newId, playerCoord, 0, 0);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             keyframe.setPathTime((currentTick / 20) * 1000L);
         } else {

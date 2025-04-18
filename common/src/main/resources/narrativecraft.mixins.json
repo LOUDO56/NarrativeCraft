@@ -11,7 +11,8 @@
     "ItemStackMixin",
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
-    "fields.TextDisplayFields"
+    "fields.TextDisplayFields",
+    "fields.ArmorStandFields"
   ],
   "client": [],
   "server": [],
