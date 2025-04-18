@@ -46,8 +46,7 @@ public class Keyframe {
         );
         player.level().addFreshEntity(itemDisplay);
         player.level().addFreshEntity(armorStand);
-        itemDisplay.snapTo(position.getX(), position.getY(), position.getZ());
-        armorStand.snapTo(position.getX(), position.getY() - 0.5, position.getZ());
+        updateItemPosition();
         ((ArmorStandFields)armorStand).callSetSmall(true);
         armorStand.setNoGravity(true);
         armorStand.setInvisible(true);
@@ -89,6 +88,11 @@ public class Keyframe {
         if(textDisplay != null) {
             textDisplay.remove(Entity.RemovalReason.KILLED);
         }
+    }
+
+    public void updateItemPosition() {
+        itemDisplay.snapTo(position.getX(), position.getY(), position.getZ());
+        armorStand.snapTo(position.getX(), position.getY() - 0.5, position.getZ());
     }
 
     public PlayerCoord getPosition() {

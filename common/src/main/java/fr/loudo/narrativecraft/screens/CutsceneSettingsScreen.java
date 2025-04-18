@@ -42,7 +42,7 @@ public class CutsceneSettingsScreen extends Screen {
         this.addRenderableWidget(numberInput);
 
         int updateX = inputX + INPUT_WIDTH + 5;
-        updateButton = Button.builder(Component.literal("Update"), button -> {
+        updateButton = Button.builder(Translation.message("screen.keyframe.update"), button -> {
             String input = numberInput.getValue();
             if (!input.isEmpty()) {
                 int value = Integer.parseInt(input);

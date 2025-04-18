@@ -91,5 +91,11 @@
   "narrativecraft.cutscene.keyframe.added": "Keyframe added to keyframe group ID #%d",
   "narrativecraft.cutscene.keyframe.added.fail": "§cYou need to select a keyframe group or create a new one.",
 
-  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds"
+  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
+
+  "narrativecraft.screen.update": "Update",
+  "narrativecraft.screen.close": "Close",
+  "narrativecraft.screen.keyframe.start_delay": "Start delay:",
+  "narrativecraft.screen.keyframe.path_time": "Path time:",
+  "narrativecraft.screen.keyframe.updated": "Keyframe ID %d updated."
 }

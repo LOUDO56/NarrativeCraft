@@ -7,23 +7,19 @@ import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
+import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.server.level.ServerEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +32,23 @@ public class TestCommand {
                         .then(Commands.literal("changeSecondValue")
                                 .executes(TestCommand::openScreenChangeSecond)
                         )
+                        .then(Commands.literal("testScreen")
+                                .executes(TestCommand::openTestScreen)
+                        )
                 )
                 .then(Commands.literal("keyframeDisplay")
                         .executes(TestCommand::createKeyFrameItem)
                 )
         );
+    }
+
+    private static int openTestScreen(CommandContext<CommandSourceStack> context) {
+
+        KeyframeOptionScreen keyframeOptionScreen = new KeyframeOptionScreen(null);
+        Minecraft client = Minecraft.getInstance();
+        client.execute(() -> client.setScreen(keyframeOptionScreen));
+
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int createKeyFrameItem(CommandContext<CommandSourceStack> context) {

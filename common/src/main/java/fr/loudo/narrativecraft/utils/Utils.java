@@ -46,4 +46,14 @@ public class Utils {
         }
         return playerSession;
     }
+
+    public static float getSecondsByMillis(long milli) {
+        if(milli == 0) return 0;
+        return (float) milli / 1000;
+    }
+
+    public static long getMillisBySecond(double second) {
+        if(second == 0) return 0;
+        return (long) second * 1000L;
+    }
 }
