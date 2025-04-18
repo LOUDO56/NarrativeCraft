@@ -60,4 +60,7 @@ public class Utils {
     public static float get360Angle(float byteAngle) {
         return (byteAngle + 360) % 360;
     }
+    public static float get180Angle(float angle) {
+        return (angle + 180) % 360 - 180;
+    }
 }

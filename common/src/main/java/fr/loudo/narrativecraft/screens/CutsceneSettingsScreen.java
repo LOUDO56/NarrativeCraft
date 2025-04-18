@@ -14,7 +14,6 @@ public class CutsceneSettingsScreen extends Screen {
     private CutsceneController cutsceneController;
     private EditBox numberInput;
     private Button updateButton;
-
     private final int INPUT_WIDTH = 100;
     private final int BUTTON_WIDTH = 60;
     private final int BUTTON_HEIGHT = 20;
