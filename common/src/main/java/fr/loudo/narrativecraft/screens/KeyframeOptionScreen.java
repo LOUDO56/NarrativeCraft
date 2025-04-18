@@ -5,12 +5,12 @@ import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,11 +28,13 @@ public class KeyframeOptionScreen extends Screen {
     private Keyframe keyframe;
     private int currentY = INITIAL_POS_Y;
     private List<EditBox> editBoxList;
+    private ServerPlayer player;
 
-    public KeyframeOptionScreen(Keyframe keyframe) {
-        super(Component.literal("Skibidi"));
+    public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
+        super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;
         this.editBoxList = new ArrayList<>();
+        this.player = player;
     }
 
     @Override
@@ -74,7 +76,7 @@ public class KeyframeOptionScreen extends Screen {
         int i = 0;
         PlayerCoord position = keyframe.getPosition();
         Float[] coords = {(float)position.getX(), (float)position.getY(), (float)position.getZ(), position.getXRot(), position.getYRot()};
-        String[] labels = {"X:", "Y:", "Z:", "Yaw:", "Pitch:"};
+        String[] labels = {"X:", "Y:", "Z:", "Pitch:", "Yaw:"};
         for(String label : labels) {
             StringWidget stringWidget = ScreenUtils.text(Component.literal(label), this.font, currentX, currentY);
             EditBox box = new EditBox(this.font,
@@ -84,7 +86,6 @@ public class KeyframeOptionScreen extends Screen {
                     EDIT_BOX_HEIGHT,
                     Component.literal(stringWidget + " Value"));
             box.setFilter(s -> s.matches(REGEX_FLOAT));
-            System.out.println(coords[i]);
             box.setValue(String.format("%.2f", coords[i]));
             this.addRenderableWidget(stringWidget);
             this.addRenderableWidget(box);
@@ -112,13 +113,13 @@ public class KeyframeOptionScreen extends Screen {
             position.setXRot(XRotVal);
             position.setYRot(YRotVal);
             keyframe.setPosition(position);
-            keyframe.updateItemPosition();
-            Minecraft.getInstance().player.displayClientMessage(Translation.message("screen.keyframe.updated", keyframe.getId()), false);
+            keyframe.updateItemData(player);
+            player.sendSystemMessage(Translation.message("screen.keyframe.updated", keyframe.getId()), false);
             this.onClose();
         }).bounds(INITIAL_POS_X, currentY + 20, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         Button closeButton = Button.builder(Translation.message("screen.close"), button -> {
             this.onClose();
-        }).bounds(INITIAL_POS_X, currentY + 60, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(INITIAL_POS_X, currentY + 50, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(closeButton);
     }

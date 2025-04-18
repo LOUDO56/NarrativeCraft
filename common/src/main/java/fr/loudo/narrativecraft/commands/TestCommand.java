@@ -44,7 +44,7 @@ public class TestCommand {
 
     private static int openTestScreen(CommandContext<CommandSourceStack> context) {
 
-        KeyframeOptionScreen keyframeOptionScreen = new KeyframeOptionScreen(null);
+        KeyframeOptionScreen keyframeOptionScreen = new KeyframeOptionScreen(null, context.getSource().getPlayer());
         Minecraft client = Minecraft.getInstance();
         client.execute(() -> client.setScreen(keyframeOptionScreen));
 

@@ -5,7 +5,6 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -18,7 +17,7 @@ public class OnEntityRightClick {
             Keyframe keyframe = playerSession.getCutsceneController().getKeyframeByEntity(entity);
             if(keyframe != null) {
                 Minecraft client = Minecraft.getInstance();
-                KeyframeOptionScreen screen = new KeyframeOptionScreen(keyframe);
+                KeyframeOptionScreen screen = new KeyframeOptionScreen(keyframe, player);
                 client.execute(() -> client.setScreen(screen));
             }
         }

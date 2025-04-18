@@ -62,7 +62,7 @@ public class CutsceneController {
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
                 keyframe.showKeyframeToClient(player);
-                keyframesEntity.add(keyframe.getArmorStand());
+                keyframesEntity.add(keyframe.getCameraEntity());
             }
         }
 
@@ -85,7 +85,7 @@ public class CutsceneController {
 
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                keyframe.removeKeyframeFromClient();
+                keyframe.removeKeyframeFromClient(player);
             }
         }
 
@@ -120,20 +120,20 @@ public class CutsceneController {
         Vec3 playerPos = player.position();
         PlayerCoord playerCoord = new PlayerCoord(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot());
         Keyframe keyframe = new Keyframe(newId, playerCoord, 0, 0);
+        keyframe.showKeyframeToClient(player);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             keyframe.setPathTime((currentTick / 20) * 1000L);
         } else {
             keyframe.showStartGroupText(player, selectedKeyframeGroup.getId());
         }
         selectedKeyframeGroup.getKeyframeList().add(keyframe);
-        keyframe.showKeyframeToClient(player);
         return true;
     }
 
     public Keyframe getKeyframeByEntity(Entity entity) {
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                if(keyframe.getArmorStand().getId() == entity.getId()) {
+                if(keyframe.getCameraEntity().getId() == entity.getId()) {
                     return keyframe;
                 }
             }

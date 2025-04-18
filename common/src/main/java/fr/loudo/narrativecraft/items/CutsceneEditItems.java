@@ -13,6 +13,7 @@ public class CutsceneEditItems {
 
     private static final Property NEXT_SECOND_TEXTURE = new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU2YTM2MTg0NTllNDNiMjg3YjIyYjdlMjM1ZWM2OTk1OTQ1NDZjNmZjZDZkYzg0YmZjYTRjZjMwYWI5MzExIn19fQ==");
     private static final Property PREVIOUS_SECOND_TEXTURE = new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2E2Y2E0NWMxYjAyOTQxMDk3NWNjMGI3NjEyMTZjNGEwNTRlNzFhMWQxMjg1MWY5NDA0MjgxYTk2YTM0N2I3OSJ9fX0=");
+    private static final Property CAMERA_TEXTURE = new Property("textures", "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTg2OWRiODU4M2I4NjdmODRhMjc3YTliNGY5MDE3ZmM1ZTIyNzQ0MTMzMzkxZjcwZDQ1M2I2NzljMzIzZjljZCJ9fX0=");
 
     public static ItemStack createKeyframeGroup;
     public static ItemStack addKeyframe;
@@ -20,6 +21,7 @@ public class CutsceneEditItems {
     public static ItemStack cutscenePause;
     public static ItemStack nextSecond;
     public static ItemStack previousSecond;
+    public static ItemStack camera;
     public static ItemStack settings;
 
     public static void init(RegistryAccess access) {
@@ -27,6 +29,7 @@ public class CutsceneEditItems {
         addKeyframe = getItem(Translation.message("items.cutscene.keyframe.name").getString(), access, Items.REDSTONE_TORCH);
         cutscenePlaying = getItem(Translation.message("items.cutscene.playing.name").getString(), access, Items.LIME_DYE);
         cutscenePause = getItem(Translation.message("items.cutscene.paused.name").getString(), access, Items.GRAY_DYE);
+        camera = getItemWithTexture("", access, Items.PLAYER_HEAD, CAMERA_TEXTURE);
         settings = getItem(Translation.message("items.cutscene.settings.name").getString(), access, Items.NETHER_STAR);
     }
 

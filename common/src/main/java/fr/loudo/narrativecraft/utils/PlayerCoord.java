@@ -23,6 +23,10 @@ public class PlayerCoord {
         this.YRot = YRot;
     }
 
+    public Vec3 getVec3() {
+        return new Vec3(x, y, z);
+    }
+
     public double getX() {
         return x;
     }

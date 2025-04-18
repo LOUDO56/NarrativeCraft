@@ -56,4 +56,8 @@ public class Utils {
         if(second == 0) return 0;
         return (long) second * 1000L;
     }
+
+    public static float get360Angle(float byteAngle) {
+        return (byteAngle + 360) % 360;
+    }
 }

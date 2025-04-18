@@ -1,27 +1,24 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
-import com.mojang.math.Transformation;
+import com.mojang.datafixers.util.Pair;
+import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
-import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
-import fr.loudo.narrativecraft.mixin.fields.TextDisplayFields;
 import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.Translation;
-import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
+import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Rotations;
+import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class Keyframe {
 
-    private transient Display.ItemDisplay itemDisplay;
-    private transient ArmorStand armorStand;
-    private transient Display.TextDisplay textDisplay;
+    private transient ArmorStand cameraEntity;
     private int id;
     private PlayerCoord position;
     private long startDelay;
@@ -35,64 +32,51 @@ public class Keyframe {
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
-        armorStand = new ArmorStand(EntityType.ARMOR_STAND, player.level());
-        itemDisplay = new Display.ItemDisplay(EntityType.ITEM_DISPLAY, player.level());
-        itemDisplay.getSlot(0).set(new ItemStack(Items.ENDER_EYE));
-        Transformation transformation = new Transformation(
-                new Vector3f(0f, 0f, 0f),
-                new Quaternionf(0f, 0f, 0f, 1f),
-                new Vector3f(0.5f, 0.5f, 0.5f),
-                new Quaternionf(0f, 0f, 0f, 1f)
-        );
-        player.level().addFreshEntity(itemDisplay);
-        player.level().addFreshEntity(armorStand);
-        updateItemPosition();
-        ((ArmorStandFields)armorStand).callSetSmall(true);
-        armorStand.setNoGravity(true);
-        armorStand.setInvisible(true);
-        armorStand.setNoBasePlate(true);
-        ((DisplayFields)itemDisplay).callSetBillboardConstraints(Display.BillboardConstraints.CENTER);
-        ((DisplayFields)itemDisplay).callSetTransformation(transformation);
-        for(ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
-            if(serverPlayer.getId() != player.getId()) {
-                serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(itemDisplay.getId()));
-                serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(armorStand.getId()));
-            }
-        }
+        cameraEntity = new ArmorStand(EntityType.ARMOR_STAND, player.level());
+        ((ArmorStandFields) cameraEntity).callSetSmall(true);
+        cameraEntity.setNoGravity(true);
+        cameraEntity.setInvisible(true);
+        cameraEntity.setNoBasePlate(true);
+        BlockPos blockPos = new BlockPos((int) position.getX(), (int) position.getY(), (int) position.getZ());
+        player.connection.send(new ClientboundAddEntityPacket(cameraEntity, 0, blockPos));
+        player.connection.send(new ClientboundSetEquipmentPacket(
+                cameraEntity.getId(),
+                List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
+        ));
+        updateItemData(player);
     }
 
     public void showStartGroupText(ServerPlayer player, int id) {
-        textDisplay = new Display.TextDisplay(EntityType.TEXT_DISPLAY, player.level());
-        Transformation transformation = new Transformation(
-                new Vector3f(0f, 0f, 0f),
-                new Quaternionf(0f, 0f, 0f, 1f),
-                new Vector3f(0.5f, 0.5f, 0.5f),
-                new Quaternionf(0f, 0f, 0f, 1f)
+        cameraEntity.setCustomNameVisible(true);
+        cameraEntity.setCustomName(Translation.message("cutscene.keyframegroup.text_display", id));
+        updateItemData(player);
+    }
+
+    public void removeKeyframeFromClient(ServerPlayer player) {
+        player.connection.send(new ClientboundRemoveEntitiesPacket(cameraEntity.getId()));
+    }
+
+    public void updateItemData(ServerPlayer player) {
+        float XheadPos = Utils.get360Angle(position.getXRot());
+        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(position.getXRot()), 0, 0));
+
+        cameraEntity.setXRot(position.getXRot());
+        cameraEntity.setYRot(position.getYRot());
+        cameraEntity.setYHeadRot(position.getYRot());
+        cameraEntity.setYBodyRot(player.yBodyRot);
+        Vec3 playerCoordVec3 = new Vec3(position.getX(), position.getY() - 1, position.getZ());
+        PositionMoveRotation pos = new PositionMoveRotation(
+                playerCoordVec3,
+                new Vec3(0, 0, 0),
+                position.getYRot(),
+                position.getXRot()
         );
-        player.level().addFreshEntity(textDisplay);
-        textDisplay.snapTo(position.getX(), position.getY() + 0.5, position.getZ());
-        ((DisplayFields)textDisplay).callSetBillboardConstraints(Display.BillboardConstraints.CENTER);
-        ((DisplayFields)textDisplay).callSetTransformation(transformation);
-        ((TextDisplayFields)textDisplay).callSetText(Translation.message("cutscene.keyframegroup.text_display", id));
-        ((TextDisplayFields)textDisplay).callSetBackgroundColor(16711680);
-        for(ServerPlayer serverPlayer : player.getServer().getPlayerList().getPlayers()) {
-            if(serverPlayer.getId() != player.getId()) {
-                serverPlayer.connection.send(new ClientboundRemoveEntitiesPacket(textDisplay.getId()));
-            }
-        }
-    }
-
-    public void removeKeyframeFromClient() {
-        itemDisplay.remove(Entity.RemovalReason.KILLED);
-        armorStand.remove(Entity.RemovalReason.KILLED);
-        if(textDisplay != null) {
-            textDisplay.remove(Entity.RemovalReason.KILLED);
-        }
-    }
-
-    public void updateItemPosition() {
-        itemDisplay.snapTo(position.getX(), position.getY(), position.getZ());
-        armorStand.snapTo(position.getX(), position.getY() - 0.5, position.getZ());
+        player.connection.send(new ClientboundEntityPositionSyncPacket(
+                cameraEntity.getId(),
+                pos,
+                false
+        ));
+        player.connection.send(new ClientboundSetEntityDataPacket(cameraEntity.getId(), cameraEntity.getEntityData().getNonDefaultValues()));
     }
 
     public PlayerCoord getPosition() {
@@ -120,8 +104,8 @@ public class Keyframe {
         this.pathTime = pathTime;
     }
 
-    public ArmorStand getArmorStand() {
-        return armorStand;
+    public ArmorStand getCameraEntity() {
+        return cameraEntity;
     }
 
     public int getId() {
