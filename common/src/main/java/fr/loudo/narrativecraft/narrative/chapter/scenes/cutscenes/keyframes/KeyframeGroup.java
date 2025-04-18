@@ -57,10 +57,11 @@ public class KeyframeGroup {
             }
         }
     }
-
-
     public List<Keyframe> getKeyframeList() {
         return keyframeList;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
 }

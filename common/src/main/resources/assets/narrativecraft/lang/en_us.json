@@ -95,6 +95,7 @@
 
   "narrativecraft.screen.update": "Update",
   "narrativecraft.screen.close": "Close",
+  "narrativecraft.screen.remove": "Remove",
   "narrativecraft.screen.keyframe.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe.path_time": "Path time:",
   "narrativecraft.screen.keyframe.updated": "Keyframe ID %d updated."

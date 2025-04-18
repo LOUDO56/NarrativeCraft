@@ -1,10 +1,13 @@
 package fr.loudo.narrativecraft.screens;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.Util;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -35,7 +38,6 @@ public class KeyframeOptionScreen extends Screen {
     private float pitchValue = 0F;
     private float yawValue = 0F;
 
-
     private ServerPlayer player;
 
     public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
@@ -51,9 +53,9 @@ public class KeyframeOptionScreen extends Screen {
     protected void init() {
         addLabeledEditBox(Translation.message("screen.keyframe.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
         addLabeledEditBox(Translation.message("screen.keyframe.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
-        addPositionLabelBox();
+        initPositionLabelBox();
         initSliders();
-        addUpdateButton();
+        initUpdateButton();
 
     }
 
@@ -82,7 +84,7 @@ public class KeyframeOptionScreen extends Screen {
         currentY += EDIT_BOX_HEIGHT + 5;
     }
 
-    private void addPositionLabelBox() {
+    private void initPositionLabelBox() {
         int currentX = INITIAL_POS_X;
         int editWidth = 50;
         int i = 0;
@@ -107,7 +109,7 @@ public class KeyframeOptionScreen extends Screen {
         }
     }
 
-    private void addUpdateButton() {
+    private void initUpdateButton() {
         Button updateButton = Button.builder(Translation.message("screen.update"), button -> {
             float startDelayVal = Float.parseFloat((editBoxList.get(0).getValue()));
             float pathTimeVal = Float.parseFloat((editBoxList.get(1).getValue()));
@@ -127,12 +129,21 @@ public class KeyframeOptionScreen extends Screen {
             player.sendSystemMessage(Translation.message("screen.keyframe.updated", keyframe.getId()), false);
             this.onClose();
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        currentY += 25;
         Button closeButton = Button.builder(Translation.message("screen.close"), button -> {
             this.onClose();
-        }).bounds(INITIAL_POS_X, currentY + 25, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        currentY += 25;
+        Button removeKeyframe = Button.builder(Translation.message("screen.remove"), button -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(player);
+            if(playerSession != null) {
+                playerSession.getCutsceneController().removeKeyframe(keyframe);
+                this.onClose();
+            }
+        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(closeButton);
-        currentY += 70;
+        this.addRenderableWidget(removeKeyframe);
     }
 
     private void initSliders() {

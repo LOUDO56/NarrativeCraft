@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.events;
+ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.core.BlockPos;

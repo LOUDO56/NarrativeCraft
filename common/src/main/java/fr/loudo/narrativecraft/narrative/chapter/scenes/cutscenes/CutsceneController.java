@@ -130,6 +130,34 @@ public class CutsceneController {
         return true;
     }
 
+    public boolean removeKeyframe(Keyframe keyframe) {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for(Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                if(keyframe.getId() == keyframeFromGroup.getId()) {
+                    keyframe.removeKeyframeFromClient(player);
+                    List<Keyframe> keyframeList = keyframeGroup.getKeyframeList();
+                    keyframeList.remove(keyframeFromGroup);
+                    if(!keyframeList.isEmpty()) {
+                        // If the user delete the first keyframe from the group, then set the first keyframe group to the next keyframe
+                        Keyframe newFirstKeyframeGroup = keyframeList.getFirst();
+                        newFirstKeyframeGroup.showStartGroupText(player, keyframeGroup.getId());
+                    } else {
+                        // Re-assign automatically the group id if the user delete a keyframe group without any child
+                        keyframeGroupCounter.decrementAndGet();
+                        cutscene.getKeyframeGroupList().remove(keyframeGroup);
+                        for(int i = 0; i < cutscene.getKeyframeGroupList().size(); i++) {
+                            KeyframeGroup keyframeGroup1 = cutscene.getKeyframeGroupList().get(i);
+                            keyframeGroup1.getKeyframeList().getFirst().showStartGroupText(player, i + 1);
+                            keyframeGroup1.setId(i + 1);
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public Keyframe getKeyframeByEntity(Entity entity) {
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
