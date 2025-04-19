@@ -1,13 +1,11 @@
 package fr.loudo.narrativecraft.screens;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.Util;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -34,9 +32,11 @@ public class KeyframeOptionScreen extends Screen {
     private List<EditBox> editBoxList;
     private AbstractSliderButton pitchSlider;
     private AbstractSliderButton yawSlider;
+    private AbstractSliderButton fovSlider;
 
-    private float pitchValue = 0F;
-    private float yawValue = 0F;
+    private float pitchValue;
+    private float yawValue;
+    private int fovValue;
 
     private ServerPlayer player;
 
@@ -47,6 +47,7 @@ public class KeyframeOptionScreen extends Screen {
         this.player = player;
         this.pitchValue = keyframe.getPosition().getXRot();
         this.yawValue = keyframe.getPosition().getYRot();
+        this.fovValue = keyframe.getFov();
     }
 
     @Override
@@ -56,13 +57,15 @@ public class KeyframeOptionScreen extends Screen {
         initPositionLabelBox();
         initSliders();
         initUpdateButton();
-
     }
 
     @Override
     public boolean isPauseScreen() {
         return false;
     }
+
+    @Override
+    protected void renderBlurredBackground() {}
 
     private void addLabeledEditBox(Component text, String defaultValue) {
         StringWidget labelWidget = ScreenUtils.text(text, this.font, INITIAL_POS_X, currentY);
@@ -111,27 +114,18 @@ public class KeyframeOptionScreen extends Screen {
 
     private void initUpdateButton() {
         Button updateButton = Button.builder(Translation.message("screen.update"), button -> {
-            float startDelayVal = Float.parseFloat((editBoxList.get(0).getValue()));
-            float pathTimeVal = Float.parseFloat((editBoxList.get(1).getValue()));
-            float xVal = Float.parseFloat((editBoxList.get(2).getValue()));
-            float yVal = Float.parseFloat((editBoxList.get(3).getValue()));
-            float zVal = Float.parseFloat((editBoxList.get(4).getValue()));
-            PlayerCoord position = keyframe.getPosition();
-            keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
-            keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
-            position.setX(xVal);
-            position.setY(yVal);
-            position.setZ(zVal);
-            position.setXRot(pitchValue);
-            position.setYRot(yawValue);
-            keyframe.setPosition(position);
-            keyframe.updateItemData(player);
+            updateValues();
             player.sendSystemMessage(Translation.message("screen.keyframe.updated", keyframe.getId()), false);
             this.onClose();
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         currentY += 25;
-        Button closeButton = Button.builder(Translation.message("screen.close"), button -> {
-            this.onClose();
+        Button previewButton = Button.builder(Translation.message("screen.preview"), button -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(player);
+            if(playerSession != null) {
+                updateValues();
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(keyframe);
+                this.onClose();
+            }
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         currentY += 25;
         Button removeKeyframe = Button.builder(Translation.message("screen.remove"), button -> {
@@ -141,43 +135,51 @@ public class KeyframeOptionScreen extends Screen {
                 this.onClose();
             }
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        currentY += 25;
+        Button closeButton = Button.builder(Translation.message("screen.close"), button -> {
+            this.onClose();
+        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(closeButton);
         this.addRenderableWidget(removeKeyframe);
+        this.addRenderableWidget(previewButton);
     }
 
     private void initSliders() {
-        Component curentPitchMessage = Component.literal(String.format("Pitch %.2f", keyframe.getPosition().getXRot()));
-        pitchSlider = new AbstractSliderButton(INITIAL_POS_X, currentY + 30, 150, BUTTON_HEIGHT,
+        Component curentPitchMessage = Component.literal(String.format("Pitch: %.2f", keyframe.getPosition().getXRot()));
+        currentY += 30;
+        pitchSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT,
                 curentPitchMessage,
                 (Utils.get180Angle(keyframe.getPosition().getXRot()) + 90F) / 180F
         ) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Component.literal(String.format("Pitch %.2f", getValue())));
+                this.setMessage(Component.literal(String.format("Pitch: %.2f", getValue())));
             }
 
             @Override
             protected void applyValue() {
                 pitchValue = getValue();
+                updateValues();
             }
 
             public float getValue() {
                 return (float)(this.value * 180F - 90F);
             }
         };
+        currentY += 30;
+        Component currentYawMessage = Component.literal(String.format("Yaw: %.2f", keyframe.getPosition().getYRot()));
 
-        Component currentYawMessage = Component.literal(String.format("Yaw %.2f", keyframe.getPosition().getYRot()));
-
-        yawSlider = new AbstractSliderButton(INITIAL_POS_X, currentY + 60, 150, BUTTON_HEIGHT, currentYawMessage, Utils.get360Angle( keyframe.getPosition().getYRot()) / 360) {
+        yawSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, currentYawMessage, Utils.get360Angle( keyframe.getPosition().getYRot()) / 360) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Component.literal(String.format("Yaw %.2f", getValue())));
+                this.setMessage(Component.literal(String.format("Yaw: %.2f", getValue())));
             }
 
             @Override
             protected void applyValue() {
                 yawValue = getValue();
+                updateValues();
             }
 
             public float getValue() {
@@ -185,10 +187,50 @@ public class KeyframeOptionScreen extends Screen {
             }
         };
 
+        currentY += 30;
+
+        Component currentFovMessage = Component.literal(String.format("Fov: %d", keyframe.getFov()));
+
+        fovSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, currentFovMessage, (double) keyframe.getFov() / 150) {
+            @Override
+            protected void updateMessage() {
+                this.setMessage(Component.literal(String.format("Fov: %d", getValue())));
+            }
+
+            @Override
+            protected void applyValue() {
+                fovValue = getValue();
+            }
+
+            public int getValue() {
+                return (int) (this.value * 150);
+            }
+        };
+
         this.addRenderableWidget(pitchSlider);
         this.addRenderableWidget(yawSlider);
+        this.addRenderableWidget(fovSlider);
 
-        currentY += 90;
+        currentY += 30;
 
+    }
+
+    private void updateValues() {
+        float startDelayVal = Float.parseFloat((editBoxList.get(0).getValue()));
+        float pathTimeVal = Float.parseFloat((editBoxList.get(1).getValue()));
+        float xVal = Float.parseFloat((editBoxList.get(2).getValue()));
+        float yVal = Float.parseFloat((editBoxList.get(3).getValue()));
+        float zVal = Float.parseFloat((editBoxList.get(4).getValue()));
+        PlayerCoord position = keyframe.getPosition();
+        keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
+        keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
+        position.setX(xVal);
+        position.setY(yVal);
+        position.setZ(zVal);
+        position.setXRot(pitchValue);
+        position.setYRot(yawValue);
+        keyframe.setPosition(position);
+        keyframe.updateItemData(player);
+        keyframe.setFov(fovValue);
     }
 }

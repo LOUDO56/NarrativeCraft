@@ -10,6 +10,7 @@ import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 
 import java.util.UUID;
@@ -41,6 +42,15 @@ public class Utils {
 
     public static PlayerSession getSessionOrNull(ServerPlayer player) {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
+        if(playerSession.getChapter() == null || playerSession.getScene() == null) {
+            return null;
+        }
+        return playerSession;
+    }
+
+    public static PlayerSession getSessionOrNull(UUID uuid) {
+        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(uuid);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(serverPlayer);
         if(playerSession.getChapter() == null || playerSession.getScene() == null) {
             return null;
         }

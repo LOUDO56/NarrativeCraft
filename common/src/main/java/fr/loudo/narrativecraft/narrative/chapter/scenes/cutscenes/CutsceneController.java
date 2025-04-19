@@ -33,6 +33,7 @@ public class CutsceneController {
     private int currentTick;
     private int currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
+    private Keyframe currentPreviewKeyframe;
 
     public CutsceneController(Cutscene cutscene, ServerPlayer player) {
         this.cutscene = cutscene;
@@ -119,7 +120,7 @@ public class CutsceneController {
         int newId = keyframeCounter.incrementAndGet();
         Vec3 playerPos = player.position();
         PlayerCoord playerCoord = new PlayerCoord(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot());
-        Keyframe keyframe = new Keyframe(newId, playerCoord, 0, 0);
+        Keyframe keyframe = new Keyframe(newId, playerCoord, 0, 0, Minecraft.getInstance().options.fov().get());
         keyframe.showKeyframeToClient(player);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             keyframe.setPathTime((currentTick / 20) * 1000L);
@@ -167,7 +168,22 @@ public class CutsceneController {
             }
         }
         return null;
-     }
+    }
+
+    public Keyframe getCurrentPreviewKeyframe() {
+        return currentPreviewKeyframe;
+    }
+
+    public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe) {
+        this.currentPreviewKeyframe = currentPreviewKeyframe;
+        currentPreviewKeyframe.hideEntity(player);
+    }
+
+    public void clearCurrentPreviewKeyframe() {
+        Minecraft.getInstance().options.hideGui = false;
+        currentPreviewKeyframe.showEntity(player);
+        currentPreviewKeyframe = null;
+    }
 
     public void openSettings() {
         CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, player);

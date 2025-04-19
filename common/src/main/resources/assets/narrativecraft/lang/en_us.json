@@ -2,6 +2,7 @@
   "key.categories.narrativecraft": "Narrative Craft Animation",
   "key.animation.record.start": "Start Animation Recording",
   "key.animation.record.stop": "Stop Animation Recording",
+  "key.cutscene.keyframe.leave_preview_keyframe": "Leave Keyframe Preview",
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
@@ -96,6 +97,7 @@
   "narrativecraft.screen.update": "Update",
   "narrativecraft.screen.close": "Close",
   "narrativecraft.screen.remove": "Remove",
+  "narrativecraft.screen.preview": "Preview",
   "narrativecraft.screen.keyframe.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe.path_time": "Path time:",
   "narrativecraft.screen.keyframe.updated": "Keyframe ID %d updated."

@@ -9,6 +9,8 @@
     "ServerLevelMixin",
     "LivingEntityMixin",
     "ItemStackMixin",
+    "CameraMixin",
+    "GameRendererMixin",
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
     "fields.TextDisplayFields",

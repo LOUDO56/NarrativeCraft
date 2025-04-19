@@ -6,12 +6,15 @@ import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
 import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Rotations;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.decoration.ArmorStand;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -23,12 +26,14 @@ public class Keyframe {
     private PlayerCoord position;
     private long startDelay;
     private long pathTime;
+    private int fov;
 
-    public Keyframe(int id, PlayerCoord position, long startDelay, long pathTime) {
+    public Keyframe(int id, PlayerCoord position, long startDelay, long pathTime, int fov) {
         this.id = id;
         this.position = position;
         this.startDelay = startDelay;
         this.pathTime = pathTime;
+        this.fov = fov;
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
@@ -39,10 +44,7 @@ public class Keyframe {
         cameraEntity.setNoBasePlate(true);
         BlockPos blockPos = new BlockPos((int) position.getX(), (int) position.getY(), (int) position.getZ());
         player.connection.send(new ClientboundAddEntityPacket(cameraEntity, 0, blockPos));
-        player.connection.send(new ClientboundSetEquipmentPacket(
-                cameraEntity.getId(),
-                List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
-        ));
+        showEntity(player);
         updateItemData(player);
     }
 
@@ -112,4 +114,27 @@ public class Keyframe {
         return id;
     }
 
+    public int getFov() {
+        return fov;
+    }
+
+    public void setFov(int fov) {
+        this.fov = fov;
+    }
+
+    public void hideEntity(ServerPlayer player) {
+        player.connection.send(new ClientboundSetEquipmentPacket(
+                cameraEntity.getId(),
+                List.of(new Pair<>(EquipmentSlot.HEAD, ItemStack.EMPTY))
+        ));
+        updateItemData(player);
+    }
+
+    public void showEntity(ServerPlayer player) {
+        player.connection.send(new ClientboundSetEquipmentPacket(
+                cameraEntity.getId(),
+                List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
+        ));
+        updateItemData(player);
+    }
 }
