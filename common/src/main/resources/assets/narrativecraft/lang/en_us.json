@@ -2,7 +2,7 @@
   "key.categories.narrativecraft": "Narrative Craft Animation",
   "key.animation.record.start": "Start Animation Recording",
   "key.animation.record.stop": "Stop Animation Recording",
-  "key.cutscene.keyframe.leave_preview_keyframe": "Leave Keyframe Preview",
+  "key.cutscene.screen.keyframe_option": "Open Keyframe Option Screen",
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",

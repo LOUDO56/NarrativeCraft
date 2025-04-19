@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -19,8 +20,8 @@ import java.util.List;
 
 public class KeyframeOptionScreen extends Screen {
 
-    private final int INITIAL_POS_X = 80;
-    private final int INITIAL_POS_Y = 40;
+    private final int INITIAL_POS_X = 20;
+    private final int INITIAL_POS_Y = 20;
     private final int EDIT_BOX_WIDTH = 60;
     private final int EDIT_BOX_HEIGHT = 15;
     private final int BUTTON_WIDTH = 60;
@@ -66,6 +67,9 @@ public class KeyframeOptionScreen extends Screen {
 
     @Override
     protected void renderBlurredBackground() {}
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     private void addLabeledEditBox(Component text, String defaultValue) {
         StringWidget labelWidget = ScreenUtils.text(text, this.font, INITIAL_POS_X, currentY);
@@ -115,34 +119,18 @@ public class KeyframeOptionScreen extends Screen {
     private void initUpdateButton() {
         Button updateButton = Button.builder(Translation.message("screen.update"), button -> {
             updateValues();
-            player.sendSystemMessage(Translation.message("screen.keyframe.updated", keyframe.getId()), false);
-            this.onClose();
-        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
-        currentY += 25;
-        Button previewButton = Button.builder(Translation.message("screen.preview"), button -> {
-            PlayerSession playerSession = Utils.getSessionOrNull(player);
-            if(playerSession != null) {
-                updateValues();
-                playerSession.getCutsceneController().setCurrentPreviewKeyframe(keyframe);
-                this.onClose();
-            }
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         currentY += 25;
         Button removeKeyframe = Button.builder(Translation.message("screen.remove"), button -> {
             PlayerSession playerSession = Utils.getSessionOrNull(player);
             if(playerSession != null) {
+                playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
                 playerSession.getCutsceneController().removeKeyframe(keyframe);
                 this.onClose();
             }
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
-        currentY += 25;
-        Button closeButton = Button.builder(Translation.message("screen.close"), button -> {
-            this.onClose();
-        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
-        this.addRenderableWidget(closeButton);
         this.addRenderableWidget(removeKeyframe);
-        this.addRenderableWidget(previewButton);
     }
 
     private void initSliders() {
@@ -200,6 +188,7 @@ public class KeyframeOptionScreen extends Screen {
             @Override
             protected void applyValue() {
                 fovValue = getValue();
+                updateValues();
             }
 
             public int getValue() {

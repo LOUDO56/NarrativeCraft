@@ -176,12 +176,24 @@ public class CutsceneController {
 
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
-        currentPreviewKeyframe.hideEntity(player);
+        currentPreviewKeyframe.openScreenOption(player);
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                keyframeFromGroup.removeKeyframeFromClient(player);
+            }
+        }
     }
 
     public void clearCurrentPreviewKeyframe() {
         Minecraft.getInstance().options.hideGui = false;
-        currentPreviewKeyframe.showEntity(player);
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                keyframeFromGroup.showKeyframeToClient(player);
+                if(keyframeFromGroup.isParentGroup()) {
+                    keyframeFromGroup.showStartGroupText(player, keyframeGroup.getId());
+                }
+            }
+        }
         currentPreviewKeyframe = null;
     }
 

@@ -16,9 +16,7 @@ public class OnEntityRightClick {
         if(playerSession != null && playerSession.getCutsceneController() != null) {
             Keyframe keyframe = playerSession.getCutsceneController().getKeyframeByEntity(entity);
             if(keyframe != null) {
-                Minecraft client = Minecraft.getInstance();
-                KeyframeOptionScreen screen = new KeyframeOptionScreen(keyframe, player);
-                client.execute(() -> client.setScreen(screen));
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(keyframe);
             }
         }
 

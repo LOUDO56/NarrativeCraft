@@ -3,18 +3,19 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
+import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Rotations;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class Keyframe {
     private long startDelay;
     private long pathTime;
     private int fov;
+    private boolean isParentGroup;
 
     public Keyframe(int id, PlayerCoord position, long startDelay, long pathTime, int fov) {
         this.id = id;
@@ -34,6 +36,7 @@ public class Keyframe {
         this.startDelay = startDelay;
         this.pathTime = pathTime;
         this.fov = fov;
+        this.isParentGroup = false;
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
@@ -44,13 +47,17 @@ public class Keyframe {
         cameraEntity.setNoBasePlate(true);
         BlockPos blockPos = new BlockPos((int) position.getX(), (int) position.getY(), (int) position.getZ());
         player.connection.send(new ClientboundAddEntityPacket(cameraEntity, 0, blockPos));
-        showEntity(player);
+        player.connection.send(new ClientboundSetEquipmentPacket(
+                cameraEntity.getId(),
+                List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
+        ));
         updateItemData(player);
     }
 
     public void showStartGroupText(ServerPlayer player, int id) {
         cameraEntity.setCustomNameVisible(true);
         cameraEntity.setCustomName(Translation.message("cutscene.keyframegroup.text_display", id));
+        isParentGroup = true;
         updateItemData(player);
     }
 
@@ -122,19 +129,13 @@ public class Keyframe {
         this.fov = fov;
     }
 
-    public void hideEntity(ServerPlayer player) {
-        player.connection.send(new ClientboundSetEquipmentPacket(
-                cameraEntity.getId(),
-                List.of(new Pair<>(EquipmentSlot.HEAD, ItemStack.EMPTY))
-        ));
-        updateItemData(player);
+    public void openScreenOption(ServerPlayer player) {
+        Minecraft client = Minecraft.getInstance();
+        KeyframeOptionScreen screen = new KeyframeOptionScreen(this, player);
+        client.execute(() -> client.setScreen(screen));
     }
 
-    public void showEntity(ServerPlayer player) {
-        player.connection.send(new ClientboundSetEquipmentPacket(
-                cameraEntity.getId(),
-                List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
-        ));
-        updateItemData(player);
+    public boolean isParentGroup() {
+        return isParentGroup;
     }
 }

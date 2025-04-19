@@ -49,6 +49,9 @@ public abstract class CameraMixin {
                         if(playerSession.getPlayer().isShiftKeyDown()) {
                             cutsceneController.clearCurrentPreviewKeyframe();
                         }
+                        if(ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
+                            keyframePreview.openScreenOption(playerSession.getPlayer());
+                        }
                         ci.cancel();
                     }
                 }

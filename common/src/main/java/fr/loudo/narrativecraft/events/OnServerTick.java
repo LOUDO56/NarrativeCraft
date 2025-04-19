@@ -37,7 +37,7 @@ public class OnServerTick {
             CutsceneController cutsceneController = playerSession.getCutsceneController();
             if(cutsceneController != null) {
                 cutsceneController.next();
-                if(NarrativeCraftMod.server.getTickCount() % 5 == 0) {
+                if(NarrativeCraftMod.server.getTickCount() % 5 == 0 && cutsceneController.getCurrentPreviewKeyframe() == null) {
                     for(KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
                         keyframeGroup.showLineBetweenKeyframes(playerSession.getPlayer());
                     }

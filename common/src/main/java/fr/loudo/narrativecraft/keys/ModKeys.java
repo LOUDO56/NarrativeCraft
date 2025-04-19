@@ -8,6 +8,7 @@ public class ModKeys {
 
     public static final KeyMapping START_ANIMATION_RECORDING = registerKey("key.animation.record.start", InputConstants.KEY_V);
     public static final KeyMapping STOP_ANIMATION_RECORDING = registerKey("key.animation.record.stop", InputConstants.KEY_B);
+    public static final KeyMapping SCREEN_KEYFRAME_OPTION = registerKey("key.cutscene.screen.keyframe_option", InputConstants.KEY_Y);
 
     private static KeyMapping registerKey(String translationKey, int code) {
         return new KeyMapping(
