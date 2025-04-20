@@ -62,12 +62,11 @@ public class Utils {
 
     public static float getSecondsByMillis(long milli) {
         if(milli == 0) return 0;
-        return (float) milli / 1000;
+        return milli / 1000f;
     }
 
     public static long getMillisBySecond(double second) {
-        if(second == 0) return 0;
-        return (long) second * 1000L;
+        return (long) (second * 1000L);
     }
 
     public static float get360Angle(float byteAngle) {

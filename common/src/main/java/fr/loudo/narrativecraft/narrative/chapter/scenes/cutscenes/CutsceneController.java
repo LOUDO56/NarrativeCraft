@@ -125,7 +125,9 @@ public class CutsceneController {
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             int tickFirstKeyframe = selectedKeyframeGroup.getKeyframeList().getLast().getTick();
             int tickSecondKeyframe = keyframe.getTick();
-            long pathTime = (long) (((double) (tickSecondKeyframe - tickFirstKeyframe) / 20) * 1000L);
+            int difference = tickSecondKeyframe - tickFirstKeyframe;
+            double seconds = difference / 20.0;
+            long pathTime = (long) (seconds * 1000.0);
             keyframe.setPathTime(pathTime);
         } else {
             keyframe.showStartGroupText(player, selectedKeyframeGroup.getId());
