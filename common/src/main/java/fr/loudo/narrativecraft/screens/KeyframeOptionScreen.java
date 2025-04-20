@@ -27,9 +27,13 @@ public class KeyframeOptionScreen extends Screen {
     private final int BUTTON_WIDTH = 60;
     private final int BUTTON_HEIGHT = 20;
 
+    private ServerPlayer player;
     private Keyframe keyframe;
-    private int currentY = INITIAL_POS_Y;
-    private List<EditBox> editBoxList;
+    private List<EditBox> coordinatesBoxList;
+
+    private EditBox startDelayBox;
+    private EditBox pathTimeBox;
+
     private AbstractSliderButton upDownSlider;
     private AbstractSliderButton leftRightSlider;
     private AbstractSliderButton rotationSlider;
@@ -39,13 +43,13 @@ public class KeyframeOptionScreen extends Screen {
     private float leftRightValue;
     private float rotationValue;
     private int fovValue;
+    private int currentY = INITIAL_POS_Y;
 
-    private ServerPlayer player;
 
     public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
         super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;
-        this.editBoxList = new ArrayList<>();
+        this.coordinatesBoxList = new ArrayList<>();
         this.player = player;
         this.upDownValue = keyframe.getPosition().getXRot();
         this.leftRightValue = keyframe.getPosition().getYRot();
@@ -55,9 +59,9 @@ public class KeyframeOptionScreen extends Screen {
 
     @Override
     protected void init() {
-        addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
+        startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
         if(!keyframe.isParentGroup()) {
-            addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+            pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
         }
         initPositionLabelBox();
         initSliders();
@@ -75,7 +79,7 @@ public class KeyframeOptionScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    private void addLabeledEditBox(Component text, String defaultValue) {
+    private EditBox addLabeledEditBox(Component text, String defaultValue) {
         StringWidget labelWidget = ScreenUtils.text(text, this.font, INITIAL_POS_X, currentY);
 
         EditBox editBox = new EditBox(this.font,
@@ -90,9 +94,9 @@ public class KeyframeOptionScreen extends Screen {
 
         this.addRenderableWidget(labelWidget);
         this.addRenderableWidget(editBox);
-        editBoxList.add(editBox);
 
         currentY += EDIT_BOX_HEIGHT + 5;
+        return editBox;
     }
 
     private void initPositionLabelBox() {
@@ -114,7 +118,7 @@ public class KeyframeOptionScreen extends Screen {
             box.setValue(String.format("%.2f", coords[i]));
             this.addRenderableWidget(stringWidget);
             this.addRenderableWidget(box);
-            editBoxList.add(box);
+            coordinatesBoxList.add(box);
             currentX += stringWidget.getWidth() + editWidth + 10;
             i++;
         }
@@ -233,11 +237,11 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void updateValues() {
-        float startDelayVal = Float.parseFloat((editBoxList.get(0).getValue()));
-        float pathTimeVal = Float.parseFloat((editBoxList.get(1).getValue()));
-        float xVal = Float.parseFloat((editBoxList.get(2).getValue()));
-        float yVal = Float.parseFloat((editBoxList.get(3).getValue()));
-        float zVal = Float.parseFloat((editBoxList.get(4).getValue()));
+        float startDelayVal = Float.parseFloat((startDelayBox.getValue()));
+        float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
+        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
+        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
+        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         PlayerCoord position = keyframe.getPosition();
         keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
