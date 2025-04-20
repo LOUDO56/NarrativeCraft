@@ -32,31 +32,36 @@ public abstract class CameraMixin {
     private void update(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
 
         LocalPlayer localPlayer = Minecraft.getInstance().player;
-        if(localPlayer != null) {
-            PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
-            if(playerSession != null ){
-                CutsceneController cutsceneController = playerSession.getCutsceneController();
-                if(cutsceneController != null) {
-                    Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
-                    if(keyframePreview != null) {
-                        Minecraft client = Minecraft.getInstance();
-                        PlayerCoord position = keyframePreview.getPosition();
-                        this.setPosition(position.getX(), position.getY(), position.getZ());
-                        this.setRotation(position.getYRot(), position.getXRot());
-                        this.getMaxZoom(keyframePreview.getFov());
-                        client.options.setCameraType(CameraType.FIRST_PERSON);
-                        client.options.hideGui = true;
-                        if(playerSession.getPlayer().isShiftKeyDown()) {
-                            cutsceneController.clearCurrentPreviewKeyframe();
-                        }
-                        if(ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
-                            keyframePreview.openScreenOption(playerSession.getPlayer());
-                        }
-                        ci.cancel();
-                    }
-                }
-            }
+        if (localPlayer == null) return;
+
+        PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
+        if (playerSession == null) return;
+
+        CutsceneController cutsceneController = playerSession.getCutsceneController();
+        if (cutsceneController == null) return;
+
+        Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
+        if (keyframePreview == null) return;
+
+        Minecraft client = Minecraft.getInstance();
+        PlayerCoord position = keyframePreview.getPosition();
+
+        this.setPosition(position.getX(), position.getY(), position.getZ());
+        this.setRotation(position.getYRot(), position.getXRot());
+        this.getMaxZoom(keyframePreview.getFov());
+
+        client.options.setCameraType(CameraType.FIRST_PERSON);
+        client.options.hideGui = true;
+
+        if (playerSession.getPlayer().isShiftKeyDown()) {
+            cutsceneController.clearCurrentPreviewKeyframe();
         }
+
+        if (ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
+            keyframePreview.openScreenOption(playerSession.getPlayer());
+        }
+
+        ci.cancel();
 
     }
 

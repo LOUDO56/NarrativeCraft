@@ -17,17 +17,18 @@ public class GameRendererMixin {
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
     public void getZoomLevel(CallbackInfoReturnable<Float> callbackInfo) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
-        if(localPlayer != null) {
-            PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
-            if(playerSession != null){
-                CutsceneController cutsceneController = playerSession.getCutsceneController();
-                if(cutsceneController != null) {
-                    Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
-                    if(keyframePreview != null) {
-                        callbackInfo.setReturnValue((float) keyframePreview.getFov());
-                    }
-                }
-            }
-        }
+        if (localPlayer == null) return;
+
+        PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
+        if (playerSession == null) return;
+
+        CutsceneController cutsceneController = playerSession.getCutsceneController();
+        if (cutsceneController == null) return;
+
+        Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
+        if (keyframePreview == null) return;
+
+        callbackInfo.setReturnValue((float) keyframePreview.getFov());
+
     }
 }
