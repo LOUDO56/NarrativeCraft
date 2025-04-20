@@ -67,7 +67,7 @@ public class Keyframe {
 
     public void updateItemData(ServerPlayer player) {
         float XheadPos = Utils.get360Angle(position.getXRot());
-        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(position.getXRot()), 0, 0));
+        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(position.getXRot()), 0, position.getZRot()));
 
         cameraEntity.setXRot(position.getXRot());
         cameraEntity.setYRot(position.getYRot());

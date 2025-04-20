@@ -13,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.BlockGetter;
+import org.joml.Quaternionf;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -27,6 +29,8 @@ public abstract class CameraMixin {
     @Shadow protected abstract void setRotation(float yRot, float xRot);
 
     @Shadow protected abstract float getMaxZoom(float maxZoom);
+
+    @Shadow @Final private Quaternionf rotation;
 
     @Inject(method = "setup", at = @At(value = "HEAD"), cancellable = true)
     private void update(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
@@ -48,6 +52,7 @@ public abstract class CameraMixin {
 
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
+        this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
         this.getMaxZoom(keyframePreview.getFov());
 
         client.options.setCameraType(CameraType.FIRST_PERSON);

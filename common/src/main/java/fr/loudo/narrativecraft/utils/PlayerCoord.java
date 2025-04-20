@@ -5,7 +5,7 @@ import net.minecraft.world.phys.Vec3;
 public class PlayerCoord {
 
     private double x, y, z;
-    private float XRot, YRot;
+    private float XRot, YRot, ZRot;
 
     public PlayerCoord(double x, double y, double z, float XRot, float YRot) {
         this.x = x;
@@ -13,6 +13,7 @@ public class PlayerCoord {
         this.z = z;
         this.XRot = XRot;
         this.YRot = YRot;
+        this.ZRot = 0f;
     }
 
     public PlayerCoord(Vec3 position, float XRot, float YRot) {
@@ -21,6 +22,7 @@ public class PlayerCoord {
         this.z = position.z();
         this.XRot = XRot;
         this.YRot = YRot;
+        this.ZRot = 0f;
     }
 
     public Vec3 getVec3() {
@@ -65,5 +67,13 @@ public class PlayerCoord {
 
     public void setYRot(float YRot) {
         this.YRot = YRot;
+    }
+
+    public float getZRot() {
+        return ZRot;
+    }
+
+    public void setZRot(float ZRot) {
+        this.ZRot = ZRot;
     }
 }

@@ -94,11 +94,12 @@
 
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
 
-  "narrativecraft.screen.update": "Update",
-  "narrativecraft.screen.close": "Close",
-  "narrativecraft.screen.remove": "Remove",
-  "narrativecraft.screen.preview": "Preview",
-  "narrativecraft.screen.keyframe.start_delay": "Start delay:",
-  "narrativecraft.screen.keyframe.path_time": "Path time:",
-  "narrativecraft.screen.keyframe.updated": "Keyframe ID %d updated."
+  "narrativecraft.screen.keyframe_option.up_down": "Up/Down: %.2f",
+  "narrativecraft.screen.keyframe_option.left_right": "Left/Right %.2f",
+  "narrativecraft.screen.keyframe_option.rotation": "Rotation: %d",
+  "narrativecraft.screen.keyframe_option.fov": "Fov: %d",
+  "narrativecraft.screen.keyframe_option.update": "Update",
+  "narrativecraft.screen.keyframe_option.remove": "Remove",
+  "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
+  "narrativecraft.screen.keyframe_option.path_time": "Path time:"
 }
