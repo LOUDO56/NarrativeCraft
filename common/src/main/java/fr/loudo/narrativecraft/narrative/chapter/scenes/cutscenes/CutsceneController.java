@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
-import fr.loudo.narrativecraft.utils.PlayerCoord;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -119,8 +119,8 @@ public class CutsceneController {
         if(selectedKeyframeGroup == null) return false;
         int newId = keyframeCounter.incrementAndGet();
         Vec3 playerPos = player.position();
-        PlayerCoord playerCoord = new PlayerCoord(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot());
-        Keyframe keyframe = new Keyframe(newId, playerCoord, currentTick, 0, 0, Minecraft.getInstance().options.fov().get());
+        KeyframeCoordinate keyframeCoordinate = new KeyframeCoordinate(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot(), Minecraft.getInstance().options.fov().get());
+        Keyframe keyframe = new Keyframe(newId, keyframeCoordinate, currentTick, 0, 0);
         keyframe.showKeyframeToClient(player);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             int tickFirstKeyframe = selectedKeyframeGroup.getKeyframeList().getLast().getTick();

@@ -1,7 +1,9 @@
 package fr.loudo.narrativecraft.mixin;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -22,13 +24,26 @@ public class GameRendererMixin {
         PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
         if (playerSession == null) return;
 
+        cutsceneControllerFov(playerSession, callbackInfo);
+        cutscenePlayingFov(playerSession, callbackInfo);
+
+    }
+
+    private void cutsceneControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if (cutsceneController == null) return;
 
         Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
         if (keyframePreview == null) return;
 
-        callbackInfo.setReturnValue((float) keyframePreview.getFov());
+        callbackInfo.setReturnValue((float) keyframePreview.getKeyframeCoordinate().getFov());
+    }
 
+    private void cutscenePlayingFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
+        CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
+        if(cutscenePlayback == null) return;
+
+        KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
+        callbackInfo.setReturnValue((float) currentLoc.getFov());
     }
 }

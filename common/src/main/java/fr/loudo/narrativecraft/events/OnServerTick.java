@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
@@ -9,10 +10,8 @@ import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.utils.PlayerCoord;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.TpUtil;
-import net.minecraft.client.CameraType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OnServerTick {
@@ -44,9 +43,14 @@ public class OnServerTick {
                 }
                 Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
                 if(keyframePreview != null) {
-                    PlayerCoord position = keyframePreview.getPosition();
+                    KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
                     TpUtil.teleportPlayer(playerSession.getPlayer(), position.getX(), position.getY(), position.getZ());
                 }
+            }
+            CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
+            if(cutscenePlayback != null) {
+                KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
+                TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getX(), currentLoc.getY(), currentLoc.getZ());
             }
         }
     }

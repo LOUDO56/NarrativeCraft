@@ -1,28 +1,30 @@
-package fr.loudo.narrativecraft.utils;
+package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
 import net.minecraft.world.phys.Vec3;
 
-public class PlayerCoord {
+public class KeyframeCoordinate {
 
     private double x, y, z;
-    private float XRot, YRot, ZRot;
+    private float XRot, YRot, ZRot, fov;
 
-    public PlayerCoord(double x, double y, double z, float XRot, float YRot) {
+    public KeyframeCoordinate(double x, double y, double z, float XRot, float YRot, float fov) {
         this.x = x;
         this.y = y;
         this.z = z;
         this.XRot = XRot;
         this.YRot = YRot;
         this.ZRot = 0f;
+        this.fov = fov;
     }
 
-    public PlayerCoord(Vec3 position, float XRot, float YRot) {
+    public KeyframeCoordinate(Vec3 position, float XRot, float YRot, float fov) {
         this.x = position.x();
         this.y = position.y();
         this.z = position.z();
         this.XRot = XRot;
         this.YRot = YRot;
         this.ZRot = 0f;
+        this.fov = fov;
     }
 
     public Vec3 getVec3() {
@@ -75,5 +77,13 @@ public class PlayerCoord {
 
     public void setZRot(float ZRot) {
         this.ZRot = ZRot;
+    }
+
+    public float getFov() {
+        return fov;
+    }
+
+    public void setFov(float fov) {
+        this.fov = fov;
     }
 }

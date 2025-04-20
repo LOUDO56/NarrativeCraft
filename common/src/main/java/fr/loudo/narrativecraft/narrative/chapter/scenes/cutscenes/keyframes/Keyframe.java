@@ -4,7 +4,6 @@ import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
 import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
-import fr.loudo.narrativecraft.utils.PlayerCoord;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -24,20 +23,18 @@ public class Keyframe {
 
     private transient ArmorStand cameraEntity;
     private int id;
-    private PlayerCoord position;
+    private KeyframeCoordinate keyframeCoordinate;
     private long startDelay;
     private long pathTime;
     private int tick;
-    private int fov;
     private boolean isParentGroup;
 
-    public Keyframe(int id, PlayerCoord position, int tick, long startDelay, long pathTime, int fov) {
+    public Keyframe(int id, KeyframeCoordinate keyframeCoordinate, int tick, long startDelay, long pathTime) {
         this.id = id;
         this.tick = tick;
-        this.position = position;
+        this.keyframeCoordinate = keyframeCoordinate;
         this.startDelay = startDelay;
         this.pathTime = pathTime;
-        this.fov = fov;
         this.isParentGroup = false;
     }
 
@@ -47,7 +44,7 @@ public class Keyframe {
         cameraEntity.setNoGravity(true);
         cameraEntity.setInvisible(true);
         cameraEntity.setNoBasePlate(true);
-        BlockPos blockPos = new BlockPos((int) position.getX(), (int) position.getY(), (int) position.getZ());
+        BlockPos blockPos = new BlockPos((int) keyframeCoordinate.getX(), (int) keyframeCoordinate.getY(), (int) keyframeCoordinate.getZ());
         player.connection.send(new ClientboundAddEntityPacket(cameraEntity, 0, blockPos));
         player.connection.send(new ClientboundSetEquipmentPacket(
                 cameraEntity.getId(),
@@ -68,22 +65,22 @@ public class Keyframe {
     }
 
     public void updateItemData(ServerPlayer player) {
-        float XheadPos = Utils.get360Angle(position.getXRot());
-        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(position.getXRot()), 0, position.getZRot()));
+        float XheadPos = Utils.get360Angle(keyframeCoordinate.getXRot());
+        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(keyframeCoordinate.getXRot()), 0, keyframeCoordinate.getZRot()));
         cameraEntity.setBodyPose(new Rotations(180f, 0, 0));
         cameraEntity.setLeftLegPose(new Rotations(180f, 0, 0));
         cameraEntity.setRightLegPose(new Rotations(180f, 0, 0));
 
-        cameraEntity.setXRot(position.getXRot());
-        cameraEntity.setYRot(position.getYRot());
-        cameraEntity.setYHeadRot(position.getYRot());
+        cameraEntity.setXRot(keyframeCoordinate.getXRot());
+        cameraEntity.setYRot(keyframeCoordinate.getYRot());
+        cameraEntity.setYHeadRot(keyframeCoordinate.getYRot());
         cameraEntity.setYBodyRot(player.yBodyRot);
-        Vec3 playerCoordVec3 = new Vec3(position.getX(), position.getY() - 1, position.getZ());
+        Vec3 playerCoordVec3 = new Vec3(keyframeCoordinate.getX(), keyframeCoordinate.getY() - 1, keyframeCoordinate.getZ());
         PositionMoveRotation pos = new PositionMoveRotation(
                 playerCoordVec3,
                 new Vec3(0, 0, 0),
-                position.getYRot(),
-                position.getXRot()
+                keyframeCoordinate.getYRot(),
+                keyframeCoordinate.getXRot()
         );
         player.connection.send(new ClientboundEntityPositionSyncPacket(
                 cameraEntity.getId(),
@@ -93,12 +90,12 @@ public class Keyframe {
         player.connection.send(new ClientboundSetEntityDataPacket(cameraEntity.getId(), cameraEntity.getEntityData().getNonDefaultValues()));
     }
 
-    public PlayerCoord getPosition() {
-        return position;
+    public KeyframeCoordinate getKeyframeCoordinate() {
+        return keyframeCoordinate;
     }
 
-    public void setPosition(PlayerCoord position) {
-        this.position = position;
+    public void setKeyframeCoordinate(KeyframeCoordinate keyframeCoordinate) {
+        this.keyframeCoordinate = keyframeCoordinate;
     }
 
     public long getStartDelay() {
@@ -124,14 +121,6 @@ public class Keyframe {
 
     public int getId() {
         return id;
-    }
-
-    public int getFov() {
-        return fov;
-    }
-
-    public void setFov(int fov) {
-        this.fov = fov;
     }
 
     public void openScreenOption(ServerPlayer player) {

@@ -100,6 +100,7 @@
   "narrativecraft.screen.keyframe_option.fov": "Fov: %d",
   "narrativecraft.screen.keyframe_option.update": "Update",
   "narrativecraft.screen.keyframe_option.remove": "Remove",
+  "narrativecraft.screen.keyframe_option.play_from_here": "Play from here",
   "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe_option.path_time": "Path time:"
 }

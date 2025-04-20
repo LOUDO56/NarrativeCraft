@@ -1,8 +1,10 @@
 package fr.loudo.narrativecraft.screens;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.utils.PlayerCoord;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -42,7 +44,7 @@ public class KeyframeOptionScreen extends Screen {
     private float upDownValue;
     private float leftRightValue;
     private float rotationValue;
-    private int fovValue;
+    private float fovValue;
     private int currentY = INITIAL_POS_Y;
 
 
@@ -51,10 +53,10 @@ public class KeyframeOptionScreen extends Screen {
         this.keyframe = keyframe;
         this.coordinatesBoxList = new ArrayList<>();
         this.player = player;
-        this.upDownValue = keyframe.getPosition().getXRot();
-        this.leftRightValue = keyframe.getPosition().getYRot();
-        this.rotationValue = keyframe.getPosition().getZRot();
-        this.fovValue = keyframe.getFov();
+        this.upDownValue = keyframe.getKeyframeCoordinate().getXRot();
+        this.leftRightValue = keyframe.getKeyframeCoordinate().getYRot();
+        this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
+        this.fovValue = keyframe.getKeyframeCoordinate().getFov();
     }
 
     @Override
@@ -65,7 +67,7 @@ public class KeyframeOptionScreen extends Screen {
         }
         initPositionLabelBox();
         initSliders();
-        initUpdateButton();
+        initButtons();
     }
 
     @Override
@@ -103,7 +105,7 @@ public class KeyframeOptionScreen extends Screen {
         int currentX = INITIAL_POS_X;
         int editWidth = 50;
         int i = 0;
-        PlayerCoord position = keyframe.getPosition();
+        KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         Float[] coords = {(float)position.getX(), (float)position.getY(), (float)position.getZ(), position.getXRot(), position.getYRot()};
         String[] labels = {"X:", "Y:", "Z:"};
         for(String label : labels) {
@@ -124,7 +126,7 @@ public class KeyframeOptionScreen extends Screen {
         }
     }
 
-    private void initUpdateButton() {
+    private void initButtons() {
         Button updateButton = Button.builder(Translation.message("screen.keyframe_option.update"), button -> {
             updateValues();
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
@@ -137,20 +139,32 @@ public class KeyframeOptionScreen extends Screen {
                 this.onClose();
             }
         }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        currentY += 25;
+        Button playFromHere = Button.builder(Translation.message("screen.keyframe_option.play_from_here"), button -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(player);
+            if(playerSession != null) {
+                CutsceneController cutsceneController = playerSession.getCutsceneController();
+                CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), cutsceneController.getSelectedKeyframeGroup(), keyframe);
+                cutscenePlayback.initStartFrame();
+                playerSession.setCutscenePlayback(cutscenePlayback);
+                this.onClose();
+            }
+        }).bounds(INITIAL_POS_X, currentY, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(removeKeyframe);
+        this.addRenderableWidget(playFromHere);
     }
 
     private void initSliders() {
-        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getPosition().getXRot()));
+        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getKeyframeCoordinate().getXRot()));
         currentY += 20;
         upDownSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT,
                 upDownName,
-                (Utils.get180Angle(keyframe.getPosition().getXRot()) + 90F) / 180F
+                (Utils.get180Angle(keyframe.getKeyframeCoordinate().getXRot()) + 90F) / 180F
         ) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getPosition().getXRot())));
+                this.setMessage(Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getKeyframeCoordinate().getXRot())));
             }
 
             @Override
@@ -165,12 +179,12 @@ public class KeyframeOptionScreen extends Screen {
         };
         currentY += 30;
 
-        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getPosition().getYRot()));
+        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getKeyframeCoordinate().getYRot()));
 
-        leftRightSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getPosition().getYRot()) / 360) {
+        leftRightSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getPosition().getYRot())));
+                this.setMessage(Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getKeyframeCoordinate().getYRot())));
             }
 
             @Override
@@ -186,12 +200,12 @@ public class KeyframeOptionScreen extends Screen {
 
         currentY += 30;
 
-        Component rotationName = Translation.message("screen.keyframe_option.rotation", (int) keyframe.getPosition().getZRot());
+        Component rotationName = Translation.message("screen.keyframe_option.rotation", (int) keyframe.getKeyframeCoordinate().getZRot());
 
-        rotationSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, rotationName, keyframe.getPosition().getZRot() / 360) {
+        rotationSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, rotationName, keyframe.getKeyframeCoordinate().getZRot() / 360) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.rotation", (int) keyframe.getPosition().getZRot()));
+                this.setMessage(Translation.message("screen.keyframe_option.rotation", (int) keyframe.getKeyframeCoordinate().getZRot()));
             }
 
             @Override
@@ -207,12 +221,12 @@ public class KeyframeOptionScreen extends Screen {
 
         currentY += 30;
 
-        Component fovName = Translation.message("screen.keyframe_option.fov", keyframe.getFov());
+        Component fovName = Translation.message("screen.keyframe_option.fov", keyframe.getKeyframeCoordinate().getFov());
 
-        fovSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, fovName,  (double) keyframe.getFov() / 150) {
+        fovSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, fovName,  (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.fov", keyframe.getFov()));
+                this.setMessage(Translation.message("screen.keyframe_option.fov", keyframe.getKeyframeCoordinate().getFov()));
             }
 
             @Override
@@ -242,7 +256,7 @@ public class KeyframeOptionScreen extends Screen {
         float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
         float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
         float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
-        PlayerCoord position = keyframe.getPosition();
+        KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
         position.setX(xVal);
@@ -251,8 +265,8 @@ public class KeyframeOptionScreen extends Screen {
         position.setXRot(upDownValue);
         position.setYRot(leftRightValue);
         position.setZRot(rotationValue);
-        keyframe.setPosition(position);
+        position.setFov(fovValue);
+        keyframe.setKeyframeCoordinate(position);
         keyframe.updateItemData(player);
-        keyframe.setFov(fovValue);
     }
 }

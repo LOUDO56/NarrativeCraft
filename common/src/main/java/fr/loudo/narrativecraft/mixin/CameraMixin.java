@@ -1,11 +1,11 @@
 package fr.loudo.narrativecraft.mixin;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.utils.PlayerCoord;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
@@ -41,6 +41,13 @@ public abstract class CameraMixin {
         PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
         if (playerSession == null) return;
 
+        keyframePreviewAction(playerSession, ci);
+        cutscenePlaying(playerSession, ci);
+
+    }
+
+    private void keyframePreviewAction(PlayerSession playerSession, CallbackInfo ci) {
+
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if (cutsceneController == null) return;
 
@@ -48,12 +55,11 @@ public abstract class CameraMixin {
         if (keyframePreview == null) return;
 
         Minecraft client = Minecraft.getInstance();
-        PlayerCoord position = keyframePreview.getPosition();
+        KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
 
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
-        this.getMaxZoom(keyframePreview.getFov());
 
         client.options.setCameraType(CameraType.FIRST_PERSON);
         client.options.hideGui = true;
@@ -67,7 +73,18 @@ public abstract class CameraMixin {
         }
 
         ci.cancel();
-
     }
 
+    private void cutscenePlaying(PlayerSession playerSession, CallbackInfo ci) {
+        CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
+        if(cutscenePlayback == null) return;
+
+        KeyframeCoordinate position = cutscenePlayback.next();
+
+        this.setPosition(position.getX(), position.getY(), position.getZ());
+        this.setRotation(position.getYRot(), position.getXRot());
+        this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
+
+        ci.cancel();
+    }
 }
