@@ -120,10 +120,12 @@ public class CutsceneController {
         int newId = keyframeCounter.incrementAndGet();
         Vec3 playerPos = player.position();
         PlayerCoord playerCoord = new PlayerCoord(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot());
-        Keyframe keyframe = new Keyframe(newId, playerCoord, 0, 0, Minecraft.getInstance().options.fov().get());
+        Keyframe keyframe = new Keyframe(newId, playerCoord, currentTick, 0, 0, Minecraft.getInstance().options.fov().get());
         keyframe.showKeyframeToClient(player);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
-            keyframe.setPathTime((currentTick / 20) * 1000L);
+            int tickFirstKeyframe = selectedKeyframeGroup.getKeyframeList().getLast().getTick();
+            int tickSecondKeyframe = keyframe.getTick();
+            keyframe.setPathTime(((tickSecondKeyframe - tickFirstKeyframe) / 20) * 1000L);
         } else {
             keyframe.showStartGroupText(player, selectedKeyframeGroup.getId());
         }

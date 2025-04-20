@@ -57,7 +57,9 @@ public class KeyframeOptionScreen extends Screen {
     @Override
     protected void init() {
         addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
-        addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+        if(!keyframe.isParentGroup()) {
+            addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+        }
         initPositionLabelBox();
         initSliders();
         initUpdateButton();

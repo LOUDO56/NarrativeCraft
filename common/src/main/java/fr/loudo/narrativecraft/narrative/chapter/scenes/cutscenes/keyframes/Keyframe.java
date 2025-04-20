@@ -27,11 +27,13 @@ public class Keyframe {
     private PlayerCoord position;
     private long startDelay;
     private long pathTime;
+    private int tick;
     private int fov;
     private boolean isParentGroup;
 
-    public Keyframe(int id, PlayerCoord position, long startDelay, long pathTime, int fov) {
+    public Keyframe(int id, PlayerCoord position, int tick, long startDelay, long pathTime, int fov) {
         this.id = id;
+        this.tick = tick;
         this.position = position;
         this.startDelay = startDelay;
         this.pathTime = pathTime;
@@ -68,6 +70,9 @@ public class Keyframe {
     public void updateItemData(ServerPlayer player) {
         float XheadPos = Utils.get360Angle(position.getXRot());
         cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(position.getXRot()), 0, position.getZRot()));
+        cameraEntity.setBodyPose(new Rotations(180f, 0, 0));
+        cameraEntity.setLeftLegPose(new Rotations(180f, 0, 0));
+        cameraEntity.setRightLegPose(new Rotations(180f, 0, 0));
 
         cameraEntity.setXRot(position.getXRot());
         cameraEntity.setYRot(position.getYRot());
@@ -133,6 +138,14 @@ public class Keyframe {
         Minecraft client = Minecraft.getInstance();
         KeyframeOptionScreen screen = new KeyframeOptionScreen(this, player);
         client.execute(() -> client.setScreen(screen));
+    }
+
+    public int getTick() {
+        return tick;
+    }
+
+    public void setTick(int tick) {
+        this.tick = tick;
     }
 
     public boolean isParentGroup() {
