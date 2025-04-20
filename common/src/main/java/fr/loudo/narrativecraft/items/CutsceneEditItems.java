@@ -33,7 +33,7 @@ public class CutsceneEditItems {
         settings = getItem(Translation.message("items.cutscene.settings.name").getString(), access, Items.NETHER_STAR);
     }
 
-    public static void initSkipItems(RegistryAccess access, int secondSkip) {
+    public static void initSkipItems(RegistryAccess access, double secondSkip) {
         nextSecond = getItemWithTexture(Translation.message("items.cutscene.skip.plus.name", secondSkip).getString(), access, Items.PLAYER_HEAD, NEXT_SECOND_TEXTURE);
         previousSecond = getItemWithTexture(Translation.message("items.cutscene.skip.minus.name", secondSkip).getString(), access, Items.PLAYER_HEAD, PREVIOUS_SECOND_TEXTURE);
     }

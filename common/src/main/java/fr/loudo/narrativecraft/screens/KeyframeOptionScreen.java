@@ -26,7 +26,6 @@ public class KeyframeOptionScreen extends Screen {
     private final int EDIT_BOX_HEIGHT = 15;
     private final int BUTTON_WIDTH = 60;
     private final int BUTTON_HEIGHT = 20;
-    private final String REGEX_FLOAT = "[+-]?([0-9]+([.][0-9]*)?|[.][0-9]+)";
 
     private Keyframe keyframe;
     private int currentY = INITIAL_POS_Y;
@@ -87,7 +86,7 @@ public class KeyframeOptionScreen extends Screen {
                 Component.literal(text.getString() + " Value"));
 
         editBox.setValue(defaultValue);
-        editBox.setFilter((s -> s.matches(REGEX_FLOAT)));
+        editBox.setFilter((s -> s.matches(Utils.REGEX_FLOAT_POSITIVE_ONLY)));
 
         this.addRenderableWidget(labelWidget);
         this.addRenderableWidget(editBox);
@@ -111,7 +110,7 @@ public class KeyframeOptionScreen extends Screen {
                     editWidth,
                     EDIT_BOX_HEIGHT,
                     Component.literal(stringWidget + " Value"));
-            box.setFilter(s -> s.matches(REGEX_FLOAT));
+            box.setFilter(s -> s.matches(Utils.REGEX_FLOAT));
             box.setValue(String.format("%.2f", coords[i]));
             this.addRenderableWidget(stringWidget);
             this.addRenderableWidget(box);
@@ -140,7 +139,7 @@ public class KeyframeOptionScreen extends Screen {
 
     private void initSliders() {
         Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getPosition().getXRot()));
-        currentY += 30;
+        currentY += 20;
         upDownSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT,
                 upDownName,
                 (Utils.get180Angle(keyframe.getPosition().getXRot()) + 90F) / 180F

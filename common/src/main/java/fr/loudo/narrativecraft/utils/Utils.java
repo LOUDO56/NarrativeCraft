@@ -17,6 +17,9 @@ import java.util.UUID;
 
 public class Utils {
 
+    public static final String REGEX_FLOAT = "^([+-]?([0-9]+([.,][0-9]*)?|[.,][0-9]+))?$";
+    public static final String REGEX_FLOAT_POSITIVE_ONLY = "^([+]?([0-9]+([.,][0-9]*)?|[.,][0-9]+))?$";
+
     // https://github.com/mt1006/mc-mocap-mod/blob/1.21.1/common/src/main/java/net/mt1006/mocap/mocap/actions/ChangeItem.java#L291
     public static CompoundTag tagFromIdAndComponents(Item item, String data)
     {

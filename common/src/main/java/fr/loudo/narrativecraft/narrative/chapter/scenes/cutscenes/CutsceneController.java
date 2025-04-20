@@ -31,7 +31,7 @@ public class CutsceneController {
     private ServerPlayer player;
     private boolean isPlaying;
     private int currentTick;
-    private int currentSkipCount;
+    private double currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
     private Keyframe currentPreviewKeyframe;
 
@@ -125,7 +125,8 @@ public class CutsceneController {
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
             int tickFirstKeyframe = selectedKeyframeGroup.getKeyframeList().getLast().getTick();
             int tickSecondKeyframe = keyframe.getTick();
-            keyframe.setPathTime(((tickSecondKeyframe - tickFirstKeyframe) / 20) * 1000L);
+            long pathTime = (long) (((double) (tickSecondKeyframe - tickFirstKeyframe) / 20) * 1000L);
+            keyframe.setPathTime(pathTime);
         } else {
             keyframe.showStartGroupText(player, selectedKeyframeGroup.getId());
         }
@@ -227,11 +228,11 @@ public class CutsceneController {
     }
 
     public void nextSecondSkip() {
-        changeTimePosition(currentTick + currentSkipCount);
+        changeTimePosition(currentTick + (int) currentSkipCount);
     }
 
     public void previousSecondSkip() {
-        changeTimePosition(Math.max(0, currentTick - currentSkipCount));
+        changeTimePosition(Math.max(0, currentTick - (int) currentSkipCount));
     }
 
     public void next() {
@@ -250,7 +251,7 @@ public class CutsceneController {
         return cutscene;
     }
 
-    public void setCurrentSkipCount(int currentSkipCount) {
+    public void setCurrentSkipCount(double currentSkipCount) {
         this.currentSkipCount = currentSkipCount * 20;
         ItemStack oldPreviousSecond = CutsceneEditItems.previousSecond;
         ItemStack oldNextSecond = CutsceneEditItems.nextSecond;

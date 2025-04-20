@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.screens;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -35,16 +36,16 @@ public class CutsceneSettingsScreen extends Screen {
 
         int inputX = centerX - (INPUT_WIDTH + 5 + BUTTON_WIDTH) / 2;
 
-        numberInput = new EditBox(this.font, inputX, centerY - 20, INPUT_WIDTH, BUTTON_HEIGHT, Component.literal("Number"));
-        numberInput.setFilter(s -> s.matches("\\d*"));
+        numberInput = new EditBox(this.font, inputX, centerY - 20, INPUT_WIDTH + 20, BUTTON_HEIGHT, Component.literal("Number"));
+        numberInput.setFilter(s -> s.matches(Utils.REGEX_FLOAT_POSITIVE_ONLY));
         numberInput.setMaxLength(10);
         this.addRenderableWidget(numberInput);
 
-        int updateX = inputX + INPUT_WIDTH + 5;
-        updateButton = Button.builder(Translation.message("screen.keyframe.update"), button -> {
+        int updateX = inputX + INPUT_WIDTH + 30;
+        updateButton = Button.builder(Translation.message("screen.keyframe_option.update"), button -> {
             String input = numberInput.getValue();
             if (!input.isEmpty()) {
-                int value = Integer.parseInt(input);
+                double value = Double.parseDouble(input);
                 if(cutsceneController != null) {
                     this.onClose();
                     cutsceneController.setCurrentSkipCount(value);
@@ -54,7 +55,7 @@ public class CutsceneSettingsScreen extends Screen {
         }).bounds(updateX, centerY - 20, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
 
-        int[] values = {1, 5, 10, 15, 60};
+        double[] values = {0.5, 1, 5, 10, 15, 60};
         int buttonCount = values.length;
         int totalTopWidth = INPUT_WIDTH + 5 + BUTTON_WIDTH;
         int buttonWidth = 30;
@@ -63,8 +64,8 @@ public class CutsceneSettingsScreen extends Screen {
         int spacing = (totalTopWidth - totalButtonsWidth) / (buttonCount - 1);
 
         for (int i = 0; i < buttonCount; i++) {
-            int val = values[i];
-            int x = inputX + i * (buttonWidth + spacing);
+            double val = values[i];
+            int x = inputX + i * (buttonWidth + spacing + 5);
             Button b = Button.builder(Component.literal(String.valueOf(val)), button -> {
                 numberInput.setValue(String.valueOf(val));
             }).bounds(x, centerY + 10, buttonWidth, BUTTON_HEIGHT).build();
