@@ -221,12 +221,12 @@ public class KeyframeOptionScreen extends Screen {
 
         currentY += 30;
 
-        Component fovName = Translation.message("screen.keyframe_option.fov", keyframe.getKeyframeCoordinate().getFov());
+        Component fovName = Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov()));
 
         fovSlider = new AbstractSliderButton(INITIAL_POS_X, currentY, 150, BUTTON_HEIGHT, fovName,  (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.fov", keyframe.getKeyframeCoordinate().getFov()));
+                this.setMessage(Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov())));
             }
 
             @Override
@@ -235,8 +235,8 @@ public class KeyframeOptionScreen extends Screen {
                 updateValues();
             }
 
-            public int getValue() {
-                return (int) (this.value * 150);
+            public float getValue() {
+                return (float) (this.value * 150);
             }
         };
 

@@ -36,7 +36,7 @@ public class GameRendererMixin {
         Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
         if (keyframePreview == null) return;
 
-        callbackInfo.setReturnValue((float) keyframePreview.getKeyframeCoordinate().getFov());
+        callbackInfo.setReturnValue(keyframePreview.getKeyframeCoordinate().getFov());
     }
 
     private void cutscenePlayingFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
@@ -44,6 +44,6 @@ public class GameRendererMixin {
         if(cutscenePlayback == null) return;
 
         KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
-        callbackInfo.setReturnValue((float) currentLoc.getFov());
+        callbackInfo.setReturnValue((currentLoc.getFov()));
     }
 }

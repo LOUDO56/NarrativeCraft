@@ -81,10 +81,6 @@ public class CutscenePlayback  {
 
         long currentTime = System.currentTimeMillis();
         long elapsedTime = currentTime - startTime;
-        System.out.println(currentTime);
-        System.out.println(elapsedTime);
-        System.out.println(duration);
-        System.out.println(elapsedTime / duration);
         t = Math.min(elapsedTime / duration, 1.0);
         double smoothedT = Easings.easeOut(t);
         if(t >= 1.0) {
@@ -110,7 +106,7 @@ public class CutscenePlayback  {
         double z = MathUtils.lerp(position1.getZ(), position2.getZ(), t);
         float XRot = (float) MathUtils.lerp(position1.getXRot(), position2.getXRot(), t);
         float YRot = (float) MathUtils.lerp(position1.getYRot(), position2.getYRot(), t);
-        int fov = (int) MathUtils.lerp(position1.getFov(), position2.getFov(), t);
+        float fov = (float) MathUtils.lerp(position1.getFov(), position2.getFov(), t);
         return new KeyframeCoordinate(x, y, z, XRot, YRot, fov);
     }
 
