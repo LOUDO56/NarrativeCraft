@@ -19,6 +19,7 @@ public class CutscenePlayback  {
     private double t;
 
     private long startTime;
+    private long delay;
     private double duration;
     private ServerPlayer player;
     private PlayerSession playerSession;
@@ -29,6 +30,7 @@ public class CutscenePlayback  {
     private Keyframe firstKeyframe;
     private Keyframe secondKeyframe;
     private KeyframeCoordinate currentLoc;
+    private CutsceneController cutsceneController;
 
     public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList) {
         this.player = player;
@@ -39,38 +41,63 @@ public class CutscenePlayback  {
         this.currentIndexKeyframe = 0;
         this.currentIndexKeyframeGroup = 0;
         this.playerSession = Utils.getSessionOrNull(player);
+        this.cutsceneController = playerSession.getCutsceneController() == null ? null : playerSession.getCutsceneController();
     }
 
-    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, KeyframeGroup currentKeyframeGroup, Keyframe keyframe) {
+    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, Keyframe keyframe) {
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
+        for(KeyframeGroup keyframeGroup : keyframeGroupList) {
+            for(Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                if(keyframeFromGroup.getId() == keyframe.getId()) {
+                    this.currentKeyframeGroup = keyframeGroup;
+                    break;
+                }
+            }
+        }
         for(int i = 0; i < currentKeyframeGroup.getKeyframeList().size(); i++) {
             if(currentKeyframeGroup.getKeyframeList().get(i).getId() == keyframe.getId()) {
                 this.currentIndexKeyframe = i;
             }
         }
-        this.currentKeyframeGroup = currentKeyframeGroup;
         this.currentIndexKeyframeGroup = currentKeyframeGroup.getId() - 1;
-        this.firstKeyframe = currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe);
-        if(currentIndexKeyframe < currentKeyframeGroup.getKeyframeList().size()) {
-            this.secondKeyframe =  currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe + 1);
+        if(currentIndexKeyframe == currentKeyframeGroup.getKeyframeList().size() - 1) {
+            currentIndexKeyframe = 0;
+            currentIndexKeyframeGroup++;
+            currentKeyframeGroup = keyframeGroupList.get(currentIndexKeyframeGroup);
+            firstKeyframe = currentKeyframeGroup.getKeyframeList().getFirst();
+            if(currentKeyframeGroup.getKeyframeList().size() > 1) {
+                secondKeyframe = currentKeyframeGroup.getKeyframeList().get(1);
+            } else {
+                secondKeyframe = firstKeyframe;
+            }
+        } else {
+            firstKeyframe = currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe);
+            secondKeyframe = currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe + 1);
         }
+
         this.playerSession = Utils.getSessionOrNull(player);
+        this.cutsceneController = playerSession.getCutsceneController() == null ? null : playerSession.getCutsceneController();
     }
 
     public void initStartFrame() {
         t = 0;
         startTime = System.currentTimeMillis();
+        if(secondKeyframe.isParentGroup()) {
+            delay = System.currentTimeMillis() + secondKeyframe.getStartDelay();
+        } else {
+            delay = System.currentTimeMillis() + firstKeyframe.getStartDelay();
+        }
         duration = currentKeyframeGroup.getTotalDuration();
-        playerSession.getCutsceneController().resume();
+        cutsceneController.resume();
     }
 
     public void stop() {
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
-        Minecraft.getInstance().options.hideGui = false;
         TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
+        cutsceneController.pause();
+        cutsceneController.setCurrentPreviewKeyframe(secondKeyframe);
         playerSession.setCutscenePlayback(null);
-        playerSession.getCutsceneController().pause();
     }
 
     public KeyframeCoordinate next() {
@@ -80,23 +107,41 @@ public class CutscenePlayback  {
         Minecraft.getInstance().options.hideGui = true;
 
         long currentTime = System.currentTimeMillis();
+        if(currentTime < delay) {
+            startTime = System.currentTimeMillis();
+            // If next keyframe is the first keyframe of the next group and has a start delay, then wait at the last keyframe of the last group
+            if(firstKeyframe.isParentGroup() && currentIndexKeyframeGroup > 0) {
+                currentLoc = keyframeGroupList.get(currentIndexKeyframeGroup - 1).getKeyframeList().getLast().getKeyframeCoordinate();
+            } else {
+                currentLoc = firstKeyframe.getKeyframeCoordinate();
+            }
+            return currentLoc;
+        }
         long elapsedTime = currentTime - startTime;
-        t = Math.min(elapsedTime / duration, 1.0);
+        t = Math.min((double) elapsedTime / secondKeyframe.getPathTime(), 1.0);
         double smoothedT = Easings.easeOut(t);
-        if(t >= 1.0) {
+        currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
+        if (t >= 1.0) {
             currentIndexKeyframe++;
-            if(currentIndexKeyframe == currentKeyframeGroup.getKeyframeList().size() - 1) {
-                if(currentIndexKeyframeGroup != keyframeGroupList.size() - 1) {
-                    currentIndexKeyframeGroup++;
-                    currentIndexKeyframe = 0;
-                    currentKeyframeGroup = keyframeGroupList.get(currentIndexKeyframeGroup);
-                } else {
+            if (currentIndexKeyframe >= currentKeyframeGroup.getKeyframeList().size() - 1) {
+                currentIndexKeyframeGroup++;
+                if (currentIndexKeyframeGroup >= keyframeGroupList.size()) {
                     stop();
+                    return secondKeyframe.getKeyframeCoordinate();
+                } else {
+                    currentKeyframeGroup = keyframeGroupList.get(currentIndexKeyframeGroup);
+                    currentIndexKeyframe = 0;
                 }
+
+            }
+            firstKeyframe = currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe);
+            if(currentKeyframeGroup.getKeyframeList().size() > 1) {
+                secondKeyframe = currentKeyframeGroup.getKeyframeList().get(currentIndexKeyframe + 1);
+            } else {
+                secondKeyframe = firstKeyframe;
             }
             initStartFrame();
         }
-        currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), smoothedT);
         return currentLoc;
     }
 

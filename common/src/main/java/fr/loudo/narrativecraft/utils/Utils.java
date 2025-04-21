@@ -45,6 +45,7 @@ public class Utils {
 
     public static PlayerSession getSessionOrNull(ServerPlayer player) {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
+        if(playerSession == null) return null;
         if(playerSession.getChapter() == null || playerSession.getScene() == null) {
             return null;
         }
@@ -54,6 +55,7 @@ public class Utils {
     public static PlayerSession getSessionOrNull(UUID uuid) {
         ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(uuid);
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(serverPlayer);
+        if(playerSession == null) return null;
         if(playerSession.getChapter() == null || playerSession.getScene() == null) {
             return null;
         }

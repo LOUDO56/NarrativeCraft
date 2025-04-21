@@ -50,7 +50,9 @@ public class OnServerTick {
             CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
             if(cutscenePlayback != null) {
                 KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
-                TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getX(), currentLoc.getY(), currentLoc.getZ());
+                if(currentLoc != null) {
+                    TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getX(), currentLoc.getY(), currentLoc.getZ());
+                }
             }
         }
     }

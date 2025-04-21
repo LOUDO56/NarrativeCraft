@@ -144,7 +144,7 @@ public class KeyframeOptionScreen extends Screen {
             PlayerSession playerSession = Utils.getSessionOrNull(player);
             if(playerSession != null) {
                 CutsceneController cutsceneController = playerSession.getCutsceneController();
-                CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), cutsceneController.getSelectedKeyframeGroup(), keyframe);
+                CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), keyframe);
                 cutscenePlayback.initStartFrame();
                 playerSession.setCutscenePlayback(cutscenePlayback);
                 this.onClose();
