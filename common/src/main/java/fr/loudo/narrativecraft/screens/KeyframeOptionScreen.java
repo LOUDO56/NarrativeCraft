@@ -282,7 +282,10 @@ public class KeyframeOptionScreen extends Screen {
         if(startDelayBox != null) {
             float startDelayVal = Float.parseFloat((startDelayBox.getValue()));
             keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
-
+        }
+        if(transitionDelayBox != null) {
+            float transitionDelayValue = Float.parseFloat((transitionDelayBox.getValue()));
+            keyframe.setTransitionDelay(Utils.getMillisBySecond(transitionDelayValue));
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
 //        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
