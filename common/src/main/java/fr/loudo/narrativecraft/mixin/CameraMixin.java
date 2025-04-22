@@ -64,10 +64,6 @@ public abstract class CameraMixin {
         client.options.setCameraType(CameraType.FIRST_PERSON);
         client.options.hideGui = true;
 
-        if (playerSession.getPlayer().isShiftKeyDown()) {
-            cutsceneController.clearCurrentPreviewKeyframe();
-        }
-
         if (ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
             keyframePreview.openScreenOption(playerSession.getPlayer());
         }
