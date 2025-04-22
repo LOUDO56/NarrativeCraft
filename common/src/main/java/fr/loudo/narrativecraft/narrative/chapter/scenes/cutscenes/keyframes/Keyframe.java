@@ -26,6 +26,7 @@ public class Keyframe {
     private KeyframeCoordinate keyframeCoordinate;
     private long startDelay;
     private long pathTime;
+    private long transitionDelay;
     private int tick;
     private boolean isParentGroup;
 
@@ -35,6 +36,7 @@ public class Keyframe {
         this.keyframeCoordinate = keyframeCoordinate;
         this.startDelay = startDelay;
         this.pathTime = pathTime;
+        this.transitionDelay = 0;
         this.isParentGroup = false;
     }
 
@@ -113,6 +115,14 @@ public class Keyframe {
 
     public void setPathTime(long pathTime) {
         this.pathTime = pathTime;
+    }
+
+    public long getTransitionDelay() {
+        return transitionDelay;
+    }
+
+    public void setTransitionDelay(long transitionDelay) {
+        this.transitionDelay = transitionDelay;
     }
 
     public ArmorStand getCameraEntity() {

@@ -26,7 +26,6 @@ public class KeyframeOptionScreen extends Screen {
     private final int INITIAL_POS_Y = 20;
     private final int EDIT_BOX_WIDTH = 60;
     private final int EDIT_BOX_HEIGHT = 15;
-    private final int BUTTON_WIDTH = 60;
     private final int BUTTON_HEIGHT = 20;
 
     private ServerPlayer player;
@@ -36,6 +35,7 @@ public class KeyframeOptionScreen extends Screen {
 
     private EditBox startDelayBox;
     private EditBox pathTimeBox;
+    private EditBox transitionDelayBox;
 
     private AbstractSliderButton upDownSlider;
     private AbstractSliderButton leftRightSlider;
@@ -63,9 +63,14 @@ public class KeyframeOptionScreen extends Screen {
 
     @Override
     protected void init() {
-        startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
+        CutsceneController cutsceneController = playerSession.getCutsceneController();
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+        }
+        if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupFromKeyframe(keyframe), keyframe) && cutsceneController.getSelectedKeyframeGroup().getKeyframeList().size() > 1) {
+            transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getTransitionDelay())));
+        } else {
+            startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
         }
         initPositionLabelBox();
         initSliders();
@@ -157,9 +162,7 @@ public class KeyframeOptionScreen extends Screen {
             }
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
-        CutsceneController cutsceneController = playerSession.getCutsceneController();
-        if(cutsceneController.getKeyframeGroupCounter().get() <= cutsceneController.getSelectedKeyframeGroup().getId()
-        && cutsceneController.getSelectedKeyframeGroup().getKeyframeList().getLast().getId() != keyframe.getId()) {
+        if(!playerSession.getCutsceneController().isLastKeyframe(keyframe)) {
             this.addRenderableWidget(playFromHere);
         }
         this.addRenderableWidget(removeKeyframe);
@@ -170,7 +173,7 @@ public class KeyframeOptionScreen extends Screen {
         Button closeButton = Button.builder(Component.literal("X"), button -> {
             playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
             this.onClose();
-        }).bounds(this.width - INITIAL_POS_X - (width / 2), startDelayBox.getY(), width, BUTTON_HEIGHT).build();
+        }).bounds(this.width - INITIAL_POS_X - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
         this.addRenderableWidget(closeButton);
     }
 
@@ -276,13 +279,16 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void updateValues() {
-        float startDelayVal = Float.parseFloat((startDelayBox.getValue()));
+        if(startDelayBox != null) {
+            float startDelayVal = Float.parseFloat((startDelayBox.getValue()));
+            keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
+
+        }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
 //        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
 //        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
 //        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
-        keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
 //        position.setX(xVal);
 //        position.setY(yVal);

@@ -229,6 +229,26 @@ public class CutsceneController {
         }
     }
 
+    public KeyframeGroup getKeyframeGroupFromKeyframe(Keyframe keyframe) {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for(Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                if(keyframeFromGroup.getId() == keyframe.getId()) {
+                    return keyframeGroup;
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isLastKeyframe(Keyframe keyframe) {
+        return keyframeGroupCounter.get() == selectedKeyframeGroup.getId()
+                && selectedKeyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
+    }
+
+    public boolean isLastKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
+        return keyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
+    }
+
     public void nextSecondSkip() {
         changeTimePosition(currentTick + (int) currentSkipCount);
     }
