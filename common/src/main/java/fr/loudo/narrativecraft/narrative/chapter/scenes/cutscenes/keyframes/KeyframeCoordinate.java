@@ -17,6 +17,16 @@ public class KeyframeCoordinate {
         this.fov = fov;
     }
 
+    public KeyframeCoordinate(double x, double y, double z, float XRot, float YRot, float ZRot, float fov) {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.XRot = XRot;
+        this.YRot = YRot;
+        this.ZRot = ZRot;
+        this.fov = fov;
+    }
+
     public KeyframeCoordinate(Vec3 position, float XRot, float YRot, float fov) {
         this.x = position.x();
         this.y = position.y();

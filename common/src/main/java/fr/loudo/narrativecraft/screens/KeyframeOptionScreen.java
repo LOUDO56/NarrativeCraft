@@ -179,7 +179,8 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void initSliders() {
-        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getKeyframeCoordinate().getXRot()));
+        float defaultValXRot = keyframe.getKeyframeCoordinate().getXRot() + 90F;
+        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", defaultValXRot));
         int initialY = this.height - 40;
         int gap = 5;
         int numSliders = 4;
@@ -188,11 +189,14 @@ public class KeyframeOptionScreen extends Screen {
 
         upDownSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
                 upDownName,
-                (Utils.get180Angle(keyframe.getKeyframeCoordinate().getXRot()) + 90F) / 180F
+                defaultValXRot / 180F
         ) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.up_down", String.format("%.2f", keyframe.getKeyframeCoordinate().getXRot())));
+                this.setMessage(Translation.message(
+                        "screen.keyframe_option.up_down",
+                        String.format(Locale.US, "%.2f", getValue() + 90F)
+                ));
             }
 
             @Override
@@ -206,14 +210,23 @@ public class KeyframeOptionScreen extends Screen {
             }
         };
 
+
         currentX += sliderWidth + gap;
 
-        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getKeyframeCoordinate().getYRot()));
+        float defaultValYRot = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
+        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", defaultValYRot));
 
-        leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360) {
+        leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.left_right", String.format("%.2f", keyframe.getKeyframeCoordinate().getYRot())));
+                float value = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
+                if(value == 0F && this.value == 1F) {
+                    value = 360F;
+                }
+                this.setMessage(Translation.message(
+                        "screen.keyframe_option.left_right",
+                        String.format(Locale.US ,"%.2f", value)
+                ));
             }
 
             @Override
@@ -229,22 +242,28 @@ public class KeyframeOptionScreen extends Screen {
 
         currentX += sliderWidth + gap;
 
-        Component rotationName = Translation.message("screen.keyframe_option.rotation", (int) keyframe.getKeyframeCoordinate().getZRot());
+        float defaultValZRot = Utils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
+        Component rotationName = Translation.message("screen.keyframe_option.rotation", defaultValZRot);
 
-        rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, keyframe.getKeyframeCoordinate().getZRot() / 360) {
+        rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.rotation", (int) keyframe.getKeyframeCoordinate().getZRot()));
+                float displayedAngle = (float)(this.value * 360 - 180);
+                this.setMessage(Translation.message(
+                        "screen.keyframe_option.rotation",
+                        String.format(Locale.US ,"%.2f", displayedAngle)
+                ));
             }
 
             @Override
             protected void applyValue() {
-                rotationValue = getValue();
+                float displayedAngle = (float)(this.value * 360 - 180);
+                rotationValue = (displayedAngle + 360) % 360;
                 updateValues();
             }
 
-            public int getValue() {
-                return (int) (this.value * 360);
+            public float getValue() {
+                return (float)((this.value * 360 - 180 + 360) % 360);
             }
         };
 
