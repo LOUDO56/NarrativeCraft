@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.TpUtil;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -15,7 +16,8 @@ import java.util.List;
 public class CutscenePlayback  {
 
     private double t;
-    private long startTime, startDelay, transitionDelay;
+    private long startTime, startDelay, transitionDelay, endTime, pauseStartTime, totalPausedTime;
+    private boolean isPaused;
     private int currentIndexKeyframe, currentIndexKeyframeGroup;
     private KeyframeCoordinate currentLoc;
     private Keyframe firstKeyframe, secondKeyframe;
@@ -89,29 +91,39 @@ public class CutscenePlayback  {
     }
 
     private void initValues() {
+        totalPausedTime = 0;
         startTime = System.currentTimeMillis();
+        endTime = secondKeyframe.getPathTime();
         startDelay = startTime + firstKeyframe.getStartDelay();
         transitionDelay = startDelay + secondKeyframe.getTransitionDelay();
         if(secondKeyframe.getId() != firstKeyframe.getId()) {
-            transitionDelay += secondKeyframe.getPathTime();
+            transitionDelay += endTime;
         }
     }
 
     public KeyframeCoordinate next() {
         long currentTime = System.currentTimeMillis();
-        if (currentTime < startDelay) {
-            startTime = System.currentTimeMillis();
+        if(Minecraft.getInstance().isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = currentTime;
+        } else if(!Minecraft.getInstance().isPaused() && isPaused) {
+            isPaused = false;
+            totalPausedTime += currentTime - pauseStartTime;
+        }
+        if(isPaused) {
+            return currentLoc;
+        }
+        long adjustedTime = currentTime - totalPausedTime;
+        long elapsedTime = adjustedTime - startTime;
+        if (adjustedTime < startDelay) {
+            startTime = adjustedTime;
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             return currentLoc;
         }
-        long elapsedTime = currentTime - startTime;
-        t = Math.min((double) elapsedTime / secondKeyframe.getPathTime(), 1.0);
-        double smoothedT = Easings.easeOut(t);
+        t = Easings.linear(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
-        if(t >= 1.0) {
-            if(currentTime >= transitionDelay) {
-                nextFrame();
-            }
+        if(t >= 1.0 && adjustedTime >= transitionDelay) {
+            nextFrame();
         }
         return currentLoc;
     }

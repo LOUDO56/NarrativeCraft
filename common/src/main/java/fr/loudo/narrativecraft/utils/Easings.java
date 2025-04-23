@@ -2,6 +2,9 @@ package fr.loudo.narrativecraft.utils;
 
 public class Easings {
 
+    public static double linear(double t) {
+        return t;
+    }
     public static double easeIn(double t) {
         return t * t;
     }

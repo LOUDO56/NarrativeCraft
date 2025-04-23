@@ -12,6 +12,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.TpUtil;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OnServerTick {
@@ -20,6 +21,7 @@ public class OnServerTick {
     private static final PlaybackHandler PLAYBACK_HANDLER = NarrativeCraftMod.getInstance().getPlaybackHandler();
 
     public static void serverTick() {
+        if(Minecraft.getInstance().isPaused()) return;
         for(Recording recording : RECORDING_HANDLER.getRecordings()) {
             if(recording.isRecording()) {
                 ServerPlayer player = recording.getPlayer();
@@ -51,6 +53,7 @@ public class OnServerTick {
             if(cutscenePlayback != null) {
                 KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
                 if(currentLoc != null) {
+                    // Teleport player every tick to handle chunk loading while camera moves.
                     TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getX(), currentLoc.getY(), currentLoc.getZ());
                 }
             }
