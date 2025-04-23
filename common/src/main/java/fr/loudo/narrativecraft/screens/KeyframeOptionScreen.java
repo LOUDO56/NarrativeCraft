@@ -34,19 +34,10 @@ public class KeyframeOptionScreen extends Screen {
     private Keyframe keyframe;
     private List<EditBox> coordinatesBoxList;
 
-    private EditBox startDelayBox;
-    private EditBox pathTimeBox;
-    private EditBox transitionDelayBox;
+    private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
 
-    private AbstractSliderButton upDownSlider;
-    private AbstractSliderButton leftRightSlider;
-    private AbstractSliderButton rotationSlider;
-    private AbstractSliderButton fovSlider;
-
-    private float upDownValue;
-    private float leftRightValue;
-    private float rotationValue;
-    private float fovValue;
+    private float upDownValue, leftRightValue, rotationValue, fovValue;
+    private double speed;
     private int currentY = INITIAL_POS_Y;
 
 
@@ -59,6 +50,7 @@ public class KeyframeOptionScreen extends Screen {
         this.leftRightValue = keyframe.getKeyframeCoordinate().getYRot();
         this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
         this.fovValue = keyframe.getKeyframeCoordinate().getFov();
+        this.speed = keyframe.getSpeed();
         this.playerSession = Utils.getSessionOrNull(player);
     }
 
@@ -67,9 +59,11 @@ public class KeyframeOptionScreen extends Screen {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+            speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
         }
         if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe)) {
             transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getTransitionDelay())));
+
         } else {
             startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
         }
@@ -187,7 +181,7 @@ public class KeyframeOptionScreen extends Screen {
         int sliderWidth = (this.width - gap * (numSliders + 1)) / numSliders;
         int currentX = gap;
 
-        upDownSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
+        AbstractSliderButton upDownSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
                 upDownName,
                 defaultValXRot / 180F
         ) {
@@ -206,7 +200,7 @@ public class KeyframeOptionScreen extends Screen {
             }
 
             public float getValue() {
-                return (float)(this.value * 180F - 90F);
+                return (float) (this.value * 180F - 90F);
             }
         };
 
@@ -216,16 +210,16 @@ public class KeyframeOptionScreen extends Screen {
         float defaultValYRot = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
         Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", defaultValYRot));
 
-        leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
+        AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
             @Override
             protected void updateMessage() {
                 float value = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
-                if(value == 0F && this.value == 1F) {
+                if (value == 0F && this.value == 1F) {
                     value = 360F;
                 }
                 this.setMessage(Translation.message(
                         "screen.keyframe_option.left_right",
-                        String.format(Locale.US ,"%.2f", value)
+                        String.format(Locale.US, "%.2f", value)
                 ));
             }
 
@@ -245,25 +239,25 @@ public class KeyframeOptionScreen extends Screen {
         float defaultValZRot = Utils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
         Component rotationName = Translation.message("screen.keyframe_option.rotation", defaultValZRot);
 
-        rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F) {
+        AbstractSliderButton rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F) {
             @Override
             protected void updateMessage() {
-                float displayedAngle = (float)(this.value * 360 - 180);
+                float displayedAngle = (float) (this.value * 360 - 180);
                 this.setMessage(Translation.message(
                         "screen.keyframe_option.rotation",
-                        String.format(Locale.US ,"%.2f", displayedAngle)
+                        String.format(Locale.US, "%.2f", displayedAngle)
                 ));
             }
 
             @Override
             protected void applyValue() {
-                float displayedAngle = (float)(this.value * 360 - 180);
+                float displayedAngle = (float) (this.value * 360 - 180);
                 rotationValue = (displayedAngle + 360) % 360;
                 updateValues();
             }
 
             public float getValue() {
-                return (float)((this.value * 360 - 180 + 360) % 360);
+                return (float) ((this.value * 360 - 180 + 360) % 360);
             }
         };
 
@@ -271,7 +265,7 @@ public class KeyframeOptionScreen extends Screen {
 
         Component fovName = Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov()));
 
-        fovSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, fovName,  (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
+        AbstractSliderButton fovSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, fovName, (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
             @Override
             protected void updateMessage() {
                 this.setMessage(Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov())));
@@ -306,6 +300,10 @@ public class KeyframeOptionScreen extends Screen {
         if(transitionDelayBox != null) {
             float transitionDelayValue = Float.parseFloat((transitionDelayBox.getValue()));
             keyframe.setTransitionDelay(Utils.getMillisBySecond(transitionDelayValue));
+        }
+        if(speedBox != null) {
+            double speedValue = Double.parseDouble((speedBox.getValue()));
+            keyframe.setSpeed(speedValue);
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
         float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));

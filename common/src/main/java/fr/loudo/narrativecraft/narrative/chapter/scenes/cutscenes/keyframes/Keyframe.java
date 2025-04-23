@@ -22,12 +22,10 @@ import java.util.List;
 public class Keyframe {
 
     private transient ArmorStand cameraEntity;
-    private int id;
+    private int id, tick;
+    private double speed;
     private KeyframeCoordinate keyframeCoordinate;
-    private long startDelay;
-    private long pathTime;
-    private long transitionDelay;
-    private int tick;
+    private long startDelay, pathTime, transitionDelay;
     private boolean isParentGroup;
 
     public Keyframe(int id, KeyframeCoordinate keyframeCoordinate, int tick, long startDelay, long pathTime) {
@@ -38,6 +36,7 @@ public class Keyframe {
         this.pathTime = pathTime;
         this.transitionDelay = 0;
         this.isParentGroup = false;
+        this.speed = 1;
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
@@ -145,6 +144,14 @@ public class Keyframe {
 
     public void setTick(int tick) {
         this.tick = tick;
+    }
+
+    public double getSpeed() {
+        return speed;
+    }
+
+    public void setSpeed(double speed) {
+        this.speed = speed;
     }
 
     public boolean isParentGroup() {

@@ -16,7 +16,7 @@ import java.util.List;
 public class CutscenePlayback  {
 
     private double t;
-    private long startTime, startDelay, transitionDelay, endTime, pauseStartTime, totalPausedTime;
+    private long startTime, startDelay, transitionDelay, endTime, defaultEndTime, pauseStartTime, totalPausedTime;
     private boolean isPaused;
     private int currentIndexKeyframe, currentIndexKeyframeGroup;
     private KeyframeCoordinate currentLoc;
@@ -99,6 +99,10 @@ public class CutscenePlayback  {
         if(secondKeyframe.getId() != firstKeyframe.getId()) {
             transitionDelay += endTime;
         }
+        defaultEndTime = endTime;
+        if(secondKeyframe.getSpeed() > 0) {
+            endTime = (long) (endTime / secondKeyframe.getSpeed());
+        }
     }
 
     public KeyframeCoordinate next() {
@@ -122,7 +126,7 @@ public class CutscenePlayback  {
         }
         t = Easings.linear(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
-        if(t >= 1.0 && adjustedTime >= transitionDelay) {
+        if(t >= 1.0 && secondKeyframe.getSpeed() <= 1 || (adjustedTime >= transitionDelay && adjustedTime >= defaultEndTime)) {
             nextFrame();
         }
         return currentLoc;

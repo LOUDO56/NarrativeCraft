@@ -103,5 +103,6 @@
   "narrativecraft.screen.keyframe_option.play_from_here": "Play from here",
   "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe_option.path_time": "Path time:",
-  "narrativecraft.screen.keyframe_option.transition_delay": "Transition delay:"
+  "narrativecraft.screen.keyframe_option.transition_delay": "Transition delay:",
+  "narrativecraft.screen.keyframe_option.speed": "Speed:"
 }
