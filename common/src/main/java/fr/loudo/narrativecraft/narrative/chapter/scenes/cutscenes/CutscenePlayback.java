@@ -189,6 +189,10 @@ public class CutscenePlayback  {
         return currentKeyframeGroup;
     }
 
+    public int getCurrentIndexKeyframe() {
+        return currentIndexKeyframe;
+    }
+
     public List<KeyframeGroup> getKeyframeGroupList() {
         return keyframeGroupList;
     }

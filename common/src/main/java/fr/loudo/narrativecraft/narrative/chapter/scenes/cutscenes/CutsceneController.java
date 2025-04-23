@@ -72,7 +72,9 @@ public class CutsceneController {
         }
 
         player.setGameMode(GameType.ADVENTURE);
-        player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.CHANGE_GAME_MODE, (float)GameType.CREATIVE.getId()));
+        player.getAbilities().mayfly = true;
+        player.getAbilities().flying = true;
+        player.connection.send(new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
         player.getInventory().clearContent();
         player.getInventory().setItem(0, CutsceneEditItems.createKeyframeGroup);
         player.getInventory().setItem(1, CutsceneEditItems.addKeyframe);

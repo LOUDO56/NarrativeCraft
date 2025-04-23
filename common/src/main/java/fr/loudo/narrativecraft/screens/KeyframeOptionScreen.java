@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.screens;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -33,11 +34,12 @@ public class KeyframeOptionScreen extends Screen {
     private PlayerSession playerSession;
     private Keyframe keyframe;
     private List<EditBox> coordinatesBoxList;
+    private Keyframe previousKeyframe;
 
     private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
 
     private float upDownValue, leftRightValue, rotationValue, fovValue;
-    private double speed;
+    private double speed, additionalStartDelay;
     private int currentY = INITIAL_POS_Y;
 
 
@@ -57,6 +59,13 @@ public class KeyframeOptionScreen extends Screen {
     @Override
     protected void init() {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
+        KeyframeGroup selectedKeyframeGroup = cutsceneController.getSelectedKeyframeGroup();
+        int keyframeIndex = cutsceneController.getKeyframeIndex(selectedKeyframeGroup, keyframe);
+        if(selectedKeyframeGroup.getKeyframeList().size() > 1 && keyframeIndex > 0) {
+            previousKeyframe = selectedKeyframeGroup.getKeyframeList().get(keyframeIndex - 1);
+        } else {
+            previousKeyframe = keyframe;
+        }
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
             speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
@@ -71,6 +80,7 @@ public class KeyframeOptionScreen extends Screen {
         initSliders();
         initButtons();
         initLittleButtons();
+        updateCurrentTick();
     }
 
     @Override
@@ -311,6 +321,7 @@ public class KeyframeOptionScreen extends Screen {
         float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
+        updateCurrentTick();
         position.setX(xVal);
         position.setY(yVal);
         position.setZ(zVal);
@@ -320,5 +331,15 @@ public class KeyframeOptionScreen extends Screen {
         position.setFov(fovValue);
         keyframe.setKeyframeCoordinate(position);
         keyframe.updateItemData(player);
+    }
+
+    private void updateCurrentTick() {
+        double newTime = 0;
+        if(previousKeyframe.getId() != keyframe.getId()) {
+            newTime = (double) (keyframe.getPathTime() + previousKeyframe.getStartDelay()) / 1000;
+        }
+        int newTick = (int) (previousKeyframe.getTick() + (newTime * 20));
+        keyframe.setTick(newTick);
+        playerSession.getCutsceneController().changeTimePosition(newTick);
     }
 }
