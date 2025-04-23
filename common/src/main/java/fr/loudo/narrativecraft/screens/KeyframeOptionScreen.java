@@ -19,6 +19,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class KeyframeOptionScreen extends Screen {
 
@@ -114,7 +115,7 @@ public class KeyframeOptionScreen extends Screen {
         int editWidth = 50;
         int i = 0;
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
-        Float[] coords = {(float)position.getX(), (float)position.getY(), (float)position.getZ(), position.getXRot(), position.getYRot()};
+        Double[] coords = {position.getX(), position.getY(), position.getZ()};
         String[] labels = {"X:", "Y:", "Z:"};
         for(String label : labels) {
             StringWidget stringWidget = ScreenUtils.text(Component.literal(label), this.font, currentX, currentY);
@@ -125,7 +126,7 @@ public class KeyframeOptionScreen extends Screen {
                     EDIT_BOX_HEIGHT,
                     Component.literal(stringWidget + " Value"));
             box.setFilter(s -> s.matches(Utils.REGEX_FLOAT));
-            box.setValue(String.format("%.2f", coords[i]));
+            box.setValue(String.format(Locale.US, "%.2f", coords[i]));
             this.addRenderableWidget(stringWidget);
             this.addRenderableWidget(box);
             coordinatesBoxList.add(box);
@@ -288,14 +289,14 @@ public class KeyframeOptionScreen extends Screen {
             keyframe.setTransitionDelay(Utils.getMillisBySecond(transitionDelayValue));
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
-//        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
-//        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
-//        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
+        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
+        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
+        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
-//        position.setX(xVal);
-//        position.setY(yVal);
-//        position.setZ(zVal);
+        position.setX(xVal);
+        position.setY(yVal);
+        position.setZ(zVal);
         position.setXRot(upDownValue);
         position.setYRot(leftRightValue);
         position.setZRot(rotationValue);
