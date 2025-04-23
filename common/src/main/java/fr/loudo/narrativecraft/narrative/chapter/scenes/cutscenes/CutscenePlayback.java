@@ -107,10 +107,18 @@ public class CutscenePlayback  {
 
     public KeyframeCoordinate next() {
         long currentTime = System.currentTimeMillis();
-        if(Minecraft.getInstance().isPaused() && !isPaused) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft.options.keyShift.isDown()) {
+            currentLoc = firstKeyframe.getKeyframeCoordinate();
+            cutsceneController.pause();
+            cutsceneController.setCurrentPreviewKeyframe(firstKeyframe);
+            playerSession.setCutscenePlayback(null);
+            return currentLoc;
+        }
+        if(minecraft.isPaused() && !isPaused) {
             isPaused = true;
             pauseStartTime = currentTime;
-        } else if(!Minecraft.getInstance().isPaused() && isPaused) {
+        } else if(!minecraft.isPaused() && isPaused) {
             isPaused = false;
             totalPausedTime += currentTime - pauseStartTime;
         }

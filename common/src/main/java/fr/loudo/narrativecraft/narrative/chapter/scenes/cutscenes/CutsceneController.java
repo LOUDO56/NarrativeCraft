@@ -188,6 +188,7 @@ public class CutsceneController {
 
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
+        changeTimePosition(currentPreviewKeyframe.getTick());
         currentPreviewKeyframe.openScreenOption(player);
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {

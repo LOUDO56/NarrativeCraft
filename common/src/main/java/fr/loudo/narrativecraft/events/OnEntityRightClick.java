@@ -16,7 +16,6 @@ public class OnEntityRightClick {
         if(playerSession != null && playerSession.getCutsceneController() != null) {
             Keyframe keyframe = playerSession.getCutsceneController().getKeyframeByEntity(entity);
             if(keyframe != null) {
-                playerSession.getCutsceneController().changeTimePosition(keyframe.getTick());
                 playerSession.getCutsceneController().setCurrentPreviewKeyframe(keyframe);
             }
         }
