@@ -123,17 +123,24 @@ public class CutsceneController {
         Keyframe keyframe = new Keyframe(newId, keyframeCoordinate, currentTick, 0, 0);
         keyframe.showKeyframeToClient(player);
         if(!selectedKeyframeGroup.getKeyframeList().isEmpty()) {
-            int tickFirstKeyframe = selectedKeyframeGroup.getKeyframeList().getLast().getTick();
-            int tickSecondKeyframe = keyframe.getTick();
-            int difference = tickSecondKeyframe - tickFirstKeyframe;
-            double seconds = difference / 20.0;
-            long pathTime = (long) (seconds * 1000.0);
+            long pathTime = getDifferenceSeconds(selectedKeyframeGroup.getKeyframeList().getLast().getTick(),keyframe.getTick());
             keyframe.setPathTime(pathTime);
         } else {
             keyframe.showStartGroupText(player, selectedKeyframeGroup.getId());
+            if(selectedKeyframeGroup.getId() > 1) {
+                Keyframe lastKeyframe = cutscene.getKeyframeGroupList().get(keyframeGroupCounter.get() - 2).getKeyframeList().getLast();
+                long transitionDelay = getDifferenceSeconds(lastKeyframe.getTick(), keyframe.getTick());
+                lastKeyframe.setTransitionDelay(transitionDelay);
+            }
         }
         selectedKeyframeGroup.getKeyframeList().add(keyframe);
         return true;
+    }
+
+    private long getDifferenceSeconds(int tickFirstKeyframe, int tickSecondKeyframe)  {
+        int difference = tickSecondKeyframe - tickFirstKeyframe;
+        double seconds = difference / 20.0;
+        return (long) (seconds * 1000.0);
     }
 
     public boolean removeKeyframe(Keyframe keyframe) {
@@ -212,7 +219,7 @@ public class CutsceneController {
         Inventory inventory = player.getInventory();
         for(int i = 0; i < inventory.getContainerSize(); i++) {
             ItemStack itemStack = inventory.getItem(i);
-            if(!itemStack.isEmpty()) {
+            if(!itemStack.isEmpty() && itemStack.getCustomName() != null && previousItem.getCustomName() != null) {
                 if(itemStack.getCustomName().getString().equals(previousItem.getCustomName().getString())) {
                     inventory.setItem(i, newItem);
                 }
