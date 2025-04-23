@@ -31,14 +31,16 @@ public class KeyframeGroup {
             KeyframeCoordinate endPos = secondKeyFrame.getKeyframeCoordinate();
 
             Vec3 vec3StartPos = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-            Vec3 vec3EndPod = new Vec3(endPos.getX(), endPos.getY(), endPos.getZ());
+            Vec3 vec3EndPos = new Vec3(endPos.getX(), endPos.getY(), endPos.getZ());
 
-            int numParticles = 15;
+            double distance = vec3StartPos.distanceTo(vec3EndPos);
+
+            int numParticles = (int) (distance / 0.5);
 
             for (int j = 0; j <= numParticles; j++) {
                 double t = j / (double) numParticles;
 
-                Vec3 particlePos = vec3StartPos.add(vec3EndPod.subtract(vec3StartPos).scale(t));
+                Vec3 particlePos = vec3StartPos.add(vec3EndPos.subtract(vec3StartPos).scale(t));
 
                 player.connection.send(new ClientboundLevelParticlesPacket(
                         ParticleTypes.CRIT,
@@ -56,6 +58,7 @@ public class KeyframeGroup {
             }
         }
     }
+
 
     public long getTotalDuration() {
         long totalDuration = 0;
