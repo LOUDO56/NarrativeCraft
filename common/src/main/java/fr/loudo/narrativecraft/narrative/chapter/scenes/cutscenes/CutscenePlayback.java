@@ -99,7 +99,7 @@ public class CutscenePlayback  {
         if(secondKeyframe.getId() != firstKeyframe.getId()) {
             transitionDelay += endTime;
         }
-        defaultEndTime = startTime + endTime + firstKeyframe.getStartDelay();
+        defaultEndTime = startTime + endTime + firstKeyframe.getStartDelay() + secondKeyframe.getTransitionDelay();
         if(secondKeyframe.getSpeed() > 0) {
             endTime = (long) (endTime / secondKeyframe.getSpeed());
         }
@@ -132,7 +132,7 @@ public class CutscenePlayback  {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             return currentLoc;
         }
-        t = Easings.linear(Math.min((double) elapsedTime / endTime, 1.0));
+        t = Easings.easeOut(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             nextFrame();
