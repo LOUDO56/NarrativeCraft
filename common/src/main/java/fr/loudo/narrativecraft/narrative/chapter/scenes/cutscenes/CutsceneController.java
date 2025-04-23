@@ -8,12 +8,16 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
+import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
@@ -67,6 +71,8 @@ public class CutsceneController {
             }
         }
 
+        player.setGameMode(GameType.ADVENTURE);
+        player.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.CHANGE_GAME_MODE, (float)GameType.CREATIVE.getId()));
         player.getInventory().clearContent();
         player.getInventory().setItem(0, CutsceneEditItems.createKeyframeGroup);
         player.getInventory().setItem(1, CutsceneEditItems.addKeyframe);
@@ -90,6 +96,9 @@ public class CutsceneController {
             }
         }
 
+        player.setGameMode(GameType.CREATIVE);
+        player.getAbilities().mayBuild = true;
+        player.connection.send(new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
         player.getInventory().clearContent();
 
         isPlaying = false;
