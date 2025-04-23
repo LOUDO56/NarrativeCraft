@@ -67,7 +67,7 @@ public class KeyframeOptionScreen extends Screen {
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
         }
-        if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupFromKeyframe(keyframe), keyframe) && cutsceneController.getSelectedKeyframeGroup().getKeyframeList().size() > 1) {
+        if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe) && cutsceneController.getSelectedKeyframeGroup().getKeyframeList().size() > 1) {
             transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getTransitionDelay())));
         } else {
             startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
@@ -147,7 +147,7 @@ public class KeyframeOptionScreen extends Screen {
             if(playerSession != null) {
                 CutsceneController cutsceneController = playerSession.getCutsceneController();
                 CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), keyframe);
-                cutscenePlayback.initStartFrame();
+                cutscenePlayback.start();
                 playerSession.setCutscenePlayback(cutscenePlayback);
                 this.onClose();
             }

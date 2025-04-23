@@ -229,7 +229,7 @@ public class CutsceneController {
         }
     }
 
-    public KeyframeGroup getKeyframeGroupFromKeyframe(Keyframe keyframe) {
+    public KeyframeGroup getKeyframeGroupByKeyframe(Keyframe keyframe) {
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for(Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
                 if(keyframeFromGroup.getId() == keyframe.getId()) {
@@ -238,6 +238,16 @@ public class CutsceneController {
             }
         }
         return null;
+    }
+
+    public int getKeyframeIndex(KeyframeGroup keyframeGroup, Keyframe keyframe) {
+        List<Keyframe> keyframeList = keyframeGroup.getKeyframeList();
+        for(int i = 0; i < keyframeGroup.getKeyframeList().size(); i++) {
+            if(keyframeList.get(i).getId() == keyframe.getId()) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public boolean isLastKeyframe(Keyframe keyframe) {
