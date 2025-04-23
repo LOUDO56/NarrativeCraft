@@ -99,7 +99,7 @@ public class CutscenePlayback  {
         if(secondKeyframe.getId() != firstKeyframe.getId()) {
             transitionDelay += endTime;
         }
-        defaultEndTime = endTime;
+        defaultEndTime = startTime + endTime + firstKeyframe.getStartDelay();
         if(secondKeyframe.getSpeed() > 0) {
             endTime = (long) (endTime / secondKeyframe.getSpeed());
         }
@@ -134,7 +134,7 @@ public class CutscenePlayback  {
         }
         t = Easings.linear(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
-        if(t >= 1.0 && secondKeyframe.getSpeed() <= 1 || (adjustedTime >= transitionDelay && adjustedTime >= defaultEndTime)) {
+        if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             nextFrame();
         }
         return currentLoc;
@@ -145,13 +145,13 @@ public class CutscenePlayback  {
         double y = MathUtils.lerp(position1.getY(), position2.getY(), t);
         double z = MathUtils.lerp(position1.getZ(), position2.getZ(), t);
         float XRot = (float) MathUtils.lerp(position1.getXRot(), position2.getXRot(), t);
-        float YRot = (float) MathUtils.lerp(position1.getYRot(), position2.getYRot(), t);
-        float ZRot = lerpAngleShortestPath(position1.getZRot(), position2.getZRot(), t);
+        float YRot = getAccurateYaw(position1.getYRot(), position2.getYRot(), t);
+        float ZRot = getAccurateRotation(position1.getZRot(), position2.getZRot(), t);
         float fov = (float) MathUtils.lerp(position1.getFov(), position2.getFov(), t);
         return new KeyframeCoordinate(x, y, z, XRot, YRot, ZRot, fov);
     }
 
-    private float lerpAngleShortestPath(float startAngle, float endAngle, double t) {
+    private float getAccurateRotation(float startAngle, float endAngle, double t) {
         float diff = endAngle - startAngle;
         if (diff > 180) {
             diff -= 360;
@@ -159,6 +159,26 @@ public class CutscenePlayback  {
             diff += 360;
         }
         return startAngle + (float)(diff * t);
+    }
+
+    private float getAccurateYaw(float startAngle, float endAngle, double t) {
+        float diff = endAngle - startAngle;
+
+        if (diff > 180) {
+            diff -= 360;
+        } else if (diff < -180) {
+            diff += 360;
+        }
+
+        float interpolated = startAngle + (float)(diff * t);
+
+        if (interpolated > 180) {
+            interpolated -= 360;
+        } else if (interpolated < -180) {
+            interpolated += 360;
+        }
+
+        return interpolated;
     }
 
     public ServerPlayer getPlayer() {

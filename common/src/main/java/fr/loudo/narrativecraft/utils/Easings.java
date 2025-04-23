@@ -20,4 +20,17 @@ public class Easings {
             return -1 + (4 - 2 * t) * t;
         }
     }
+
+    public static double easeOutElastic(double t) {
+        double c4 = (2 * Math.PI) / 3;
+
+        if (t == 0) {
+            return 0;
+        } else if (t == 1) {
+            return 1;
+        } else {
+            return Math.pow(2, -10 * t) * Math.sin((t * 10 - 0.75) * c4) + 1;
+        }
+    }
+
 }
