@@ -174,11 +174,30 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void initLittleButtons() {
+        int currentX = this.width - INITIAL_POS_X;
+        int gap = 5;
         int width = 20;
         Button closeButton = Button.builder(Component.literal("X"), button -> {
             playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
             this.onClose();
-        }).bounds(this.width - INITIAL_POS_X - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+        Keyframe nextKeyframe = playerSession.getCutsceneController().getNextKeyframe(keyframe);
+        if(nextKeyframe != null) {
+            currentX -= INITIAL_POS_X + gap;
+            Button rightKeyframeButton = Button.builder(Component.literal("⇨"), button -> {
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(nextKeyframe);
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(rightKeyframeButton);
+
+        }
+        Keyframe previousKeyframe = playerSession.getCutsceneController().getPreviousKeyframe(keyframe);
+        if(previousKeyframe != null) {
+            currentX -= INITIAL_POS_X + gap;
+            Button leftKeyframeButton = Button.builder(Component.literal("⇦"), button -> {
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(previousKeyframe);
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(leftKeyframeButton);
+        }
         this.addRenderableWidget(closeButton);
     }
 

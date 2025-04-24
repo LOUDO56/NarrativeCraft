@@ -279,6 +279,96 @@ public class CutsceneController {
         return -1;
     }
 
+
+    public Keyframe getNextKeyframe(Keyframe initialKeyframe) {
+        for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
+            List<Keyframe> keyframes = group.getKeyframeList();
+            if (keyframes.size() <= 1) continue;
+
+            for (int i = 0; i < keyframes.size(); i++) {
+                Keyframe current = keyframes.get(i);
+
+                if (current.getId() == initialKeyframe.getId()) {
+                    if (!isLastKeyframe(group, initialKeyframe)) {
+                        return keyframes.get(i + 1);
+                    }
+
+                    if (keyframeGroupCounter.get() != group.getId()) {
+                        int nextGroupId = group.getId();
+                        if (nextGroupId < cutscene.getKeyframeGroupList().size()) {
+                            return cutscene.getKeyframeGroupList()
+                                    .get(nextGroupId)
+                                    .getKeyframeList()
+                                    .getFirst();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Keyframe getNextKeyframe(KeyframeGroup group, Keyframe initialKeyframe) {
+        List<Keyframe> keyframes = group.getKeyframeList();
+        if (keyframes.size() <= 1) return null;
+
+        for (int i = 0; i < keyframes.size(); i++) {
+            Keyframe current = keyframes.get(i);
+
+            if (current.getId() == initialKeyframe.getId()) {
+                if (!isLastKeyframe(group, initialKeyframe)) {
+                    return keyframes.get(i + 1);
+                }
+
+                if (keyframeGroupCounter.get() != group.getId()) {
+                    int nextGroupId = group.getId();
+                    if (nextGroupId < cutscene.getKeyframeGroupList().size()) {
+                        return cutscene.getKeyframeGroupList()
+                                .get(nextGroupId)
+                                .getKeyframeList()
+                                .getFirst();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public Keyframe getPreviousKeyframe(Keyframe initialKeyframe) {
+        for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
+            List<Keyframe> keyframes = group.getKeyframeList();
+            if (keyframes.size() <= 1) continue;
+
+            for (int i = 0; i < keyframes.size(); i++) {
+                Keyframe current = keyframes.get(i);
+
+                if (current.getId() == initialKeyframe.getId()) {
+                    if (!isFirstKeyframe(group, initialKeyframe)) {
+                        return keyframes.get(i - 1);
+                    }
+
+                    int previousGroupId = group.getId() - 2;
+                    if (previousGroupId >= 0) {
+                        return cutscene.getKeyframeGroupList()
+                                .get(previousGroupId)
+                                .getKeyframeList()
+                                .getLast();
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    public boolean isFirstKeyframe(Keyframe keyframe) {
+        return keyframeGroupCounter.get() == selectedKeyframeGroup.getId()
+                && selectedKeyframeGroup.getKeyframeList().getFirst().getId() == keyframe.getId();
+    }
+
+    public boolean isFirstKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
+        return keyframeGroup.getKeyframeList().getFirst().getId() == keyframe.getId();
+    }
+
     public boolean isLastKeyframe(Keyframe keyframe) {
         return keyframeGroupCounter.get() == selectedKeyframeGroup.getId()
                 && selectedKeyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
