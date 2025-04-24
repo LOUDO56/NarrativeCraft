@@ -303,7 +303,7 @@ public class CutsceneCommand {
             return 0;
         }
 
-        cutsceneController.changeTimePosition(tick);
+        cutsceneController.changeTimePosition(tick, false);
         context.getSource().sendSuccess(() -> Translation.message("cutscene.edit.changed_time", tick), false);
 
 

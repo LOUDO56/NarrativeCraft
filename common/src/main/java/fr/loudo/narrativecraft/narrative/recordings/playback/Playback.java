@@ -35,27 +35,36 @@ public class Playback {
     public boolean start() {
         if(isPlaying) return false;
         tick = 0;
+        isPlaying = true;
+        MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
+        spawnEntity(firstLoc);
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
+        return true;
+    }
+
+    private void spawnEntity(MovementData loc) {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
         entity = new FakePlayer(serverLevel, gameProfile);
-        MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
-        moveEntitySilent(entity, firstLoc);
+        moveEntitySilent(entity, loc);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
             serverLevel.addNewPlayer(fakePlayer);
         } else {
             serverLevel.addFreshEntity(entity);
         }
-        isPlaying = true;
-        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
-        return true;
     }
 
     public boolean stop() {
-        entity.remove(Entity.RemovalReason.KILLED);
-        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
+        killEntity();
         isPlaying = false;
         //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
         return true;
+    }
+
+
+    private void killEntity() {
+        entity.remove(Entity.RemovalReason.KILLED);
+        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
     }
 
     public void next() {
@@ -116,11 +125,16 @@ public class Playback {
         return isPlaying;
     }
 
-    public void changeLocationByTick(int tick) {
+    public void changeLocationByTick(int tick, boolean seamless) {
         if(tick < animation.getActionsData().getMovementData().size() - 1) {
             this.tick = tick;
             MovementData movementData = animation.getActionsData().getMovementData().get(tick);
-            moveEntitySilent(entity, movementData);
+            if(seamless) {
+                moveEntitySilent(entity, movementData);
+            } else {
+                killEntity();
+                spawnEntity(movementData);
+            }
         }
     }
 

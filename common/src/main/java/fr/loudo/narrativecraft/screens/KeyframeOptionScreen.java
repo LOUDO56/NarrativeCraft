@@ -185,7 +185,8 @@ public class KeyframeOptionScreen extends Screen {
         if(nextKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
             Button rightKeyframeButton = Button.builder(Component.literal("⇨"), button -> {
-                playerSession.getCutsceneController().setCurrentPreviewKeyframe(nextKeyframe);
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(nextKeyframe, false);
+                playerSession.getCutsceneController().changeTimePosition(nextKeyframe.getTick(), false);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(rightKeyframeButton);
 
@@ -194,7 +195,8 @@ public class KeyframeOptionScreen extends Screen {
         if(previousKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
             Button leftKeyframeButton = Button.builder(Component.literal("⇦"), button -> {
-                playerSession.getCutsceneController().setCurrentPreviewKeyframe(previousKeyframe);
+                playerSession.getCutsceneController().setCurrentPreviewKeyframe(previousKeyframe, false);
+                playerSession.getCutsceneController().changeTimePosition(previousKeyframe.getTick(), false);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(leftKeyframeButton);
         }
@@ -380,6 +382,6 @@ public class KeyframeOptionScreen extends Screen {
                 referenceTick = newTick;
             }
         }
-        playerSession.getCutsceneController().changeTimePosition(keyframe.getTick());
+        playerSession.getCutsceneController().changeTimePosition(keyframe.getTick(), false);
     }
 }

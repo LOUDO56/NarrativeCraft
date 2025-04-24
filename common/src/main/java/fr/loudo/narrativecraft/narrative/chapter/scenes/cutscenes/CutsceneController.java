@@ -207,15 +207,15 @@ public class CutsceneController {
         return currentPreviewKeyframe;
     }
 
-    public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe) {
+    public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe, boolean seamless) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
-        changeTimePosition(currentPreviewKeyframe.getTick());
         currentPreviewKeyframe.openScreenOption(player);
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
                 keyframeFromGroup.removeKeyframeFromClient(player);
             }
         }
+        changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
     }
 
     public void clearCurrentPreviewKeyframe() {
@@ -250,11 +250,11 @@ public class CutsceneController {
         }
     }
 
-    public void changeTimePosition(int newTick) {
+    public void changeTimePosition(int newTick, boolean seamless) {
         currentTick = newTick;
         for(Subscene subscene : cutscene.getSubsceneList()) {
             for(Playback playback : subscene.getPlaybackList()) {
-                playback.changeLocationByTick(newTick);
+                playback.changeLocationByTick(newTick, seamless);
             }
         }
     }
@@ -377,11 +377,11 @@ public class CutsceneController {
     }
 
     public void nextSecondSkip() {
-        changeTimePosition(currentTick + (int) currentSkipCount);
+        changeTimePosition(currentTick + (int) currentSkipCount, false);
     }
 
     public void previousSecondSkip() {
-        changeTimePosition(Math.max(0, currentTick - (int) currentSkipCount));
+        changeTimePosition(Math.max(0, currentTick - (int) currentSkipCount), false);
     }
 
     public void next() {

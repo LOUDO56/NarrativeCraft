@@ -86,7 +86,7 @@ public class CutscenePlayback  {
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
         TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
         cutsceneController.pause();
-        cutsceneController.setCurrentPreviewKeyframe(secondKeyframe);
+        cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
         playerSession.setCutscenePlayback(null);
     }
 
@@ -114,7 +114,7 @@ public class CutscenePlayback  {
         if(minecraft.options.keyShift.isDown()) {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             cutsceneController.pause();
-            cutsceneController.setCurrentPreviewKeyframe(firstKeyframe);
+            cutsceneController.setCurrentPreviewKeyframe(firstKeyframe, false);
             playerSession.setCutscenePlayback(null);
             return currentLoc;
         }
