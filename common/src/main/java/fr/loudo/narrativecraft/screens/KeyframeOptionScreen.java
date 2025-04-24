@@ -329,7 +329,7 @@ public class KeyframeOptionScreen extends Screen {
         position.setZRot(rotationValue);
         position.setFov(fovValue);
         keyframe.setKeyframeCoordinate(position);
-        keyframe.updateItemData(player);
+        keyframe.updateEntityData(player);
     }
 
     private void updateCurrentTick() {

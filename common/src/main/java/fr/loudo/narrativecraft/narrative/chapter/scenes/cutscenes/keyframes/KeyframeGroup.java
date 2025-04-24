@@ -22,6 +22,20 @@ public class KeyframeGroup {
         return id;
     }
 
+    public void showGlow(ServerPlayer player) {
+        for(Keyframe keyframe : keyframeList) {
+            keyframe.getCameraEntity().setGlowingTag(true);
+            keyframe.updateEntityData(player);
+        }
+    }
+
+    public void removeGlow(ServerPlayer player) {
+        for(Keyframe keyframe : keyframeList) {
+            keyframe.getCameraEntity().setGlowingTag(false);
+            keyframe.updateEntityData(player);
+        }
+    }
+
     public void showLineBetweenKeyframes(ServerPlayer player) {
         for (int i = 0; i < keyframeList.size() - 1; i++) {
             Keyframe firstKeyFrame = keyframeList.get(i);

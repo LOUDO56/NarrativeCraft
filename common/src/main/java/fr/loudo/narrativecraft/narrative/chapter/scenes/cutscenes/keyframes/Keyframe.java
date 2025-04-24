@@ -45,32 +45,32 @@ public class Keyframe {
         cameraEntity.setNoGravity(true);
         cameraEntity.setInvisible(true);
         cameraEntity.setNoBasePlate(true);
+        cameraEntity.setBodyPose(new Rotations(180f, 0, 0));
+        cameraEntity.setLeftLegPose(new Rotations(180f, 0, 0));
+        cameraEntity.setRightLegPose(new Rotations(180f, 0, 0));
         BlockPos blockPos = new BlockPos((int) keyframeCoordinate.getX(), (int) keyframeCoordinate.getY(), (int) keyframeCoordinate.getZ());
         player.connection.send(new ClientboundAddEntityPacket(cameraEntity, 0, blockPos));
         player.connection.send(new ClientboundSetEquipmentPacket(
                 cameraEntity.getId(),
                 List.of(new Pair<>(EquipmentSlot.HEAD, CutsceneEditItems.camera))
         ));
-        updateItemData(player);
+        updateEntityData(player);
     }
 
     public void showStartGroupText(ServerPlayer player, int id) {
         cameraEntity.setCustomNameVisible(true);
         cameraEntity.setCustomName(Translation.message("cutscene.keyframegroup.text_display", id));
         isParentGroup = true;
-        updateItemData(player);
+        updateEntityData(player);
     }
 
     public void removeKeyframeFromClient(ServerPlayer player) {
         player.connection.send(new ClientboundRemoveEntitiesPacket(cameraEntity.getId()));
     }
 
-    public void updateItemData(ServerPlayer player) {
+    public void updateEntityData(ServerPlayer player) {
         float XheadPos = Utils.get360Angle(keyframeCoordinate.getXRot());
         cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(keyframeCoordinate.getXRot()), 0, keyframeCoordinate.getZRot()));
-        cameraEntity.setBodyPose(new Rotations(180f, 0, 0));
-        cameraEntity.setLeftLegPose(new Rotations(180f, 0, 0));
-        cameraEntity.setRightLegPose(new Rotations(180f, 0, 0));
 
         cameraEntity.setXRot(keyframeCoordinate.getXRot());
         cameraEntity.setYRot(keyframeCoordinate.getYRot());

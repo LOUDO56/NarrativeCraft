@@ -8,13 +8,11 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
@@ -124,6 +122,17 @@ public class CutsceneController {
         cutscene.getKeyframeGroupList().add(keyframeGroup);
         selectedKeyframeGroup = keyframeGroup;
         addKeyframe();
+        updateSelectedGroupGlow();
+    }
+
+    public void updateSelectedGroupGlow() {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            if(keyframeGroup.getId() == selectedKeyframeGroup.getId()) {
+                keyframeGroup.showGlow(player);
+            } else {
+                keyframeGroup.removeGlow(player);
+            }
+        }
     }
 
     public boolean addKeyframe() {
@@ -145,6 +154,7 @@ public class CutsceneController {
             }
         }
         selectedKeyframeGroup.getKeyframeList().add(keyframe);
+        selectedKeyframeGroup.showGlow(player);
         return true;
     }
 
