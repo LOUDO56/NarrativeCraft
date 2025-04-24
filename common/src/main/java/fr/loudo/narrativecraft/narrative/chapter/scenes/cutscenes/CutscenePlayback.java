@@ -103,6 +103,9 @@ public class CutscenePlayback  {
         if(secondKeyframe.getSpeed() > 0) {
             endTime = (long) (endTime / secondKeyframe.getSpeed());
         }
+        if(secondKeyframe.getId() == firstKeyframe.getId()) {
+            endTime = 0;
+        }
     }
 
     public KeyframeCoordinate next() {

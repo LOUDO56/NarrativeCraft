@@ -228,6 +228,7 @@ public class CutsceneController {
                 }
             }
         }
+        selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
     }
 
@@ -283,7 +284,6 @@ public class CutsceneController {
     public Keyframe getNextKeyframe(Keyframe initialKeyframe) {
         for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
             List<Keyframe> keyframes = group.getKeyframeList();
-            if (keyframes.size() <= 1) continue;
 
             for (int i = 0; i < keyframes.size(); i++) {
                 Keyframe current = keyframes.get(i);
@@ -310,7 +310,6 @@ public class CutsceneController {
 
     public Keyframe getNextKeyframe(KeyframeGroup group, Keyframe initialKeyframe) {
         List<Keyframe> keyframes = group.getKeyframeList();
-        if (keyframes.size() <= 1) return null;
 
         for (int i = 0; i < keyframes.size(); i++) {
             Keyframe current = keyframes.get(i);
@@ -337,7 +336,6 @@ public class CutsceneController {
     public Keyframe getPreviousKeyframe(Keyframe initialKeyframe) {
         for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
             List<Keyframe> keyframes = group.getKeyframeList();
-            if (keyframes.size() <= 1) continue;
 
             for (int i = 0; i < keyframes.size(); i++) {
                 Keyframe current = keyframes.get(i);
