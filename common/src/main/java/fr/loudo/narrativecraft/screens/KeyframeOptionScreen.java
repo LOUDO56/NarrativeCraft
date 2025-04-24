@@ -163,6 +163,7 @@ public class KeyframeOptionScreen extends Screen {
             if(playerSession != null) {
                 playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
                 playerSession.getCutsceneController().removeKeyframe(keyframe);
+                updateCurrentTick();
                 this.onClose();
             }
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
