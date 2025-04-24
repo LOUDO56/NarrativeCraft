@@ -80,7 +80,6 @@ public class KeyframeOptionScreen extends Screen {
         initSliders();
         initButtons();
         initLittleButtons();
-        updateCurrentTick();
     }
 
     @Override
@@ -146,6 +145,7 @@ public class KeyframeOptionScreen extends Screen {
         Component updateTitle = Translation.message("screen.keyframe_option.update");
         Button updateButton = Button.builder(updateTitle, button -> {
             updateValues();
+            updateCurrentTick();
         }).bounds(INITIAL_POS_X, currentY, this.font.width(updateTitle) + margin, BUTTON_HEIGHT).build();
         Component playTitle = Translation.message("screen.keyframe_option.play_from_here");
         Button playFromHere = Button.builder(playTitle, button -> {
@@ -321,7 +321,6 @@ public class KeyframeOptionScreen extends Screen {
         float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
-        updateCurrentTick();
         position.setX(xVal);
         position.setY(yVal);
         position.setZ(zVal);
@@ -334,12 +333,34 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void updateCurrentTick() {
-        double newTime = 0;
-        if(previousKeyframe.getId() != keyframe.getId()) {
-            newTime = (double) (keyframe.getPathTime() + previousKeyframe.getStartDelay()) / 1000;
+        List<KeyframeGroup> keyframeGroupList = playerSession.getCutsceneController().getCutscene().getKeyframeGroupList();
+
+        int referenceTick = 0;
+
+        for (int i = 0; i < keyframeGroupList.size(); i++) {
+            KeyframeGroup group = keyframeGroupList.get(i);
+            List<Keyframe> keyframes = group.getKeyframeList();
+
+            if (i > 0 && !keyframeGroupList.get(i - 1).getKeyframeList().isEmpty()) {
+                Keyframe lastKeyframePrevGroup = keyframeGroupList.get(i - 1).getKeyframeList().getLast();
+                referenceTick += (int) (lastKeyframePrevGroup.getTransitionDelay() / 1000.0 * 20);
+            }
+
+            for (int j = 0; j < keyframes.size(); j++) {
+                Keyframe current = keyframes.get(j);
+
+                int newTick = referenceTick;
+                if (j > 0) {
+                    Keyframe previous = keyframes.get(j - 1);
+                    double startDelay = previous.getStartDelay() / 1000.0;
+                    double pathTime = current.getPathTime() / 1000.0;
+                    newTick = previous.getTick() + (int) ((startDelay + pathTime) * 20);
+                }
+
+                current.setTick(newTick);
+                referenceTick = newTick;
+            }
         }
-        int newTick = (int) (previousKeyframe.getTick() + (newTime * 20));
-        keyframe.setTick(newTick);
-        playerSession.getCutsceneController().changeTimePosition(newTick);
+        playerSession.getCutsceneController().changeTimePosition(keyframe.getTick());
     }
 }
