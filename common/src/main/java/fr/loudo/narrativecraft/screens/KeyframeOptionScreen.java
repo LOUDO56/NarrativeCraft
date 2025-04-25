@@ -193,7 +193,7 @@ public class KeyframeOptionScreen extends Screen {
 
     private void initSliders() {
         float defaultValXRot = keyframe.getKeyframeCoordinate().getXRot() + 90F;
-        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format("%.2f", defaultValXRot));
+        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format(Locale.US, "%.2f", defaultValXRot));
         int initialY = this.height - 40;
         int gap = 5;
         int numSliders = 4;
@@ -227,7 +227,7 @@ public class KeyframeOptionScreen extends Screen {
         currentX += sliderWidth + gap;
 
         float defaultValYRot = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
-        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format("%.2f", defaultValYRot));
+        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format(Locale.US, "%.2f", defaultValYRot));
 
         AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
             @Override
@@ -282,12 +282,12 @@ public class KeyframeOptionScreen extends Screen {
 
         currentX += sliderWidth + gap;
 
-        Component fovName = Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov()));
+        Component fovName = Translation.message("screen.keyframe_option.fov", String.format(Locale.US, "%.2f", keyframe.getKeyframeCoordinate().getFov()));
 
         AbstractSliderButton fovSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, fovName, (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.fov", String.format("%.2f", keyframe.getKeyframeCoordinate().getFov())));
+                this.setMessage(Translation.message("screen.keyframe_option.fov", String.format(Locale.US, "%.2f", keyframe.getKeyframeCoordinate().getFov())));
             }
 
             @Override
@@ -358,6 +358,9 @@ public class KeyframeOptionScreen extends Screen {
                     double startDelay = previous.getStartDelay() / 1000.0;
                     double pathTime = current.getPathTime() / 1000.0;
                     newTick = previous.getTick() + (int) ((startDelay + pathTime) * 20);
+                    if(i == keyframeGroupList.size() - 1 && j == keyframes.size() - 1) {
+                        newTick += (int) ((keyframe.getTransitionDelay() / 1000) * 20);
+                    }
                 }
 
                 current.setTick(newTick);

@@ -63,10 +63,6 @@ public class CutscenePlayback  {
     }
 
     private void nextFrame() {
-        if(cutsceneController.isLastKeyframe(secondKeyframe)) {
-            stop();
-            return;
-        }
         currentIndexKeyframe++;
         if(cutsceneController.isLastKeyframe(currentKeyframeGroup, secondKeyframe)) {
             currentIndexKeyframe = 0;
@@ -138,7 +134,11 @@ public class CutscenePlayback  {
         t = Easings.easeOut(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
-            nextFrame();
+            if(cutsceneController.isLastKeyframe(secondKeyframe)) {
+                stop();
+            } else {
+                nextFrame();
+            }
         }
         return currentLoc;
     }
