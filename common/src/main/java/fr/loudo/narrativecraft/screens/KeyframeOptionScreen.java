@@ -3,9 +3,9 @@ package fr.loudo.narrativecraft.screens;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -18,14 +18,13 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 public class KeyframeOptionScreen extends Screen {
 
     private final int INITIAL_POS_X = 20;
-    private final int INITIAL_POS_Y = 20;
+    private final int INITIAL_POS_Y = 15;
     private final int EDIT_BOX_WIDTH = 60;
     private final int EDIT_BOX_HEIGHT = 15;
     private final int BUTTON_HEIGHT = 20;
@@ -33,39 +32,27 @@ public class KeyframeOptionScreen extends Screen {
     private ServerPlayer player;
     private PlayerSession playerSession;
     private Keyframe keyframe;
-    private List<EditBox> coordinatesBoxList;
-    private Keyframe previousKeyframe;
 
     private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
 
     private float upDownValue, leftRightValue, rotationValue, fovValue;
-    private double speed, additionalStartDelay;
     private int currentY = INITIAL_POS_Y;
 
 
     public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
         super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;
-        this.coordinatesBoxList = new ArrayList<>();
         this.player = player;
         this.upDownValue = keyframe.getKeyframeCoordinate().getXRot();
         this.leftRightValue = keyframe.getKeyframeCoordinate().getYRot();
         this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
         this.fovValue = keyframe.getKeyframeCoordinate().getFov();
-        this.speed = keyframe.getSpeed();
         this.playerSession = Utils.getSessionOrNull(player);
     }
 
     @Override
     protected void init() {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
-        KeyframeGroup selectedKeyframeGroup = cutsceneController.getSelectedKeyframeGroup();
-        int keyframeIndex = cutsceneController.getKeyframeIndex(selectedKeyframeGroup, keyframe);
-        if(selectedKeyframeGroup.getKeyframeList().size() > 1 && keyframeIndex > 0) {
-            previousKeyframe = selectedKeyframeGroup.getKeyframeList().get(keyframeIndex - 1);
-        } else {
-            previousKeyframe = keyframe;
-        }
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
             speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
@@ -76,10 +63,11 @@ public class KeyframeOptionScreen extends Screen {
         } else {
             startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
         }
-        initPositionLabelBox();
         initSliders();
         initButtons();
         initLittleButtons();
+        //Reset for responsive (changing windows size or going fullscreen)
+        currentY = INITIAL_POS_Y;
     }
 
     @Override
@@ -113,33 +101,8 @@ public class KeyframeOptionScreen extends Screen {
         return editBox;
     }
 
-    private void initPositionLabelBox() {
-        int currentX = INITIAL_POS_X;
-        int editWidth = 50;
-        int i = 0;
-        KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
-        Double[] coords = {position.getX(), position.getY(), position.getZ()};
-        String[] labels = {"X:", "Y:", "Z:"};
-        for(String label : labels) {
-            StringWidget stringWidget = ScreenUtils.text(Component.literal(label), this.font, currentX, currentY);
-            EditBox box = new EditBox(this.font,
-                    currentX + stringWidget.getWidth() + 5,
-                    currentY - stringWidget.getHeight() / 2,
-                    editWidth,
-                    EDIT_BOX_HEIGHT,
-                    Component.literal(stringWidget + " Value"));
-            box.setFilter(s -> s.matches(Utils.REGEX_FLOAT));
-            box.setValue(String.format(Locale.US, "%.2f", coords[i]));
-            this.addRenderableWidget(stringWidget);
-            this.addRenderableWidget(box);
-            coordinatesBoxList.add(box);
-            currentX += stringWidget.getWidth() + editWidth + 10;
-            i++;
-        }
-    }
-
     private void initButtons() {
-        currentY -= 10;
+        currentY -= 30;
         int gap = 15;
         int margin = 15;
         Component updateTitle = Translation.message("screen.keyframe_option.update");
@@ -178,27 +141,27 @@ public class KeyframeOptionScreen extends Screen {
         int currentX = this.width - INITIAL_POS_X;
         int gap = 5;
         int width = 20;
-        Button closeButton = Button.builder(Component.literal("X"), button -> {
+        Button closeButton = Button.builder(Component.literal("⨉"), button -> {
             playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
             this.onClose();
-        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
         Keyframe nextKeyframe = playerSession.getCutsceneController().getNextKeyframe(keyframe);
         if(nextKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
-            Button rightKeyframeButton = Button.builder(Component.literal("⇨"), button -> {
+            Button rightKeyframeButton = Button.builder(Component.literal("▶"), button -> {
                 playerSession.getCutsceneController().setCurrentPreviewKeyframe(nextKeyframe, false);
                 playerSession.getCutsceneController().changeTimePosition(nextKeyframe.getTick(), false);
-            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(rightKeyframeButton);
 
         }
         Keyframe previousKeyframe = playerSession.getCutsceneController().getPreviousKeyframe(keyframe);
         if(previousKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
-            Button leftKeyframeButton = Button.builder(Component.literal("⇦"), button -> {
+            Button leftKeyframeButton = Button.builder(Component.literal("◀"), button -> {
                 playerSession.getCutsceneController().setCurrentPreviewKeyframe(previousKeyframe, false);
                 playerSession.getCutsceneController().changeTimePosition(previousKeyframe.getTick(), false);
-            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 10, width, BUTTON_HEIGHT).build();
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(leftKeyframeButton);
         }
         this.addRenderableWidget(closeButton);
@@ -338,14 +301,8 @@ public class KeyframeOptionScreen extends Screen {
             keyframe.setSpeed(speedValue);
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
-        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
-        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
-        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
-        position.setX(xVal);
-        position.setY(yVal);
-        position.setZ(zVal);
         position.setXRot(upDownValue);
         position.setYRot(leftRightValue);
         position.setZRot(rotationValue);
