@@ -22,6 +22,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 public class KeyframeOptionScreen extends Screen {
 
@@ -105,7 +106,7 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void initButtons() {
-        currentY -= 30;
+        //currentY -= 30;
         int gap = 15;
         int margin = 15;
         Component updateTitle = Translation.message("screen.keyframe_option.update");
@@ -177,7 +178,6 @@ public class KeyframeOptionScreen extends Screen {
                 playerSession.getCutsceneController().changeTimePosition(nextKeyframe.getTick(), false);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(rightKeyframeButton);
-
         }
         Keyframe previousKeyframe = playerSession.getCutsceneController().getPreviousKeyframe(keyframe);
         if(previousKeyframe != null) {
@@ -192,24 +192,25 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     private void initSliders() {
-        float defaultValXRot = keyframe.getKeyframeCoordinate().getXRot() + 90F;
-        Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format(Locale.US, "%.2f", defaultValXRot));
         int initialY = this.height - 50;
         int gap = 5;
         int numSliders = 4;
         int sliderWidth = (this.width - gap * (numSliders + 1)) / numSliders;
         int currentX = gap;
 
+        Function<Float, String> formatFloat = val -> String.format(Locale.US, "%.2f", val);
+
+        // === UP DOWN ===
+        float defaultXRot = keyframe.getKeyframeCoordinate().getXRot();
+        float defaultValXRot = defaultXRot + 90F;
+
         AbstractSliderButton upDownSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
-                upDownName,
+                Translation.message("screen.keyframe_option.up_down", formatFloat.apply(defaultValXRot)),
                 defaultValXRot / 180F
         ) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message(
-                        "screen.keyframe_option.up_down",
-                        String.format(Locale.US, "%.2f", getValue() + 90F)
-                ));
+                this.setMessage(Translation.message("screen.keyframe_option.up_down", formatFloat.apply(getValue() + 90F)));
             }
 
             @Override
@@ -223,29 +224,33 @@ public class KeyframeOptionScreen extends Screen {
             }
         };
 
-        EditBox upDownBox = new EditBox(this.font, upDownSlider.getX(), upDownSlider.getY() + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("Up Down Value"));
-        upDownBox.setValue(String.format(Locale.US, "%.2f", defaultValXRot));
-        Button upDownButton = Button.builder(Component.literal("✔"), button -> {
+        EditBox upDownBox = new EditBox(this.font, currentX, initialY + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("Up Down Value"));
+        upDownBox.setValue(formatFloat.apply(defaultValXRot));
+        upDownBox.setFilter(s -> s.matches(Utils.REGEX_FLOAT_POSITIVE_ONLY));
+        Button upDownButton = Button.builder(Component.literal("✔"), btn -> {
             upDownValue = Float.parseFloat(upDownBox.getValue()) - 90F;
             updateValues();
-        }).bounds(upDownBox.getX() + upDownBox.getWidth() + 5, upDownBox.getY(), 20, EDIT_BOX_HEIGHT).build();
+            keyframe.openScreenOption(player);
+        }).bounds(currentX + EDIT_BOX_WIDTH + 5, upDownBox.getY(), 20, EDIT_BOX_HEIGHT).build();
+
+        this.addRenderableWidget(upDownSlider);
+        this.addRenderableWidget(upDownBox);
+        this.addRenderableWidget(upDownButton);
 
         currentX += sliderWidth + gap;
 
-        float defaultValYRot = MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
-        Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format(Locale.US, "%.2f", defaultValYRot));
+        // === LEFT RIGHT ===
+        float defaultYRot = MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
 
-        AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
+        AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
+                Translation.message("screen.keyframe_option.left_right", formatFloat.apply(defaultYRot)),
+                defaultYRot / 360F
+        ) {
             @Override
             protected void updateMessage() {
                 float value = MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
-                if (value == 0F && this.value == 1F) {
-                    value = 360F;
-                }
-                this.setMessage(Translation.message(
-                        "screen.keyframe_option.left_right",
-                        String.format(Locale.US, "%.2f", value)
-                ));
+                if (value == 0F && this.value == 1F) value = 360F;
+                this.setMessage(Translation.message("screen.keyframe_option.left_right", formatFloat.apply(value)));
             }
 
             @Override
@@ -259,41 +264,69 @@ public class KeyframeOptionScreen extends Screen {
             }
         };
 
+        EditBox leftRightBox = new EditBox(this.font, currentX, initialY + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("Left Right Value"));
+        leftRightBox.setValue(formatFloat.apply(defaultYRot));
+        leftRightBox.setFilter(s -> s.matches(Utils.REGEX_FLOAT_POSITIVE_ONLY));
+        Button leftRightButton = Button.builder(Component.literal("✔"), btn -> {
+            leftRightValue = Float.parseFloat(leftRightBox.getValue());
+            updateValues();
+            keyframe.openScreenOption(player);
+        }).bounds(currentX + EDIT_BOX_WIDTH + 5, leftRightBox.getY(), 20, EDIT_BOX_HEIGHT).build();
+
+        this.addRenderableWidget(leftRightSlider);
+        this.addRenderableWidget(leftRightBox);
+        this.addRenderableWidget(leftRightButton);
+
         currentX += sliderWidth + gap;
 
-        float defaultValZRot = MathUtils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
-        Component rotationName = Translation.message("screen.keyframe_option.rotation", defaultValZRot);
+        // === ROTATION ===
+        float defaultZRot = MathUtils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
 
-        AbstractSliderButton rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F) {
+        AbstractSliderButton rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
+                Translation.message("screen.keyframe_option.rotation", defaultZRot),
+                ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F
+        ) {
             @Override
             protected void updateMessage() {
-                float displayedAngle = (float) (this.value * 360 - 180);
-                this.setMessage(Translation.message(
-                        "screen.keyframe_option.rotation",
-                        String.format(Locale.US, "%.2f", displayedAngle)
-                ));
+                float angle = (float) (this.value * 360 - 180);
+                this.setMessage(Translation.message("screen.keyframe_option.rotation", formatFloat.apply(angle)));
             }
 
             @Override
             protected void applyValue() {
-                float displayedAngle = (float) (this.value * 360 - 180);
-                rotationValue = (displayedAngle + 360) % 360;
+                float angle = (float) (this.value * 360 - 180);
+                rotationValue = (angle + 360) % 360;
                 updateValues();
-            }
-
-            public float getValue() {
-                return (float) ((this.value * 360 - 180 + 360) % 360);
             }
         };
 
+        EditBox rotationBox = new EditBox(this.font, currentX, initialY + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("Rotation Value"));
+        rotationBox.setValue(formatFloat.apply(defaultZRot));
+        rotationBox.setFilter(s -> s.matches(Utils.REGEX_FLOAT));
+        Button rotationButton = Button.builder(Component.literal("✔"), btn -> {
+            if(rotationBox.getValue().equals("-")) return;
+            float angle = Float.parseFloat(rotationBox.getValue());
+            rotationValue = (angle + 360F) % 360F;
+            updateValues();
+            keyframe.openScreenOption(player);
+        }).bounds(currentX + EDIT_BOX_WIDTH + 5, rotationBox.getY(), 20, EDIT_BOX_HEIGHT).build();
+
+        this.addRenderableWidget(rotationSlider);
+        this.addRenderableWidget(rotationBox);
+        this.addRenderableWidget(rotationButton);
+
         currentX += sliderWidth + gap;
 
-        Component fovName = Translation.message("screen.keyframe_option.fov", String.format(Locale.US, "%.2f", keyframe.getKeyframeCoordinate().getFov()));
+        // === FOV ===
+        float defaultFov = keyframe.getKeyframeCoordinate().getFov();
 
-        AbstractSliderButton fovSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, fovName, (double) keyframe.getKeyframeCoordinate().getFov() / 150) {
+        AbstractSliderButton fovSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT,
+                Translation.message("screen.keyframe_option.fov", formatFloat.apply(defaultFov)),
+                defaultFov / 150F
+        ) {
             @Override
             protected void updateMessage() {
-                this.setMessage(Translation.message("screen.keyframe_option.fov", String.format(Locale.US, "%.2f", keyframe.getKeyframeCoordinate().getFov())));
+                this.setMessage(Translation.message("screen.keyframe_option.fov", formatFloat.apply(getValue())));
             }
 
             @Override
@@ -303,21 +336,25 @@ public class KeyframeOptionScreen extends Screen {
             }
 
             public float getValue() {
-                return (float) (this.value * 150);
+                return (float) (this.value * 150F);
             }
         };
 
+        EditBox fovBox = new EditBox(this.font, currentX, initialY + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("FOV Value"));
+        fovBox.setValue(formatFloat.apply(defaultFov));
+        fovBox.setFilter(s -> s.matches(Utils.REGEX_FLOAT_POSITIVE_ONLY));
+        Button fovButton = Button.builder(Component.literal("✔"), btn -> {
+            fovValue = Float.parseFloat(fovBox.getValue());
+            updateValues();
+            keyframe.openScreenOption(player);
+        }).bounds(currentX + EDIT_BOX_WIDTH + 5, fovBox.getY(), 20, EDIT_BOX_HEIGHT).build();
 
-        this.addRenderableWidget(upDownSlider);
-        this.addRenderableWidget(upDownBox);
-        this.addRenderableWidget(upDownButton);
-        this.addRenderableWidget(leftRightSlider);
-        this.addRenderableWidget(rotationSlider);
         this.addRenderableWidget(fovSlider);
-
-        currentY += 30;
-
+        this.addRenderableWidget(fovBox);
+        this.addRenderableWidget(fovButton);
     }
+
+
 
     private void updateValues() {
         if(startDelayBox != null) {

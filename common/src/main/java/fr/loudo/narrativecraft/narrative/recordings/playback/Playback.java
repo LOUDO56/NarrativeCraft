@@ -68,6 +68,7 @@ public class Playback {
     }
 
     public void next() {
+        if(!entity.isAlive()) return;
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
         if(tick >= movementDataList.size() - 1) {
             stop();
