@@ -61,20 +61,4 @@ public class Utils {
         }
         return playerSession;
     }
-
-    public static float getSecondsByMillis(long milli) {
-        if(milli == 0) return 0;
-        return milli / 1000f;
-    }
-
-    public static long getMillisBySecond(double second) {
-        return (long) (second * 1000L);
-    }
-
-    public static float get360Angle(float byteAngle) {
-        return (byteAngle + 360) % 360;
-    }
-    public static float get180Angle(float angle) {
-        return (angle + 180) % 360 - 180;
-    }
 }

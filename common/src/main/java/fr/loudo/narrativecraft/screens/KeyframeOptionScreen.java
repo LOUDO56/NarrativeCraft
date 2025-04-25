@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -55,14 +56,14 @@ public class KeyframeOptionScreen extends Screen {
     protected void init() {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if(!keyframe.isParentGroup()) {
-            pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(Utils.getSecondsByMillis(keyframe.getPathTime())));
+            pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getPathTime())));
             speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
         }
         if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe)) {
-            transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getTransitionDelay())));
+            transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getTransitionDelay())));
 
         } else {
-            startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(Utils.getSecondsByMillis(keyframe.getStartDelay())));
+            startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getStartDelay())));
         }
         initSliders();
         initButtons();
@@ -226,13 +227,13 @@ public class KeyframeOptionScreen extends Screen {
 
         currentX += sliderWidth + gap;
 
-        float defaultValYRot = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
+        float defaultValYRot = MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
         Component leftRightName = Translation.message("screen.keyframe_option.left_right", String.format(Locale.US, "%.2f", defaultValYRot));
 
-        AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
+        AbstractSliderButton leftRightSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, leftRightName, MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot()) / 360F) {
             @Override
             protected void updateMessage() {
-                float value = Utils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
+                float value = MathUtils.get360Angle(keyframe.getKeyframeCoordinate().getYRot());
                 if (value == 0F && this.value == 1F) {
                     value = 360F;
                 }
@@ -249,13 +250,13 @@ public class KeyframeOptionScreen extends Screen {
             }
 
             public float getValue() {
-                return Utils.get180Angle((float) (this.value * 360));
+                return MathUtils.get180Angle((float) (this.value * 360));
             }
         };
 
         currentX += sliderWidth + gap;
 
-        float defaultValZRot = Utils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
+        float defaultValZRot = MathUtils.get180Angle(keyframe.getKeyframeCoordinate().getZRot());
         Component rotationName = Translation.message("screen.keyframe_option.rotation", defaultValZRot);
 
         AbstractSliderButton rotationSlider = new AbstractSliderButton(currentX, initialY, sliderWidth, BUTTON_HEIGHT, rotationName, ((keyframe.getKeyframeCoordinate().getZRot() + 180F) % 360F) / 360F) {
@@ -314,11 +315,11 @@ public class KeyframeOptionScreen extends Screen {
     private void updateValues() {
         if(startDelayBox != null) {
             float startDelayVal = Float.parseFloat((startDelayBox.getValue()));
-            keyframe.setStartDelay(Utils.getMillisBySecond(startDelayVal));
+            keyframe.setStartDelay(MathUtils.getMillisBySecond(startDelayVal));
         }
         if(transitionDelayBox != null) {
             float transitionDelayValue = Float.parseFloat((transitionDelayBox.getValue()));
-            keyframe.setTransitionDelay(Utils.getMillisBySecond(transitionDelayValue));
+            keyframe.setTransitionDelay(MathUtils.getMillisBySecond(transitionDelayValue));
         }
         if(speedBox != null) {
             double speedValue = Double.parseDouble((speedBox.getValue()));
@@ -326,7 +327,7 @@ public class KeyframeOptionScreen extends Screen {
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
-        keyframe.setPathTime(Utils.getMillisBySecond(pathTimeVal));
+        keyframe.setPathTime(MathUtils.getMillisBySecond(pathTimeVal));
         position.setXRot(upDownValue);
         position.setYRot(leftRightValue);
         position.setZRot(rotationValue);

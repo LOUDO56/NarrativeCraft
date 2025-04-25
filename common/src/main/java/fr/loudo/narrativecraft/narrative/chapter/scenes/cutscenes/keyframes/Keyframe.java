@@ -4,6 +4,7 @@ import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
 import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -69,8 +70,8 @@ public class Keyframe {
     }
 
     public void updateEntityData(ServerPlayer player) {
-        float XheadPos = Utils.get360Angle(keyframeCoordinate.getXRot());
-        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : Utils.get360Angle(keyframeCoordinate.getXRot()), 0, keyframeCoordinate.getZRot()));
+        float XheadPos = MathUtils.get360Angle(keyframeCoordinate.getXRot());
+        cameraEntity.setHeadPose(new Rotations(XheadPos == 0 ? 0.000001f : MathUtils.get360Angle(keyframeCoordinate.getXRot()), 0, keyframeCoordinate.getZRot()));
 
         cameraEntity.setXRot(keyframeCoordinate.getXRot());
         cameraEntity.setYRot(keyframeCoordinate.getYRot());
