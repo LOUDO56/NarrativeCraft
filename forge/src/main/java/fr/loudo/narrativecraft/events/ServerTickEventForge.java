@@ -6,7 +6,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = NarrativeCraftMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
-public class ServerTickEvent {
+public class ServerTickEventForge {
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {

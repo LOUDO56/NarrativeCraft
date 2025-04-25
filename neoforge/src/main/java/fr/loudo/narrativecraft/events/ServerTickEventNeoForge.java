@@ -7,10 +7,10 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 
 @Mod(NarrativeCraftMod.MOD_ID)
-public class ServerTickEventClass {
+public class ServerTickEventNeoForge {
 
-    public ServerTickEventClass(IEventBus eventBus) {
-        NeoForge.EVENT_BUS.addListener(ServerTickEventClass::onServerTick);
+    public ServerTickEventNeoForge(IEventBus eventBus) {
+        NeoForge.EVENT_BUS.addListener(ServerTickEventNeoForge::onServerTick);
     }
 
     public static void onServerTick(ServerTickEvent.Post event) {

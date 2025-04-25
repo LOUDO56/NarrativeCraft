@@ -5,10 +5,13 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.client.KeyMapping;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModKeys {
 
+    private static final Map<KeyMapping, Boolean> previousStates = new HashMap<>();
     private static final List<KeyMapping> ALL_KEYS = new ArrayList<>();
 
     public static final KeyMapping START_ANIMATION_RECORDING = registerKey("key.animation.record.start", InputConstants.KEY_V);
@@ -31,6 +34,17 @@ public class ModKeys {
 
     public static List<KeyMapping> getAllKeys() {
         return ALL_KEYS;
+    }
+
+    public static void handleKeyPress(KeyMapping key, Runnable action) {
+        boolean isDown = key.isDown();
+        boolean wasDown = previousStates.getOrDefault(key, false);
+
+        if (isDown && !wasDown) {
+            action.run();
+        }
+
+        previousStates.put(key, isDown);
     }
 }
 

@@ -2,15 +2,18 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
-import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -374,6 +377,40 @@ public class CutsceneController {
 
     public boolean isLastKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
         return keyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
+    }
+
+    public void handleItemClick(String itemName) {
+        boolean playSound = false;
+        if(itemName.equals(CutsceneEditItems.createKeyframeGroup.getCustomName().getString())) {
+            createKeyframeGroup();
+            player.sendSystemMessage(Translation.message("cutscene.keyframegroup.created", selectedKeyframeGroup.getId()));
+            playSound = true;
+        } else if(itemName.equals(CutsceneEditItems.addKeyframe.getCustomName().getString())) {
+            if(addKeyframe()) {
+                player.sendSystemMessage(Translation.message("cutscene.keyframe.added", selectedKeyframeGroup.getId()));
+            } else {
+                player.sendSystemMessage(Translation.message("cutscene.keyframe.added.fail"));
+            }
+            playSound = true;
+        } else if(itemName.equals(CutsceneEditItems.cutscenePause.getCustomName().getString())) {
+            resume();
+            playSound = true;
+        } else if(itemName.equals(CutsceneEditItems.cutscenePlaying.getCustomName().getString())) {
+            pause();
+            playSound = true;
+        } else if (itemName.equals(CutsceneEditItems.nextSecond.getCustomName().getString())) {
+            nextSecondSkip();
+            playSound = true;
+        } else if (itemName.equals(CutsceneEditItems.previousSecond.getCustomName().getString())) {
+            previousSecondSkip();
+            playSound = true;
+        } else if (itemName.equals(CutsceneEditItems.settings.getCustomName().getString())) {
+            openSettings();
+        }
+
+        if(playSound) {
+            player.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.MASTER, 0.3F, 2);
+        }
     }
 
     public void nextSecondSkip() {
