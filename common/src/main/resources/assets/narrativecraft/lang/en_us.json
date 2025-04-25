@@ -3,6 +3,8 @@
   "key.animation.record.start": "Start Animation Recording",
   "key.animation.record.stop": "Stop Animation Recording",
   "key.cutscene.screen.keyframe_option": "Open Keyframe Option Screen",
+  "key.cutscene.keyframes.create_group": "Create Keyframe Group",
+  "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
