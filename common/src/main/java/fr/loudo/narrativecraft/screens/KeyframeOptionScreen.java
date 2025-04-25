@@ -67,7 +67,7 @@ public class KeyframeOptionScreen extends Screen {
         }
         initSliders();
         initButtons();
-        showTextSelectedKeyframe();
+        initTextSelectedKeyframe();
         initLittleButtons();
         //Reset for responsive (changing windows size or going fullscreen)
         currentY = INITIAL_POS_Y;
@@ -140,7 +140,7 @@ public class KeyframeOptionScreen extends Screen {
         this.addRenderableWidget(removeKeyframe);
     }
 
-    private void showTextSelectedKeyframe() {
+    private void initTextSelectedKeyframe() {
         int y = 10;
 
         KeyframeGroup group = playerSession.getCutsceneController().getKeyframeGroupByKeyframe(keyframe);
@@ -160,7 +160,6 @@ public class KeyframeOptionScreen extends Screen {
         this.addRenderableWidget(groupLabel);
         this.addRenderableWidget(keyframeIdLabel);
     }
-
 
     private void initLittleButtons() {
         int currentX = this.width - INITIAL_POS_X;
@@ -195,7 +194,7 @@ public class KeyframeOptionScreen extends Screen {
     private void initSliders() {
         float defaultValXRot = keyframe.getKeyframeCoordinate().getXRot() + 90F;
         Component upDownName = Translation.message("screen.keyframe_option.up_down", String.format(Locale.US, "%.2f", defaultValXRot));
-        int initialY = this.height - 40;
+        int initialY = this.height - 50;
         int gap = 5;
         int numSliders = 4;
         int sliderWidth = (this.width - gap * (numSliders + 1)) / numSliders;
@@ -224,6 +223,12 @@ public class KeyframeOptionScreen extends Screen {
             }
         };
 
+        EditBox upDownBox = new EditBox(this.font, upDownSlider.getX(), upDownSlider.getY() + BUTTON_HEIGHT + 5, EDIT_BOX_WIDTH, EDIT_BOX_HEIGHT, Component.literal("Up Down Value"));
+        upDownBox.setValue(String.format(Locale.US, "%.2f", defaultValXRot));
+        Button upDownButton = Button.builder(Component.literal("✔"), button -> {
+            upDownValue = Float.parseFloat(upDownBox.getValue()) - 90F;
+            updateValues();
+        }).bounds(upDownBox.getX() + upDownBox.getWidth() + 5, upDownBox.getY(), 20, EDIT_BOX_HEIGHT).build();
 
         currentX += sliderWidth + gap;
 
@@ -304,6 +309,8 @@ public class KeyframeOptionScreen extends Screen {
 
 
         this.addRenderableWidget(upDownSlider);
+        this.addRenderableWidget(upDownBox);
+        this.addRenderableWidget(upDownButton);
         this.addRenderableWidget(leftRightSlider);
         this.addRenderableWidget(rotationSlider);
         this.addRenderableWidget(fovSlider);
