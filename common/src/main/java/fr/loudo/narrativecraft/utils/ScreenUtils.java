@@ -10,4 +10,10 @@ public class ScreenUtils {
     public static StringWidget text(Component text, Font font, int x, int y) {
         return new StringWidget(x, y, font.width(text.getVisualOrderText()), 9, text, font);
     }
+
+    public static StringWidget text(Component text, Font font, int x, int y, int color) {
+        StringWidget stringWidget = new StringWidget(x, y, font.width(text.getVisualOrderText()), 9, text, font);
+        stringWidget.setColor(color);
+        return stringWidget;
+    }
 }

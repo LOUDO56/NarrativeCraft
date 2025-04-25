@@ -100,9 +100,11 @@
   "narrativecraft.screen.keyframe_option.fov": "Fov: %.2f",
   "narrativecraft.screen.keyframe_option.update": "Update",
   "narrativecraft.screen.keyframe_option.remove": "Remove",
-  "narrativecraft.screen.keyframe_option.play_from_here": "Play from here",
+  "narrativecraft.screen.keyframe_option.play_from_here": "Play here",
   "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe_option.path_time": "Path time:",
   "narrativecraft.screen.keyframe_option.transition_delay": "Transition delay:",
-  "narrativecraft.screen.keyframe_option.speed": "Speed:"
+  "narrativecraft.screen.keyframe_option.speed": "Speed:",
+  "narrativecraft.screen.keyframe_option.keyframe_group": "Group %d",
+  "narrativecraft.screen.keyframe_option.keyframe_id": "Keyframe ID #%d"
 }

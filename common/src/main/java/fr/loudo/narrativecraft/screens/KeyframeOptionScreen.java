@@ -16,6 +16,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.List;
@@ -65,6 +66,7 @@ public class KeyframeOptionScreen extends Screen {
         }
         initSliders();
         initButtons();
+        showTextSelectedKeyframe();
         initLittleButtons();
         //Reset for responsive (changing windows size or going fullscreen)
         currentY = INITIAL_POS_Y;
@@ -137,11 +139,33 @@ public class KeyframeOptionScreen extends Screen {
         this.addRenderableWidget(removeKeyframe);
     }
 
+    private void showTextSelectedKeyframe() {
+        int y = 10;
+
+        KeyframeGroup group = playerSession.getCutsceneController().getKeyframeGroupByKeyframe(keyframe);
+        MutableComponent groupText = Translation.message("screen.keyframe_option.keyframe_group", group.getId());
+        MutableComponent keyframeText = Translation.message("screen.keyframe_option.keyframe_id", keyframe.getId());
+
+        int groupWidth = this.font.width(groupText);
+        int keyframeWidth = this.font.width(keyframeText);
+        int spacing = 5;
+        int totalWidth = groupWidth + spacing + keyframeWidth;
+
+        int startX = (this.width - totalWidth) / 2;
+
+        StringWidget groupLabel = ScreenUtils.text(groupText, this.font, startX, y, 0x27cf1f);
+        StringWidget keyframeIdLabel = ScreenUtils.text(keyframeText, this.font, startX + groupWidth + spacing, y, 0xF1C40F);
+
+        this.addRenderableWidget(groupLabel);
+        this.addRenderableWidget(keyframeIdLabel);
+    }
+
+
     private void initLittleButtons() {
         int currentX = this.width - INITIAL_POS_X;
         int gap = 5;
         int width = 20;
-        Button closeButton = Button.builder(Component.literal("⨉"), button -> {
+        Button closeButton = Button.builder(Component.literal("✖"), button -> {
             playerSession.getCutsceneController().clearCurrentPreviewKeyframe();
             this.onClose();
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
