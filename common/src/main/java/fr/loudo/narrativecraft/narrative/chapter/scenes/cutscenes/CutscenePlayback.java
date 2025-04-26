@@ -131,7 +131,7 @@ public class CutscenePlayback  {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             return currentLoc;
         }
-        t = Easings.easeOut(Math.min((double) elapsedTime / endTime, 1.0));
+        t = Easings.smooth(Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             if(cutsceneController.isLastKeyframe(secondKeyframe)) {
