@@ -1,0 +1,40 @@
+{
+  "providers": [
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/keyframe_group.png",
+      "ascent": 11,
+      "height": 14,
+      "chars": [
+        "\uE000"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/keyframe.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\uE001"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/keyframe_trigger.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\uE002"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/settings.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\uE003"
+      ]
+    }
+  ]
+}

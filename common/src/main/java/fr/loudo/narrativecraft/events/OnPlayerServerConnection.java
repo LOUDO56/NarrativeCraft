@@ -16,7 +16,6 @@ public class OnPlayerServerConnection {
             playerSessionManager.getPlayerSessions().add(playerSession);
         }
         CutsceneEditItems.init(player.registryAccess());
-        CutsceneEditItems.initSkipItems(player.registryAccess(), 5);
     }
 
     public static void playerLeave(ServerPlayer player) {

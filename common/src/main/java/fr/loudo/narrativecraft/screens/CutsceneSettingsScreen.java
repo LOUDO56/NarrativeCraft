@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.screens;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
@@ -11,7 +12,7 @@ import net.minecraft.server.level.ServerPlayer;
 
 public class CutsceneSettingsScreen extends Screen {
 
-    private ServerPlayer serverPlayer;
+    private Screen lastScreen;
     private CutsceneController cutsceneController;
     private EditBox numberInput;
     private Button updateButton;
@@ -19,10 +20,15 @@ public class CutsceneSettingsScreen extends Screen {
     private final int BUTTON_WIDTH = 60;
     private final int BUTTON_HEIGHT = 20;
 
-    public CutsceneSettingsScreen(CutsceneController cutsceneController, ServerPlayer player) {
+    public CutsceneSettingsScreen(CutsceneController cutsceneController) {
         super(Component.literal("Change Skip Second"));
-        this.serverPlayer = player;
         this.cutsceneController = cutsceneController;
+    }
+
+    public CutsceneSettingsScreen(CutsceneController cutsceneController, Screen lastScreen) {
+        super(Component.literal("Change Skip Second"));
+        this.cutsceneController = cutsceneController;
+        this.lastScreen = lastScreen;
     }
 
     public CutsceneSettingsScreen() {
@@ -46,10 +52,12 @@ public class CutsceneSettingsScreen extends Screen {
             String input = numberInput.getValue();
             if (!input.isEmpty()) {
                 double value = Double.parseDouble(input);
-                if(cutsceneController != null) {
+                cutsceneController.setCurrentSkipCount(value);
+                Minecraft.getInstance().player.displayClientMessage(Translation.message("cutscene.changed_time_skip_value", value), false);
+                if(lastScreen == null) {
                     this.onClose();
-                    cutsceneController.setCurrentSkipCount(value);
-                    serverPlayer.sendSystemMessage(Translation.message("cutscene.changed_time_skip_value", value));
+                } else {
+                    Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(lastScreen));
                 }
             }
         }).bounds(updateX, centerY - 20, BUTTON_WIDTH, BUTTON_HEIGHT).build();

@@ -6,7 +6,6 @@ import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
 import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Rotations;

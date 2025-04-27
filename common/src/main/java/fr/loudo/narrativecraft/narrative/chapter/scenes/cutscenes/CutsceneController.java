@@ -1,19 +1,15 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
-import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.screens.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
-import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -72,18 +68,9 @@ public class CutsceneController {
             }
         }
 
-        player.setGameMode(GameType.ADVENTURE);
-        player.getAbilities().mayfly = true;
-        player.getAbilities().flying = true;
-        player.connection.send(new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
-        player.getInventory().clearContent();
-        player.getInventory().setItem(0, CutsceneEditItems.createKeyframeGroup);
-        player.getInventory().setItem(1, CutsceneEditItems.addKeyframe);
-        player.getInventory().setItem(3, CutsceneEditItems.previousSecond);
-        player.getInventory().setItem(4, CutsceneEditItems.cutscenePause);
-        player.getInventory().setItem(5, CutsceneEditItems.nextSecond);
-        player.getInventory().setItem(8, CutsceneEditItems.settings);
+        player.setGameMode(GameType.SPECTATOR);
         pause();
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
 
     }
 
@@ -100,9 +87,6 @@ public class CutsceneController {
         }
 
         player.setGameMode(GameType.CREATIVE);
-        player.getAbilities().mayBuild = true;
-        player.connection.send(new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
-        player.getInventory().clearContent();
 
         isPlaying = false;
 
@@ -111,21 +95,20 @@ public class CutsceneController {
     public void pause() {
         isPlaying = false;
         changePlayingPlaybackState();
-        changeItem(CutsceneEditItems.cutscenePlaying, CutsceneEditItems.cutscenePause);
     }
 
     public void resume() {
         isPlaying = true;
-        changeItem(CutsceneEditItems.cutscenePause, CutsceneEditItems.cutscenePlaying);
         changePlayingPlaybackState();
     }
 
-    public void createKeyframeGroup() {
+    public KeyframeGroup createKeyframeGroup() {
         KeyframeGroup keyframeGroup = new KeyframeGroup(keyframeGroupCounter.incrementAndGet());
         cutscene.getKeyframeGroupList().add(keyframeGroup);
         selectedKeyframeGroup = keyframeGroup;
         addKeyframe();
         updateSelectedGroupGlow();
+        return keyframeGroup;
     }
 
     public void updateSelectedGroupGlow() {
@@ -236,7 +219,7 @@ public class CutsceneController {
     }
 
     public void openSettings() {
-        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, player);
+        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.execute(() -> minecraft.setScreen(screen));
     }
@@ -379,40 +362,6 @@ public class CutsceneController {
         return keyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
     }
 
-    public void handleItemClick(String itemName) {
-        boolean playSound = false;
-        if(itemName.equals(CutsceneEditItems.createKeyframeGroup.getCustomName().getString())) {
-            createKeyframeGroup();
-            player.sendSystemMessage(Translation.message("cutscene.keyframegroup.created", selectedKeyframeGroup.getId()));
-            playSound = true;
-        } else if(itemName.equals(CutsceneEditItems.addKeyframe.getCustomName().getString())) {
-            if(addKeyframe()) {
-                player.sendSystemMessage(Translation.message("cutscene.keyframe.added", selectedKeyframeGroup.getId()));
-            } else {
-                player.sendSystemMessage(Translation.message("cutscene.keyframe.added.fail"));
-            }
-            playSound = true;
-        } else if(itemName.equals(CutsceneEditItems.cutscenePause.getCustomName().getString())) {
-            resume();
-            playSound = true;
-        } else if(itemName.equals(CutsceneEditItems.cutscenePlaying.getCustomName().getString())) {
-            pause();
-            playSound = true;
-        } else if (itemName.equals(CutsceneEditItems.nextSecond.getCustomName().getString())) {
-            nextSecondSkip();
-            playSound = true;
-        } else if (itemName.equals(CutsceneEditItems.previousSecond.getCustomName().getString())) {
-            previousSecondSkip();
-            playSound = true;
-        } else if (itemName.equals(CutsceneEditItems.settings.getCustomName().getString())) {
-            openSettings();
-        }
-
-        if(playSound) {
-            player.playNotifySound(SoundEvents.UI_BUTTON_CLICK.value(), SoundSource.MASTER, 0.3F, 2);
-        }
-    }
-
     public void nextSecondSkip() {
         changeTimePosition(currentTick + (int) currentSkipCount, false);
     }
@@ -439,11 +388,6 @@ public class CutsceneController {
 
     public void setCurrentSkipCount(double currentSkipCount) {
         this.currentSkipCount = currentSkipCount * 20;
-        ItemStack oldPreviousSecond = CutsceneEditItems.previousSecond;
-        ItemStack oldNextSecond = CutsceneEditItems.nextSecond;
-        CutsceneEditItems.initSkipItems(player.registryAccess(), currentSkipCount);
-        changeItem(oldPreviousSecond, CutsceneEditItems.previousSecond);
-        changeItem(oldNextSecond, CutsceneEditItems.nextSecond);
     }
 
     public KeyframeGroup getSelectedKeyframeGroup() {
@@ -456,5 +400,13 @@ public class CutsceneController {
 
     public List<Entity> getKeyframesEntity() {
         return keyframesEntity;
+    }
+
+    public boolean isPlaying() {
+        return isPlaying;
+    }
+
+    public double getCurrentSkipCount() {
+        return currentSkipCount;
     }
 }
