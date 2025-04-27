@@ -219,8 +219,8 @@ public class CutsceneController {
     }
 
     public void openSettings() {
-        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this);
         Minecraft minecraft = Minecraft.getInstance();
+        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, minecraft.screen);
         minecraft.execute(() -> minecraft.setScreen(screen));
     }
 

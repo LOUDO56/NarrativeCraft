@@ -123,8 +123,6 @@ public class TestCommand {
     }
 
     private static int openScreenChangeSecond(CommandContext<CommandSourceStack> context) {
-        CutsceneSettingsScreen cutsceneSettingsScreen = new CutsceneSettingsScreen();
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(cutsceneSettingsScreen));
         return Command.SINGLE_SUCCESS;
     }
 }
