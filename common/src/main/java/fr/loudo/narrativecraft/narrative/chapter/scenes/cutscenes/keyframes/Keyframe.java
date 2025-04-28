@@ -3,7 +3,8 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
-import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -27,6 +28,7 @@ public class Keyframe {
     private KeyframeCoordinate keyframeCoordinate;
     private long startDelay, pathTime, transitionDelay;
     private boolean isParentGroup;
+    private Easing easing;
 
     public Keyframe(int id, KeyframeCoordinate keyframeCoordinate, int tick, long startDelay, long pathTime) {
         this.id = id;
@@ -37,6 +39,7 @@ public class Keyframe {
         this.transitionDelay = 0;
         this.isParentGroup = false;
         this.speed = 1;
+        this.easing = Easing.SMOOTH;
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
@@ -156,5 +159,13 @@ public class Keyframe {
 
     public boolean isParentGroup() {
         return isParentGroup;
+    }
+
+    public Easing getEasing() {
+        return easing;
+    }
+
+    public void setEasing(Easing easing) {
+        this.easing = easing;
     }
 }

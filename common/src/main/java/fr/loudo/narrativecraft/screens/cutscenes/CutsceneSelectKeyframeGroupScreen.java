@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 
 public class CutsceneSelectKeyframeGroupScreen extends CutsceneSettingsScreen {
     public CutsceneSelectKeyframeGroupScreen(CutsceneController cutsceneController, Screen lastScreen) {
-        super(cutsceneController, lastScreen);
+        super(cutsceneController, lastScreen, Translation.message("screen.cutscenes_settings.select_group"));
     }
 
     @Override

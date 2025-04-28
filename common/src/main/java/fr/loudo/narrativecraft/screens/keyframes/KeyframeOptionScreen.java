@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens;
+package fr.loudo.narrativecraft.screens.keyframes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
@@ -129,6 +129,12 @@ public class KeyframeOptionScreen extends Screen {
                 this.onClose();
             }
         }).bounds(updateButton.getWidth() + updateButton.getX() + 5, currentY, this.font.width(playTitle) + margin, BUTTON_HEIGHT).build();
+        currentY += BUTTON_HEIGHT + gap - 10;
+        Component advancedTitle = Translation.message("screen.keyframe_option.advanced");
+        Button advancedButton = Button.builder(advancedTitle, button -> {
+            KeyframeAdvancedSettings screen = new KeyframeAdvancedSettings(playerSession.getCutsceneController(), this, keyframe);
+            this.minecraft.setScreen(screen);
+        }).bounds(INITIAL_POS_X, currentY, this.font.width(advancedTitle) + margin, BUTTON_HEIGHT).build();
         currentY += BUTTON_HEIGHT + gap;
         Component removeTitle = Translation.message("screen.keyframe_option.remove");
         Button removeKeyframe = Button.builder(removeTitle, button -> {
@@ -140,6 +146,7 @@ public class KeyframeOptionScreen extends Screen {
             }
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
+        this.addRenderableWidget(advancedButton);
         if(!playerSession.getCutsceneController().isLastKeyframe(keyframe)) {
             this.addRenderableWidget(playFromHere);
         }

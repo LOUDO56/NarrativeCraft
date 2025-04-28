@@ -2,9 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 

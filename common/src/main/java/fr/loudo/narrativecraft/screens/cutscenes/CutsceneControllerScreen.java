@@ -110,7 +110,7 @@ public class CutsceneControllerScreen extends Screen {
         int startX = controllerStartX + totalWidthControllerBtn + 15;
 
         Button settingsButton = Button.builder(ImageFontConstants.SETTINGS, button -> {
-            client.execute(() -> client.setScreen(new CutsceneSettingsScreen(cutsceneController, this)));
+            client.execute(() -> client.setScreen(new CutsceneSettingsScreen(cutsceneController, this, Translation.message("screen.cutscenes_settings.name"))));
         }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
 
         this.addRenderableWidget(settingsButton);

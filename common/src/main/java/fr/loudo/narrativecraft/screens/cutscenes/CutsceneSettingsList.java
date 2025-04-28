@@ -9,7 +9,6 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 
-
 import java.util.List;
 
 public class CutsceneSettingsList extends ContainerObjectSelectionList<CutsceneSettingsList.Entry> {

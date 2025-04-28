@@ -15,12 +15,12 @@ import java.util.List;
 
 public class CutsceneSettingsScreen extends OptionsSubScreen {
 
-    private Screen lastScreen;
+    protected Screen lastScreen;
     protected CutsceneController cutsceneController;
     protected CutsceneSettingsList cutsceneSettingsList;
 
-    public CutsceneSettingsScreen(CutsceneController cutsceneController, Screen lastScreen) {
-        super(lastScreen, Minecraft.getInstance().options, Component.literal("Cutscene Settings"));
+    public CutsceneSettingsScreen(CutsceneController cutsceneController, Screen lastScreen, Component title) {
+        super(lastScreen, Minecraft.getInstance().options, title);
         this.lastScreen = lastScreen;
         this.cutsceneController = cutsceneController;
     }

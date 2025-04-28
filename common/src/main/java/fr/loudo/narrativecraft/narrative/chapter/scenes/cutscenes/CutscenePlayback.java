@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.utils.Easings;
+import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.utils.TpUtil;
@@ -131,7 +131,7 @@ public class CutscenePlayback  {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             return currentLoc;
         }
-        t = Easings.smooth(Math.min((double) elapsedTime / endTime, 1.0));
+        t = Easing.getInterpolation(secondKeyframe.getEasing(), Math.min((double) elapsedTime / endTime, 1.0));
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             if(cutsceneController.isLastKeyframe(secondKeyframe)) {

@@ -7,10 +7,29 @@
   "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
   "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
 
+  "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
   "narrativecraft.screen.cutscenes_settings.time_skip": "Change Time Skip",
   "narrativecraft.screen.cutscenes_settings.select_group": "Select Keyframe Group",
   "narrativecraft.screen.cutscenes_settings.select_group_name": "Keyframe Group %d",
   "narrativecraft.screen.cutscenes_settings.select_group_name_selected": "Keyframe Group %d (selected)",
+
+  "narrativecraft.screen.keyframe_advanced.name": "Advanced Settings",
+  "narrativecraft.screen.keyframe_advanced.easings": "Easings",
+
+  "narrativecraft.screen.keyframe_option.up_down": "Up/Down: %.2f",
+  "narrativecraft.screen.keyframe_option.left_right": "Left/Right %.2f",
+  "narrativecraft.screen.keyframe_option.rotation": "Rotation: %d",
+  "narrativecraft.screen.keyframe_option.fov": "Zoom: %.2f",
+  "narrativecraft.screen.keyframe_option.update": "Update",
+  "narrativecraft.screen.keyframe_option.advanced": "Advanced",
+  "narrativecraft.screen.keyframe_option.remove": "Remove",
+  "narrativecraft.screen.keyframe_option.play_from_here": "Play here",
+  "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
+  "narrativecraft.screen.keyframe_option.path_time": "Path time:",
+  "narrativecraft.screen.keyframe_option.transition_delay": "Transition delay:",
+  "narrativecraft.screen.keyframe_option.speed": "Speed:",
+  "narrativecraft.screen.keyframe_option.keyframe_group": "Group %d",
+  "narrativecraft.screen.keyframe_option.keyframe_id": "Keyframe ID #%d",
 
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
@@ -100,19 +119,5 @@
   "narrativecraft.cutscene.keyframe.added": "Keyframe added to keyframe group ID #%d",
   "narrativecraft.cutscene.keyframe.added.fail": "§cYou need to select a keyframe group or create a new one.",
 
-  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
-
-  "narrativecraft.screen.keyframe_option.up_down": "Up/Down: %.2f",
-  "narrativecraft.screen.keyframe_option.left_right": "Left/Right %.2f",
-  "narrativecraft.screen.keyframe_option.rotation": "Rotation: %d",
-  "narrativecraft.screen.keyframe_option.fov": "Zoom: %.2f",
-  "narrativecraft.screen.keyframe_option.update": "Update",
-  "narrativecraft.screen.keyframe_option.remove": "Remove",
-  "narrativecraft.screen.keyframe_option.play_from_here": "Play here",
-  "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
-  "narrativecraft.screen.keyframe_option.path_time": "Path time:",
-  "narrativecraft.screen.keyframe_option.transition_delay": "Transition delay:",
-  "narrativecraft.screen.keyframe_option.speed": "Speed:",
-  "narrativecraft.screen.keyframe_option.keyframe_group": "Group %d",
-  "narrativecraft.screen.keyframe_option.keyframe_id": "Keyframe ID #%d"
+  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds"
 }
