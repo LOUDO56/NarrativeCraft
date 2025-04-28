@@ -68,8 +68,8 @@ public class ActionDifferenceListener {
 
     private void poseListener() {
         if(player.getPose() != poseState) {
+            PoseAction action = new PoseAction(tick, ActionType.POSE, player.getPose(), poseState);
             poseState = player.getPose();
-            PoseAction action = new PoseAction(tick, ActionType.POSE, player.getPose());
             recording.getActionsData().addAction(action);
         }
     }
@@ -77,8 +77,8 @@ public class ActionDifferenceListener {
     private void entityByteListener() {
         byte entityCurrentByte = player.getEntityData().get(entityFlagByte);
         if(entityByteState != entityCurrentByte) {
+            EntityByteAction entityByteAction = new EntityByteAction(tick, ActionType.ENTITY_BYTE, entityCurrentByte, entityByteState);
             entityByteState = entityCurrentByte;
-            EntityByteAction entityByteAction = new EntityByteAction(tick, ActionType.ENTITY_BYTE, entityCurrentByte);
             recording.getActionsData().addAction(entityByteAction);
         }
     }

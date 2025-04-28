@@ -24,11 +24,16 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
             }
             case POSE -> {
                 Pose pose = Pose.valueOf(jsonObject.get("pose").getAsString());
-                return new PoseAction(tick, actionType, pose);
+                Pose previousPose = null;
+                if(jsonObject.get("previousPose") != null) {
+                    previousPose = Pose.valueOf(jsonObject.get("previousPose").getAsString());
+                }
+                return new PoseAction(tick, actionType, pose, previousPose);
             }
             case ENTITY_BYTE -> {
                 byte entityByte = jsonObject.get("entityByte").getAsByte();
-                return new EntityByteAction(tick, actionType, entityByte);
+                byte previousEntityByte = jsonObject.get("previousEntityByte").getAsByte();
+                return new EntityByteAction(tick, actionType, entityByte, previousEntityByte);
             }
             case LIVING_ENTITY_BYTE -> {
                 byte livingEntityByte = jsonObject.get("livingEntityByte").getAsByte();

@@ -10,10 +10,14 @@ import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.Pose;
 
 import java.util.List;
 import java.util.UUID;
@@ -54,6 +58,23 @@ public class Playback {
         } else {
             serverLevel.addFreshEntity(entity);
         }
+    }
+
+    private void spawnEntity(MovementData loc, Entity oldEntity) {
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
+        entity = new FakePlayer(serverLevel, gameProfile);
+        moveEntitySilent(entity, loc);
+        entity.setPose(oldEntity.getPose());
+        SynchedEntityData entityData = entity.getEntityData();
+        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
+        if(entity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+            serverLevel.addNewPlayer(fakePlayer);
+        } else {
+            serverLevel.addFreshEntity(entity);
+        }
+
     }
 
     public void stop() {
@@ -129,6 +150,10 @@ public class Playback {
                 destroyBlockStageAction.execute(serverLevel, destroyBlockStageAction.getProgress() == 1);
             } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
                 rightClickBlockAction.execute(entity);
+            } else if(action instanceof PoseAction poseAction) {
+                poseAction.execute(entity, true);
+            } else if(action instanceof EntityByteAction entityByteAction) {
+                entityByteAction.execute(entity, true);
             } else {
                 action.execute(entity);
             }
@@ -159,6 +184,13 @@ public class Playback {
 
     public void changeLocationByTick(int newTick, boolean seamless) {
         if(newTick < animation.getActionsData().getMovementData().size() - 1) {
+            MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
+            if(seamless) {
+                moveEntitySilent(entity, movementData);
+            } else {
+                killEntity();
+                spawnEntity(movementData, entity);
+            }
             int tickDiff = newTick - tick;
             if(tickDiff > 0) {
                 for (int i = tick; i < newTick; i++) {
@@ -172,13 +204,6 @@ public class Playback {
                 }
             }
             this.tick = newTick;
-            MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
-            if(seamless) {
-                moveEntitySilent(entity, movementData);
-            } else {
-                killEntity();
-                spawnEntity(movementData);
-            }
             hasEnded = false;
         } else {
             hasEnded = true;

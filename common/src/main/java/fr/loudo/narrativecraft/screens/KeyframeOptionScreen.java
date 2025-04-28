@@ -420,6 +420,11 @@ public class KeyframeOptionScreen extends Screen {
     private void updateCurrentTick() {
         List<KeyframeGroup> keyframeGroupList = playerSession.getCutsceneController().getCutscene().getKeyframeGroupList();
 
+        int initialFirstTick = 0;
+        if (!keyframeGroupList.isEmpty() && !keyframeGroupList.getFirst().getKeyframeList().isEmpty()) {
+            initialFirstTick = keyframeGroupList.getFirst().getKeyframeList().getFirst().getTick();
+        }
+
         int referenceTick = 0;
 
         for (int i = 0; i < keyframeGroupList.size(); i++) {
@@ -434,15 +439,16 @@ public class KeyframeOptionScreen extends Screen {
             for (int j = 0; j < keyframes.size(); j++) {
                 Keyframe current = keyframes.get(j);
 
-                int newTick = referenceTick;
-                if (j > 0) {
+                int newTick;
+                if (i == 0 && j == 0) {
+                    newTick = initialFirstTick;
+                } else if (j > 0) {
                     Keyframe previous = keyframes.get(j - 1);
                     double startDelay = previous.getStartDelay() / 1000.0;
                     double pathTime = current.getPathTime() / 1000.0;
                     newTick = previous.getTick() + (int) ((startDelay + pathTime) * 20);
-                    if(i == keyframeGroupList.size() - 1 && j == keyframes.size() - 1) {
-                        newTick += (int) ((keyframe.getTransitionDelay() / 1000) * 20);
-                    }
+                } else {
+                    newTick = referenceTick;
                 }
 
                 current.setTick(newTick);

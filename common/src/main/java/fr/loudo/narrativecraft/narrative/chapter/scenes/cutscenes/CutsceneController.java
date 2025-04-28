@@ -347,11 +347,11 @@ public class CutsceneController {
     }
 
     public void nextSecondSkip() {
-        changeTimePosition(currentTick + (int) currentSkipCount, false);
+        changeTimePosition(currentTick + (int) currentSkipCount, true);
     }
 
     public void previousSecondSkip() {
-        changeTimePosition(Math.max(0, currentTick - (int) currentSkipCount), false);
+        changeTimePosition(Math.max(0, currentTick - (int) currentSkipCount), true);
     }
 
     public void next() {
