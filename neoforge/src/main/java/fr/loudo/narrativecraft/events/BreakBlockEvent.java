@@ -17,6 +17,6 @@ public class BreakBlockEvent {
 
     private static void onBreakBlock(BlockEvent.BreakEvent event) {
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(event.getPlayer().getUUID());
-        OnBreakBlock.breakBlock(event.getPos(), serverPlayer);
+        OnBreakBlock.breakBlock(event.getState(), event.getPos(), serverPlayer);
     }
 }

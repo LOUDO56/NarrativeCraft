@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -116,6 +117,24 @@ public class Playback {
         }
     }
 
+    public void actionListenerRewind() {
+        List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
+        for(Action action : actionToBePlayed) {
+            if(action instanceof PlaceBlockAction placeBlockAction) {
+                placeBlockAction.execute(entity, serverLevel);
+            } else if(action instanceof BreakBlockAction breakBlockAction) {
+                PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, ActionType.BLOCK_PLACE, breakBlockAction.getX(), breakBlockAction.getY(), breakBlockAction.getZ(), breakBlockAction.getData());
+                placeBlockAction.execute(entity, serverLevel);
+            } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
+                destroyBlockStageAction.execute(serverLevel, destroyBlockStageAction.getProgress() == 1);
+            } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
+                rightClickBlockAction.execute(entity);
+            } else {
+                action.execute(entity);
+            }
+        }
+    }
+
     private void moveEntity(Entity entity, MovementData movementData, MovementData movementDataNext) {
         moveEntitySilent(entity, movementData);
         entity.move(MoverType.SELF, MovementUtils.getDeltaMovement(movementData, movementDataNext));
@@ -138,10 +157,22 @@ public class Playback {
         return hasEnded;
     }
 
-    public void changeLocationByTick(int tick, boolean seamless) {
-        if(tick < animation.getActionsData().getMovementData().size() - 1) {
-            this.tick = tick;
-            MovementData movementData = animation.getActionsData().getMovementData().get(tick);
+    public void changeLocationByTick(int newTick, boolean seamless) {
+        if(newTick < animation.getActionsData().getMovementData().size() - 1) {
+            int tickDiff = newTick - tick;
+            if(tickDiff > 0) {
+                for (int i = tick; i < newTick; i++) {
+                    tick = i;
+                    actionListener();
+                }
+            } else {
+                for (int i = tick; i > newTick; i--) {
+                    tick = i;
+                    actionListenerRewind();
+                }
+            }
+            this.tick = newTick;
+            MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
             if(seamless) {
                 moveEntitySilent(entity, movementData);
             } else {

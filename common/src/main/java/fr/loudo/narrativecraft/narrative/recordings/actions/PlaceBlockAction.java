@@ -41,7 +41,5 @@ public class PlaceBlockAction extends Action {
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);
         }
-
-
     }
 }

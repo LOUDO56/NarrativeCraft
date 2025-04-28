@@ -23,4 +23,12 @@ public class DestroyBlockStageAction extends Action {
     public void execute(ServerLevel serverLevel) {
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundBlockDestructionPacket(id, new BlockPos(x, y, z), progress));
     }
+
+    public void execute(ServerLevel serverLevel, boolean reset) {
+        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundBlockDestructionPacket(id, new BlockPos(x, y, z), reset ? -1 : progress));
+    }
+
+    public int getProgress() {
+        return progress;
+    }
 }

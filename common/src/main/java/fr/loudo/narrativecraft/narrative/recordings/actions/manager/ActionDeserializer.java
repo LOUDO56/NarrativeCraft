@@ -59,7 +59,8 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 int y = jsonObject.get("y").getAsInt();
                 int z = jsonObject.get("z").getAsInt();
                 boolean drop = jsonObject.get("drop").getAsBoolean();
-                return new BreakBlockAction(tick, actionType, x, y, z, drop);
+                String data = jsonObject.get("data").getAsString();
+                return new BreakBlockAction(tick, actionType, x, y, z, drop, data);
             }
             case DESTROY_BLOCK_STAGE -> {
                 int x = jsonObject.get("x").getAsInt();

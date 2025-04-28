@@ -69,7 +69,7 @@ public class Subscene {
 
     public void stop() {
         for(Playback playback : playbackList) {
-            playback.stop();
+            playback.stopAndKill();
         }
         playbackList.clear();
     }
