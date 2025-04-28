@@ -52,7 +52,7 @@ public class OnServerTick {
                 Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
                 if(keyframePreview != null) {
                     KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
-                    TpUtil.teleportPlayer(playerSession.getPlayer(), position.getX(), position.getY(), position.getZ());
+                    TpUtil.teleportPlayer(playerSession.getPlayer(), position.getVec3());
                 }
             }
             CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
@@ -60,7 +60,7 @@ public class OnServerTick {
                 KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
                 if(currentLoc != null) {
                     // Teleport player every tick to handle chunk loading while camera moves.
-                    TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getX(), currentLoc.getY(), currentLoc.getZ());
+                    TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getVec3());
                 }
             }
         }

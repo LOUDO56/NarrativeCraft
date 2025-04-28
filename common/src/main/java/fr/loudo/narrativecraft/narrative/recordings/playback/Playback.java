@@ -22,7 +22,7 @@ public class Playback {
     private Animation animation;
     private LivingEntity entity;
     private ServerLevel serverLevel;
-    private boolean isPlaying;
+    private boolean isPlaying, hasEnded;
 
     private int tick;
 
@@ -30,6 +30,7 @@ public class Playback {
         this.animation = animation;
         this.serverLevel = serverLevel;
         this.isPlaying = false;
+        this.hasEnded = false;
     }
 
     public boolean start() {
@@ -54,11 +55,17 @@ public class Playback {
         }
     }
 
-    public boolean stop() {
-        killEntity();
+    public void stop() {
         isPlaying = false;
+        hasEnded = true;
         //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
-        return true;
+    }
+
+    public void stopAndKill() {
+        isPlaying = false;
+        hasEnded = true;
+        killEntity();
+        //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
     }
 
 
@@ -72,7 +79,6 @@ public class Playback {
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
         if(tick >= movementDataList.size() - 1) {
             stop();
-            return;
         };
 
         MovementData movementData = movementDataList.get(tick);
@@ -88,7 +94,9 @@ public class Playback {
 //            serverPlayer.connection.send(new ClientboundEntityPositionSyncPacket(fakePlayer.getId(), positionMoveRotation, true));
 //        }
 
-        tick++;
+        if(tick < movementDataList.size() - 1) {
+            tick++;
+        }
     }
 
     public void actionListener() {
@@ -126,6 +134,10 @@ public class Playback {
         return isPlaying;
     }
 
+    public boolean hasEnded() {
+        return hasEnded;
+    }
+
     public void changeLocationByTick(int tick, boolean seamless) {
         if(tick < animation.getActionsData().getMovementData().size() - 1) {
             this.tick = tick;
@@ -136,6 +148,9 @@ public class Playback {
                 killEntity();
                 spawnEntity(movementData);
             }
+            hasEnded = false;
+        } else {
+            hasEnded = true;
         }
     }
 
@@ -145,6 +160,9 @@ public class Playback {
 
     public void setPlaying(boolean playing) {
         isPlaying = playing;
+        if(playing) {
+            hasEnded = false;
+        }
     }
 
     public Animation getAnimation() {

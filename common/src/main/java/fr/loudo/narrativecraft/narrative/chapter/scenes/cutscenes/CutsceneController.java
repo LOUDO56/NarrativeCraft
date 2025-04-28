@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.utils.TpUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -355,12 +356,23 @@ public class CutsceneController {
 
     public void next() {
         if(isPlaying) currentTick++;
+        checkEndedPlayback();
     }
 
     private void changePlayingPlaybackState() {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             for(Playback playback : subscene.getPlaybackList()) {
                 playback.setPlaying(isPlaying);
+            }
+        }
+    }
+
+    private void checkEndedPlayback() {
+        for(Subscene subscene : cutscene.getSubsceneList()) {
+            for(Playback playback : subscene.getPlaybackList()) {
+                if(playback.hasEnded()) {
+                    player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
+                }
             }
         }
     }
