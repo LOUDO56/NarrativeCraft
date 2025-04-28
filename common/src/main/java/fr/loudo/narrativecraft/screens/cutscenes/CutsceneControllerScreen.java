@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens;
+package fr.loudo.narrativecraft.screens.cutscenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;

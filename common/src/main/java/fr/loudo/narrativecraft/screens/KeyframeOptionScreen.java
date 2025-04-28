@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Function;
@@ -32,6 +33,7 @@ public class KeyframeOptionScreen extends Screen {
     private final int EDIT_BOX_HEIGHT = 15;
     private final int BUTTON_HEIGHT = 20;
 
+    private List<EditBox> coordinatesBoxList;
     private ServerPlayer player;
     private PlayerSession playerSession;
     private Keyframe keyframe;
@@ -46,6 +48,7 @@ public class KeyframeOptionScreen extends Screen {
         super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;
         this.player = player;
+        this.coordinatesBoxList = new ArrayList<>();
         this.upDownValue = keyframe.getKeyframeCoordinate().getXRot();
         this.leftRightValue = keyframe.getKeyframeCoordinate().getYRot();
         this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
@@ -55,6 +58,7 @@ public class KeyframeOptionScreen extends Screen {
 
     @Override
     protected void init() {
+        updateCurrentTick();
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if(!keyframe.isParentGroup()) {
             pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getPathTime())));
@@ -66,6 +70,7 @@ public class KeyframeOptionScreen extends Screen {
         } else {
             startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getStartDelay())));
         }
+        initPositionLabelBox();
         initSliders();
         initButtons();
         initTextSelectedKeyframe();
@@ -139,6 +144,32 @@ public class KeyframeOptionScreen extends Screen {
             this.addRenderableWidget(playFromHere);
         }
         this.addRenderableWidget(removeKeyframe);
+    }
+
+    private void initPositionLabelBox() {
+        int currentX = INITIAL_POS_X;
+        int editWidth = 50;
+        int i = 0;
+        KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
+        Double[] coords = {position.getX(), position.getY(), position.getZ()};
+        String[] labels = {"X:", "Y:", "Z:"};
+        for(String label : labels) {
+            StringWidget stringWidget = ScreenUtils.text(Component.literal(label), this.font, currentX, currentY);
+            EditBox box = new EditBox(this.font,
+                    currentX + stringWidget.getWidth() + 5,
+                    currentY - stringWidget.getHeight() / 2,
+                    editWidth,
+                    EDIT_BOX_HEIGHT,
+                    Component.literal(stringWidget + " Value"));
+            box.setFilter(s -> s.matches(Utils.REGEX_FLOAT));
+            box.setValue(String.format(Locale.US, "%.2f", coords[i]));
+            this.addRenderableWidget(stringWidget);
+            this.addRenderableWidget(box);
+            coordinatesBoxList.add(box);
+            currentX += stringWidget.getWidth() + editWidth + 10;
+            i++;
+        }
+        currentY += 20;
     }
 
     private void initTextSelectedKeyframe() {
@@ -370,11 +401,17 @@ public class KeyframeOptionScreen extends Screen {
             keyframe.setSpeed(speedValue);
         }
         float pathTimeVal = pathTimeBox == null ? 0 : Float.parseFloat((pathTimeBox.getValue()));
+        float xVal = Float.parseFloat((coordinatesBoxList.get(0).getValue()));
+        float yVal = Float.parseFloat((coordinatesBoxList.get(1).getValue()));
+        float zVal = Float.parseFloat((coordinatesBoxList.get(2).getValue()));
         KeyframeCoordinate position = keyframe.getKeyframeCoordinate();
         keyframe.setPathTime(MathUtils.getMillisBySecond(pathTimeVal));
         position.setXRot(upDownValue);
         position.setYRot(leftRightValue);
         position.setZRot(rotationValue);
+        position.setX(xVal);
+        position.setY(yVal);
+        position.setZ(zVal);
         position.setFov(fovValue);
         keyframe.setKeyframeCoordinate(position);
         keyframe.updateEntityData(player);

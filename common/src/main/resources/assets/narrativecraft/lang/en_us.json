@@ -7,6 +7,11 @@
   "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
   "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
 
+  "narrativecraft.screen.cutscenes_settings.time_skip": "Change Time Skip",
+  "narrativecraft.screen.cutscenes_settings.select_group": "Select Keyframe Group",
+  "narrativecraft.screen.cutscenes_settings.select_group_name": "Keyframe Group %d",
+  "narrativecraft.screen.cutscenes_settings.select_group_name_selected": "Keyframe Group %d (selected)",
+
   "narrativecraft.chapter.create.success": "Chapter %d created successfully.",
   "narrativecraft.chapter.create.fail": "Chapter %d couldn't be created! Please check if chapters directory in your map world directory exists!",
   "narrativecraft.chapter.delete.success": "Chapter %d deleted successfully.",

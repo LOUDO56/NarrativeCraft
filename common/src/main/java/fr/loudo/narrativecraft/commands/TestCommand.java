@@ -6,7 +6,6 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
-import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.screens.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;

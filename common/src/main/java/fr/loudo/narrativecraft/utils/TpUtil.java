@@ -23,4 +23,20 @@ public class TpUtil {
         );
         player.teleport(teleportTransition);
     }
+
+    public static void teleportPlayer(ServerPlayer player, Vec3 position) {
+        ServerLevel world = player.serverLevel();
+        TeleportTransition teleportTransition = new TeleportTransition(
+                world,
+                new Vec3(position.x, position.y, position.z),
+                new Vec3(0, 0, 0),
+                player.getYRot(),
+                player.getXRot(),
+                false,
+                false,
+                Set.of(),
+                TeleportTransition.DO_NOTHING
+        );
+        player.teleport(teleportTransition);
+    }
 }

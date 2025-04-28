@@ -5,15 +5,13 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import fr.loudo.narrativecraft.screens.CutsceneControllerScreen;
-import fr.loudo.narrativecraft.screens.CutsceneSettingsScreen;
+import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
+import fr.loudo.narrativecraft.utils.TpUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
@@ -170,6 +168,9 @@ public class CutsceneController {
                             keyframeGroup1.getKeyframeList().getFirst().showStartGroupText(player, i + 1);
                             keyframeGroup1.setId(i + 1);
                         }
+                        if(!cutscene.getKeyframeGroupList().isEmpty()) {
+                            setSelectedKeyframeGroup(cutscene.getKeyframeGroupList().getLast());
+                        }
                     }
                     return true;
                 }
@@ -216,24 +217,6 @@ public class CutsceneController {
         }
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
-    }
-
-    public void openSettings() {
-        Minecraft minecraft = Minecraft.getInstance();
-        CutsceneSettingsScreen screen = new CutsceneSettingsScreen(this, minecraft.screen);
-        minecraft.execute(() -> minecraft.setScreen(screen));
-    }
-
-    private void changeItem(ItemStack previousItem, ItemStack newItem) {
-        Inventory inventory = player.getInventory();
-        for(int i = 0; i < inventory.getContainerSize(); i++) {
-            ItemStack itemStack = inventory.getItem(i);
-            if(!itemStack.isEmpty() && itemStack.getCustomName() != null && previousItem.getCustomName() != null) {
-                if(itemStack.getCustomName().getString().equals(previousItem.getCustomName().getString())) {
-                    inventory.setItem(i, newItem);
-                }
-            }
-        }
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
@@ -354,8 +337,8 @@ public class CutsceneController {
     }
 
     public boolean isLastKeyframe(Keyframe keyframe) {
-        return keyframeGroupCounter.get() == selectedKeyframeGroup.getId()
-                && selectedKeyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
+        return keyframeGroupCounter.get() == cutscene.getKeyframeGroupList().getLast().getId()
+                && cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId() == keyframe.getId();
     }
 
     public boolean isLastKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
@@ -392,6 +375,13 @@ public class CutsceneController {
 
     public KeyframeGroup getSelectedKeyframeGroup() {
         return selectedKeyframeGroup;
+    }
+
+    public void setSelectedKeyframeGroup(KeyframeGroup selectedKeyframeGroup) {
+        this.selectedKeyframeGroup = selectedKeyframeGroup;
+        updateSelectedGroupGlow();
+        Vec3 pos = selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3();
+        TpUtil.teleportPlayer(player, pos.x(), pos.y() - 1, pos.z());
     }
 
     public AtomicInteger getKeyframeGroupCounter() {
