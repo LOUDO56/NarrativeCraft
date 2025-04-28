@@ -455,6 +455,6 @@ public class KeyframeOptionScreen extends Screen {
                 referenceTick = newTick;
             }
         }
-        playerSession.getCutsceneController().changeTimePosition(keyframe.getTick(), false);
+        playerSession.getCutsceneController().changeTimePosition(keyframe.getTick(), true);
     }
 }
