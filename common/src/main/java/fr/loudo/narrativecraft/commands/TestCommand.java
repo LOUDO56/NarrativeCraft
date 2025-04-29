@@ -25,6 +25,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -66,7 +67,9 @@ public class TestCommand {
         ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, context.getSource().getLevel());
         armorStand.snapTo(context.getSource().getPosition());
         context.getSource().getLevel().addFreshEntity(armorStand);
-        OnHudRender.entityPos = armorStand.position();
+        Vec3 armorStandPos = armorStand.position();
+        OnHudRender.entityPos = new Vec3(armorStandPos.x, armorStandPos.y + armorStand.getEyeHeight(), armorStandPos.z);
+        OnHudRender.entity = armorStand;
 
         return Command.SINGLE_SUCCESS;
     }

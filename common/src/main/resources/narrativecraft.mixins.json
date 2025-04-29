@@ -13,7 +13,8 @@
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
     "fields.TextDisplayFields",
-    "fields.ArmorStandFields"
+    "fields.ArmorStandFields",
+    "fields.GameRendererFields"
   ],
   "client": [],
   "server": [],
