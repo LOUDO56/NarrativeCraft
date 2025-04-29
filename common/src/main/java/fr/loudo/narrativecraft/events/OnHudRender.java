@@ -1,11 +1,9 @@
 package fr.loudo.narrativecraft.events;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -16,6 +14,7 @@ public class OnHudRender {
     public static Vec3 entityPos;
 
     public static void hudRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+        if(entityPos == null) return;
         Minecraft client = Minecraft.getInstance();
         Matrix4f projection = client.gameRenderer.getProjectionMatrix(client.options.fov().get());
         Matrix4f view = getViewMatrix(client.gameRenderer.getMainCamera());
@@ -29,13 +28,24 @@ public class OnHudRender {
         float ndcZ = posClip.z / posClip.w;
         float ndcW = 1.0f;
 
+        int screenWidth = Minecraft.getInstance().getWindow().getScreenWidth();
+        int screenHeight = Minecraft.getInstance().getWindow().getScreenHeight();
+
+        float screenX = (ndcX + 1.0f) / 2.0f * screenWidth;
+        float screenY = (1.0f - ndcY) / 2.0f * screenHeight;
+
+        guiGraphics.drawString(client.font, "Hello", (int) screenX, (int) screenY, 0xFFFFFF);
+
     }
 
     private static Matrix4f getViewMatrix(Camera camera) {
 
         Vec3 camPos = camera.getPosition();
         Quaternionf camRot = camera.rotation();
-        return new Matrix4f().rotate(camRot).translate((float) -camPos.x, (float) -camPos.y, (float) -camPos.z);
+        return new Matrix4f()
+                .rotate(camRot.conjugate(new Quaternionf()))
+                .translate((float) -camPos.x, (float) -camPos.y, (float) -camPos.z);
+
     }
 
 }

@@ -4,6 +4,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
+import fr.loudo.narrativecraft.events.OnHudRender;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
@@ -21,6 +22,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
@@ -54,9 +56,19 @@ public class TestCommand {
                         )
                 )
                 .then(Commands.literal("dialog")
-
+                        .executes(TestCommand::dialogText)
                 )
         );
+    }
+
+    private static int dialogText(CommandContext<CommandSourceStack> context) {
+
+        ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, context.getSource().getLevel());
+        armorStand.snapTo(context.getSource().getPosition());
+        context.getSource().getLevel().addFreshEntity(armorStand);
+        OnHudRender.entityPos = armorStand.position();
+
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int playFadeOut(CommandContext<CommandSourceStack> context) {
