@@ -53,6 +53,9 @@ public class TestCommand {
                                 .executes(TestCommand::playFadeOut)
                         )
                 )
+                .then(Commands.literal("dialog")
+
+                )
         );
     }
 
