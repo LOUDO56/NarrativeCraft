@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -22,7 +23,12 @@ public class OnHudRender {
     public static void hudRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(entityPos == null) return;
         Minecraft client = Minecraft.getInstance();
-        Matrix4f projection = client.gameRenderer.getProjectionMatrix(client.options.fov().get());
+        float dynamicFov = ((GameRendererFields)client.gameRenderer).callGetFov(
+                client.gameRenderer.getMainCamera(),
+                deltaTracker.getGameTimeDeltaPartialTick(true),
+                true
+        );
+        Matrix4f projection = client.gameRenderer.getProjectionMatrix(dynamicFov);
         Matrix4f view = getViewMatrix(client.gameRenderer.getMainCamera());
         Vector4f posWorld = new Vector4f(
                 (float) entityPos.x,
@@ -45,7 +51,8 @@ public class OnHudRender {
         int screenHeight = (client.getWindow().getScreenHeight()) / client.options.guiScale().get();
 
         float baseSize = 2.0f;
-        float scale = 100.0f / posClip.w;
+        float fovScale = (70.0f / dynamicFov);
+        float scale = (100.0f / posClip.w) * fovScale;
 
         float rectWidth = (baseSize + 10f) * scale;
         float rectHeight = baseSize * scale;
