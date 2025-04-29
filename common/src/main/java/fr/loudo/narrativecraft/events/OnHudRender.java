@@ -64,7 +64,7 @@ public class OnHudRender {
         float minY = screenY;
         float maxX = screenX + rectWidth;
         float maxY = screenY + rectHeight;
-        float z = -1;
+        float z = 0;
 
         int color = 0xD9000000; // opaque noir
 
@@ -81,7 +81,7 @@ public class OnHudRender {
         }
 
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
-        VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
+        VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.translucent());
 
         int a = (color >> 24) & 0xFF;
         int r = (color >> 16) & 0xFF;
@@ -96,10 +96,16 @@ public class OnHudRender {
 
         MultiBufferSource.BufferSource buffers = client.renderBuffers().bufferSource();
 
+        String text = "Hello, folk!";
+
+        guiGraphics.pose().pushPose();
+        float textScale = (5.0f / posClip.w) * fovScale;
+        guiGraphics.pose().scale(textScale, textScale, 1.0f);
+
         client.font.drawInBatch(
-                "Hello World!",
-                screenX,
-                screenY,
+                text,
+                screenX / textScale,
+                screenY / textScale,
                 0xFFFFFF,
                 true,
                 guiGraphics.pose().last().pose(),
@@ -108,6 +114,8 @@ public class OnHudRender {
                 0,
                 15728880
         );
+
+        guiGraphics.pose().popPose();
 
         buffers.endBatch();
     }
