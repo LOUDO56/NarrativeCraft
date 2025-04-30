@@ -13,26 +13,22 @@ import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.geom.LayerDefinitions;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Display;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.animal.Pig;
-import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -72,12 +68,15 @@ public class TestCommand {
 
     private static int dialogText(CommandContext<CommandSourceStack> context) {
 
+        ServerPlayer player = context.getSource().getPlayer();
         Pig pig = new Pig(EntityType.PIG, context.getSource().getLevel());
         pig.snapTo(context.getSource().getPosition());
         //context.getSource().getLevel().addFreshEntity(pig);
         //Entity clientPig = Minecraft.getInstance().level.getEntity(pig.getId());
-        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "Hi!"));
-        context.getSource().getLevel().addFreshEntity(fakePlayer);
+        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "SCUAMP CONNARD"));
+        fakePlayer.snapTo(context.getSource().getPosition());
+        player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+        context.getSource().getLevel().addNewPlayer(fakePlayer);
         OnHudRender.dialog = new Dialog(fakePlayer, 10F, 5F, 0xD9000000);
 
         return Command.SINGLE_SUCCESS;

@@ -14,8 +14,7 @@
     "fields.ItemDisplayFields",
     "fields.TextDisplayFields",
     "fields.ArmorStandFields",
-    "fields.GameRendererFields",
-    "fields.EntityRendererFields"
+    "fields.GameRendererFields"
   ],
   "client": [],
   "server": [],

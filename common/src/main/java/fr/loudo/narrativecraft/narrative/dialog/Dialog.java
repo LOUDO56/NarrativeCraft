@@ -1,10 +1,8 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import fr.loudo.narrativecraft.mixin.fields.EntityRendererFields;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.utils.Easing;
-import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -12,10 +10,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -23,7 +19,7 @@ import org.joml.Vector4f;
 
 public class Dialog {
 
-    private final long APPEAR_TIME = 3000L;
+    private final long APPEAR_TIME = 200L;
     private final Easing easing = Easing.SMOOTH;
 
     private Vector4f posClip;
@@ -58,6 +54,7 @@ public class Dialog {
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(textPosition == null) return;
+        updateTextPosition(deltaTracker);
         if (t < 1.0) {
             dialogInterpolation.setStartPosition(new Vec3(textPosition.x, textPosition.y - 1.5f, textPosition.z));
             long currentTime = System.currentTimeMillis();
@@ -87,24 +84,20 @@ public class Dialog {
         projection.transform(posClip);
 
         float[] coord = worldToScreen(posClip);
-        drawTextDialog(guiGraphics, "Hello World!", coord[0], coord[1], scale);
+        drawTextDialog(guiGraphics, "FORTNITE R34 FEET", coord[0], coord[1], scale);
 
     }
 
-    public void updateTextPosition(DeltaTracker deltaTracker) {
-        double x1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().x;
-        double y1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().y;
-        double z1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().z;
-
-        float pt = deltaTracker.getGameTimeDeltaPartialTick(true);
-
-        double x = Mth.lerp(pt, entity.xo, entity.getX());
-        double y = Mth.lerp(pt, entity.yo, entity.getY());
-        double z = Mth.lerp(pt, entity.zo, entity.getZ());
-
-        double eyeY = y + entity.getEyeHeight();
-
-        textPosition = new Vec3(x1, y1, z1);
+    private void updateTextPosition(DeltaTracker deltaTracker) {
+        for (Entity entity1 : Minecraft.getInstance().level.entitiesForRendering()) {
+            if(entity1.getId() == entity.getId()) {
+                double x = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.xOld, entity1.getX());
+                double y = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.yOld, entity1.getY());
+                double z = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.zOld, entity1.getZ());
+                textPosition = new Vec3(x, y + entity.getBbHeight(), z);
+                break;
+            }
+        }
     }
 
     private float[] worldToScreen(Vector4f posClip) {
