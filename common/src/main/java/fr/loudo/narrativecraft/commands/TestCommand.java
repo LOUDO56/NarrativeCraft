@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.commands;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
@@ -9,8 +10,11 @@ import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.LayerDefinitions;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
@@ -22,7 +26,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.entity.decoration.ArmorStand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -30,6 +36,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -65,12 +72,13 @@ public class TestCommand {
 
     private static int dialogText(CommandContext<CommandSourceStack> context) {
 
-        ArmorStand armorStand = new ArmorStand(EntityType.ARMOR_STAND, context.getSource().getLevel());
-        armorStand.snapTo(context.getSource().getPosition());
-        context.getSource().getLevel().addFreshEntity(armorStand);
-        Vec3 armorStandPos = armorStand.position();
-        Vec3 pos = new Vec3(armorStandPos.x, armorStandPos.y + armorStand.getEyeHeight() + 0.5f, armorStandPos.z);
-        OnHudRender.dialog = new Dialog(pos, 10F, 5F, 0xD9000000);
+        Pig pig = new Pig(EntityType.PIG, context.getSource().getLevel());
+        pig.snapTo(context.getSource().getPosition());
+        //context.getSource().getLevel().addFreshEntity(pig);
+        //Entity clientPig = Minecraft.getInstance().level.getEntity(pig.getId());
+        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "Hi!"));
+        context.getSource().getLevel().addFreshEntity(fakePlayer);
+        OnHudRender.dialog = new Dialog(fakePlayer, 10F, 5F, 0xD9000000);
 
         return Command.SINGLE_SUCCESS;
     }

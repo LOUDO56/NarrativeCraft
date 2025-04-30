@@ -1,7 +1,10 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import fr.loudo.narrativecraft.mixin.fields.EntityRendererFields;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
+import fr.loudo.narrativecraft.utils.Easing;
+import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -9,6 +12,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityAttachment;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -16,21 +23,50 @@ import org.joml.Vector4f;
 
 public class Dialog {
 
+    private final long APPEAR_TIME = 3000L;
+    private final Easing easing = Easing.SMOOTH;
+
     private Vector4f posClip;
-    private float fov, paddingX, paddingY;
+    private float fov, paddingX, paddingY, scale, opacity;
 
-    private Vec3 entityPos;
+    private Entity entity;
+    private Vec3 textPosition, lastPos, currentPos;
     private int backgroundColor;
+    private long startTime;
+    private double t;
 
-    public Dialog(Vec3 entityPos, float paddingX, float paddingY, int backgroundColor) {
-        this.entityPos = entityPos;
+    private DialogInterpolation dialogInterpolation;
+
+    public Dialog(Entity entity, float paddingX, float paddingY, int backgroundColor) {
+        this.entity = entity;
+        this.textPosition = new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ());
+        this.lastPos = textPosition;
         this.paddingX = paddingX;
         this.paddingY = paddingY;
         this.backgroundColor = backgroundColor;
+        this.t = 0;
+        this.startTime = System.currentTimeMillis();
+        this.scale = 15f;
+        this.opacity = 0f;
+        this.dialogInterpolation = new DialogInterpolation(
+                this,
+                new Vec3(textPosition.x, textPosition.y - 1.5f, textPosition.z),
+                textPosition,
+                scale
+        );
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if(entityPos == null) return;
+        if(textPosition == null) return;
+        if (t < 1.0) {
+            dialogInterpolation.setStartPosition(new Vec3(textPosition.x, textPosition.y - 1.5f, textPosition.z));
+            long currentTime = System.currentTimeMillis();
+            t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));
+            DialogInterpolation interpolation = dialogInterpolation.getNextValues(t);
+            textPosition = interpolation.getTextPosition();
+            scale = interpolation.getScale();
+            opacity = interpolation.getOpacity();
+        }
         Minecraft client = Minecraft.getInstance();
         fov = ((GameRendererFields)client.gameRenderer).callGetFov(
                 client.gameRenderer.getMainCamera(),
@@ -40,9 +76,9 @@ public class Dialog {
         Matrix4f projection = client.gameRenderer.getProjectionMatrix(fov);
         Matrix4f view = getViewMatrix(client.gameRenderer.getMainCamera());
         Vector4f posWorld = new Vector4f(
-                (float) entityPos.x,
-                (float) entityPos.y + 0.9f,
-                (float) entityPos.z,
+                (float) textPosition.x,
+                (float) textPosition.y + 0.9f,
+                (float) textPosition.z,
                 1.0f
         );
 
@@ -51,8 +87,24 @@ public class Dialog {
         projection.transform(posClip);
 
         float[] coord = worldToScreen(posClip);
-        drawTextDialog(guiGraphics, "Hello World!", coord[0], coord[1], 8f);
+        drawTextDialog(guiGraphics, "Hello World!", coord[0], coord[1], scale);
 
+    }
+
+    public void updateTextPosition(DeltaTracker deltaTracker) {
+        double x1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().x;
+        double y1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().y;
+        double z1 = ((EntityRendererFields)Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(entity)).getReusedState().z;
+
+        float pt = deltaTracker.getGameTimeDeltaPartialTick(true);
+
+        double x = Mth.lerp(pt, entity.xo, entity.getX());
+        double y = Mth.lerp(pt, entity.yo, entity.getY());
+        double z = Mth.lerp(pt, entity.zo, entity.getZ());
+
+        double eyeY = y + entity.getEyeHeight();
+
+        textPosition = new Vec3(x1, y1, z1);
     }
 
     private float[] worldToScreen(Vector4f posClip) {
@@ -106,10 +158,20 @@ public class Dialog {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
 
-        vertexconsumer.addVertex(matrix4f, minX, minY, 0).setColor(backgroundColor);
-        vertexconsumer.addVertex(matrix4f, minX, maxY, 0).setColor(backgroundColor);
-        vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(backgroundColor);
-        vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(backgroundColor);
+        float a;
+        if(t <= 1.0) {
+            a = opacity;
+        } else {
+            a = (backgroundColor >> 24) & 0xFF;
+        }
+        float r = (backgroundColor >> 16) & 0xFF;
+        float g = (backgroundColor >> 8) & 0xFF;
+        float b = backgroundColor & 0xFF;
+
+        vertexconsumer.addVertex(matrix4f, minX, minY, 0).setColor(r, g, b, a);
+        vertexconsumer.addVertex(matrix4f, minX, maxY, 0).setColor(r, g, b, a);
+        vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(r, g, b, a);
+        vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(r, g, b, a);
 
         return new float[]{minX, minY, maxX, maxY};
     }
@@ -156,5 +218,21 @@ public class Dialog {
 
     private float getResizedScale(float baseScale) {
         return (baseScale / posClip.w) * (70.0f / fov);
+    }
+
+    public void setTextPosition(Vec3 textPosition) {
+        this.textPosition = textPosition;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setLastPos(Vec3 lastPos) {
+        this.lastPos = lastPos;
+    }
+
+    public void setCurrentPos(Vec3 currentPos) {
+        this.currentPos = currentPos;
     }
 }
