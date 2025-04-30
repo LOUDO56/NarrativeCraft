@@ -84,7 +84,7 @@ public class Dialog {
         projection.transform(posClip);
 
         float[] coord = worldToScreen(posClip);
-        drawTextDialog(guiGraphics, "FORTNITE R34 FEET", coord[0], coord[1], scale);
+        drawTextDialog(guiGraphics, "Hello World!", coord[0], coord[1], scale);
 
     }
 

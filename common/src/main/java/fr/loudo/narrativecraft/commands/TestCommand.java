@@ -73,7 +73,7 @@ public class TestCommand {
         pig.snapTo(context.getSource().getPosition());
         //context.getSource().getLevel().addFreshEntity(pig);
         //Entity clientPig = Minecraft.getInstance().level.getEntity(pig.getId());
-        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "SCUAMP CONNARD"));
+        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
