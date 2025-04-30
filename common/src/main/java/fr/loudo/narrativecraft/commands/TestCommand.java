@@ -7,6 +7,7 @@ import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.events.OnHudRender;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
@@ -68,8 +69,8 @@ public class TestCommand {
         armorStand.snapTo(context.getSource().getPosition());
         context.getSource().getLevel().addFreshEntity(armorStand);
         Vec3 armorStandPos = armorStand.position();
-        OnHudRender.entityPos = new Vec3(armorStandPos.x, armorStandPos.y + armorStand.getEyeHeight(), armorStandPos.z);
-        OnHudRender.entity = armorStand;
+        Vec3 pos = new Vec3(armorStandPos.x, armorStandPos.y + armorStand.getEyeHeight() + 0.5f, armorStandPos.z);
+        OnHudRender.dialog = new Dialog(pos, 10F, 5F, 0xD9000000);
 
         return Command.SINGLE_SUCCESS;
     }
