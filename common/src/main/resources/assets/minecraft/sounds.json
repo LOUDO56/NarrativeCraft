@@ -1,0 +1,6 @@
+{
+  "custom.dialog_sound": {
+    "category": "master",
+    "sounds": ["custom/dialog_sound"]
+  }
+}
