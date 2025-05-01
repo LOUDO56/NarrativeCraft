@@ -23,19 +23,23 @@ public class Dialog {
     private final Easing easing = Easing.SMOOTH;
 
     private Vector4f posClip;
-    private float fov, paddingX, paddingY, scale, opacity;
+    private float fov, paddingX, paddingY, scale;
+    private int opacity;
 
-    private Entity entity;
+    private Entity entityServer;
+    private Entity entityClient;
     private Vec3 textPosition, lastPos, currentPos;
     private int backgroundColor;
     private long startTime;
     private double t;
 
     private DialogInterpolation dialogInterpolation;
+    private String text;
 
-    public Dialog(Entity entity, float paddingX, float paddingY, int backgroundColor) {
-        this.entity = entity;
-        this.textPosition = new Vec3(entity.getX(), entity.getY() + entity.getEyeHeight(), entity.getZ());
+    public Dialog(String text, Entity entityServer, float paddingX, float paddingY, int backgroundColor) {
+        this.text = text;
+        this.entityServer = entityServer;
+        this.textPosition = new Vec3(entityServer.getX(), entityServer.getEyeHeight(), entityServer.getZ());
         this.lastPos = textPosition;
         this.paddingX = paddingX;
         this.paddingY = paddingY;
@@ -43,10 +47,9 @@ public class Dialog {
         this.t = 0;
         this.startTime = System.currentTimeMillis();
         this.scale = 15f;
-        this.opacity = 0f;
+        this.opacity = 0;
         this.dialogInterpolation = new DialogInterpolation(
-                this,
-                new Vec3(textPosition.x, textPosition.y - 1.5f, textPosition.z),
+                textPosition.add(0, -1, 0),
                 textPosition,
                 scale
         );
@@ -56,7 +59,8 @@ public class Dialog {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
         if (t < 1.0) {
-            dialogInterpolation.setStartPosition(new Vec3(textPosition.x, textPosition.y - 1.5f, textPosition.z));
+            dialogInterpolation.setStartPosition(textPosition.add(0, -1, 0));
+            dialogInterpolation.setEndPosition(textPosition);
             long currentTime = System.currentTimeMillis();
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));
             DialogInterpolation interpolation = dialogInterpolation.getNextValues(t);
@@ -84,20 +88,28 @@ public class Dialog {
         projection.transform(posClip);
 
         float[] coord = worldToScreen(posClip);
-        drawTextDialog(guiGraphics, "Hello World!", coord[0], coord[1], scale);
+        drawTextDialog(guiGraphics, text, coord[0], coord[1], scale);
 
     }
 
     private void updateTextPosition(DeltaTracker deltaTracker) {
-        for (Entity entity1 : Minecraft.getInstance().level.entitiesForRendering()) {
-            if(entity1.getId() == entity.getId()) {
-                double x = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.xOld, entity1.getX());
-                double y = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.yOld, entity1.getY());
-                double z = Mth.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), entity1.zOld, entity1.getZ());
-                textPosition = new Vec3(x, y + entity.getBbHeight(), z);
-                break;
+        if(!entityServer.level().isClientSide) {
+            for (Entity entity1 : Minecraft.getInstance().level.entitiesForRendering()) {
+                if(entity1.getId() == entityServer.getId()) {
+                    entityClient = entity1;
+                    break;
+                }
             }
         }
+
+        float partialTick = deltaTracker.getGameTimeDeltaPartialTick(true);
+
+        double x = Mth.lerp(partialTick, entityClient.xOld, entityClient.getX());
+        double y = Mth.lerp(partialTick, entityClient.yOld, entityClient.getY());
+        double z = Mth.lerp(partialTick, entityClient.zOld, entityClient.getZ());
+
+        textPosition = new Vec3(x, y + entityServer.getEyeHeight(), z);
+
     }
 
     private float[] worldToScreen(Vector4f posClip) {
@@ -151,20 +163,11 @@ public class Dialog {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
 
-        float a;
-        if(t <= 1.0) {
-            a = opacity;
-        } else {
-            a = (backgroundColor >> 24) & 0xFF;
-        }
-        float r = (backgroundColor >> 16) & 0xFF;
-        float g = (backgroundColor >> 8) & 0xFF;
-        float b = backgroundColor & 0xFF;
-
-        vertexconsumer.addVertex(matrix4f, minX, minY, 0).setColor(r, g, b, a);
-        vertexconsumer.addVertex(matrix4f, minX, maxY, 0).setColor(r, g, b, a);
-        vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(r, g, b, a);
-        vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(r, g, b, a);
+        int color = (Math.min(opacity, 200) << 24) | backgroundColor;
+        vertexconsumer.addVertex(matrix4f, minX, minY, 0).setColor(color);
+        vertexconsumer.addVertex(matrix4f, minX, maxY, 0).setColor(color);
+        vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(color);
+        vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(color);
 
         return new float[]{minX, minY, maxX, maxY};
     }
@@ -185,7 +188,7 @@ public class Dialog {
                 text,
                 (screenX / scale) - ((float) client.font.width(text) / 2),
                 (screenY / scale) - ((float) client.font.lineHeight / 2),
-                0xFFFFFF,
+                (opacity << 24) | 0xFFFFFF,
                 false,
                 guiGraphics.pose().last().pose(),
                 buffers,
@@ -217,8 +220,8 @@ public class Dialog {
         this.textPosition = textPosition;
     }
 
-    public Entity getEntity() {
-        return entity;
+    public Entity getEntityServer() {
+        return entityServer;
     }
 
     public void setLastPos(Vec3 lastPos) {

@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.commands;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.events.OnHudRender;
@@ -18,7 +19,6 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -61,12 +61,17 @@ public class TestCommand {
                         )
                 )
                 .then(Commands.literal("dialog")
-                        .executes(TestCommand::dialogText)
+                        .then(Commands.argument("text", StringArgumentType.greedyString())
+                                .executes(commandContext -> {
+                                    String text = String.join(" ", StringArgumentType.getString(commandContext, "text").split("_"));
+                                    return dialogText(commandContext, text);
+                                })
+                        )
                 )
         );
     }
 
-    private static int dialogText(CommandContext<CommandSourceStack> context) {
+    private static int dialogText(CommandContext<CommandSourceStack> context, String text) {
 
         ServerPlayer player = context.getSource().getPlayer();
         Pig pig = new Pig(EntityType.PIG, context.getSource().getLevel());
@@ -75,9 +80,9 @@ public class TestCommand {
         //Entity clientPig = Minecraft.getInstance().level.getEntity(pig.getId());
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
-        player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        context.getSource().getLevel().addNewPlayer(fakePlayer);
-        OnHudRender.dialog = new Dialog(fakePlayer, 10F, 5F, 0xD9000000);
+        //player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+        //context.getSource().getLevel().addNewPlayer(fakePlayer);
+        OnHudRender.dialog = new Dialog(text, player, 10F, 5F, 0x000000);
 
         return Command.SINGLE_SUCCESS;
     }
