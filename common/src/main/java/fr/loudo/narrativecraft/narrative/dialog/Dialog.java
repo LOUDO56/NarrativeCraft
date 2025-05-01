@@ -19,7 +19,7 @@ import org.joml.Vector4f;
 
 public class Dialog {
 
-    private final long APPEAR_TIME = 200L;
+    private final long APPEAR_TIME = 4000L;
     private final Easing easing = Easing.SMOOTH;
 
     private Vector4f posClip;
@@ -131,14 +131,28 @@ public class Dialog {
 
     private void drawTextDialog(GuiGraphics guiGraphics, String text, float screenX, float screenY, float scale) {
         Minecraft client = Minecraft.getInstance();
-
+        int guiScale = client.options.guiScale().get();
         float resizedScale = getResizedScale(scale);
-        float textWidth = (client.font.width(text) * resizedScale);
-        float textHeight = ((client.font.lineHeight) * resizedScale);
+        float gap = 0f;
 
-        drawRectangle(guiGraphics, screenX, screenY, textWidth, textHeight, paddingX * resizedScale, paddingY * resizedScale);
-        drawString(guiGraphics, text, screenX, screenY, resizedScale);
+        float totalWidth = 0;
+        float widthRectangle = (client.font.width(text) * resizedScale) / 2;
+        for (int i = 0; i < text.length(); i++) {
+            String character = String.valueOf(text.charAt(i));
+            totalWidth += (client.font.width(character) * resizedScale + gap * resizedScale) / guiScale;
+        }
+
+        float startX = screenX - (totalWidth / 2);
+        for (int i = 0; i < text.length(); i++) {
+            String character = String.valueOf(text.charAt(i));
+            drawString(guiGraphics, character, startX, screenY, resizedScale);
+            startX += (client.font.width(character) * resizedScale + gap * resizedScale) / guiScale;
+        }
+
+        float textHeight = (client.font.lineHeight * resizedScale) / 2;
+        drawRectangle(guiGraphics, screenX, screenY, widthRectangle, textHeight, paddingX * resizedScale, paddingY * resizedScale);
     }
+
 
     private float[] drawRectangle(GuiGraphics guiGraphics, float screenX, float screenY, float width, float height, float paddingX, float paddingY) {
         Minecraft client = Minecraft.getInstance();
@@ -149,16 +163,13 @@ public class Dialog {
         float totalWidth = (width + 2 * paddingX) / guiScale;
         float totalHeight = (height + 2 * paddingY) / guiScale;
 
-        float verticalOffset = (client.font.lineHeight / 2.0f - 5.5f) * (height / client.font.lineHeight) / guiScale;
+        float verticalOffset = (client.font.lineHeight / 2.0f - 5.9f) * (height / client.font.lineHeight) / guiScale;
         float centerY = screenY + verticalOffset;
 
-        float halfWidth = totalWidth / 2.0f;
-        float halfHeight = totalHeight / 2.0f;
-
-        float minX = screenX - halfWidth;
-        float maxX = screenX + halfWidth;
-        float minY = centerY - halfHeight;
-        float maxY = centerY + halfHeight;
+        float minX = screenX - totalWidth;
+        float maxX = screenX + totalWidth;
+        float minY = centerY - totalHeight;
+        float maxY = centerY + totalHeight;
 
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
@@ -184,11 +195,14 @@ public class Dialog {
         scale /= guiScale;
         guiGraphics.pose().scale(scale, scale, 2.0f);
 
+        int rgb = 0xFFFFFF;
+        int color = (opacity << 24) | rgb;
+
         client.font.drawInBatch(
                 text,
-                (screenX / scale) - ((float) client.font.width(text) / 2),
+                (screenX / scale),
                 (screenY / scale) - ((float) client.font.lineHeight / 2),
-                (opacity << 24) | 0xFFFFFF,
+                color,
                 false,
                 guiGraphics.pose().last().pose(),
                 buffers,
@@ -196,6 +210,7 @@ public class Dialog {
                 0,
                 15728880
         );
+
 
         guiGraphics.pose().popPose();
         buffers.endBatch();
