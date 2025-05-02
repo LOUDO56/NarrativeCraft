@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.dialog;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.utils.Easing;
+import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -18,19 +19,21 @@ import org.joml.Vector4f;
 public class Dialog {
 
     private final long APPEAR_TIME = 200L;
+    private final long DIALOG_CHANGE_TIME = 500L;
     private final Easing easing = Easing.SMOOTH;
 
     private DialogScrollText dialogScrollText;
     private Vector4f posClip;
-    private float fov, paddingX, paddingY, scale;
+    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight;
     private int opacity;
+    private boolean acceptNewDialog;
 
     private Entity entityServer;
     private Entity entityClient;
     private Vec3 textPosition;
     private int backgroundColor;
     private long startTime;
-    private double t;
+    private double t; // Used to make transtions between two points
 
     private DialogInterpolation dialogInterpolation;
 
@@ -50,9 +53,12 @@ public class Dialog {
                 scale
         );
         this.dialogScrollText = new DialogScrollText(text, letterSpacing, gap);
+        this.acceptNewDialog = false;
     }
 
     public void reset() {
+        acceptNewDialog = true;
+        startTime = System.currentTimeMillis();
         t = 0;
         dialogScrollText.reset();
     }
@@ -60,7 +66,7 @@ public class Dialog {
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
-        if (t < 1.0) {
+        if (t < 1.0 && !acceptNewDialog) {
             dialogInterpolation.setStartPosition(textPosition.add(0, -1, 0));
             dialogInterpolation.setEndPosition(textPosition);
             long currentTime = System.currentTimeMillis();
@@ -168,6 +174,20 @@ public class Dialog {
 
         float totalWidth = (width + 2 * paddingX) / guiScale;
         float totalHeight = (height + 2 * paddingY) / guiScale;
+        if(t >= 1.0) {
+            oldWidth = totalWidth;
+            oldHeight = totalHeight;
+        } else {
+            // Don't interpolate if next dialog have exact same width and height
+            if(oldWidth == totalWidth && oldHeight == totalHeight) {
+                t = 1.0;
+            } else {
+                long currentTime = System.currentTimeMillis();
+                totalWidth = (float) MathUtils.lerp(oldWidth, totalWidth, t);
+                totalHeight = (float) MathUtils.lerp(oldHeight, totalHeight, t);
+                t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / DIALOG_CHANGE_TIME, 1.0));
+            }
+        }
 
         float verticalOffset = (client.font.lineHeight / 2.0f - 6.5F) * (height / client.font.lineHeight) / guiScale;
         float centerY = screenY + verticalOffset;
