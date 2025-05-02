@@ -52,4 +52,8 @@ public class DialogInterpolation {
     public void setEndPosition(Vec3 endPosition) {
         this.endPosition = endPosition;
     }
+
+    public void setScale(float scale) {
+        this.endScale = scale;
+    }
 }

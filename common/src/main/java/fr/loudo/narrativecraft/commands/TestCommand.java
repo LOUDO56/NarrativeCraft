@@ -3,6 +3,8 @@ package fr.loudo.narrativecraft.commands;
 import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.FloatArgumentType;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
@@ -19,6 +21,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,7 +29,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.Pig;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
@@ -61,28 +63,55 @@ public class TestCommand {
                         )
                 )
                 .then(Commands.literal("dialog")
-                        .then(Commands.argument("text", StringArgumentType.greedyString())
-                                .executes(commandContext -> {
-                                    String text = String.join(" ", StringArgumentType.getString(commandContext, "text").split("_"));
-                                    return dialogText(commandContext, text);
-                                })
+                        .then(Commands.argument("text", StringArgumentType.string())
+                                .then(Commands.argument("paddingX", FloatArgumentType.floatArg())
+                                        .then(Commands.argument("paddingY", FloatArgumentType.floatArg())
+                                                .then(Commands.argument("letterSpacing", FloatArgumentType.floatArg())
+                                                        .then(Commands.argument("gap", FloatArgumentType.floatArg())
+                                                                .then(Commands.argument("scale", FloatArgumentType.floatArg())
+                                                                    .then(Commands.argument("bcColor", IntegerArgumentType.integer())
+                                                                            .executes(commandContext -> {
+                                                                                String text = StringArgumentType.getString(commandContext, "text");
+                                                                                float pX = FloatArgumentType.getFloat(commandContext, "paddingX");
+                                                                                float pY = FloatArgumentType.getFloat(commandContext, "paddingY");
+                                                                                float lp = FloatArgumentType.getFloat(commandContext, "letterSpacing");
+                                                                                float g = FloatArgumentType.getFloat(commandContext, "gap");
+                                                                                float sc = FloatArgumentType.getFloat(commandContext, "scale");
+                                                                                int bcColor = IntegerArgumentType.getInteger(commandContext, "bcColor");
+                                                                                return dialogText(commandContext, text, pX, pY, lp, g, sc, bcColor);
+                                                                            })
+                                                                    )
+                                                                )
+                                                        )
+                                                )
+                                        )
+                                )
                         )
+
                 )
         );
     }
 
-    private static int dialogText(CommandContext<CommandSourceStack> context, String text) {
+    private static int dialogText(CommandContext<CommandSourceStack> context, String text, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int bcColor) {
 
+        text = String.join(" ", text.split("_"));
         ServerPlayer player = context.getSource().getPlayer();
-        Pig pig = new Pig(EntityType.PIG, context.getSource().getLevel());
-        pig.snapTo(context.getSource().getPosition());
-        //context.getSource().getLevel().addFreshEntity(pig);
-        //Entity clientPig = Minecraft.getInstance().level.getEntity(pig.getId());
+        if(OnHudRender.dialog != null) {
+            OnHudRender.dialog.reset();
+            OnHudRender.dialog.getDialogScrollText().setText(text);
+            OnHudRender.dialog.setPaddingX(paddingX);
+            OnHudRender.dialog.setPaddingY(paddingY);
+            OnHudRender.dialog.setScale(scale);
+            OnHudRender.dialog.setBackgroundColor(bcColor);
+            OnHudRender.dialog.getDialogScrollText().setGap(gap);
+            OnHudRender.dialog.getDialogScrollText().setLetterSpacing(letterSpacing);
+            return Command.SINGLE_SUCCESS;
+        }
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
-        //player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        //context.getSource().getLevel().addNewPlayer(fakePlayer);
-        OnHudRender.dialog = new Dialog(text, player, 10F, 5F, 0x000000);
+        player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+        context.getSource().getLevel().addNewPlayer(fakePlayer);
+        OnHudRender.dialog = new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor);
 
         return Command.SINGLE_SUCCESS;
     }
