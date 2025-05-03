@@ -29,7 +29,7 @@ public class DialogScrollText {
     private List<String> lines;
     private int currentLetter;
     private float letterSpacing;
-    private float gap, startY, totalHeight, screenX, endY, screenY, scale;
+    private float gap, startY, totalHeight, screenX, endY, screenY, scale, maxLineWidth;
 
     private long lastTimeChar, pauseStartTime;
 
@@ -43,6 +43,11 @@ public class DialogScrollText {
 
     public void init(float screenX, float screenY, float paddingY, float scale) {
         Minecraft client = Minecraft.getInstance();
+        maxLineWidth = 0;
+        for (String line : lines) {
+            float lineWidth = client.font.width(line) + (line.length() - 1) * letterSpacing;
+            maxLineWidth = Math.max(maxLineWidth, lineWidth);
+        }
         this.screenX = screenX;
         this.screenY = screenY;
         this.scale = scale;
@@ -94,21 +99,23 @@ public class DialogScrollText {
 
         float currentY = startY;
 
-        for (String text : lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            String text = lines.get(i);
             int lineLength = text.length();
             int lineVisibleLetters = Math.max(0, Math.min(lineLength, currentLetter - shownLetters));
             shownLetters += lineLength;
 
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
-            float startX = screenX - ((textWidth * scale) / 2.0F) / guiScale;
+            float textPlace = textWidth == maxLineWidth ? textWidth / 2.0F : maxLineWidth / 2.0F; //TODO: add left, center and right position text setting
+            float startX = screenX - ScreenUtils.getPixelValue(textPlace, scale);
 
-            for (int i = 0; i < lineVisibleLetters; i++) {
-                String character = String.valueOf(text.charAt(i));
+            for (int j = 0; j < lineVisibleLetters; j++) {
+                String character = String.valueOf(text.charAt(j));
                 drawString(guiGraphics, character, startX, currentY, scale, posClip);
 
                 Style style = Style.EMPTY;
                 FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
-                GlyphInfo glyph = fontset.getGlyphInfo(text.codePointAt(i), ((FontFields) client.font).getFilterFishyGlyphs());
+                GlyphInfo glyph = fontset.getGlyphInfo(text.codePointAt(j), ((FontFields) client.font).getFilterFishyGlyphs());
                 boolean bold = style.isBold();
                 float letterWidth = glyph.getAdvance(bold);
 
@@ -172,6 +179,10 @@ public class DialogScrollText {
             finalString.add(stringBuilder.toString());
         }
         return finalString;
+    }
+
+    public float getMaxWidthLine() {
+        return maxLineWidth;
     }
 
     public void reset() {

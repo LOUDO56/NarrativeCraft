@@ -149,13 +149,7 @@ public class Dialog {
             }
         }
 
-        float maxLineWidth = 0;
-        for (String line : dialogScrollText.getLines()) {
-            float lineWidth = client.font.width(line) + (line.length() - 1) * dialogScrollText.getLetterSpacing();
-            maxLineWidth = Math.max(maxLineWidth, lineWidth);
-        }
-
-        float widthRectangle = maxLineWidth / 2.0F;
+        float widthRectangle = dialogScrollText.getMaxWidthLine() / 2.0F;
         float heightRectangle = dialogScrollText.getTotalHeight();
 
         dialogScrollText.init(screenX, screenY, paddingY, resizedScale);
