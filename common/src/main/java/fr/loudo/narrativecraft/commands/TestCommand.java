@@ -21,12 +21,14 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -34,6 +36,7 @@ import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,6 +66,15 @@ public class TestCommand {
                         )
                 )
                 .then(Commands.literal("dialog")
+                        .then(Commands.literal("textSplit")
+                                .then(Commands.argument("text", StringArgumentType.string())
+                                        .then(Commands.argument("width", IntegerArgumentType.integer())
+                                            .executes(commandContext -> {
+                                                return splitText(commandContext, StringArgumentType.getString(commandContext, "text"), IntegerArgumentType.getInteger(commandContext, "width"));
+                                            })
+                                        )
+                                )
+                        )
                         .then(Commands.argument("text", StringArgumentType.string())
                                 .then(Commands.argument("paddingX", FloatArgumentType.floatArg())
                                         .then(Commands.argument("paddingY", FloatArgumentType.floatArg())
@@ -70,16 +82,19 @@ public class TestCommand {
                                                         .then(Commands.argument("gap", FloatArgumentType.floatArg())
                                                                 .then(Commands.argument("scale", FloatArgumentType.floatArg())
                                                                     .then(Commands.argument("bcColor", IntegerArgumentType.integer())
-                                                                            .executes(commandContext -> {
-                                                                                String text = StringArgumentType.getString(commandContext, "text");
-                                                                                float pX = FloatArgumentType.getFloat(commandContext, "paddingX");
-                                                                                float pY = FloatArgumentType.getFloat(commandContext, "paddingY");
-                                                                                float lp = FloatArgumentType.getFloat(commandContext, "letterSpacing");
-                                                                                float g = FloatArgumentType.getFloat(commandContext, "gap");
-                                                                                float sc = FloatArgumentType.getFloat(commandContext, "scale");
-                                                                                int bcColor = IntegerArgumentType.getInteger(commandContext, "bcColor");
-                                                                                return dialogText(commandContext, text, pX, pY, lp, g, sc, bcColor);
-                                                                            })
+                                                                            .then(Commands.argument("maxWidth", IntegerArgumentType.integer())
+                                                                                .executes(commandContext -> {
+                                                                                    String text = StringArgumentType.getString(commandContext, "text");
+                                                                                    float pX = FloatArgumentType.getFloat(commandContext, "paddingX");
+                                                                                    float pY = FloatArgumentType.getFloat(commandContext, "paddingY");
+                                                                                    float lp = FloatArgumentType.getFloat(commandContext, "letterSpacing");
+                                                                                    float g = FloatArgumentType.getFloat(commandContext, "gap");
+                                                                                    float sc = FloatArgumentType.getFloat(commandContext, "scale");
+                                                                                    int bcColor = IntegerArgumentType.getInteger(commandContext, "bcColor");
+                                                                                    int maxWidth = IntegerArgumentType.getInteger(commandContext, "maxWidth");
+                                                                                    return dialogText(commandContext, text, pX, pY, lp, g, sc, bcColor, maxWidth);
+                                                                                })
+                                                                            )
                                                                     )
                                                                 )
                                                         )
@@ -92,26 +107,43 @@ public class TestCommand {
         );
     }
 
-    private static int dialogText(CommandContext<CommandSourceStack> context, String text, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int bcColor) {
+    private static int splitText(CommandContext<CommandSourceStack> commandContext, String text, int width) {
+
+        Minecraft client = Minecraft.getInstance();
+        List<FormattedCharSequence> charSequences = client.font.split(FormattedText.of(text), width);
+        for(FormattedCharSequence chara : charSequences) {
+            StringBuilder stringBuilder = new StringBuilder();
+            chara.accept((i, style, i1) -> {
+                stringBuilder.appendCodePoint(i1);
+                return true;
+            });
+            commandContext.getSource().sendSystemMessage(Component.literal(stringBuilder.toString()));
+        }
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int dialogText(CommandContext<CommandSourceStack> context, String text, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int bcColor, int maxWidth) {
 
         text = String.join(" ", text.split("_"));
         ServerPlayer player = context.getSource().getPlayer();
         if(OnHudRender.dialog != null) {
-            OnHudRender.dialog.reset();
-            OnHudRender.dialog.getDialogScrollText().setText(text);
             OnHudRender.dialog.setPaddingX(paddingX);
             OnHudRender.dialog.setPaddingY(paddingY);
             OnHudRender.dialog.setScale(scale);
             OnHudRender.dialog.setBackgroundColor(bcColor);
             OnHudRender.dialog.getDialogScrollText().setGap(gap);
             OnHudRender.dialog.getDialogScrollText().setLetterSpacing(letterSpacing);
+            OnHudRender.dialog.getDialogScrollText().setMaxWidth(maxWidth);
+            OnHudRender.dialog.getDialogScrollText().setText(text);
+            OnHudRender.dialog.reset();
             return Command.SINGLE_SUCCESS;
         }
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
-        OnHudRender.dialog = new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor);
+        OnHudRender.dialog = new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor, maxWidth);
 
         return Command.SINGLE_SUCCESS;
     }

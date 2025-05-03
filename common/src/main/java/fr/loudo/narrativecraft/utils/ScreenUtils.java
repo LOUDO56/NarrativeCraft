@@ -17,4 +17,8 @@ public class ScreenUtils {
         stringWidget.setColor(color);
         return stringWidget;
     }
+
+    public static float getPixelValue(float value, float scale) {
+        return (value * scale) / Math.max(1, Minecraft.getInstance().options.guiScale().get());
+    }
 }

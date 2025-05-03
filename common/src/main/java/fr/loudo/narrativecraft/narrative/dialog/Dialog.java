@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -24,7 +25,7 @@ public class Dialog {
 
     private DialogScrollText dialogScrollText;
     private Vector4f posClip;
-    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight;
+    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY;
     private int opacity;
     private boolean acceptNewDialog;
 
@@ -37,11 +38,11 @@ public class Dialog {
 
     private DialogInterpolation dialogInterpolation;
 
-    public Dialog(String text, Entity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor) {
+    public Dialog(String text, Entity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor, int maxWidth) {
         this.entityServer = entityServer;
         this.textPosition = new Vec3(entityServer.getX(), entityServer.getEyeHeight(), entityServer.getZ());
         this.paddingX = paddingX;
-        this.paddingY = paddingY;
+        this.paddingY = paddingY * 2;
         this.backgroundColor = backgroundColor;
         this.t = 0;
         this.startTime = System.currentTimeMillis();
@@ -52,7 +53,7 @@ public class Dialog {
                 textPosition,
                 scale
         );
-        this.dialogScrollText = new DialogScrollText(text, letterSpacing, gap);
+        this.dialogScrollText = new DialogScrollText(text, letterSpacing, gap, maxWidth);
         this.acceptNewDialog = false;
     }
 
@@ -84,14 +85,12 @@ public class Dialog {
         );
         Matrix4f projection = client.gameRenderer.getProjectionMatrix(fov);
         Matrix4f view = getViewMatrix(client.gameRenderer.getMainCamera());
-        Vector4f posWorld = new Vector4f(
+        posClip = new Vector4f(
                 (float) textPosition.x,
                 (float) textPosition.y + 0.9f,
                 (float) textPosition.z,
                 1.0f
         );
-
-        posClip = new Vector4f(posWorld);
         view.transform(posClip);
         projection.transform(posClip);
 
@@ -141,61 +140,75 @@ public class Dialog {
 
     private void drawTextDialog(GuiGraphics guiGraphics, float screenX, float screenY) {
         Minecraft client = Minecraft.getInstance();
-        float resizedScale = getResizedScale();
-
-        String text = dialogScrollText.getText();
-        float letterSpacing = dialogScrollText.getLetterSpacing();
-        int textLength = text.length();
-
-        float baseTextWidth = client.font.width(text);
-        float totalLetterSpacing = letterSpacing * (textLength - 1);
-
-        float widthRectangle = ((baseTextWidth + totalLetterSpacing) / 2.0F) * resizedScale;
-
-        float textHeight = (client.font.lineHeight * resizedScale) / 2;
-
-        float[] coords = drawRectangle(guiGraphics, screenX, screenY, widthRectangle, textHeight, paddingX * resizedScale, paddingY * resizedScale);
+        float resizedScale = getResizedScale(scale);
         if(t >= 1.0) {
-            int guiScale = client.options.guiScale().get();
-            if (guiScale == 0) guiScale = 1;
-            float totalHeight = coords[1];
-            float centerY = screenY - (totalHeight / 2.0F);
-            float textY = centerY - ((client.font.lineHeight / 2.0F) * resizedScale / 2.0F) / guiScale;
-            dialogScrollText.show(guiGraphics, posClip, screenX, textY, resizedScale);
+            oldScale = scale;
+        } else {
+            if(oldScale != scale) {
+                resizedScale = (float) MathUtils.lerp(getResizedScale(oldScale), getResizedScale(scale), t);
+            }
         }
+
+        float maxLineWidth = 0;
+        for (String line : dialogScrollText.getLines()) {
+            float lineWidth = client.font.width(line) + (line.length() - 1) * dialogScrollText.getLetterSpacing();
+            maxLineWidth = Math.max(maxLineWidth, lineWidth);
+        }
+
+        float widthRectangle = maxLineWidth / 2.0F;
+        float heightRectangle = dialogScrollText.getTotalHeight();
+
+        dialogScrollText.init(screenX, screenY, paddingY, resizedScale);
+
+        drawBackground(
+                guiGraphics,
+                screenX,
+                screenY,
+                widthRectangle,
+                heightRectangle,
+                paddingX,
+                paddingY,
+                resizedScale
+        );
+        if (t >= 1.0) {
+            dialogScrollText.show(guiGraphics, posClip);
+        }
+
     }
 
-
-    private float[] drawRectangle(GuiGraphics guiGraphics, float screenX, float screenY, float width, float height, float paddingX, float paddingY) {
+    private void drawBackground(GuiGraphics guiGraphics, float x, float y, float width, float height, float paddingX, float paddingY, float resizedScale) {
         Minecraft client = Minecraft.getInstance();
 
-        int guiScale = client.options.guiScale().get();
-        if (guiScale == 0) guiScale = 1;
+        float pixelPaddingX = ScreenUtils.getPixelValue(paddingX, resizedScale);
+        float pixelPaddingY = ScreenUtils.getPixelValue(paddingY, resizedScale);
 
-        float totalWidth = (width + 2 * paddingX) / guiScale;
-        float totalHeight = (height + 2 * paddingY) / guiScale;
-        if(t >= 1.0) {
-            oldWidth = totalWidth;
-            oldHeight = totalHeight;
+        float totalWidth = ScreenUtils.getPixelValue(width, resizedScale) + 2 * pixelPaddingX;
+        float totalHeight = ScreenUtils.getPixelValue(height, resizedScale) + 2 * pixelPaddingY;
+
+        if (t >= 1.0) {
+            oldWidth = width;
+            oldHeight = height;
+            oldPaddingX = paddingX;
+            oldPaddingY = paddingY;
         } else {
-            // Don't interpolate if next dialog have exact same width and height
-            if(oldWidth == totalWidth && oldHeight == totalHeight) {
+            if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale) {
                 t = 1.0;
             } else {
+                float scaledOldPixelPaddingX = ScreenUtils.getPixelValue(oldPaddingX, resizedScale);
+                float scaledOldPixelPaddingY = ScreenUtils.getPixelValue(oldPaddingY, resizedScale);
+                float scaledOldWidth = ScreenUtils.getPixelValue(oldWidth, resizedScale) + 2 * scaledOldPixelPaddingX;
+                float scaledOldHeight = ScreenUtils.getPixelValue(oldHeight, resizedScale) + 2 * scaledOldPixelPaddingY;
                 long currentTime = System.currentTimeMillis();
-                totalWidth = (float) MathUtils.lerp(oldWidth, totalWidth, t);
-                totalHeight = (float) MathUtils.lerp(oldHeight, totalHeight, t);
+                totalWidth = (float) MathUtils.lerp(scaledOldWidth, totalWidth, t);
+                totalHeight = (float) MathUtils.lerp(scaledOldHeight, totalHeight, t);
                 t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / DIALOG_CHANGE_TIME, 1.0));
             }
         }
 
-        float verticalOffset = (client.font.lineHeight / 2.0f - 6.5F) * (height / client.font.lineHeight) / guiScale;
-        float centerY = screenY + verticalOffset;
-
-        float minX = screenX - totalWidth;
-        float maxX = screenX + totalWidth;
-        float minY = centerY - totalHeight;
-        float maxY = centerY + (((client.font.lineHeight / 2.0f) * getResizedScale()) / guiScale);
+        float minX = x - totalWidth;
+        float maxX = x + totalWidth;
+        float minY = y - totalHeight;
+        float maxY = y;
 
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
@@ -206,8 +219,10 @@ public class Dialog {
         vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(color);
         vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(color);
 
-        return new float[]{totalWidth, totalHeight};
+        client.renderBuffers().bufferSource().endBatch();
     }
+
+
 
     private static Matrix4f getViewMatrix(Camera camera) {
         Vec3 camPos = camera.getPosition();
@@ -218,7 +233,7 @@ public class Dialog {
 
     }
 
-    private float getResizedScale() {
+    private float getResizedScale(float scale) {
         return (scale / posClip.w) * (70.0f / fov);
     }
 
@@ -239,7 +254,7 @@ public class Dialog {
     }
 
     public void setPaddingY(float paddingY) {
-        this.paddingY = paddingY;
+        this.paddingY = paddingY * 2;
     }
 
     public void setBackgroundColor(int backgroundColor) {
