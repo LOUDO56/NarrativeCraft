@@ -2,6 +2,9 @@ package fr.loudo.narrativecraft.narrative.dialog;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
+import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
+import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
+import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScrollText;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -23,7 +26,8 @@ public class Dialog {
     private final long DIALOG_CHANGE_TIME = 500L;
     private final Easing easing = Easing.SMOOTH;
 
-    private DialogScrollText dialogScrollText;
+    private DialogAnimationScrollText dialogAnimationScrollText;
+    private DialogAnimationArrowSkip dialogAnimationArrowSkip;
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY;
     private int opacity;
@@ -36,7 +40,7 @@ public class Dialog {
     private long startTime;
     private double t; // Used to make transtions between two points
 
-    private DialogInterpolation dialogInterpolation;
+    private DialogAppearAnimation dialogAppearAnimation;
 
     public Dialog(String text, Entity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor, int maxWidth) {
         this.entityServer = entityServer;
@@ -48,12 +52,13 @@ public class Dialog {
         this.startTime = System.currentTimeMillis();
         this.scale = scale;
         this.opacity = 0;
-        this.dialogInterpolation = new DialogInterpolation(
+        this.dialogAppearAnimation = new DialogAppearAnimation(
                 textPosition.add(0, -1, 0),
                 textPosition,
                 scale
         );
-        this.dialogScrollText = new DialogScrollText(text, letterSpacing, gap, maxWidth);
+        this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
+        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(1000L);
         this.acceptNewDialog = false;
     }
 
@@ -61,18 +66,18 @@ public class Dialog {
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         t = 0;
-        dialogScrollText.reset();
+        dialogAnimationScrollText.reset();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
         if (t < 1.0 && !acceptNewDialog) {
-            dialogInterpolation.setStartPosition(textPosition.add(0, -1, 0));
-            dialogInterpolation.setEndPosition(textPosition);
+            dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
+            dialogAppearAnimation.setEndPosition(textPosition);
             long currentTime = System.currentTimeMillis();
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));
-            DialogInterpolation interpolation = dialogInterpolation.getNextValues(t);
+            DialogAppearAnimation interpolation = dialogAppearAnimation.getNextValues(t);
             textPosition = interpolation.getTextPosition();
             scale = interpolation.getScale();
             opacity = interpolation.getOpacity();
@@ -149,12 +154,12 @@ public class Dialog {
             }
         }
 
-        float widthRectangle = dialogScrollText.getMaxWidthLine() / 2.0F;
-        float heightRectangle = dialogScrollText.getTotalHeight();
+        float widthRectangle = dialogAnimationScrollText.getMaxWidthLine() / 2.0F;
+        float heightRectangle = dialogAnimationScrollText.getTotalHeight();
 
-        dialogScrollText.init(screenX, screenY, paddingY, resizedScale);
+        dialogAnimationScrollText.init(screenX, screenY, paddingY, resizedScale);
 
-        drawBackground(
+        float[] coords = drawBackground(
                 guiGraphics,
                 screenX,
                 screenY,
@@ -165,12 +170,16 @@ public class Dialog {
                 resizedScale
         );
         if (t >= 1.0) {
-            dialogScrollText.show(guiGraphics, posClip);
+            dialogAnimationScrollText.show(guiGraphics, posClip);
+            if(dialogAnimationScrollText.isFinished()) {
+                if(dialogAnimationArrowSkip.isFinished()) dialogAnimationArrowSkip.reset();
+                dialogAnimationArrowSkip.draw(guiGraphics, coords[0], coords[1], coords[2], coords[3], resizedScale);
+            }
         }
 
     }
 
-    private void drawBackground(GuiGraphics guiGraphics, float x, float y, float width, float height, float paddingX, float paddingY, float resizedScale) {
+    private float[] drawBackground(GuiGraphics guiGraphics, float x, float y, float width, float height, float paddingX, float paddingY, float resizedScale) {
         Minecraft client = Minecraft.getInstance();
 
         float pixelPaddingX = ScreenUtils.getPixelValue(paddingX, resizedScale);
@@ -188,6 +197,7 @@ public class Dialog {
             if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale) {
                 t = 1.0;
             } else {
+                // All scaled stuff is to interpolate and match the player's distance and fov (or else during the interpolation, width and height remains the same on UI).
                 float scaledOldPixelPaddingX = ScreenUtils.getPixelValue(oldPaddingX, resizedScale);
                 float scaledOldPixelPaddingY = ScreenUtils.getPixelValue(oldPaddingY, resizedScale);
                 float scaledOldWidth = ScreenUtils.getPixelValue(oldWidth, resizedScale) + 2 * scaledOldPixelPaddingX;
@@ -214,6 +224,8 @@ public class Dialog {
         vertexconsumer.addVertex(matrix4f, maxX, minY, 0).setColor(color);
 
         client.renderBuffers().bufferSource().endBatch();
+
+        return new float[]{minX, maxX, minY, maxY};
     }
 
 
@@ -239,8 +251,8 @@ public class Dialog {
         return entityServer;
     }
 
-    public DialogScrollText getDialogScrollText() {
-        return dialogScrollText;
+    public DialogAnimationScrollText getDialogScrollText() {
+        return dialogAnimationScrollText;
     }
 
     public void setPaddingX(float paddingX) {
@@ -257,6 +269,6 @@ public class Dialog {
 
     public void setScale(float scale) {
         this.scale = scale;
-        dialogInterpolation.setScale(scale);
+        dialogAppearAnimation.setScale(scale);
     }
 }

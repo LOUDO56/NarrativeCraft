@@ -1,21 +1,21 @@
-package fr.loudo.narrativecraft.narrative.dialog;
+package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.world.phys.Vec3;
 
-public class DialogInterpolation {
+public class DialogAppearAnimation {
 
     private Vec3 startPosition, endPosition, textPosition;
     private float endScale, scale;
     private int opacity;
 
-    public DialogInterpolation(Vec3 textPosition, float scale, int opacity) {
+    public DialogAppearAnimation(Vec3 textPosition, float scale, int opacity) {
         this.textPosition = textPosition;
         this.scale = scale;
         this.opacity = opacity;
     }
 
-    public DialogInterpolation(Vec3 startPosition, Vec3 endPosition, float scale) {
+    public DialogAppearAnimation(Vec3 startPosition, Vec3 endPosition, float scale) {
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.textPosition = startPosition;
@@ -24,13 +24,13 @@ public class DialogInterpolation {
         this.opacity = 0;
     }
 
-    public DialogInterpolation getNextValues(double t) {
+    public DialogAppearAnimation getNextValues(double t) {
         double x = MathUtils.lerp(startPosition.x, endPosition.x, t);
         double y = MathUtils.lerp(startPosition.y, endPosition.y, t);
         double z = MathUtils.lerp(startPosition.z, endPosition.z, t);
         float scale = (float) MathUtils.lerp(0, endScale, t);
         int opacity = (int) MathUtils.lerp(0, 255, t);
-        return new DialogInterpolation(new Vec3(x, y, z), scale, opacity);
+        return new DialogAppearAnimation(new Vec3(x, y, z), scale, opacity);
     }
 
     public Vec3 getTextPosition() {

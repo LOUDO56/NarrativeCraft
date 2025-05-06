@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.narrative.dialog;
+package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.font.GlyphInfo;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
@@ -19,7 +19,7 @@ import org.joml.Vector4f;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DialogScrollText {
+public class DialogAnimationScrollText {
 
     private final long showLetterDelay = 30L;
     private final float offset = 4.1f;
@@ -33,7 +33,7 @@ public class DialogScrollText {
 
     private long lastTimeChar, pauseStartTime;
 
-    public DialogScrollText(String text, float letterSpacing, float gap, int maxWidth) {
+    public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth) {
         this.lines = splitText(text);
         this.letterSpacing = letterSpacing;
         this.gap = gap;
@@ -179,6 +179,10 @@ public class DialogScrollText {
             finalString.add(stringBuilder.toString());
         }
         return finalString;
+    }
+
+    public boolean isFinished() {
+        return currentLetter == lines.stream().mapToInt(String::length).sum();
     }
 
     public float getMaxWidthLine() {
