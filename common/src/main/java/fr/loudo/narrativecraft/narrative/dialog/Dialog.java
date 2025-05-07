@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScrollText;
+import fr.loudo.narrativecraft.narrative.dialog.geometrics.DialogueTail;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -28,6 +29,7 @@ public class Dialog {
 
     private DialogAnimationScrollText dialogAnimationScrollText;
     private DialogAnimationArrowSkip dialogAnimationArrowSkip;
+    private DialogueTail dialogueTail;
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth;
     private int opacity;
@@ -60,10 +62,12 @@ public class Dialog {
         this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
         this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 10f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         this.acceptNewDialog = false;
+        this.dialogueTail = new DialogueTail(10f, 5f);
     }
 
     public void reset() {
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
+        dialogueTail = new DialogueTail(5f, 10f);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         t = 0;
@@ -173,6 +177,8 @@ public class Dialog {
                 paddingY,
                 resizedScale
         );
+        int color = (Math.min(opacity, 200) << 24) | backgroundColor;
+        dialogueTail.draw(guiGraphics, color, screenX, screenY, coords[0], coords[1], coords[3], resizedScale);
         if (t >= 1.0) {
             dialogAnimationScrollText.show(guiGraphics, posClip);
             if(dialogAnimationScrollText.isFinished()) {
