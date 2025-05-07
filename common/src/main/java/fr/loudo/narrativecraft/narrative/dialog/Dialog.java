@@ -29,7 +29,7 @@ public class Dialog {
     private DialogAnimationScrollText dialogAnimationScrollText;
     private DialogAnimationArrowSkip dialogAnimationArrowSkip;
     private Vector4f posClip;
-    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY;
+    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth;
     private int opacity;
     private boolean acceptNewDialog;
 
@@ -58,7 +58,7 @@ public class Dialog {
                 scale
         );
         this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
-        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(1000L);
+        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(500L, 0xFFFFFF, 70);
         this.acceptNewDialog = false;
     }
 
@@ -146,15 +146,18 @@ public class Dialog {
     private void drawTextDialog(GuiGraphics guiGraphics, float screenX, float screenY) {
         Minecraft client = Minecraft.getInstance();
         float resizedScale = getResizedScale(scale);
+        float maxWidth = dialogAnimationScrollText.getMaxWidthLine();
         if(t >= 1.0) {
             oldScale = scale;
+            oldMaxWidth = maxWidth;
         } else {
-            if(oldScale != scale) {
+            if(oldScale != scale || oldMaxWidth != maxWidth) {
                 resizedScale = (float) MathUtils.lerp(getResizedScale(oldScale), getResizedScale(scale), t);
+                maxWidth = (float) MathUtils.lerp(oldMaxWidth, maxWidth, t);
             }
         }
 
-        float widthRectangle = dialogAnimationScrollText.getMaxWidthLine() / 2.0F;
+        float widthRectangle = maxWidth / 2.0F;
         float heightRectangle = dialogAnimationScrollText.getTotalHeight();
 
         dialogAnimationScrollText.init(screenX, screenY, paddingY, resizedScale);
@@ -172,8 +175,9 @@ public class Dialog {
         if (t >= 1.0) {
             dialogAnimationScrollText.show(guiGraphics, posClip);
             if(dialogAnimationScrollText.isFinished()) {
-                if(dialogAnimationArrowSkip.isFinished()) dialogAnimationArrowSkip.reset();
-                dialogAnimationArrowSkip.draw(guiGraphics, coords[0], coords[1], coords[2], coords[3], resizedScale);
+                dialogAnimationArrowSkip.draw(guiGraphics, coords[1], coords[3], resizedScale);
+            } else {
+                dialogAnimationArrowSkip.reset();
             }
         }
 
@@ -194,7 +198,7 @@ public class Dialog {
             oldPaddingX = paddingX;
             oldPaddingY = paddingY;
         } else {
-            if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale) {
+            if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale && oldMaxWidth == dialogAnimationScrollText.getMaxWidthLine()) {
                 t = 1.0;
             } else {
                 // All scaled stuff is to interpolate and match the player's distance and fov (or else during the interpolation, width and height remains the same on UI).
