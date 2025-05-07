@@ -58,11 +58,12 @@ public class Dialog {
                 scale
         );
         this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
-        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(500L, 0xFFFFFF, 70);
+        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 10f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         this.acceptNewDialog = false;
     }
 
     public void reset() {
+        dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         t = 0;

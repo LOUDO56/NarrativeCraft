@@ -34,11 +34,11 @@ public class DialogAnimationScrollText {
     private long lastTimeChar, pauseStartTime;
 
     public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth) {
+        this.maxWidth = maxWidth;
         this.lines = splitText(text);
         this.letterSpacing = letterSpacing;
         this.gap = gap;
         this.currentLetter = 0;
-        this.maxWidth = maxWidth;
     }
 
     public void init(float screenX, float screenY, float paddingY, float scale) {
