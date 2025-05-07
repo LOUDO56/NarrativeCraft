@@ -176,7 +176,7 @@ public class Dialog {
         if (t >= 1.0) {
             dialogAnimationScrollText.show(guiGraphics, posClip);
             if(dialogAnimationScrollText.isFinished()) {
-                dialogAnimationArrowSkip.draw(guiGraphics, coords[1], coords[3], resizedScale);
+                dialogAnimationArrowSkip.draw(guiGraphics, coords[1], coords[3], resizedScale, posClip);
             } else {
                 dialogAnimationArrowSkip.reset();
             }

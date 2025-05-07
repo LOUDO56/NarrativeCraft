@@ -113,6 +113,9 @@ public class DialogAnimationScrollText {
                 String character = String.valueOf(text.charAt(j));
                 drawString(guiGraphics, character, startX, currentY, scale, posClip);
 
+                // Why not client.font.width() to get letter's width? Because with a custom font, it returns the bad value
+                // leading in an incorrect width between text and dialog, those lines of codes get the actual letter width
+                // for whatever font you're using (normal minecraft font or custom one).
                 Style style = Style.EMPTY;
                 FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
                 GlyphInfo glyph = fontset.getGlyphInfo(text.codePointAt(j), ((FontFields) client.font).getFilterFishyGlyphs());
@@ -134,9 +137,9 @@ public class DialogAnimationScrollText {
 
     private void drawString(GuiGraphics guiGraphics, String character, float screenX, float screenY, float scale, Vector4f posClip) {
         Minecraft client = Minecraft.getInstance();
-        MultiBufferSource.BufferSource buffers = client.renderBuffers().bufferSource();
-
         if (posClip.w <= 0) return;
+
+        MultiBufferSource.BufferSource buffers = client.renderBuffers().bufferSource();
 
         guiGraphics.pose().pushPose();
         int guiScale = client.options.guiScale().get();

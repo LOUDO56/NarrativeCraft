@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 public class DialogAnimationArrowSkip {
 
@@ -39,8 +40,9 @@ public class DialogAnimationArrowSkip {
         t = 0;
     }
 
-    public void draw(GuiGraphics guiGraphics, float maxX, float maxY, float scale) {
+    public void draw(GuiGraphics guiGraphics, float maxX, float maxY, float scale, Vector4f posClip) {
         Minecraft client = Minecraft.getInstance();
+        if (posClip.w <= 0) return;
         long now = System.currentTimeMillis();
         if (client.isPaused() && !isPaused) {
             isPaused = true;
