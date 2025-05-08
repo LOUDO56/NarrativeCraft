@@ -67,7 +67,7 @@ public class Dialog {
 
     public void reset() {
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
-        dialogueTail = new DialogueTail(5f, 10f);
+        dialogueTail = new DialogueTail(7f, 15f);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         t = 0;
@@ -78,6 +78,7 @@ public class Dialog {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
         if (t < 1.0 && !acceptNewDialog) {
+            //TODO: interpolate by transform and scale, not position.
             dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
             dialogAppearAnimation.setEndPosition(textPosition);
             long currentTime = System.currentTimeMillis();
@@ -177,8 +178,8 @@ public class Dialog {
                 paddingY,
                 resizedScale
         );
-        int color = (Math.min(opacity, 200) << 24) | backgroundColor;
-        dialogueTail.draw(guiGraphics, color, screenX, screenY, coords[0], coords[1], coords[3], resizedScale);
+        int color = (opacity << 24) | backgroundColor;
+        dialogueTail.draw(guiGraphics, color, screenX, screenY, coords[0], coords[1], coords[2], coords[3], resizedScale);
         if (t >= 1.0) {
             dialogAnimationScrollText.show(guiGraphics, posClip);
             if(dialogAnimationScrollText.isFinished()) {
@@ -228,7 +229,7 @@ public class Dialog {
         Matrix4f matrix4f = guiGraphics.pose().last().pose();
         VertexConsumer vertexconsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.gui());
 
-        int color = (Math.min(opacity, 200) << 24) | backgroundColor;
+        int color = (opacity << 24) | backgroundColor;
         vertexconsumer.addVertex(matrix4f, minX, minY, 0).setColor(color);
         vertexconsumer.addVertex(matrix4f, minX, maxY, 0).setColor(color);
         vertexconsumer.addVertex(matrix4f, maxX, maxY, 0).setColor(color);
