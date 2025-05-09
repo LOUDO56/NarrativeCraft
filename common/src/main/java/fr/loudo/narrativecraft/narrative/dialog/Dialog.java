@@ -31,7 +31,7 @@ public class Dialog {
     private DialogAnimationArrowSkip dialogAnimationArrowSkip;
     private DialogueTail dialogueTail;
     private Vector4f posClip;
-    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth;
+    private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth, tailXPoint, tailYPoint;
     private int opacity;
     private boolean acceptNewDialog;
 
@@ -105,7 +105,18 @@ public class Dialog {
         view.transform(posClip);
         projection.transform(posClip);
 
+        Vector4f tailClip = new Vector4f(
+                (float) textPosition.x,
+                (float) textPosition.y + 0.9f,
+                (float) textPosition.z,
+                1.0f
+        );
+        view.transform(tailClip);
+        projection.transform(tailClip);
+
         float[] coord = worldToScreen(posClip);
+        tailXPoint = worldToScreen(tailClip)[0];
+        tailYPoint =  worldToScreen(tailClip)[1];
         drawTextDialog(guiGraphics, coord[0], coord[1]);
 
     }
@@ -179,7 +190,7 @@ public class Dialog {
                 resizedScale
         );
         int color = (opacity << 24) | backgroundColor;
-        dialogueTail.draw(guiGraphics, color, screenX, screenY, coords[0], coords[1], coords[2], coords[3], resizedScale);
+        dialogueTail.draw(guiGraphics, color, tailXPoint, tailYPoint, coords[0], coords[1], coords[2], coords[3], resizedScale);
         if (t >= 1.0) {
             dialogAnimationScrollText.show(guiGraphics, posClip);
             if(dialogAnimationScrollText.isFinished()) {

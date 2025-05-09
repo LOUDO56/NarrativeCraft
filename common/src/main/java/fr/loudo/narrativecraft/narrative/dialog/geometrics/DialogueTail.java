@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import org.joml.Matrix4f;
 
+//TODO: refractor, it works but it's a bit messy
 public class DialogueTail {
 
     private final float width;
