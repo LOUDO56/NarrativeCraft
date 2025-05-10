@@ -2,6 +2,8 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.font.GlyphInfo;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
+import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
+import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -14,10 +16,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Random;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DialogAnimationScrollText {
 
@@ -30,8 +35,10 @@ public class DialogAnimationScrollText {
     private int currentLetter;
     private float letterSpacing;
     private float gap, startY, totalHeight, screenX, endY, screenY, scale, maxLineWidth;
-
-    private long lastTimeChar, pauseStartTime;
+    private final DialogLetterEffect dialogLetterEffect;
+    private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
+    private final Map<Integer, Long> letterStartTime = new HashMap<>();
+    private long lastTimeChar, animationTime, pauseStartTime, totalPauseTime;
 
     public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth) {
         this.maxWidth = maxWidth;
@@ -39,6 +46,11 @@ public class DialogAnimationScrollText {
         this.letterSpacing = letterSpacing;
         this.gap = gap;
         this.currentLetter = 0;
+        this.dialogLetterEffect = new DialogLetterEffect(DialogAnimationType.NONE, 0, 0);
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < text.length(); i++) {
+            letterStartTime.put(i, now + i * 50L);
+        }
     }
 
     public void init(float screenX, float screenY, float paddingY, float scale) {
@@ -81,7 +93,8 @@ public class DialogAnimationScrollText {
             pauseStartTime = now;
         } else if (!client.isPaused() && isPaused) {
             isPaused = false;
-            lastTimeChar += now - pauseStartTime;
+            totalPauseTime += now - pauseStartTime;
+            lastTimeChar += totalPauseTime;
         }
 
         int totalLetters = lines.stream().mapToInt(String::length).sum();
@@ -94,7 +107,7 @@ public class DialogAnimationScrollText {
             client.player.playSound(sound, 1.0F, pitch);
 
             currentLetter++;
-            lastTimeChar = System.currentTimeMillis();
+            lastTimeChar = now;
         }
 
         float currentY = startY;
@@ -108,10 +121,31 @@ public class DialogAnimationScrollText {
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
             float textPlace = textWidth == maxLineWidth ? textWidth / 2.0F : maxLineWidth / 2.0F; //TODO: add left, center and right position text setting
             float startX = screenX - ScreenUtils.getPixelValue(textPlace, scale);
+            if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING
+                    && now - animationTime >= dialogLetterEffect.getTime()
+                    && !isPaused) {
+                animationTime = now;
+                letterOffsets.clear();
+                for (int j = 0; j < lineVisibleLetters; j++) {
+                    float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                    float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                    letterOffsets.put(j, new Vector2f(offsetX, offsetY));
+                }
+            } else if (dialogLetterEffect.getAnimation() == DialogAnimationType.WAVING && !isPaused) {
+                letterOffsets.clear();
+                float waveSpacing = 0.2f;
+                double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
+
+                for (int j = 0; j < lineVisibleLetters; j++) {
+                    float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
+                    letterOffsets.put(j, new Vector2f(0, offsetY));
+                }
+            }
 
             for (int j = 0; j < lineVisibleLetters; j++) {
+                Vector2f offset = letterOffsets.getOrDefault(j, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                drawString(guiGraphics, character, startX, currentY, scale, posClip);
+                drawString(guiGraphics, character, startX + ScreenUtils.getPixelValue(offset.x, scale), currentY + ScreenUtils.getPixelValue(offset.y, scale), scale, posClip);
 
                 // Why not client.font.width() to get letter's width? Because with a custom font, it returns the bad value
                 // leading in an incorrect width between text and dialog, those lines of codes get the actual letter width
@@ -238,5 +272,9 @@ public class DialogAnimationScrollText {
 
     public void setMaxWidth(int maxWidth) {
         this.maxWidth = maxWidth;
+    }
+
+    public DialogLetterEffect getDialogLetterShakeEffect() {
+        return dialogLetterEffect;
     }
 }

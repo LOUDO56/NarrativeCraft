@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.utils;
 
+import java.util.Random;
+
 public class MathUtils {
 
     public static double lerp(double v0, double v1, double t) {
@@ -21,6 +23,11 @@ public class MathUtils {
 
     public static float get180Angle(float angle) {
         return (angle + 180) % 360 - 180;
+    }
+
+    public static float getRandomFloat(float min, float max) {
+        Random r = new Random();
+        return min + r.nextFloat() * (max - min);
     }
 
 }

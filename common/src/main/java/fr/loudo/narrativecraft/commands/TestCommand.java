@@ -5,6 +5,7 @@ import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
@@ -12,6 +13,7 @@ import fr.loudo.narrativecraft.events.OnHudRender;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -21,14 +23,12 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
@@ -36,7 +36,6 @@ import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -66,12 +65,17 @@ public class TestCommand {
                         )
                 )
                 .then(Commands.literal("dialog")
-                        .then(Commands.literal("textSplit")
+                        .then(Commands.literal("animation")
                                 .then(Commands.argument("text", StringArgumentType.string())
-                                        .then(Commands.argument("width", IntegerArgumentType.integer())
-                                            .executes(commandContext -> {
-                                                return splitText(commandContext, StringArgumentType.getString(commandContext, "text"), IntegerArgumentType.getInteger(commandContext, "width"));
-                                            })
+                                        .then(Commands.argument("time", LongArgumentType.longArg())
+                                                .then(Commands.argument("force", FloatArgumentType.floatArg())
+                                                        .executes(commandContext -> {
+                                                            String animation = StringArgumentType.getString(commandContext, "text");
+                                                            long time = LongArgumentType.getLong(commandContext, "time");
+                                                            float force = FloatArgumentType.getFloat(commandContext, "force");
+                                                            return changeDialogAnimation(commandContext, animation, time, force);
+                                                        })
+                                                )
                                         )
                                 )
                         )
@@ -107,18 +111,19 @@ public class TestCommand {
         );
     }
 
-    private static int splitText(CommandContext<CommandSourceStack> commandContext, String text, int width) {
+    private static int changeDialogAnimation(CommandContext<CommandSourceStack> commandContext, String animation, long time, float force) {
 
-        Minecraft client = Minecraft.getInstance();
-        List<FormattedCharSequence> charSequences = client.font.split(FormattedText.of(text), width);
-        for(FormattedCharSequence chara : charSequences) {
-            StringBuilder stringBuilder = new StringBuilder();
-            chara.accept((i, style, i1) -> {
-                stringBuilder.appendCodePoint(i1);
-                return true;
-            });
-            commandContext.getSource().sendSystemMessage(Component.literal(stringBuilder.toString()));
+        if(OnHudRender.dialog == null) {
+            commandContext.getSource().sendFailure(Component.literal("Dialog not set."));
+            return 0;
         }
+
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setAnimation(DialogAnimationType.valueOf(animation));
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setTime(time);
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setForce(force);
+        OnHudRender.dialog.getDialogScrollText().reset();
+
+        commandContext.getSource().sendSuccess(() -> (Component.literal("Animation set to " + animation + " time " + time + " force " + force)), false);
 
         return Command.SINGLE_SUCCESS;
     }
