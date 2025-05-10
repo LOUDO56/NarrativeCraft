@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
+import fr.loudo.narrativecraft.screens.story_manager.ChaptersScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,11 @@ public class OnClientTick {
     public static void clientTick(Minecraft client) {
 
         if(client.player == null) return;
+
+        ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
+            ChaptersScreen chaptersScreen = new ChaptersScreen();
+            client.execute(() -> client.setScreen(chaptersScreen));
+        });
 
         PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
         if(playerSession == null) return;

@@ -3,21 +3,35 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 
+import java.util.List;
+
 public class Animation {
 
-    private transient Scene scene;
-    private String sceneName; // For GSON deserialization
-    private int chapterIndex; // For GSON deserialization
     private String name;
     private Character character;
+    private Scene scene;
     private ActionsData actionsData;
 
-    public Animation(Scene scene, String name){
-        this.scene = scene;
-        this.sceneName = scene.getName();
-        this.chapterIndex = scene.getChapter().getIndex();
+    public Animation(String name, Scene scene) {
         this.name = name;
+        this.scene = scene;
         this.actionsData = new ActionsData();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Character getCharacter() {
+        return character;
+    }
+
+    public void setCharacter(Character character) {
+        this.character = character;
     }
 
     public Scene getScene() {
@@ -28,31 +42,11 @@ public class Animation {
         this.scene = scene;
     }
 
-    public String getSceneName() {
-        return sceneName;
-    }
-
-    public int getChapterIndex() {
-        return chapterIndex;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public Character getCharacter() {
-        return character;
-    }
-
     public ActionsData getActionsData() {
         return actionsData;
     }
 
     public void setActionsData(ActionsData actionsData) {
         this.actionsData = actionsData;
-    }
-
-    public void setCharacter(Character character) {
-        this.character = character;
     }
 }

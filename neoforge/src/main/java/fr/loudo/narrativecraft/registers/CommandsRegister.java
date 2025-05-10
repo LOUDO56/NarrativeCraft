@@ -15,15 +15,6 @@ public class CommandsRegister {
     }
 
     public static void register(RegisterCommandsEvent event) {
-        ChapterCommand.register(event.getDispatcher());
-        SceneCommand.register(event.getDispatcher());
-        AnimationCommand.register(event.getDispatcher());
-        CharacterCommand.register(event.getDispatcher());
-        RecordCommand.register(event.getDispatcher());
-        SessionCommand.register(event.getDispatcher());
-        StoryCommand.register(event.getDispatcher());
-        SubsceneCommand.register(event.getDispatcher());
-        CutsceneCommand.register(event.getDispatcher());
         TestCommand.register(event.getDispatcher());
     }
 

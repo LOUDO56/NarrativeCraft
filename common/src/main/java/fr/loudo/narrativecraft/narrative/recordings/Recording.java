@@ -40,14 +40,7 @@ public class Recording {
 
     public boolean save(Animation animation) {
         if(isRecording) return false;
-        try {
-            animation.setActionsData(actionsData);
-            recordingHandler.removeRecording(this);
-            NarrativeCraftFile.saveAnimation(animation);
-            return true;
-        } catch (IOException e) {
-            throw new RuntimeException("Error while saving record animation: " + e);
-        }
+        return true;
     }
 
     public ActionsData getActionsData() {

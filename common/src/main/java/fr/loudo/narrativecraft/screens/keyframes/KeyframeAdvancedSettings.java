@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.screens.cutscenes.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.SoundOptionsScreen;
 
 public class KeyframeAdvancedSettings extends CutsceneSettingsScreen {
 
@@ -20,7 +21,6 @@ public class KeyframeAdvancedSettings extends CutsceneSettingsScreen {
     @Override
     protected void addContents() {
         this.cutsceneSettingsList = new CutsceneSettingsList(this.minecraft, this.width, this);
-
         Button easingsButton = Button.builder(Translation.message("screen.keyframe_advanced.easings"), button -> {
             KeyframeEasingsScreen screen = new KeyframeEasingsScreen(this.lastScreen, this.options, keyframe);
             this.minecraft.setScreen(screen);

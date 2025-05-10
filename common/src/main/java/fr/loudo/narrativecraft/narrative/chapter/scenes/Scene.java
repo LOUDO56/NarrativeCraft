@@ -4,6 +4,7 @@ import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import net.minecraft.commands.CommandSourceStack;
@@ -14,22 +15,27 @@ import java.util.List;
 
 public class Scene {
 
-    private transient Chapter chapter;
-    private List<String> animationFilesName;
-    private List<String> cutsceneFilesName;
-    private List<Subscene> subsceneList;
-    private String name;
+    private String name, description;
+    private Chapter chapter;
+    private final List<Animation> animationList;
+    private final List<Cutscene> cutsceneList;
+    private final List<Subscene> subsceneList;
 
-    public Scene(Chapter chapter, String name) {
-        this.chapter = chapter;
-        this.animationFilesName = new ArrayList<>();
-        this.cutsceneFilesName = new ArrayList<>();
-        this.subsceneList = new ArrayList<>();
+    public Scene(String name, String description, Chapter chapter) {
         this.name = name;
+        this.chapter = chapter;
+        this.description = description;
+        this.animationList = new ArrayList<>();
+        this.cutsceneList = new ArrayList<>();
+        this.subsceneList = new ArrayList<>();
     }
 
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public Chapter getChapter() {
@@ -40,115 +46,23 @@ public class Scene {
         this.chapter = chapter;
     }
 
-    public List<String> getAnimationFilesName() {
-        return animationFilesName;
+    public String getDescription() {
+        return description;
     }
 
-    public boolean addAnimation(String animationName) {
-        if(animationFilesName.contains(animationName)) return false;
-        animationFilesName.add(animationName);
-        return true;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public boolean removeAnimation(String animationName) {
-        if(!animationFilesName.contains(animationName)) return false;
-        try {
-            NarrativeCraftFile.removeAnimationFile(animationName);
-            animationFilesName.remove(animationName);
-            NarrativeCraftFile.saveChapter(chapter);
-            return true;
-        } catch (IOException e) {
-            NarrativeCraftMod.LOG.warn("Couldn't remove animation " + animationName + " file: " + e);
-            return false;
-        }
-    }
-    
-    public boolean addSubscene(Subscene subscene) {
-        if(subsceneList.contains(subscene)) return false;
-        try {
-            subsceneList.add(subscene);
-            NarrativeCraftFile.saveChapter(chapter);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+    public void addAnimation(Animation animation) {
+        if(!animationList.contains(animation)) animationList.add(animation);
     }
 
-    public SuggestionProvider<CommandSourceStack> getSubscenesSuggestion() {
-        return (context, builder) -> {
-            for (Subscene subscene : subsceneList) {
-                builder.suggest(subscene.getName());
-            }
-            return builder.buildFuture();
-        };
+    public void addCutscene(Cutscene cutscene) {
+        if(!cutsceneList.contains(cutscene)) cutsceneList.add(cutscene);
     }
 
-    public boolean removeSubscene(Subscene subscene) {
-        if(!subsceneList.contains(subscene)) return false;
-        try {
-            subsceneList.remove(subscene);
-            NarrativeCraftFile.saveChapter(chapter);
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    public Subscene getSubsceneByName(String subsceneName) {
-        for(Subscene subscene : subsceneList) {
-            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
-                return subscene;
-            }
-        }
-        return null;
-    }
-
-    public boolean subsceneExists(String subsceneName) {
-        for(Subscene subscene : subsceneList) {
-            if(subscene.getName().equalsIgnoreCase(subsceneName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public List<Subscene> getSubsceneList() {
-        return subsceneList;
-    }
-
-    public void setSubsceneList(List<Subscene> subsceneList) {
-        this.subsceneList = subsceneList;
-    }
-
-    public List<String> getCutsceneFilesName() {
-        return cutsceneFilesName;
-    }
-
-    public boolean addCutscene(String cutsceneName) {
-        String cutsceneFileName = NarrativeCraftFile.getFileNameTemplate(chapter.getIndex(), name, cutsceneName);
-        if(cutsceneFilesName.contains(cutsceneFileName)) return false;
-        try {
-            Cutscene cutscene = new Cutscene(cutsceneName, this);
-            cutsceneFilesName.add(cutsceneFileName);
-            NarrativeCraftFile.saveCutscene(cutscene);
-            NarrativeCraftFile.saveChapter(chapter);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-        return true;
-    }
-
-    public boolean removeCutscene(String cutsceneName) {
-        String cutsceneFileName = NarrativeCraftFile.getFileNameTemplate(chapter.getIndex(), name, cutsceneName);
-        if(!cutsceneFilesName.contains(cutsceneFileName)) return false;
-        try {
-            cutsceneFilesName.remove(cutsceneFileName);
-            NarrativeCraftFile.removeCutsceneFile(cutsceneFileName);
-            NarrativeCraftFile.saveChapter(chapter);
-        } catch (IOException e) {
-            return false;
-        }
-        return true;
+    public void addSubscene(Subscene subscene) {
+        if(!subsceneList.contains(subscene)) subsceneList.add(subscene);
     }
 }
