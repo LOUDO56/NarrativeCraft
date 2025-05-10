@@ -4,7 +4,10 @@
   "package": "fr.loudo.narrativecraft.mixin",
   "compatibilityLevel": "JAVA_18",
   "mixins": [],
-  "client": [],
+  "client": [
+    "GuiMixin",
+    "LevelRendererMixin"
+  ],
   "server": [],
   "injectors": {
     "defaultRequire": 1

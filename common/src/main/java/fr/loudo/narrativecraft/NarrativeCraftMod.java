@@ -18,7 +18,7 @@ public class NarrativeCraftMod {
 
     public static Story story;
     public static MinecraftServer server;
-    private static NarrativeCraftMod instance = new NarrativeCraftMod();
+    private static final NarrativeCraftMod instance = new NarrativeCraftMod();
 
     static {
         try {

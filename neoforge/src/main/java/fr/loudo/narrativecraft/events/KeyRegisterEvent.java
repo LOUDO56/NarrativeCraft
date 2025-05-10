@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.NeoForge;
 public class KeyRegisterEvent {
 
     public KeyRegisterEvent(IEventBus bus) {
-        NeoForge.EVENT_BUS.addListener(KeyRegisterEvent::onKeyRegister);
+        bus.addListener(KeyRegisterEvent::onKeyRegister);
     }
 
     private static void onKeyRegister(RegisterKeyMappingsEvent event) {

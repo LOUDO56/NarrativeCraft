@@ -5,7 +5,6 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -38,11 +37,6 @@ public class OnServerTick {
             CutsceneController cutsceneController = playerSession.getCutsceneController();
             if(cutsceneController != null) {
                 cutsceneController.next();
-                if(NarrativeCraftMod.server.getTickCount() % 5 == 0 && cutsceneController.getCurrentPreviewKeyframe() == null) {
-                    for(KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
-                        keyframeGroup.showLineBetweenKeyframes(playerSession.getPlayer());
-                    }
-                }
                 Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
                 if(keyframePreview != null) {
                     KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();

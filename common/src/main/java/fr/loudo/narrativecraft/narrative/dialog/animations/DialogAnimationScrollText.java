@@ -274,7 +274,7 @@ public class DialogAnimationScrollText {
         this.maxWidth = maxWidth;
     }
 
-    public DialogLetterEffect getDialogLetterShakeEffect() {
+    public DialogLetterEffect getDialogLetterEffect() {
         return dialogLetterEffect;
     }
 }

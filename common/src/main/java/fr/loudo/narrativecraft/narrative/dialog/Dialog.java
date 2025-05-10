@@ -27,7 +27,6 @@ public class Dialog {
     private final long DIALOG_CHANGE_TIME = 500L;
     private final Easing easing = Easing.SMOOTH;
 
-    private DialogAnimationScrollText dialogAnimationScrollText;
     private DialogAnimationArrowSkip dialogAnimationArrowSkip;
     private DialogueTail dialogueTail;
     private Vector4f posClip;
@@ -40,9 +39,10 @@ public class Dialog {
     private Vec3 textPosition;
     private int backgroundColor;
     private long startTime;
-    private double t; // Used to make transtions between two points
+    private double t; // Used to make transitions between two points
 
-    private DialogAppearAnimation dialogAppearAnimation;
+    private final DialogAnimationScrollText dialogAnimationScrollText;
+    private final DialogAppearAnimation dialogAppearAnimation;
 
     public Dialog(String text, Entity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor, int maxWidth) {
         this.entityServer = entityServer;

@@ -118,9 +118,9 @@ public class TestCommand {
             return 0;
         }
 
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setAnimation(DialogAnimationType.valueOf(animation));
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setTime(time);
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterShakeEffect().setForce(force);
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setAnimation(DialogAnimationType.valueOf(animation));
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setTime(time);
+        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setForce(force);
         OnHudRender.dialog.getDialogScrollText().reset();
 
         commandContext.getSource().sendSuccess(() -> (Component.literal("Animation set to " + animation + " time " + time + " force " + force)), false);

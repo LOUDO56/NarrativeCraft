@@ -1,9 +1,18 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,43 +45,36 @@ public class KeyframeGroup {
         }
     }
 
-    public void showLineBetweenKeyframes(ServerPlayer player) {
+    public void showLineBetweenKeyframes(PoseStack poseStack) {
+        Minecraft client = Minecraft.getInstance();
+        Camera camera = Minecraft.getInstance().gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
+        PoseStack.Pose matrix4f = poseStack.last();
+        VertexConsumer vertexConsumer = client.renderBuffers().bufferSource().getBuffer(RenderType.debugLineStrip(1.0F));
+
         for (int i = 0; i < keyframeList.size() - 1; i++) {
             Keyframe firstKeyFrame = keyframeList.get(i);
             Keyframe secondKeyFrame = keyframeList.get(i + 1);
 
             KeyframeCoordinate startPos = firstKeyFrame.getKeyframeCoordinate();
             KeyframeCoordinate endPos = secondKeyFrame.getKeyframeCoordinate();
+            double x1 = startPos.getX() - cameraPos.x;
+            double y1 = startPos.getY() - cameraPos.y;
+            double z1 = startPos.getZ() - cameraPos.z;
+            double x2 = endPos.getX() - cameraPos.x;
+            double y2 = endPos.getY() - cameraPos.y;
+            double z2 = endPos.getZ() - cameraPos.z;
 
-            Vec3 vec3StartPos = new Vec3(startPos.getX(), startPos.getY(), startPos.getZ());
-            Vec3 vec3EndPos = new Vec3(endPos.getX(), endPos.getY(), endPos.getZ());
+            vertexConsumer.addVertex(matrix4f, new Vector3f((float) x1, (float) y1, (float) z1))
+                    .setColor(1.0F, 1.0F, 0.0F, 1.0F)
+                    .setNormal(0, 1, 0);
+            vertexConsumer.addVertex(matrix4f, new Vector3f((float) x2, (float) y2, (float) z2))
+                    .setColor(1.0F, 1.0F, 0.0F, 1.0F)
+                    .setNormal(0, 1, 0);
 
-            double distance = vec3StartPos.distanceTo(vec3EndPos);
-
-            int numParticles = (int) (distance / 0.5);
-
-            for (int j = 0; j <= numParticles; j++) {
-                double t = j / (double) numParticles;
-
-                Vec3 particlePos = vec3StartPos.add(vec3EndPos.subtract(vec3StartPos).scale(t));
-
-                player.connection.send(new ClientboundLevelParticlesPacket(
-                        ParticleTypes.CRIT,
-                        false,
-                        false,
-                        particlePos.x(),
-                        particlePos.y(),
-                        particlePos.z(),
-                        0f,
-                        0f,
-                        0f,
-                        0,
-                        3
-                ));
-            }
         }
+        client.renderBuffers().bufferSource().endBatch();
     }
-
 
     public long getTotalDuration() {
         long totalDuration = 0;

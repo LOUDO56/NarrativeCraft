@@ -24,6 +24,7 @@ public class CommandsRegister {
         StoryCommand.register(event.getDispatcher());
         SubsceneCommand.register(event.getDispatcher());
         CutsceneCommand.register(event.getDispatcher());
+        TestCommand.register(event.getDispatcher());
     }
 
 }

@@ -10,8 +10,8 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(Font.class)
 public interface FontFields {
 
-
     @Accessor boolean getFilterFishyGlyphs();
     @Invoker
     FontSet callGetFontSet(ResourceLocation fontLocation);
+
 }
