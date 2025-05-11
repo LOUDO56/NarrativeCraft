@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 
@@ -23,8 +24,21 @@ public class Chapter extends StoryDetails {
         this.sceneList = new ArrayList<>();
     }
 
-    public void addScene(Scene scene) {
-        if(!sceneList.contains(scene)) sceneList.add(scene);
+    public boolean addScene(Scene scene) {
+        if(NarrativeCraftFile.createSceneFolder(scene)) {
+            sceneList.add(scene);
+            return true;
+        }
+        return false;
+    }
+
+    public boolean sceneExists(String name) {
+        for(Scene scene : sceneList) {
+            if(scene.getName().toLowerCase().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public int getIndex() {

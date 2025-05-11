@@ -11,7 +11,6 @@ import java.util.List;
 
 public class Scene extends StoryDetails {
 
-    private String name, description;
     private Chapter chapter;
     private final List<Animation> animationList;
     private final List<Cutscene> cutsceneList;
@@ -25,28 +24,12 @@ public class Scene extends StoryDetails {
         this.subsceneList = new ArrayList<>();
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public Chapter getChapter() {
         return chapter;
     }
 
     public void setChapter(Chapter chapter) {
         this.chapter = chapter;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void addAnimation(Animation animation) {

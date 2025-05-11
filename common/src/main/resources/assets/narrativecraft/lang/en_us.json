@@ -40,6 +40,8 @@
   "narrativecraft.screen.chapter_manager.edit.title": "Edit chapter %d",
   "narrativecraft.screen.scene_manager.title": "Scene list of chapter %d",
   "narrativecraft.screen.scene_manager.add.title": "Add a scene to chapter %d",
+  "narrativecraft.screen.scene_manager.add.failed": "Couldn't create scene folder. Check if scenes folder in your chapter folder exists.",
+  "narrativecraft.screen.scene_manager.add.already_exists": "This scene already exists.",
   "narrativecraft.screen.scene_manager.edit.title": "Edit scene %s from chapter %d",
   "narrativecraft.screen.story.name.required": "You must have a name!",
   "narrativecraft.screen.story.name": "Name",

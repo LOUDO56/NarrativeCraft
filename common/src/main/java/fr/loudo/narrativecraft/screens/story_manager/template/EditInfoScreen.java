@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.story_manager.template;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
@@ -48,16 +49,16 @@ public class EditInfoScreen extends Screen {
     protected void init() {
         Component title = getScreenTitle();
         Component buttonActionMessage = storyDetails == null ? Translation.message("screen.add.text") : Translation.message("screen.update.text");
-        int titleY = 10;
         int titleX = this.width / 2 - this.font.width(title) / 2;
-        StringWidget titleWidget = ScreenUtils.text(title, this.font, titleX, titleY);
-        this.addRenderableWidget(titleWidget);
 
         int labelHeight = this.font.lineHeight + 5;
 
         int centerX = this.width / 2 - WIDGET_WIDTH / 2;
-
         int centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
+
+        StringWidget titleWidget = ScreenUtils.text(title, this.font, titleX, centerY - labelHeight);
+        this.addRenderableWidget(titleWidget);
+
         Component nameLabel = Translation.message("screen.story.name")
                 .append(Component.literal(" *").withStyle(style -> style.withColor(0xE62E37)));
 
@@ -120,19 +121,51 @@ public class EditInfoScreen extends Screen {
         return title;
     }
 
-
-    private void updateSceneAction() {
-    }
-
-    private void updateChapterAction() {
+    private void addChapterAction() {
+        String name = nameBox.getValue();
+        String desc = descriptionBox.getValue();
+        if(name.isEmpty()) {
+            ScreenUtils.sendToast(Translation.message("screen.error"), Translation.message("screen.story.name.required"));
+            return;
+        }
+        if(!NarrativeCraftMod.getInstance().getChapterManager().addChapter(name, desc)) {
+            ScreenUtils.sendToast(Translation.message("screen.error"), Translation.message("screen.chapter_manager.add.failed"));
+            return;
+        }
+        ChaptersScreen screen = new ChaptersScreen();
+        this.minecraft.setScreen(screen);
     }
 
     private void addSceneAction() {
+        Chapter chapter = ((ScenesScreen)lastScreen).getChapter();
+        String name = nameBox.getValue();
+        String desc = descriptionBox.getValue();
+        Scene scene = new Scene(name, desc, chapter);
+        if(name.isEmpty()) {
+            ScreenUtils.sendToast(Translation.message("screen.error"), Translation.message("screen.story.name.required"));
+            return;
+        }
+        if(chapter.sceneExists(name)) {
+            ScreenUtils.sendToast(Translation.message("screen.error"), Translation.message("screen.scene_manager.add.already_exists"));
+            return;
+        }
+        if(!chapter.addScene(scene)) {
+            ScreenUtils.sendToast(Translation.message("screen.error"), Translation.message("screen.scene_manager.add.failed"));
+            return;
+        }
+        ScenesScreen screen = new ScenesScreen(lastScreen, chapter);
+        this.minecraft.setScreen(screen);
     }
-    
-    private void addChapterAction() {
-        
+
+    private void updateSceneAction() {
+
     }
+
+    private void updateChapterAction() {
+
+    }
+
+
 
     @Override
     public void onClose() {
