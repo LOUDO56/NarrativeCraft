@@ -40,10 +40,10 @@ public class ChapterManager {
                 Chapter chapter = new Chapter(index);
                 String name = "";
                 String desc = "";
-                File settingsFile = NarrativeCraftFile.getSettingsFile(chapterIndex);
-                if(settingsFile.exists()) {
+                File detailsFile = NarrativeCraftFile.getDetailsFile(chapterIndex);
+                if(detailsFile.exists()) {
                     try {
-                        String content = Files.readString(settingsFile.toPath());
+                        String content = Files.readString(detailsFile.toPath());
                         JsonObject json = JsonParser.parseString(content).getAsJsonObject();
                         name = json.get("name").getAsString();
                         desc = json.get("description").getAsString();
@@ -69,11 +69,12 @@ public class ChapterManager {
                     String name = sceneFolder.getName();
                     String desc = "";
                     Scene scene = new Scene(name, desc, chapter);
+                    scene.setChapter(chapter);
                     if(dataFolder.exists()) {
-                        File settingsFile = NarrativeCraftFile.getSettingsFile(sceneFolder);
-                        if(settingsFile.exists()) {
+                        File detailsFile = NarrativeCraftFile.getDetailsFile(dataFolder);
+                        if(detailsFile.exists()) {
                             try {
-                                String content = Files.readString(settingsFile.toPath());
+                                String content = Files.readString(detailsFile.toPath());
                                 JsonObject json = JsonParser.parseString(content).getAsJsonObject();
                                 name = json.get("name").getAsString();
                                 desc = json.get("description").getAsString();
@@ -110,7 +111,7 @@ public class ChapterManager {
         }
 
         // Cutscenes
-        File cutsceneFile = new File(sceneFolder.getAbsoluteFile(), "cutscenes" + NarrativeCraftFile.EXTENSTION_DATA_FILE);
+        File cutsceneFile = new File(sceneFolder.getAbsoluteFile(), "cutscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(cutsceneFile.exists()) {
             try {
                 String content = Files.readString(cutsceneFile.toPath());
@@ -122,7 +123,7 @@ public class ChapterManager {
         }
 
         // Cutscenes
-        File subsceneFile = new File(sceneFolder.getAbsoluteFile(), "subscenes" + NarrativeCraftFile.EXTENSTION_DATA_FILE);
+        File subsceneFile = new File(sceneFolder.getAbsoluteFile(), "subscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(subsceneFile.exists()) {
             try {
                 String content = Files.readString(subsceneFile.toPath());
@@ -138,6 +139,16 @@ public class ChapterManager {
 
     public List<Chapter> getChapters() {
         return chapters;
+    }
+
+    public boolean addChapter(String name, String description) {
+        Chapter chapter = new Chapter(chapters.size() + 1, name, description);
+        if(NarrativeCraftFile.createChapterDirectory(chapter)) {
+            chapters.add(chapter);
+            return true;
+        } else {
+            return false;
+        }
     }
 }
 

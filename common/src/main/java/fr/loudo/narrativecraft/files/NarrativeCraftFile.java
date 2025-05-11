@@ -1,27 +1,17 @@
 package fr.loudo.narrativecraft.files;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.character.Character;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.TickRateManager;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class NarrativeCraftFile {
 
-    public static final String EXTENSTION_SCRIPT_FILE = ".ink";
-    public static final String EXTENSTION_DATA_FILE = ".json";
+    public static final String EXTENSION_SCRIPT_FILE = ".ink";
+    public static final String EXTENSION_DATA_FILE = ".json";
 
     private static final String DIRECTORY_NAME = NarrativeCraftMod.MOD_ID;
 
@@ -29,7 +19,7 @@ public class NarrativeCraftFile {
     private static final String CHAPTERS_DIRECTORY_NAME = "chapters";
     private static final String CHARACTERS_DIRECTORY_NAME = "characters";
     private static final String SAVES_DIRECTORY_NAME = "saves";
-    private static final String GLOBAL_VAR_INK_NAME = "global_var" + EXTENSTION_SCRIPT_FILE;
+    private static final String GLOBAL_VAR_INK_NAME = "main" + EXTENSION_SCRIPT_FILE;
 
     public static File mainDirectory;
     public static File chaptersDirectory;
@@ -47,8 +37,27 @@ public class NarrativeCraftFile {
         globalVarInkFile = createFile(mainDirectory, GLOBAL_VAR_INK_NAME);
     }
 
-    public static File getSettingsFile(File file) {
-        return new File(file.getAbsoluteFile(), "settings" + NarrativeCraftFile.EXTENSTION_DATA_FILE);
+    public static File getDetailsFile(File file) {
+        return new File(file.getAbsoluteFile(), "details" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+    }
+
+    public static boolean createChapterDirectory(Chapter chapter) {
+        File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(chapter.getIndex()));
+        if(!chapterFolder.exists()) return false;
+        try {
+            new File(chapterFolder, "scenes").mkdir();
+            File detailsFile = getDetailsFile(chapterFolder);
+            detailsFile.createNewFile();
+            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", chapter.getName(), chapter.getDescription());
+            try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
+                writer.write(content);
+            }
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't create details file! " + e.getMessage());
+            return false;
+        }
+
     }
 
     private static File createDirectory(File parent, String name) {

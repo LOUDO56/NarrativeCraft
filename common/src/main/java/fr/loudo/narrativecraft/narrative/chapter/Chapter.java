@@ -1,17 +1,24 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chapter {
+public class Chapter extends StoryDetails {
 
     private int index;
-    private String name, description;
     private List<Scene> sceneList;
 
     public Chapter(int index) {
+        super("", "");
+        this.index = index;
+        this.sceneList = new ArrayList<>();
+    }
+
+    public Chapter(int index, String name, String description) {
+        super(name, description);
         this.index = index;
         this.sceneList = new ArrayList<>();
     }
@@ -26,22 +33,6 @@ public class Chapter {
 
     public void setIndex(int index) {
         this.index = index;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public List<Scene> getSceneList() {

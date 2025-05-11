@@ -33,10 +33,10 @@ public class KeyframeOptionScreen extends Screen {
     private final int EDIT_BOX_HEIGHT = 15;
     private final int BUTTON_HEIGHT = 20;
 
-    private List<EditBox> coordinatesBoxList;
-    private ServerPlayer player;
-    private PlayerSession playerSession;
-    private Keyframe keyframe;
+    private final List<EditBox> coordinatesBoxList;
+    private final ServerPlayer player;
+    private final PlayerSession playerSession;
+    private final Keyframe keyframe;
 
     private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
 

@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.components.toasts.SystemToast;
 import net.minecraft.network.chat.Component;
 
 public class ScreenUtils {
@@ -20,5 +21,15 @@ public class ScreenUtils {
 
     public static float getPixelValue(float value, float scale) {
         return (value * scale) / Math.max(1, Minecraft.getInstance().options.guiScale().get());
+    }
+
+    public static void sendToast(Component name, Component description) {
+        Minecraft.getInstance().getToastManager().addToast(
+                new SystemToast(
+                        SystemToast.SystemToastId.NARRATOR_TOGGLE,
+                        name,
+                        description
+                )
+        );
     }
 }

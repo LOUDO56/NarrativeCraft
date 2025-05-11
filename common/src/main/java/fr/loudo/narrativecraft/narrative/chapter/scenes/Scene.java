@@ -1,19 +1,15 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes;
 
-import com.mojang.brigadier.suggestion.SuggestionProvider;
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import net.minecraft.commands.CommandSourceStack;
+import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene {
+public class Scene extends StoryDetails {
 
     private String name, description;
     private Chapter chapter;
@@ -22,9 +18,8 @@ public class Scene {
     private final List<Subscene> subsceneList;
 
     public Scene(String name, String description, Chapter chapter) {
-        this.name = name;
+        super(name, description);
         this.chapter = chapter;
-        this.description = description;
         this.animationList = new ArrayList<>();
         this.cutsceneList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();

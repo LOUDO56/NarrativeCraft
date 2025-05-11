@@ -35,6 +35,33 @@
       "chars": [
         "\uE003"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/add.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\uE004"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/edit.png",
+      "ascent": 10,
+      "height": 12,
+      "chars": [
+        "\uE005"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/remove.png",
+      "ascent": 10,
+      "height": 10,
+      "chars": [
+        "\uE006"
+      ]
     }
   ]
 }
