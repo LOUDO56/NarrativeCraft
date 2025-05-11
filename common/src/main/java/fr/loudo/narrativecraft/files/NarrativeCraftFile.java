@@ -60,6 +60,21 @@ public class NarrativeCraftFile {
 
     }
 
+    public static boolean updateChapterDetails(Chapter chapter, String name, String description) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
+        File chapterDetails = getDetailsFile(chapterFolder);
+        try {
+            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
+            try(Writer writer = new BufferedWriter(new FileWriter(chapterDetails))) {
+                writer.write(content);
+            }
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update chapter {} details file! {}", chapter.getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
     public static boolean createSceneFolder(Scene scene) {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         if(!chapterFolder.exists()) createChapterDirectory(scene.getChapter());
@@ -85,6 +100,27 @@ public class NarrativeCraftFile {
             return false;
         }
 
+    }
+
+    public static boolean updateSceneDetails(Scene scene, String name, String description) {
+        String sceneFileName = String.join("_", scene.getName().toLowerCase().split(" "));
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, "scenes");
+        File sceneFolder = new File(scenesFolder, sceneFileName);
+        File dataFolder = new File(sceneFolder, "data");
+        File sceneDetails = getDetailsFile(dataFolder);
+        try {
+            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
+            try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
+                writer.write(content);
+            }
+            sceneFileName = String.join("_", name.toLowerCase().split(" "));
+            sceneFolder.renameTo(new File(scenesFolder, sceneFileName));
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
+            return false;
+        }
     }
 
     private static File createDirectory(File parent, String name) {

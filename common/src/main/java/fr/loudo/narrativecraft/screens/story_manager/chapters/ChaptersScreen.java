@@ -49,7 +49,7 @@ public class ChaptersScreen extends OptionsSubScreen {
                 message +=  " - " + chapter.getName();
             }
             Button button = Button.builder(Component.literal(message), button1 -> {
-                ScenesScreen screen = new ScenesScreen(this, chapter);
+                ScenesScreen screen = new ScenesScreen(chapter);
                 this.minecraft.setScreen(screen);
             }).build();
             buttons.add(button);

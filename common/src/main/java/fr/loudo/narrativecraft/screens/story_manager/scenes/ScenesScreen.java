@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.screens.story_manager.scenes;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -24,8 +25,8 @@ public class ScenesScreen extends OptionsSubScreen {
     private final Chapter chapter;
     private StoryElementList storyElementList;
 
-    public ScenesScreen(Screen lastScreen, Chapter chapter) {
-        super(lastScreen, Minecraft.getInstance().options, Translation.message("screen.scene_manager.title", chapter.getIndex()));
+    public ScenesScreen(Chapter chapter) {
+        super(null, Minecraft.getInstance().options, Translation.message("screen.scene_manager.title", chapter.getIndex()));
         this.chapter = chapter;
     }
 
@@ -38,6 +39,12 @@ public class ScenesScreen extends OptionsSubScreen {
             EditInfoScreen screen = new EditInfoScreen(this);
             this.minecraft.setScreen(screen);
         }).width(25).build());
+    }
+
+    @Override
+    public void onClose() {
+        ChaptersScreen screen = new ChaptersScreen();
+        this.minecraft.setScreen(screen);
     }
 
     @Override
