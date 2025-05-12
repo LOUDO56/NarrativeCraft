@@ -1,9 +1,9 @@
-package fr.loudo.narrativecraft.screens.story_manager.scenes;
+package fr.loudo.narrativecraft.screens.story_manager.scenes.animations;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.animations.AnimationsScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -14,15 +14,16 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ScenesMenuScreen extends OptionsSubScreen {
+public class AnimationsScreen extends OptionsSubScreen {
 
     private final Scene scene;
     private StoryElementList storyElementList;
 
-    public ScenesMenuScreen(Scene scene) {
-        super(null, Minecraft.getInstance().options, Translation.message("screen.scene_menu.title", Component.literal(scene.getName()).withColor(0x5896ED)));
+    public AnimationsScreen(Scene scene) {
+        super(null, Minecraft.getInstance().options, Translation.message("screen.animation_manager.title", Component.literal(scene.getName()).withColor(0x5896ED)));
         this.scene = scene;
     }
 
@@ -35,25 +36,22 @@ public class ScenesMenuScreen extends OptionsSubScreen {
 
     @Override
     public void onClose() {
-        ScenesScreen screen = new ScenesScreen(scene.getChapter());
+        ScenesMenuScreen screen = new ScenesMenuScreen(scene);
         this.minecraft.setScreen(screen);
     }
 
     @Override
     protected void addContents() {
-        Button animationsButton = Button.builder(Translation.message("screen.scene_menu.animations.text"), button -> {
-            AnimationsScreen screen = new AnimationsScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        Button cutscenesButton = Button.builder(Translation.message("screen.scene_menu.cutscenes.text"), button -> {
-            CutscenesScreen screen = new CutscenesScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        Button subscenesButton = Button.builder(Translation.message("screen.scene_menu.subscenes.text"), button -> {
-            SubscenesScreen screen = new SubscenesScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, List.of(animationsButton, cutscenesButton, subscenesButton), List.of()));
+        List<Button> buttons = new ArrayList<>();
+        List<StoryDetails> storyDetails = new ArrayList<>();
+        for(Animation animation : scene.getAnimationList()) {
+            Button button = Button.builder(Component.literal(String.valueOf(scene.getName())), button1 -> {
+                //TODO: preview animation
+            }).build();
+            buttons.add(button);
+            storyDetails.add(animation);
+        }
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
     }
 
     @Override

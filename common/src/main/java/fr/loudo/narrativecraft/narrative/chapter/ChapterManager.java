@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -12,6 +13,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +96,8 @@ public class ChapterManager {
 
     private void initSceneData(File sceneFolder, Scene scene) {
         // Animations
-        File animationsFolder = new File(sceneFolder.getAbsoluteFile(), "animations");
+        File dataFolder = new File(sceneFolder, "data");
+        File animationsFolder = new File(dataFolder, "animations");
         if(animationsFolder.exists()) {
             File[] animationsFile = animationsFolder.listFiles();
             if(animationsFile != null) {
@@ -102,6 +105,7 @@ public class ChapterManager {
                     try {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = new Gson().fromJson(content, Animation.class);
+                        animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
                         NarrativeCraftMod.LOG.warn("Animation file {} does not exists, passing...", animationFile.getName());
@@ -111,24 +115,41 @@ public class ChapterManager {
         }
 
         // Cutscenes
-        File cutsceneFile = new File(sceneFolder.getAbsoluteFile(), "cutscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+        File cutsceneFile = new File(dataFolder, "cutscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(cutsceneFile.exists()) {
             try {
                 String content = Files.readString(cutsceneFile.toPath());
-                Cutscene cutscene = new Gson().fromJson(content, Cutscene.class);
-                scene.addCutscene(cutscene);
+                Type listType = new TypeToken<List<Cutscene>>() {}.getType();
+                List<Cutscene> cutscenes = new Gson().fromJson(content, listType);
+                if(cutscenes != null) {
+                    for (Cutscene cutscene : cutscenes) {
+                        cutscene.setScene(scene);
+                    }
+                    scene.setCutsceneList(cutscenes);
+                }
             } catch (IOException e) {
                 NarrativeCraftMod.LOG.warn("Cutscene file does not exists, passing...");
             }
         }
 
-        // Cutscenes
-        File subsceneFile = new File(sceneFolder.getAbsoluteFile(), "subscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+        // Subscenes
+        File subsceneFile = new File(dataFolder, "subscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(subsceneFile.exists()) {
             try {
                 String content = Files.readString(subsceneFile.toPath());
-                Subscene subscene = new Gson().fromJson(content, Subscene.class);
-                scene.addSubscene(subscene);
+                Type listType = new TypeToken<List<Subscene>>() {}.getType();
+                List<Subscene> subscenes = new Gson().fromJson(content, listType);
+                if(subscenes != null) {
+                    for (Subscene subscene : subscenes) {
+                        subscene.setScene(scene);
+                        for(Animation animation : scene.getAnimationList()) {
+                            if(subscene.getAnimationNameList().contains(animation.getName())) {
+                                subscene.getAnimationList().add(animation);
+                            }
+                        }
+                    }
+                    scene.setSubsceneList(subscenes);
+                }
             } catch (IOException e) {
                 NarrativeCraftMod.LOG.warn("Subscene file does not exists, passing...");
             }

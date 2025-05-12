@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.files;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
@@ -103,12 +105,11 @@ public class NarrativeCraftFile {
     }
 
     public static boolean updateSceneDetails(Scene scene, String name, String description) {
-        String sceneFileName = String.join("_", scene.getName().toLowerCase().split(" "));
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, "scenes");
+        String sceneFileName = String.join("_", scene.getName().toLowerCase().split(" "));
         File sceneFolder = new File(scenesFolder, sceneFileName);
-        File dataFolder = new File(sceneFolder, "data");
-        File sceneDetails = getDetailsFile(dataFolder);
+        File sceneDetails = getDetailsFile(getDataFolderOfScene(scene));
         try {
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
@@ -121,6 +122,26 @@ public class NarrativeCraftFile {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
             return false;
         }
+    }
+
+    public static boolean updateCutsceneFile(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        File cutsceneFile = new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(cutsceneFile))) {
+            gson.toJson(scene.getCutsceneList(), writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update cutscenes file of scene {} of chapter {} ! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
+    private static File getDataFolderOfScene(Scene scene) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, "scenes");
+        File sceneFolder = new File(scenesFolder, String.join("_", scene.getName().toLowerCase().split(" ")));
+        return new File(sceneFolder, "data");
     }
 
     private static File createDirectory(File parent, String name) {

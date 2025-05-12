@@ -4,9 +4,14 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
@@ -70,8 +75,7 @@ public class EditInfoScreen extends Screen {
                 centerY
         );
         nameBox.setValue(name);
-        nameBox.setFilter(text -> text.matches("[a-zA-Z0-9 _-]*"));
-
+        nameBox.setFilter(text -> !text.matches(".*[\\\\/:*?\"<>|].*"));
         centerY += labelHeight + EDIT_BOX_NAME_HEIGHT + GAP;
         descriptionBox = multiLineBoxLabel(
                 Translation.message("screen.story.description").getString(),
@@ -96,11 +100,17 @@ public class EditInfoScreen extends Screen {
             if(storyDetails == null && lastScreen instanceof ScenesScreen) {
                 addSceneAction(name, desc);
             }
+            if(storyDetails == null && lastScreen instanceof CutscenesScreen) {
+                addCutsceneAction(name, desc);
+            }
             if(storyDetails != null && storyDetails instanceof Chapter) {
                 updateChapterAction(name, desc);
             }
             if(storyDetails != null && storyDetails instanceof Scene) {
                 updateSceneAction(name, desc);
+            }
+            if(storyDetails != null && storyDetails instanceof Cutscene) {
+                updateCutsceneAction(name, desc);
             }
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(actionButton);
@@ -120,11 +130,23 @@ public class EditInfoScreen extends Screen {
         if(storyDetails == null && lastScreen instanceof ScenesScreen screen) {
             title = Translation.message("screen.scene_manager.add.title", screen.getChapter().getIndex());
         }
+        if(storyDetails == null && lastScreen instanceof CutscenesScreen screen) {
+            title = Translation.message("screen.cutscene_manager.add.title", screen.getScene().getName());
+        }
+        if(storyDetails == null && lastScreen instanceof SubscenesScreen screen) {
+            title = Translation.message("screen.subscene_manager.add.title", screen.getScene().getName());
+        }
         if(storyDetails != null && storyDetails instanceof Chapter chapter) {
             title = Translation.message("screen.chapter_manager.edit.title", chapter.getIndex());
         }
         if(storyDetails != null && storyDetails instanceof Scene scene) {
             title = Translation.message("screen.scene_manager.edit.title", scene.getName(), scene.getChapter().getIndex());
+        }
+        if(storyDetails != null && storyDetails instanceof Cutscene cutscene) {
+            title = Translation.message("screen.cutscene_manager.edit.title", cutscene.getName(), cutscene.getScene().getName());
+        }
+        if(storyDetails != null && storyDetails instanceof Subscene subscene) {
+            title = Translation.message("screen.subscene_manager.edit.title", subscene.getName(), subscene.getScene().getName());
         }
         return title;
     }
@@ -140,16 +162,32 @@ public class EditInfoScreen extends Screen {
 
     private void addSceneAction(String name, String description) {
         Chapter chapter = ((ScenesScreen)lastScreen).getChapter();
-        Scene scene = new Scene(name, description, chapter);
         if(chapter.sceneExists(name)) {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.add.already_exists"));
             return;
         }
+        Scene scene = new Scene(name, description, chapter);
         if(!chapter.addScene(scene)) {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.add.failed"));
             return;
         }
         ScenesScreen screen = new ScenesScreen(chapter);
+        this.minecraft.setScreen(screen);
+    }
+
+    private void addCutsceneAction(String name, String desc) {
+
+        Scene scene = ((CutscenesScreen)lastScreen).getScene();
+        if(scene.cutsceneExists(name)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.add.already_exists"));
+            return;
+        }
+        Cutscene cutscene = new Cutscene(scene, name, desc);
+        if(!scene.addCutscene(cutscene)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.add.failed", name));
+            return;
+        }
+        ScenesMenuScreen screen = new ScenesMenuScreen(scene);
         this.minecraft.setScreen(screen);
     }
 
@@ -176,6 +214,21 @@ public class EditInfoScreen extends Screen {
         scene.setDescription(description);
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", scene.getName(), scene.getChapter().getIndex()));
         ScenesScreen screen = new ScenesScreen(scene.getChapter());
+        this.minecraft.setScreen(screen);
+    }
+
+    private void updateCutsceneAction(String name, String desc) {
+        Cutscene cutscene = (Cutscene) storyDetails;
+        cutscene.setName(name);
+        cutscene.setDescription(desc);
+        if(!NarrativeCraftFile.updateCutsceneFile(cutscene.getScene())) {
+            cutscene.setName(this.name);
+            cutscene.setDescription(description);
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.update.failed", cutscene.getName()));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        CutscenesScreen screen = new CutscenesScreen(cutscene.getScene());
         this.minecraft.setScreen(screen);
     }
 

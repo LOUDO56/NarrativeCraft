@@ -1,29 +1,18 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 
-import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
+import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 
-import java.util.List;
+public class Animation extends StoryDetails {
 
-public class Animation {
-
-    private String name;
+    private transient Scene scene;
     private Character character;
-    private Scene scene;
     private ActionsData actionsData;
 
-    public Animation(String name, Scene scene) {
-        this.name = name;
-        this.scene = scene;
+    public Animation(String name, String description) {
+        super(name, description);
         this.actionsData = new ActionsData();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public Character getCharacter() {
