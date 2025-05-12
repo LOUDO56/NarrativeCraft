@@ -53,6 +53,8 @@ public class ScenesScreen extends OptionsSubScreen {
         List<StoryDetails> storyDetails = new ArrayList<>();
         for(Scene scene : chapter.getSceneList()) {
             Button button = Button.builder(Component.literal(String.valueOf(scene.getName())), button1 -> {
+                ScenesMenuScreen screen = new ScenesMenuScreen(scene);
+                this.minecraft.setScreen(screen);
             }).build();
             buttons.add(button);
             storyDetails.add(scene);
