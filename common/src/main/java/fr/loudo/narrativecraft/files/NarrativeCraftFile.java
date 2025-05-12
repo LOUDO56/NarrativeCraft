@@ -137,6 +137,19 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static boolean updateSubsceneFile(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        File cutsceneFile = new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(cutsceneFile))) {
+            gson.toJson(scene.getSubsceneList(), writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update subscenes file of scene {} of chapter {} ! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
     private static File getDataFolderOfScene(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, "scenes");
@@ -163,5 +176,4 @@ public class NarrativeCraftFile {
         }
         return file;
     }
-
 }

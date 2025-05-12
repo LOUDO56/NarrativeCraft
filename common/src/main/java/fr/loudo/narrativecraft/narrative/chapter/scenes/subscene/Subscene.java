@@ -18,7 +18,7 @@ public class Subscene extends StoryDetails {
     private transient List<Playback> playbackList;
     private List<String> animationNameList;
 
-    public Subscene(String name, String description, Scene scene) {
+    public Subscene(Scene scene, String name, String description) {
         super(name, description);
         this.scene = scene;
         this.animationList = new ArrayList<>();

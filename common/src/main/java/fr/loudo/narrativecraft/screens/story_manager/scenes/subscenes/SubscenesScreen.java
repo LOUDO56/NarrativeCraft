@@ -52,7 +52,7 @@ public class SubscenesScreen extends OptionsSubScreen {
         List<Button> buttons = new ArrayList<>();
         List<StoryDetails> storyDetails = new ArrayList<>();
         for(Subscene subscene : scene.getSubsceneList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(scene.getName())), button1 -> {
+            Button button = Button.builder(Component.literal(String.valueOf(subscene.getName())), button1 -> {
                 //TODO: show a screen where we can add animations
             }).build();
             buttons.add(button);

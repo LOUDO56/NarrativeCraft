@@ -46,6 +46,15 @@ public class Scene extends StoryDetails {
         return true;
     }
 
+    public boolean addSubscene(Subscene subscene) {
+        subsceneList.add(subscene);
+        if(!NarrativeCraftFile.updateSubsceneFile(this)) {
+            subsceneList.remove(subscene);
+            return false;
+        }
+        return true;
+    }
+
     public boolean cutsceneExists(String name) {
         for (Cutscene cutscene : cutsceneList) {
             if(cutscene.getName().equals(name)) {
@@ -55,8 +64,13 @@ public class Scene extends StoryDetails {
         return false;
     }
 
-    public void addSubscene(Subscene subscene) {
-        if(!subsceneList.contains(subscene)) subsceneList.add(subscene);
+    public boolean subsceneExists(String name) {
+        for (Subscene subscene : subsceneList) {
+            if(subscene.getName().equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public List<Animation> getAnimationList() {

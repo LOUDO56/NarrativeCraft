@@ -61,7 +61,11 @@
   "narrativecraft.screen.animation_manager.title": "Animation list of scene %s",
   "narrativecraft.screen.subscene_manager.title": "Subscene list of scene %s",
   "narrativecraft.screen.subscene_manager.add.title": "Add a subscene to scene %s",
-  "narrativecraft.screen.subscene_manager.remove.title": "Edit subscene %s from scene %s",
+  "narrativecraft.screen.subscene_manager.edit.title": "Edit subscene %s from scene %s",
+  "narrativecraft.screen.subscene_manager.add.already_exists": "This subscene already exists.",
+  "narrativecraft.screen.subscene_manager.add.failed": "Couldn't add subscene %s. Please check subscenes.json of your scene exists.",
+  "narrativecraft.screen.subscene_manager.update.failed": "Couldn't update subscene %s. Please check subscenes.json of your scene exists.",
+
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",
   "narrativecraft.screen.add.text": "Add",

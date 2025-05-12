@@ -8,7 +8,6 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
@@ -103,6 +102,9 @@ public class EditInfoScreen extends Screen {
             if(storyDetails == null && lastScreen instanceof CutscenesScreen) {
                 addCutsceneAction(name, desc);
             }
+            if(storyDetails == null && lastScreen instanceof SubscenesScreen) {
+                addSubsceneAction(name, desc);
+            }
             if(storyDetails != null && storyDetails instanceof Chapter) {
                 updateChapterAction(name, desc);
             }
@@ -111,6 +113,9 @@ public class EditInfoScreen extends Screen {
             }
             if(storyDetails != null && storyDetails instanceof Cutscene) {
                 updateCutsceneAction(name, desc);
+            }
+            if(storyDetails != null && storyDetails instanceof Subscene) {
+                updateSubsceneAction(name, desc);
             }
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(actionButton);
@@ -187,7 +192,22 @@ public class EditInfoScreen extends Screen {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.add.failed", name));
             return;
         }
-        ScenesMenuScreen screen = new ScenesMenuScreen(scene);
+        CutscenesScreen screen = new CutscenesScreen(scene);
+        this.minecraft.setScreen(screen);
+    }
+
+    private void addSubsceneAction(String name, String desc) {
+        Scene scene = ((SubscenesScreen)lastScreen).getScene();
+        if(scene.subsceneExists(name)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.add.already_exists"));
+            return;
+        }
+        Subscene subscene = new Subscene(scene, name, desc);
+        if(!scene.addSubscene(subscene)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.add.failed", name));
+            return;
+        }
+        SubscenesScreen screen = new SubscenesScreen(scene);
         this.minecraft.setScreen(screen);
     }
 
@@ -229,6 +249,21 @@ public class EditInfoScreen extends Screen {
         }
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
         CutscenesScreen screen = new CutscenesScreen(cutscene.getScene());
+        this.minecraft.setScreen(screen);
+    }
+
+    private void updateSubsceneAction(String name, String desc) {
+        Subscene subscene = (Subscene) storyDetails;
+        subscene.setName(name);
+        subscene.setDescription(desc);
+        if(!NarrativeCraftFile.updateSubsceneFile(subscene.getScene())) {
+            subscene.setName(this.name);
+            subscene.setDescription(description);
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.update.failed", subscene.getName()));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        SubscenesScreen screen = new SubscenesScreen(subscene.getScene());
         this.minecraft.setScreen(screen);
     }
 
