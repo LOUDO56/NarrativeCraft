@@ -48,8 +48,8 @@
     {
       "type": "bitmap",
       "file": "minecraft:font/edit.png",
-      "ascent": 10,
-      "height": 12,
+      "ascent": 8,
+      "height": 10,
       "chars": [
         "\uE005"
       ]
@@ -58,7 +58,7 @@
       "type": "bitmap",
       "file": "minecraft:font/remove.png",
       "ascent": 10,
-      "height": 10,
+      "height": 14,
       "chars": [
         "\uE006"
       ]

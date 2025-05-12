@@ -1,6 +1,11 @@
 package fr.loudo.narrativecraft.screens.story_manager.template;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -46,6 +51,18 @@ public class DeleteConfirmScreen extends Screen {
 
     @Override
     public void onClose() {
-        this.minecraft.setScreen(lastScreen);
+        if (lastScreen instanceof ChaptersScreen) {
+            this.minecraft.setScreen(new ChaptersScreen());
+        } else if (lastScreen instanceof ScenesScreen screen) {
+            this.minecraft.setScreen(new ScenesScreen(screen.getChapter()));
+        } else if (lastScreen instanceof AnimationsScreen screen) {
+            this.minecraft.setScreen(new AnimationsScreen(screen.getScene()));
+        } else if (lastScreen instanceof CutscenesScreen screen) {
+            this.minecraft.setScreen(new CutscenesScreen(screen.getScene()));
+        } else if (lastScreen instanceof SubscenesScreen screen) {
+            this.minecraft.setScreen(new SubscenesScreen(screen.getScene()));
+        } else {
+            this.minecraft.setScreen(lastScreen);
+        }
     }
 }
