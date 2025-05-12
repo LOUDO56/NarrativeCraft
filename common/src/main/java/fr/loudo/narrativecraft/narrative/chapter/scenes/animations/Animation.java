@@ -1,8 +1,9 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 
 public class Animation extends StoryDetails {
 
@@ -37,5 +38,11 @@ public class Animation extends StoryDetails {
 
     public void setActionsData(ActionsData actionsData) {
         this.actionsData = actionsData;
+    }
+
+    @Override
+    public void remove() {
+        scene.removeAnimation(this);
+        NarrativeCraftFile.removeAnimationFileFromScene(this);
     }
 }

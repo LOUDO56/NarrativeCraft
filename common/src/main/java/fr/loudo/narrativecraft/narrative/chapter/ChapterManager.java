@@ -171,5 +171,9 @@ public class ChapterManager {
             return false;
         }
     }
+
+    public void removeChapter(Chapter chapter) {
+        chapters.remove(chapter);
+    }
 }
 

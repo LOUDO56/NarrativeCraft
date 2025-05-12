@@ -4,10 +4,9 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,5 +49,11 @@ public class Subscene extends StoryDetails {
 
     public List<String> getAnimationNameList() {
         return animationNameList;
+    }
+
+    @Override
+    public void remove() {
+        scene.removeSubscene(this);
+        NarrativeCraftFile.updateSubsceneFile(scene);
     }
 }

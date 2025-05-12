@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.screens.story_manager.scenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
@@ -12,7 +12,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;

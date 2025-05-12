@@ -1,6 +1,6 @@
-package fr.loudo.narrativecraft.screens.story_manager;
+package fr.loudo.narrativecraft.narrative;
 
-public class StoryDetails {
+public abstract class StoryDetails {
 
     private String name, description;
 
@@ -24,4 +24,6 @@ public class StoryDetails {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    public abstract void remove();
 }

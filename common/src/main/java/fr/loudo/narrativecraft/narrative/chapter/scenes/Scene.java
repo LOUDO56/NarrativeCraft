@@ -5,7 +5,7 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +73,18 @@ public class Scene extends StoryDetails {
         return false;
     }
 
+    public void removeAnimation(Animation animation) {
+        animationList.remove(animation);
+    }
+
+    public void removeCutscene(Cutscene cutscene) {
+        cutsceneList.remove(cutscene);
+    }
+
+    public void removeSubscene(Subscene subscene) {
+        subsceneList.remove(subscene);
+    }
+
     public List<Animation> getAnimationList() {
         return animationList;
     }
@@ -95,5 +107,11 @@ public class Scene extends StoryDetails {
 
     public void setSubsceneList(List<Subscene> subsceneList) {
         this.subsceneList = subsceneList;
+    }
+
+    @Override
+    public void remove() {
+        chapter.removeScene(this);
+        NarrativeCraftFile.removeSceneFolder(this);
     }
 }

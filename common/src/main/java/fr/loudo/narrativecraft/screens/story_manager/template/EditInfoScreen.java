@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
@@ -156,6 +156,42 @@ public class EditInfoScreen extends Screen {
         return title;
     }
 
+    @Override
+    public void onClose() {
+        this.minecraft.setScreen(lastScreen);
+    }
+
+    private EditBox labelBox(Component text, int width, int height, int x, int y) {
+        StringWidget stringWidget = ScreenUtils.text(text, this.font, x, y);
+        EditBox editBox = new EditBox(
+                this.font,
+                x,
+                y + this.font.lineHeight + 5,
+                width,
+                height,
+                Component.literal(text + " value")
+        );
+        this.addRenderableWidget(stringWidget);
+        this.addRenderableWidget(editBox);
+        return editBox;
+    }
+
+    private MultiLineEditBox multiLineBoxLabel(String text, int width, int height, int x, int y) {
+        StringWidget stringWidget = ScreenUtils.text(Component.literal(text), this.font, x, y);
+        MultiLineEditBox multiLineEditBox = new MultiLineEditBox(
+                this.font,
+                x,
+                y + this.font.lineHeight + 5,
+                width,
+                height,
+                Component.literal("Once upon a time... In a wild... wild world... there were two wolf brothers, living in their home lair with their papa wolf..."),
+                Component.literal("")
+        );
+        this.addRenderableWidget(stringWidget);
+        this.addRenderableWidget(multiLineEditBox);
+        return multiLineEditBox;
+    }
+
     private void addChapterAction(String name, String description) {
         if(!NarrativeCraftMod.getInstance().getChapterManager().addChapter(name, description)) {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.chapter_manager.add.failed"));
@@ -267,39 +303,4 @@ public class EditInfoScreen extends Screen {
         this.minecraft.setScreen(screen);
     }
 
-    @Override
-    public void onClose() {
-        this.minecraft.setScreen(lastScreen);
-    }
-
-    private EditBox labelBox(Component text, int width, int height, int x, int y) {
-        StringWidget stringWidget = ScreenUtils.text(text, this.font, x, y);
-        EditBox editBox = new EditBox(
-                this.font,
-                x,
-                y + this.font.lineHeight + 5,
-                width,
-                height,
-                Component.literal(text + " value")
-        );
-        this.addRenderableWidget(stringWidget);
-        this.addRenderableWidget(editBox);
-        return editBox;
-    }
-
-    private MultiLineEditBox multiLineBoxLabel(String text, int width, int height, int x, int y) {
-        StringWidget stringWidget = ScreenUtils.text(Component.literal(text), this.font, x, y);
-        MultiLineEditBox multiLineEditBox = new MultiLineEditBox(
-                this.font,
-                x,
-                y + this.font.lineHeight + 5,
-                width,
-                height,
-                Component.literal("Once upon a time... In a wild... wild world... there were two wolf brothers, living in their home lair with their papa wolf..."),
-                Component.literal("")
-        );
-        this.addRenderableWidget(stringWidget);
-        this.addRenderableWidget(multiLineEditBox);
-        return multiLineEditBox;
-    }
 }

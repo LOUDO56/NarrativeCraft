@@ -1,9 +1,10 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,5 +45,11 @@ public class Cutscene extends StoryDetails {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    @Override
+    public void remove() {
+        scene.removeCutscene(this);
+        NarrativeCraftFile.updateCutsceneFile(scene);
     }
 }

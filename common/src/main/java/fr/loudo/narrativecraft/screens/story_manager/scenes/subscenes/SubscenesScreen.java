@@ -1,9 +1,8 @@
 package fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;

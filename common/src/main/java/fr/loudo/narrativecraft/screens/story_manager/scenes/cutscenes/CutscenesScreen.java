@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;

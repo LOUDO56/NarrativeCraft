@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.screens.story_manager.template;
 
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -45,7 +45,8 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
                 Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(editInfoScreen));
             }).width(smallButtonWidth).build();
             this.removeButton = Button.builder(ImageFontConstants.REMOVE, button1 -> {
-
+                DeleteConfirmScreen deleteConfirmScreen = new DeleteConfirmScreen(screen, storyDetails);
+                Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(deleteConfirmScreen));
             }).width(smallButtonWidth).build();
         }
 

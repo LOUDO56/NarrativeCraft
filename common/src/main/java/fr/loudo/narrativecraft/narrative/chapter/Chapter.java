@@ -1,8 +1,9 @@
 package fr.loudo.narrativecraft.narrative.chapter;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,10 @@ public class Chapter extends StoryDetails {
         return false;
     }
 
+    public void removeScene(Scene scene) {
+        sceneList.remove(scene);
+    }
+
     public boolean sceneExists(String name) {
         for(Scene scene : sceneList) {
             if(scene.getName().toLowerCase().equals(name)) {
@@ -51,5 +56,11 @@ public class Chapter extends StoryDetails {
 
     public List<Scene> getSceneList() {
         return sceneList;
+    }
+
+    @Override
+    public void remove() {
+        NarrativeCraftFile.removeChapterFolder(this);
+        NarrativeCraftMod.getInstance().getChapterManager().removeChapter(this);
     }
 }

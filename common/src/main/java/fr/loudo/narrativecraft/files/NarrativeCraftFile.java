@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -150,10 +151,33 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static void removeChapterFolder(Chapter chapter) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
+        deleteDirectory(chapterFolder);
+    }
+
+    public static void removeSceneFolder(Scene scene) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, "scenes");
+        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
+        deleteDirectory(sceneFolder);
+    }
+
+    public static void removeAnimationFileFromScene(Animation animation) {
+        File dataFolder = getDataFolderOfScene(animation.getScene());
+        File animationsFolder = new File(dataFolder, "animations");
+        File animationFile = new File(animationsFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE);
+        animationFile.delete();
+    }
+
+    private static String getCamelCaseName(String name) {
+        return String.join("_", name.toLowerCase().split(" "));
+    }
+
     private static File getDataFolderOfScene(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, "scenes");
-        File sceneFolder = new File(scenesFolder, String.join("_", scene.getName().toLowerCase().split(" ")));
+        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
         return new File(sceneFolder, "data");
     }
 
@@ -175,5 +199,15 @@ public class NarrativeCraftFile {
             }
         }
         return file;
+    }
+
+    private static void deleteDirectory(File directoryToBeDeleted) {
+        File[] allContents = directoryToBeDeleted.listFiles();
+        if (allContents != null) {
+            for (File file : allContents) {
+                deleteDirectory(file);
+            }
+        }
+        directoryToBeDeleted.delete();
     }
 }
