@@ -1,6 +1,11 @@
-package fr.loudo.narrativecraft.screens.story_manager.template;
+package fr.loudo.narrativecraft.screens.storyManager.template;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -8,7 +13,10 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
+import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
@@ -29,7 +37,7 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         }
     }
 
-    public static class Entry extends ContainerObjectSelectionList.Entry<Entry> {
+    public class Entry extends ContainerObjectSelectionList.Entry<Entry> {
         private final int gap = 5;
         private final int smallButtonWidth = 20;
         private final Button button;
@@ -45,8 +53,25 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
                 Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(editInfoScreen));
             }).width(smallButtonWidth).build();
             this.removeButton = Button.builder(ImageFontConstants.REMOVE, button1 -> {
-                DeleteConfirmScreen deleteConfirmScreen = new DeleteConfirmScreen(screen, storyDetails);
-                Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(deleteConfirmScreen));
+                ConfirmScreen screen1 = new ConfirmScreen(b -> {
+                    if(b) {
+                        storyDetails.remove();
+                    }
+                    if (screen instanceof ChaptersScreen) {
+                        minecraft.setScreen(new ChaptersScreen());
+                    } else if (screen instanceof ScenesScreen screen2) {
+                        minecraft.setScreen(new ScenesScreen(screen2.getChapter()));
+                    } else if (screen instanceof AnimationsScreen screen2) {
+                        minecraft.setScreen(new AnimationsScreen(screen2.getScene()));
+                    } else if (screen instanceof CutscenesScreen screen2) {
+                        minecraft.setScreen(new CutscenesScreen(screen2.getScene()));
+                    } else if (screen instanceof SubscenesScreen screen2) {
+                        minecraft.setScreen(new SubscenesScreen(screen2.getScene()));
+                    } else {
+                        minecraft.setScreen(screen);
+                    }
+                }, Component.literal(""), Component.literal("Are you sure? This can't be undone!"), CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
+                minecraft.setScreen(screen1);
             }).width(smallButtonWidth).build();
         }
 
