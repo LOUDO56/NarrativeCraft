@@ -1,11 +1,11 @@
-package fr.loudo.narrativecraft.screens.story_manager.scenes;
+package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
-import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

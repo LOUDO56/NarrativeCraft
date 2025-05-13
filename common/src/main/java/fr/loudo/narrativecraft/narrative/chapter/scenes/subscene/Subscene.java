@@ -51,6 +51,18 @@ public class Subscene extends StoryDetails {
         return animationNameList;
     }
 
+    public void setAnimationList(List<Animation> animationList) {
+        this.animationList = animationList;
+    }
+
+    public void setPlaybackList(List<Playback> playbackList) {
+        this.playbackList = playbackList;
+    }
+
+    public void setAnimationNameList(List<String> animationNameList) {
+        this.animationNameList = animationNameList;
+    }
+
     @Override
     public void remove() {
         scene.removeSubscene(this);

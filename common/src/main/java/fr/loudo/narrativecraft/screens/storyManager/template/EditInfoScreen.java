@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.story_manager.template;
+package fr.loudo.narrativecraft.screens.storyManager.template;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
@@ -7,10 +7,10 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
-import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;

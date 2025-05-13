@@ -1,10 +1,10 @@
-package fr.loudo.narrativecraft.screens.story_manager.scenes;
+package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.animations.AnimationsScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.cutscenes.CutscenesScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.subscenes.SubscenesScreen;
-import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -41,15 +41,15 @@ public class ScenesMenuScreen extends OptionsSubScreen {
 
     @Override
     protected void addContents() {
-        Button animationsButton = Button.builder(Translation.message("screen.scene_menu.animations.text"), button -> {
+        Button animationsButton = Button.builder(Translation.message("global.animations"), button -> {
             AnimationsScreen screen = new AnimationsScreen(scene);
             this.minecraft.setScreen(screen);
         }).build();
-        Button cutscenesButton = Button.builder(Translation.message("screen.scene_menu.cutscenes.text"), button -> {
+        Button cutscenesButton = Button.builder(Translation.message("global.cutscenes"), button -> {
             CutscenesScreen screen = new CutscenesScreen(scene);
             this.minecraft.setScreen(screen);
         }).build();
-        Button subscenesButton = Button.builder(Translation.message("screen.scene_menu.subscenes.text"), button -> {
+        Button subscenesButton = Button.builder(Translation.message("global.subscenes"), button -> {
             SubscenesScreen screen = new SubscenesScreen(scene);
             this.minecraft.setScreen(screen);
         }).build();

@@ -142,6 +142,7 @@ public class ChapterManager {
                 if(subscenes != null) {
                     for (Subscene subscene : subscenes) {
                         subscene.setScene(scene);
+                        subscene.setAnimationList(new ArrayList<>());
                         for(Animation animation : scene.getAnimationList()) {
                             if(subscene.getAnimationNameList().contains(animation.getName())) {
                                 subscene.getAnimationList().add(animation);

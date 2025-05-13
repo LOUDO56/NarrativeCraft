@@ -5,7 +5,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
-import fr.loudo.narrativecraft.screens.story_manager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;

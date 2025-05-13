@@ -140,9 +140,9 @@ public class NarrativeCraftFile {
 
     public static boolean updateSubsceneFile(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        File cutsceneFile = new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE);
+        File subscenesFile = new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE);
         Gson gson = new GsonBuilder().create();
-        try(Writer writer = new BufferedWriter(new FileWriter(cutsceneFile))) {
+        try(Writer writer = new BufferedWriter(new FileWriter(subscenesFile))) {
             gson.toJson(scene.getSubsceneList(), writer);
             return true;
         } catch (IOException e) {
@@ -168,6 +168,11 @@ public class NarrativeCraftFile {
         File animationsFolder = new File(dataFolder, "animations");
         File animationFile = new File(animationsFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE);
         animationFile.delete();
+    }
+
+    public static boolean subscenesFolderExist(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        return new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE).exists();
     }
 
     private static String getCamelCaseName(String name) {

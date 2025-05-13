@@ -1,8 +1,8 @@
-package fr.loudo.narrativecraft.screens.story_manager;
+package fr.loudo.narrativecraft.screens.storyManager;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
-import fr.loudo.narrativecraft.screens.story_manager.template.EditInfoScreen;
-import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.template.EditInfoScreen;
+import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.Button;

@@ -8,6 +8,10 @@
   "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
   "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
 
+  "narrativecraft.global.animations": "Animations",
+  "narrativecraft.global.cutscenes": "Cutscenes",
+  "narrativecraft.global.subscenes": "Subscenes",
+
   "narrativecraft.toast.error": "Error",
   "narrativecraft.toast.info": "Info",
   "narrativecraft.toast.description.updated": "Updated Successfully!",
@@ -49,9 +53,6 @@
   "narrativecraft.screen.scene_manager.update.failed": "Couldn't update scene %s. Please check details.json exists.",
   "narrativecraft.screen.story.name.required": "You must have a name!",
   "narrativecraft.screen.scene_menu.title": "Scene %s menu",
-  "narrativecraft.screen.scene_menu.animations.text": "Animations",
-  "narrativecraft.screen.scene_menu.cutscenes.text": "Cutscenes",
-  "narrativecraft.screen.scene_menu.subscenes.text": "Subscenes",
   "narrativecraft.screen.cutscene_manager.title": "Cutscenes list of scene %s",
   "narrativecraft.screen.cutscene_manager.add.title": "Add a cutscene to scene %s",
   "narrativecraft.screen.cutscene_manager.edit.title": "Edit cutscene %s from scene %s",

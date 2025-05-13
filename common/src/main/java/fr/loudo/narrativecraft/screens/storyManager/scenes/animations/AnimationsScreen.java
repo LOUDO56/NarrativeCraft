@@ -1,11 +1,11 @@
-package fr.loudo.narrativecraft.screens.story_manager.scenes.animations;
+package fr.loudo.narrativecraft.screens.storyManager.scenes.animations;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.screens.story_manager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.story_manager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.story_manager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
+import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -43,7 +43,7 @@ public class AnimationsScreen extends StoryElementScreen {
         List<Button> buttons = new ArrayList<>();
         List<StoryDetails> storyDetails = new ArrayList<>();
         for(Animation animation : scene.getAnimationList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(scene.getName())), button1 -> {
+            Button button = Button.builder(Component.literal(String.valueOf(animation.getName())), button1 -> {
                 //TODO: preview animation
             }).build();
             buttons.add(button);
