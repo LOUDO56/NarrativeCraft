@@ -73,6 +73,15 @@ public class Scene extends StoryDetails {
         return false;
     }
 
+    public Animation getAnimationByName(String name) {
+        for(Animation animation : animationList) {
+            if(animation.getName().equals(name)) {
+                return animation;
+            }
+        }
+        return null;
+    }
+
     public void removeAnimation(Animation animation) {
         animationList.remove(animation);
     }

@@ -66,6 +66,8 @@
   "narrativecraft.screen.subscene_manager.add.already_exists": "This subscene already exists.",
   "narrativecraft.screen.subscene_manager.add.failed": "Couldn't add subscene %s. Please check subscenes.json of your scene exists.",
   "narrativecraft.screen.subscene_manager.update.failed": "Couldn't update subscene %s. Please check subscenes.json of your scene exists.",
+  "narrativecraft.screen.selector.cutscene.title": "%s selector for cutscene %s",
+  "narrativecraft.screen.selector.subscene.title": "%s selector for subscene %s",
 
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",

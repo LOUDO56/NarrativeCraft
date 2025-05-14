@@ -1,10 +1,11 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,8 +13,10 @@ import java.util.List;
 public class Cutscene extends StoryDetails {
 
     private transient Scene scene;
+    private transient List<Animation> animationList;
     private List<KeyframeGroup> keyframeGroupList;
     private List<Subscene> subsceneList;
+    private List<String> animationListString;
     //private Subscene defaultSubcene;
 
     public Cutscene(Scene scene, String name, String description) {
@@ -21,6 +24,8 @@ public class Cutscene extends StoryDetails {
         this.scene = scene;
         this.keyframeGroupList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
+        this.animationList = new ArrayList<>();
+        this.animationListString = new ArrayList<>();
     }
 
     public List<KeyframeGroup> getKeyframeGroupList() {
@@ -45,6 +50,22 @@ public class Cutscene extends StoryDetails {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public List<String> getAnimationListString() {
+        return animationListString;
+    }
+
+    public void setAnimationListString(List<String> animationListString) {
+        this.animationListString = animationListString;
+    }
+
+    public List<Animation> getAnimationList() {
+        return animationList;
+    }
+
+    public void setAnimationList(List<Animation> animationList) {
+        this.animationList = animationList;
     }
 
     @Override

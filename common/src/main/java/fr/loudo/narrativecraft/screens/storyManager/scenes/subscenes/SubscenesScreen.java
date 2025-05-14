@@ -37,21 +37,30 @@ public class SubscenesScreen extends StoryElementScreen {
         List<Button> buttons = new ArrayList<>();
         List<StoryDetails> storyDetails = new ArrayList<>();
         for(Subscene subscene : scene.getSubsceneList()) {
-            List<Animation> animationsAvailable = scene.getAnimationList().stream().filter(animation -> !subscene.getAnimationList().contains(animation)).toList();
+            List<Animation> animationsAvailable = scene.getAnimationList().stream()
+                    .filter(animation -> subscene.getAnimationList().stream()
+                            .noneMatch(a -> a.getName().equals(animation.getName())))
+                    .toList();
             Button button = Button.builder(Component.literal(String.valueOf(subscene.getName())), button1 -> {
-                PickElementScreen screen = new PickElementScreen(this, Translation.message("global.animations"), animationsAvailable, subscene.getAnimationList(), (entries) -> {
-                    if(NarrativeCraftFile.subscenesFolderExist(scene)) {
-                        List<String> animationStringList = new ArrayList<>();
-                        List<Animation> animationList = new ArrayList<>();
-                        for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                            animationStringList.add(entry.getStoryDetails().getName());
-                            animationList.add((Animation) entry.getStoryDetails());
+                PickElementScreen screen = new PickElementScreen(
+                    this,
+                    Translation.message("screen.selector.subscene.title", Translation.message("global.animations"), Component.literal(subscene.getName()).withColor(StoryElementScreen.SUBSCENE_NAME_COLOR)),
+                    Translation.message("global.animations"),
+                    animationsAvailable,
+                    subscene.getAnimationList(),
+                    (entries) -> {
+                        if(NarrativeCraftFile.subscenesFileExist(scene)) {
+                            List<String> animationStringList = new ArrayList<>();
+                            List<Animation> animationList = new ArrayList<>();
+                            for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
+                                animationStringList.add(entry.getStoryDetails().getName());
+                                animationList.add((Animation) entry.getStoryDetails());
+                            }
+                            subscene.setAnimationList(animationList);
+                            subscene.setAnimationNameList(animationStringList);
+                            NarrativeCraftFile.updateSubsceneFile(scene);
                         }
-                        subscene.setAnimationList(animationList);
-                        subscene.setAnimationNameList(animationStringList);
-                        NarrativeCraftFile.updateSubsceneFile(scene);
-                    }
-                    this.minecraft.setScreen(new SubscenesScreen(scene));
+                        this.minecraft.setScreen(new SubscenesScreen(scene));
                 });
                 this.minecraft.setScreen(screen);
             }).build();

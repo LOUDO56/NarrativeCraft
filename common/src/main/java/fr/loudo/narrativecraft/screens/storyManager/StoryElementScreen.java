@@ -18,6 +18,11 @@ import java.util.List;
 
 public class StoryElementScreen extends OptionsSubScreen {
 
+    public static final int SCENE_NAME_COLOR = 0x5896ED; // BLUE
+    public static final int ANIMATION_NAME_COLOR = 0xE0DE65; // YELLOW
+    public static final int CUTSCENE_NAME_COLOR = 0xE34045; // RED
+    public static final int SUBSCENE_NAME_COLOR = 0x94E866; // GREEN
+
     protected StoryElementList storyElementList;
     protected List<Button> buttons;
     protected List<StoryDetails> storyDetails;

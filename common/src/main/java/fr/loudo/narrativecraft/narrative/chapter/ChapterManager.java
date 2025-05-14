@@ -123,7 +123,14 @@ public class ChapterManager {
                 List<Cutscene> cutscenes = new Gson().fromJson(content, listType);
                 if(cutscenes != null) {
                     for (Cutscene cutscene : cutscenes) {
+                        cutscene.setAnimationList(new ArrayList<>());
+                        if(cutscene.getAnimationListString() == null) {
+                            cutscene.setAnimationListString(new ArrayList<>());
+                        }
                         cutscene.setScene(scene);
+                        for (String animationName : cutscene.getAnimationListString()) {
+                            cutscene.getAnimationList().add(scene.getAnimationByName(animationName));
+                        }
                     }
                     scene.setCutsceneList(cutscenes);
                 }

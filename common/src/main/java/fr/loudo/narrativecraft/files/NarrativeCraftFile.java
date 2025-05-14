@@ -170,9 +170,14 @@ public class NarrativeCraftFile {
         animationFile.delete();
     }
 
-    public static boolean subscenesFolderExist(Scene scene) {
+    public static boolean subscenesFileExist(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
         return new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE).exists();
+    }
+
+    public static boolean cutscenesFileExist(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        return new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE).exists();
     }
 
     private static String getCamelCaseName(String name) {

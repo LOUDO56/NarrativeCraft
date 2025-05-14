@@ -27,17 +27,19 @@ public class PickElementScreen extends Screen {
     private final List<? extends StoryDetails> storyDetails1, storyDetails2;
     private Button moveButton, doneButton;
     private TransferableStorySelectionList availableList, selectedList;
-    private StringWidget availableString, selectedString;
-    private Component availableMessage, selectedMessage;
+    private StringWidget availableString, selectedString, headTitle;
+    private Component availableMessage, selectedMessage, selector;
     Consumer<List<TransferableStorySelectionList.Entry>> onDone;
 
     public PickElementScreen(Screen lastScreen,
                              Component title,
+                             Component selector,
                              List<? extends StoryDetails> storyDetails1,
                              List<? extends StoryDetails> storyDetails2,
                              Consumer<List<TransferableStorySelectionList.Entry>> onDone
     ) {
         super(title);
+        this.selector = selector;
         this.storyDetails1 = storyDetails1;
         this.storyDetails2 = storyDetails2;
         this.onDone = onDone;
@@ -46,8 +48,8 @@ public class PickElementScreen extends Screen {
 
     @Override
     protected void init() {
-        this.availableList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails1, 200, 100));
-        this.selectedList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails2, 200, 100));
+        this.availableList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails1, 200, 240));
+        this.selectedList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails2, 200, 240));
         this.availableList.setOtherList(selectedList);
         this.selectedList.setOtherList(availableList);
         this.moveButton = this.addRenderableWidget(Button.builder(Component.literal("◀"), button -> {
@@ -73,13 +75,14 @@ public class PickElementScreen extends Screen {
         }).width(20).build());
 
         moveButton.active = false;
-        availableMessage = Component.literal(title.getString() + " " + AVAILABLE_TITLE.getString());
-        selectedMessage = Component.literal(title.getString() + " " + SELECTED_TITLE.getString());
+        availableMessage = Component.literal(selector.getString() + " " + AVAILABLE_TITLE.getString());
+        selectedMessage = Component.literal(selector.getString() + " " + SELECTED_TITLE.getString());
         availableString = this.addRenderableWidget(ScreenUtils.text(availableMessage, this.font, 0, 0));
         selectedString = this.addRenderableWidget(ScreenUtils.text(selectedMessage, this.font, 0, 0));
         doneButton = this.addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
             onDone.accept(selectedList.children());
         }).width(200).build());
+        headTitle = this.addRenderableWidget(ScreenUtils.text(title, this.font, 0, 0));
         repositionElements();
     }
 
@@ -89,11 +92,12 @@ public class PickElementScreen extends Screen {
     }
 
     protected void repositionElements() {
-        availableList.updateSize(200, this.layout);
+        headTitle.setPosition(this.width / 2 - this.font.width(title) / 2, 12);
         availableList.setX(this.width / 2 - 15 - 200);
-        selectedList.updateSize(200, this.layout);
+        availableList.setY(availableList.getY() + 15);
         selectedList.setX(this.width / 2 + 15);
-        moveButton.setPosition(this.width / 2 - moveButton.getWidth() / 2, this.height / 2 - moveButton.getHeight() / 2);
+        selectedList.setY(selectedList.getY() + 15);
+        moveButton.setPosition(this.width / 2 - moveButton.getWidth() / 2, selectedList.getY() + selectedList.getHeight() / 2);
         availableString.setPosition(availableList.getX() + availableList.getWidth() / 2 - this.font.width(availableMessage) / 2, availableList.getY() - 15);
         selectedString.setPosition(selectedList.getX() + selectedList.getWidth() / 2 - this.font.width(selectedMessage) / 2, selectedList.getY() - 15);
         doneButton.setPosition(this.width / 2 - 200 / 2, this.height - 25);

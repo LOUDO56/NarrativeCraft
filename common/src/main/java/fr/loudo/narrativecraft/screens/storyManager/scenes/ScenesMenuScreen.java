@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
@@ -22,7 +23,7 @@ public class ScenesMenuScreen extends OptionsSubScreen {
     private StoryElementList storyElementList;
 
     public ScenesMenuScreen(Scene scene) {
-        super(null, Minecraft.getInstance().options, Translation.message("screen.scene_menu.title", Component.literal(scene.getName()).withColor(0x5896ED)));
+        super(null, Minecraft.getInstance().options, Translation.message("screen.scene_menu.title", Component.literal(scene.getName()).withColor(StoryElementScreen.SCENE_NAME_COLOR)));
         this.scene = scene;
     }
 
