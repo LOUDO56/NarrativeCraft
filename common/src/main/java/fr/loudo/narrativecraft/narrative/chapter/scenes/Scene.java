@@ -82,6 +82,15 @@ public class Scene extends StoryDetails {
         return null;
     }
 
+    public Subscene getSubsceneByName(String name) {
+        for(Subscene subscene : subsceneList) {
+            if(subscene.getName().equalsIgnoreCase(name)) {
+                return subscene;
+            }
+        }
+        return null;
+    }
+
     public void removeAnimation(Animation animation) {
         animationList.remove(animation);
     }

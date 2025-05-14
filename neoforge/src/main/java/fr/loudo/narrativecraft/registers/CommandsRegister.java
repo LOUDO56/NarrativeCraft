@@ -16,6 +16,7 @@ public class CommandsRegister {
 
     public static void register(RegisterCommandsEvent event) {
         PlayerSessionCommand.register(event.getDispatcher());
+        RecordCommand.register(event.getDispatcher());
         TestCommand.register(event.getDispatcher());
     }
 

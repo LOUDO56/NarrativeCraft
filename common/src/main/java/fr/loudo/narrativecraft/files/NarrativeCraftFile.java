@@ -151,6 +151,21 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static boolean updateAnimationFile(Animation animation) {
+        File dataFolder = getDataFolderOfScene(animation.getScene());
+        File animationFolder = new File(dataFolder, "animations");
+        if(!animationFolder.exists()) animationFolder.mkdir();
+        File animationFile = createFile(animationFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
+            gson.toJson(animation, writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update animation {} file of scene {} of chapter {} ! {}", animation.getName(), animation.getScene().getName(), animation.getScene().getChapter().getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
     public static void removeChapterFolder(Chapter chapter) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
         deleteDirectory(chapterFolder);
@@ -178,6 +193,18 @@ public class NarrativeCraftFile {
     public static boolean cutscenesFileExist(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
         return new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE).exists();
+    }
+
+    public static boolean animationFileExist(Scene scene, Animation animation) {
+        File dataFolder = getDataFolderOfScene(scene);
+        File animationsFolder = new File(dataFolder, "animations");
+        return new File(animationsFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE).exists();
+    }
+
+    public static boolean animationFileExist(Scene scene, String animationName) {
+        File dataFolder = getDataFolderOfScene(scene);
+        File animationsFolder = new File(dataFolder, "animations");
+        return new File(animationsFolder, getCamelCaseName(animationName) + EXTENSION_DATA_FILE).exists();
     }
 
     private static String getCamelCaseName(String name) {

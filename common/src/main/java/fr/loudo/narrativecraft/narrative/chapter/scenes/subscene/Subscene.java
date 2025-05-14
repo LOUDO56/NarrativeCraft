@@ -25,10 +25,23 @@ public class Subscene extends StoryDetails {
         this.playbackList = new ArrayList<>();
     }
 
-    public void start(ServerPlayer player) {
+    public void start(ServerPlayer player, Playback.PlaybackType playbackType) {
+        if(playbackList == null) {
+            playbackList = new ArrayList<>();
+        }
+        for(String animationName : animationNameList) {
+            Animation animation = scene.getAnimationByName(animationName);
+            Playback playback = new Playback(animation, player.serverLevel(), playbackType);
+            playback.start();
+            playbackList.add(playback);
+        }
     }
 
     public void stop() {
+        for(Playback playback : playbackList) {
+            playback.stopAndKill();
+        }
+        playbackList.clear();
     }
 
     public void setScene(Scene scene) {

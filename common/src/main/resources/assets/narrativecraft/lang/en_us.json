@@ -88,11 +88,12 @@
   "narrativecraft.record.start.no_session": "You need to set the chapter and scene session.",
   "narrativecraft.record.stop.success": "Record stopped.",
   "narrativecraft.record.stop.no_recording": "You are not recording.",
-  "narrativecraft.record.save.success": "Record saved to animation %s for scene %s of chapter %d.",
+  "narrativecraft.record.save.success": "Record saved animation %s to scene %s of chapter %d.",
   "narrativecraft.record.save.overwrite": "The animation %s for scene %s of chapter %d is already registered, overwrite? Enter the command again to overwrite.",
   "narrativecraft.record.save.recorded_nothing": "You recorded nothing!",
   "narrativecraft.record.save.stop_record_before_save": "Please, stop your record before saving.",
   "narrativecraft.record.save.fail": "Error while saving animation %s for scene %s of chapter %d!",
+  "narrativecraft.record.start.with_subscenes": "With subscene(s) %s.",
 
   "narrativecraft.items.cutscene.keyframegroup.name": "§6Add a new keyframe group",
   "narrativecraft.items.cutscene.keyframe.name": "§aAdd a keyframe",
@@ -101,6 +102,8 @@
   "narrativecraft.items.cutscene.skip.plus.name": "§a+ %d seconds",
   "narrativecraft.items.cutscene.skip.minus.name": "§c- %d seconds",
   "narrativecraft.items.cutscene.settings.name": "§aSettings",
+
+  "narrativecraft.subscene.no_exists": "Subscene %s for scene %s for chapter %d does not exists.",
 
   "narrativecraft.cutscene.keyframegroup.created": "Keyframe group created: ID #%d",
   "narrativecraft.cutscene.keyframegroup.text_display": "Keyframe Group #%d",

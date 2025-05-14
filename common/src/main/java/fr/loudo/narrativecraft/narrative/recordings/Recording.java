@@ -40,7 +40,12 @@ public class Recording {
 
     public boolean save(Animation animation) {
         if(isRecording) return false;
-        return true;
+        animation.setActionsData(actionsData);
+        if(NarrativeCraftFile.updateAnimationFile(animation)) {
+            animation.getScene().addAnimation(animation);
+            return true;
+        }
+        return false;
     }
 
     public ActionsData getActionsData() {

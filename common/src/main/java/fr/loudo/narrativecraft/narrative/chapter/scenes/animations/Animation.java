@@ -11,6 +11,12 @@ public class Animation extends StoryDetails {
     private Character character;
     private ActionsData actionsData;
 
+    public Animation(Scene scene, String name, String description) {
+        super(name, description);
+        this.scene = scene;
+        this.actionsData = new ActionsData();
+    }
+
     public Animation(String name, String description) {
         super(name, description);
         this.actionsData = new ActionsData();

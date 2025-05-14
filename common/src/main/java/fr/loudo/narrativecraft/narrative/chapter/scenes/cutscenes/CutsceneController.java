@@ -44,12 +44,12 @@ public class CutsceneController {
         this.keyframesEntity = new ArrayList<>();
     }
 
-    public void startSession() {
+    public void startSession(Playback.PlaybackType playbackType) {
 
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            subscene.start(player);
+            subscene.start(player, playbackType);
             for(Playback playback : subscene.getPlaybackList()) {
                 LivingEntity entity = playback.getEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {

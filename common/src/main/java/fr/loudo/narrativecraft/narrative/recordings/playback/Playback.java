@@ -27,13 +27,15 @@ public class Playback {
     private Animation animation;
     private LivingEntity entity;
     private ServerLevel serverLevel;
+    private PlaybackType playbackType;
     private boolean isPlaying, hasEnded;
 
     private int tick;
 
-    public Playback(Animation animation, ServerLevel serverLevel) {
+    public Playback(Animation animation, ServerLevel serverLevel, PlaybackType playbackType) {
         this.animation = animation;
         this.serverLevel = serverLevel;
+        this.playbackType = playbackType;
         this.isPlaying = false;
         this.hasEnded = false;
     }
@@ -100,7 +102,11 @@ public class Playback {
         if(!entity.isAlive()) return;
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
         if(tick >= movementDataList.size() - 1) {
-            stop();
+            if(playbackType == PlaybackType.RECORDING) {
+                stopAndKill();
+            } else {
+                stop();
+            }
         };
 
         MovementData movementData = movementDataList.get(tick);
@@ -227,5 +233,11 @@ public class Playback {
 
     public LivingEntity getEntity() {
         return entity;
+    }
+
+    public enum PlaybackType {
+        RECORDING,
+        CUTSCENE_EDITING,
+        CUTSCENE,
     }
 }
