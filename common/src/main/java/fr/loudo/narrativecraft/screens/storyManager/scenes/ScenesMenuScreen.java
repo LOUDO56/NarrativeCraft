@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesSc
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -36,8 +37,12 @@ public class ScenesMenuScreen extends OptionsSubScreen {
 
     @Override
     public void onClose() {
-        ScenesScreen screen = new ScenesScreen(scene.getChapter());
-        this.minecraft.setScreen(screen);
+        if(Utils.getSessionOrNull(this.minecraft.player.getUUID()) != null) {
+            this.minecraft.setScreen(null);
+        } else {
+            ScenesScreen screen = new ScenesScreen(scene.getChapter());
+            this.minecraft.setScreen(screen);
+        }
     }
 
     @Override
@@ -59,7 +64,17 @@ public class ScenesMenuScreen extends OptionsSubScreen {
 
     @Override
     protected void addFooter() {
-        this.layout.addToFooter(Button.builder(CommonComponents.GUI_BACK, (p_345997_) -> this.onClose()).width(200).build());
+        int width = 200;
+        LinearLayout linearLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
+        if(Utils.getSessionOrNull(this.minecraft.getUser().getProfileId()) != null) {
+            width = 100;
+            linearLayout.addChild(Button.builder(CommonComponents.GUI_BACK, (p_345997_) -> {
+                ScenesScreen screen = new ScenesScreen(scene.getChapter());
+                this.minecraft.setScreen(screen);
+            }).width(width).build());
+        }
+
+        linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (p_345997_) -> this.onClose()).width(width).build());
     }
 
     @Override

@@ -7,6 +7,7 @@ public class CommandsRegister {
 
     public static void register() {
         CommandRegistrationCallback.EVENT.register((commandDispatcher, commandBuildContext, commandSelection) -> {
+            PlayerSessionCommand.register(commandDispatcher);
             TestCommand.register(commandDispatcher);
         });
     }

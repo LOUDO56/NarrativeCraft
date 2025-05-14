@@ -12,6 +12,11 @@
   "narrativecraft.global.cutscenes": "Cutscenes",
   "narrativecraft.global.subscenes": "Subscenes",
 
+  "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
+  "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
+  "narrativecraft.session.cleared": "Session cleared.",
+  "narrativecraft.session.cleared.fail": "You don't have a session set.",
+
   "narrativecraft.toast.error": "Error",
   "narrativecraft.toast.info": "Info",
   "narrativecraft.toast.description.updated": "Updated Successfully!",
@@ -77,9 +82,6 @@
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
   "narrativecraft.character.create.fail": "An unexpected error occurred while creating the character! Check if characters in your map world directory exists!",
   "narrativecraft.character.already_exists": "Character %s already exists.",
-
-  "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
-  "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
 
   "narrativecraft.record.start.success": "Record started...",
   "narrativecraft.record.start.already_recording": "You are currently recording.",

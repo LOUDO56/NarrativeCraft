@@ -4,12 +4,15 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.io.File;
 import java.io.IOException;
@@ -180,8 +183,48 @@ public class ChapterManager {
         }
     }
 
+    public SuggestionProvider<CommandSourceStack> getChapterSuggestions() {
+        return (context, builder) -> {
+            if(chapters == null) return builder.buildFuture();
+            for (Chapter chapter : chapters) {
+                builder.suggest(chapter.getIndex());
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    public boolean chapterExists(int chapterIndex) {
+        for(Chapter chapter : chapters) {
+            if(chapter.getIndex() == chapterIndex){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Chapter getChapterByIndex(int chapterIndex) {
+        for(Chapter chapter : chapters) {
+            if(chapter.getIndex() == chapterIndex){
+                return chapter;
+            }
+        }
+        return null;
+    }
+
     public void removeChapter(Chapter chapter) {
         chapters.remove(chapter);
+    }
+
+    public SuggestionProvider<CommandSourceStack> getSceneSuggestionsByChapter() {
+        return (context, builder) -> {
+            int chapterIndex = IntegerArgumentType.getInteger(context, "chapter_index");
+            Chapter chapter = getChapterByIndex(chapterIndex);
+            if(chapter == null) return builder.buildFuture();
+            for (Scene scene : chapter.getSceneList()) {
+                builder.suggest(scene.getName());
+            }
+            return builder.buildFuture();
+        };
     }
 }
 

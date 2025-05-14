@@ -97,7 +97,7 @@ public class PickElementScreen extends Screen {
         availableList.setY(availableList.getY() + 15);
         selectedList.setX(this.width / 2 + 15);
         selectedList.setY(selectedList.getY() + 15);
-        moveButton.setPosition(this.width / 2 - moveButton.getWidth() / 2, selectedList.getY() + selectedList.getHeight() / 2);
+        moveButton.setPosition(this.width / 2 - moveButton.getWidth() / 2, selectedList.getY() + selectedList.getHeight() / 2 - moveButton.getHeight() / 2);
         availableString.setPosition(availableList.getX() + availableList.getWidth() / 2 - this.font.width(availableMessage) / 2, availableList.getY() - 15);
         selectedString.setPosition(selectedList.getX() + selectedList.getWidth() / 2 - this.font.width(selectedMessage) / 2, selectedList.getY() - 15);
         doneButton.setPosition(this.width / 2 - 200 / 2, this.height - 25);

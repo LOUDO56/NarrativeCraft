@@ -39,11 +39,20 @@ public class Chapter extends StoryDetails {
 
     public boolean sceneExists(String name) {
         for(Scene scene : sceneList) {
-            if(scene.getName().toLowerCase().equals(name)) {
+            if(scene.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public Scene getSceneByName(String sceneName) {
+        for(Scene scene : sceneList) {
+            if(scene.getName().equalsIgnoreCase(sceneName)) {
+                return scene;
+            }
+        }
+        return null;
     }
 
     public int getIndex() {
