@@ -4,11 +4,13 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -116,6 +118,9 @@ public class EditInfoScreen extends Screen {
             }
             if(storyDetails != null && storyDetails instanceof Subscene) {
                 updateSubsceneAction(name, desc);
+            }
+            if(storyDetails != null && storyDetails instanceof Animation) {
+                updateAnimationAction(name, desc);
             }
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(actionButton);
@@ -300,6 +305,22 @@ public class EditInfoScreen extends Screen {
         }
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
         SubscenesScreen screen = new SubscenesScreen(subscene.getScene());
+        this.minecraft.setScreen(screen);
+    }
+
+    private void updateAnimationAction(String name, String desc) {
+        Animation animation = (Animation) storyDetails;
+        NarrativeCraftFile.removeAnimationFileFromScene(animation);
+        animation.setName(name);
+        animation.setDescription(desc);
+        if(!NarrativeCraftFile.updateAnimationFile(animation)) {
+            animation.setName(this.name);
+            animation.setDescription(description);
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.animation_manager.update.failed", animation.getName()));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        AnimationsScreen screen = new AnimationsScreen(animation.getScene());
         this.minecraft.setScreen(screen);
     }
 

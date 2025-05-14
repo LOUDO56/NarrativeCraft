@@ -11,6 +11,7 @@
   "narrativecraft.global.animations": "Animations",
   "narrativecraft.global.cutscenes": "Cutscenes",
   "narrativecraft.global.subscenes": "Subscenes",
+  "narrativecraft.global.confirm_delete": "Are you sure? This can't be undone!",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
   "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
@@ -71,6 +72,7 @@
   "narrativecraft.screen.subscene_manager.add.already_exists": "This subscene already exists.",
   "narrativecraft.screen.subscene_manager.add.failed": "Couldn't add subscene %s. Please check subscenes.json of your scene exists.",
   "narrativecraft.screen.subscene_manager.update.failed": "Couldn't update subscene %s. Please check subscenes.json of your scene exists.",
+  "narrativecraft.screen.animation_manager.update.failed": "Couldn't update animation %s. Please check his json file exists.",
   "narrativecraft.screen.selector.cutscene.title": "%s selector for cutscene %s",
   "narrativecraft.screen.selector.subscene.title": "%s selector for subscene %s",
 

@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.Animations
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -70,7 +71,7 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
                     } else {
                         minecraft.setScreen(screen);
                     }
-                }, Component.literal(""), Component.literal("Are you sure? This can't be undone!"), CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
+                }, Component.literal(""), Translation.message("global.confirm_delete"), CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
                 minecraft.setScreen(screen1);
             }).width(smallButtonWidth).build();
         }
