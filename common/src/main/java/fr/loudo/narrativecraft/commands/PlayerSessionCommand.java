@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
@@ -26,9 +27,9 @@ public class PlayerSessionCommand {
                         )
                         .then(Commands.literal("set")
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
-                                        //.suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
-                                                //.suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
+                                                .suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
                                                 .executes(context -> setSession(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name")))
                                         )
                                 )

@@ -12,6 +12,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
 
 import java.io.File;
@@ -33,10 +35,9 @@ public class ChapterManager {
      */
     public ChapterManager() {
         this.chapters = new ArrayList<>();
-        init();
     }
 
-    private void init() {
+    public void init() {
         File chapterDirectory = NarrativeCraftFile.chaptersDirectory;
         File[] chapterIndexFolder = chapterDirectory.listFiles();
         if(chapterIndexFolder != null) {
@@ -222,6 +223,17 @@ public class ChapterManager {
             if(chapter == null) return builder.buildFuture();
             for (Scene scene : chapter.getSceneList()) {
                 builder.suggest(scene.getName());
+            }
+            return builder.buildFuture();
+        };
+    }
+
+    public SuggestionProvider<CommandSourceStack> getSubscenesOfScenesSuggestions() {
+        return (context, builder) -> {
+            PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
+            if(playerSession == null) return builder.buildFuture();
+            for (Subscene subscene : playerSession.getScene().getSubsceneList()) {
+                builder.suggest(subscene.getName());
             }
             return builder.buildFuture();
         };
