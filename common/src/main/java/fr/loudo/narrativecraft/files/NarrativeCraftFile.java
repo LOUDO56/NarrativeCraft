@@ -29,7 +29,7 @@ public class NarrativeCraftFile {
     public static File characterDirectory;
     public static File savesDirectory;
     public static File buildDirectory;
-    public static File globalVarInkFile;
+    public static File mainInkFile;
 
     public static void init(MinecraftServer server) {
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
@@ -37,7 +37,7 @@ public class NarrativeCraftFile {
         characterDirectory = createDirectory(mainDirectory, CHARACTERS_DIRECTORY_NAME);
         savesDirectory = createDirectory(mainDirectory, SAVES_DIRECTORY_NAME);
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
-        globalVarInkFile = createFile(mainDirectory, MAIN_INK_NAME);
+        mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
     }
 
     public static File getDetailsFile(File file) {
@@ -89,7 +89,7 @@ public class NarrativeCraftFile {
         try {
             File detailsFile = getDetailsFile(dataFolder);
             detailsFile.createNewFile();
-            new File(sceneFolder.getAbsoluteFile(), "script" + EXTENSION_SCRIPT_FILE).createNewFile();
+            new File(sceneFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE).createNewFile();
             new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
             new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
             new File(dataFolder.getAbsoluteFile(), "subscenes" + EXTENSION_DATA_FILE).createNewFile();
@@ -108,16 +108,20 @@ public class NarrativeCraftFile {
     public static boolean updateSceneDetails(Scene scene, String name, String description) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, "scenes");
-        String sceneFileName = String.join("_", scene.getName().toLowerCase().split(" "));
-        File sceneFolder = new File(scenesFolder, sceneFileName);
+        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
         File sceneDetails = getDetailsFile(getDataFolderOfScene(scene));
+        File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
         try {
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
                 writer.write(content);
             }
-            sceneFileName = String.join("_", name.toLowerCase().split(" "));
-            sceneFolder.renameTo(new File(scenesFolder, sceneFileName));
+            scriptFile.renameTo(new File(sceneFolder, getCamelCaseName(name) + EXTENSION_SCRIPT_FILE));
+            if(!scene.getName().equals(name)) {
+                if(sceneFolder.renameTo(new File(scenesFolder, getCamelCaseName(name)))) {
+                    deleteDirectory(sceneFolder);
+                }
+            }
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
