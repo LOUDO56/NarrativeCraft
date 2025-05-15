@@ -10,6 +10,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class NarrativeCraftFile {
 
@@ -109,19 +110,19 @@ public class NarrativeCraftFile {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, "scenes");
         File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
-        File sceneDetails = getDetailsFile(getDataFolderOfScene(scene));
-        File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
         try {
+            File newSceneFolder = new File(scenesFolder, getCamelCaseName(name));
+            if(!scene.getName().equals(name)) {
+                Files.move(sceneFolder.toPath(), newSceneFolder.toPath());
+                sceneFolder = newSceneFolder;
+            }
+            File sceneDetails = getDetailsFile(new File(sceneFolder, "data"));
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
                 writer.write(content);
             }
+            File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
             scriptFile.renameTo(new File(sceneFolder, getCamelCaseName(name) + EXTENSION_SCRIPT_FILE));
-            if(!scene.getName().equals(name)) {
-                if(sceneFolder.renameTo(new File(scenesFolder, getCamelCaseName(name)))) {
-                    deleteDirectory(sceneFolder);
-                }
-            }
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());

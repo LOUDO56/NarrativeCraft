@@ -56,7 +56,7 @@
   "narrativecraft.screen.scene_manager.add.failed": "Couldn't create scene folder. Check if scenes folder in your chapter folder exists.",
   "narrativecraft.screen.scene_manager.add.already_exists": "This scene already exists.",
   "narrativecraft.screen.scene_manager.edit.title": "Edit scene %s from chapter %d",
-  "narrativecraft.screen.scene_manager.update.failed": "Couldn't update scene %s. Please check details.json exists.",
+  "narrativecraft.screen.scene_manager.update.failed": "Couldn't update scene %s. Either folder is used in another program or don't exist",
   "narrativecraft.screen.story.name.required": "You must have a name!",
   "narrativecraft.screen.scene_menu.title": "Scene %s menu",
   "narrativecraft.screen.cutscene_manager.title": "Cutscenes list of scene %s",
