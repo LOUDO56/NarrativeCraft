@@ -88,6 +88,10 @@ public class KeyframeGroup {
         return keyframeList;
     }
 
+    public void setKeyframeList(List<Keyframe> keyframeList) {
+        this.keyframeList = keyframeList;
+    }
+
     public void setId(int id) {
         this.id = id;
     }

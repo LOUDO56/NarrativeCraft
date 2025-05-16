@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.narrative.session;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
@@ -16,7 +18,7 @@ public class PlayerSession {
     private Chapter chapter;
     private Scene scene;
     private List<Subscene> subscenesPlaying;
-    private CutsceneController cutsceneController;
+    private KeyframeControllerBase keyframeControllerBase;
     private CutscenePlayback cutscenePlayback;
     private boolean overwriteState;
 
@@ -63,12 +65,12 @@ public class PlayerSession {
         return subscenesPlaying;
     }
 
-    public CutsceneController getCutsceneController() {
-        return cutsceneController;
+    public void setKeyframeControllerBase(KeyframeControllerBase keyframeControllerBase) {
+        this.keyframeControllerBase = keyframeControllerBase;
     }
 
-    public void setCutsceneController(CutsceneController cutsceneController) {
-        this.cutsceneController = cutsceneController;
+    public KeyframeControllerBase getKeyframeControllerBase() {
+        return keyframeControllerBase;
     }
 
     public CutscenePlayback getCutscenePlayback() {
@@ -83,7 +85,7 @@ public class PlayerSession {
         chapter = null;
         scene = null;
         subscenesPlaying.clear();
-        cutsceneController = null;
+        keyframeControllerBase = null;
         cutscenePlayback = null;
         overwriteState = false;
     }

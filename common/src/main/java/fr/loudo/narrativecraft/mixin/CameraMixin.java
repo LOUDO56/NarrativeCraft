@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.mixin;
 
 import fr.loudo.narrativecraft.keys.ModKeys;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
@@ -20,6 +22,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Objects;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -48,10 +52,10 @@ public abstract class CameraMixin {
 
     private void keyframePreviewAction(PlayerSession playerSession, CallbackInfo ci) {
 
-        CutsceneController cutsceneController = playerSession.getCutsceneController();
-        if (cutsceneController == null) return;
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if (keyframeControllerBase == null) return;
 
-        Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
+        Keyframe keyframePreview = keyframeControllerBase.getCurrentPreviewKeyframe();
         if (keyframePreview == null) return;
 
         Minecraft client = Minecraft.getInstance();

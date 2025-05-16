@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
@@ -34,8 +35,9 @@ public class OnServerTick {
             }
         }
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
-            CutsceneController cutsceneController = playerSession.getCutsceneController();
-            if(cutsceneController != null) {
+            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+            if(keyframeControllerBase == null) return;
+            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
                 cutsceneController.next();
                 Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
                 if(keyframePreview != null) {

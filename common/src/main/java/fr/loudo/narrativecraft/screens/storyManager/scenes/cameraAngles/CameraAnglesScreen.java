@@ -1,12 +1,16 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -34,7 +38,10 @@ public class CameraAnglesScreen extends StoryElementScreen {
         List<StoryDetails> storyDetails = new ArrayList<>();
         for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
             Button button = Button.builder(Component.literal(String.valueOf(cameraAngleGroup.getName())), button1 -> {
-                //TODO: edit camera angles
+                PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(this.minecraft.player, scene.getChapter(), scene);
+                CameraAngleController cameraAngleController = new CameraAngleController(cameraAngleGroup, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()));
+                playerSession.setKeyframeControllerBase(cameraAngleController);
+                cameraAngleController.startSession();
             }).build();
             buttons.add(button);
             storyDetails.add(cameraAngleGroup);

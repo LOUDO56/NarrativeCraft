@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.mixin;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
@@ -14,6 +16,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Objects;
+
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
@@ -24,7 +28,7 @@ public class GameRendererMixin {
         PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
         if (playerSession == null) return;
 
-        cutsceneControllerFov(playerSession, callbackInfo);
+        keyframeControllerFov(playerSession, callbackInfo);
         cutscenePlayingFov(playerSession, callbackInfo);
 
     }
@@ -40,11 +44,12 @@ public class GameRendererMixin {
 //        poseStack.translate(offsetX, offsetY, 0);
 //    }
 
-    private void cutsceneControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
-        CutsceneController cutsceneController = playerSession.getCutsceneController();
-        if (cutsceneController == null) return;
+    private void keyframeControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if (keyframeControllerBase == null) return;
 
-        Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
+        Keyframe keyframePreview = keyframeControllerBase.getCurrentPreviewKeyframe();
+
         if (keyframePreview == null) return;
 
         callbackInfo.setReturnValue(keyframePreview.getKeyframeCoordinate().getFov());

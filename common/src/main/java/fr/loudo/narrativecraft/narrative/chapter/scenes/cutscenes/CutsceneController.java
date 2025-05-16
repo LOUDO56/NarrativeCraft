@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
@@ -20,36 +21,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CutsceneController {
+public class CutsceneController extends KeyframeControllerBase {
 
-    private transient final AtomicInteger keyframeGroupCounter = new AtomicInteger();
-    private transient final AtomicInteger keyframeCounter = new AtomicInteger();
+    private final AtomicInteger keyframeGroupCounter = new AtomicInteger();
+    private final AtomicInteger keyframeCounter = new AtomicInteger();
 
-    private transient List<Entity> keyframesEntity;
-
-    private Cutscene cutscene;
-    private ServerPlayer player;
+    private final Cutscene cutscene;
     private boolean isPlaying;
     private int currentTick;
     private double currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
-    private Keyframe currentPreviewKeyframe;
 
     public CutsceneController(Cutscene cutscene, ServerPlayer player) {
+        super(cutscene.getKeyframeGroupList(), player);
         this.cutscene = cutscene;
-        this.player = player;
         this.isPlaying = false;
         this.currentTick = 0;
         this.currentSkipCount = 5 * 20;
-        this.keyframesEntity = new ArrayList<>();
     }
 
-    public void startSession(Playback.PlaybackType playbackType) {
+    public void startSession() {
 
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            subscene.start(player, playbackType);
+            subscene.start(player, Playback.PlaybackType.CUTSCENE_EDITING);
             for(Playback playback : subscene.getPlaybackList()) {
                 LivingEntity entity = playback.getEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
@@ -180,21 +176,6 @@ public class CutsceneController {
         return false;
     }
 
-    public Keyframe getKeyframeByEntity(Entity entity) {
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                if(keyframe.getCameraEntity().getId() == entity.getId()) {
-                    return keyframe;
-                }
-            }
-        }
-        return null;
-    }
-
-    public Keyframe getCurrentPreviewKeyframe() {
-        return currentPreviewKeyframe;
-    }
-
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe, boolean seamless) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
         currentPreviewKeyframe.openScreenOption(player);
@@ -229,121 +210,9 @@ public class CutsceneController {
         }
     }
 
-    public KeyframeGroup getKeyframeGroupByKeyframe(Keyframe keyframe) {
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for(Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
-                if(keyframeFromGroup.getId() == keyframe.getId()) {
-                    return keyframeGroup;
-                }
-            }
-        }
-        return null;
-    }
-
-    public int getKeyframeIndex(KeyframeGroup keyframeGroup, Keyframe keyframe) {
-        List<Keyframe> keyframeList = keyframeGroup.getKeyframeList();
-        for(int i = 0; i < keyframeGroup.getKeyframeList().size(); i++) {
-            if(keyframeList.get(i).getId() == keyframe.getId()) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-
-    public Keyframe getNextKeyframe(Keyframe initialKeyframe) {
-        for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
-            List<Keyframe> keyframes = group.getKeyframeList();
-
-            for (int i = 0; i < keyframes.size(); i++) {
-                Keyframe current = keyframes.get(i);
-
-                if (current.getId() == initialKeyframe.getId()) {
-                    if (!isLastKeyframe(group, initialKeyframe)) {
-                        return keyframes.get(i + 1);
-                    }
-
-                    if (keyframeGroupCounter.get() != group.getId()) {
-                        int nextGroupId = group.getId();
-                        if (nextGroupId < cutscene.getKeyframeGroupList().size()) {
-                            return cutscene.getKeyframeGroupList()
-                                    .get(nextGroupId)
-                                    .getKeyframeList()
-                                    .getFirst();
-                        }
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public Keyframe getNextKeyframe(KeyframeGroup group, Keyframe initialKeyframe) {
-        List<Keyframe> keyframes = group.getKeyframeList();
-
-        for (int i = 0; i < keyframes.size(); i++) {
-            Keyframe current = keyframes.get(i);
-
-            if (current.getId() == initialKeyframe.getId()) {
-                if (!isLastKeyframe(group, initialKeyframe)) {
-                    return keyframes.get(i + 1);
-                }
-
-                if (keyframeGroupCounter.get() != group.getId()) {
-                    int nextGroupId = group.getId();
-                    if (nextGroupId < cutscene.getKeyframeGroupList().size()) {
-                        return cutscene.getKeyframeGroupList()
-                                .get(nextGroupId)
-                                .getKeyframeList()
-                                .getFirst();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public Keyframe getPreviousKeyframe(Keyframe initialKeyframe) {
-        for (KeyframeGroup group : cutscene.getKeyframeGroupList()) {
-            List<Keyframe> keyframes = group.getKeyframeList();
-
-            for (int i = 0; i < keyframes.size(); i++) {
-                Keyframe current = keyframes.get(i);
-
-                if (current.getId() == initialKeyframe.getId()) {
-                    if (!isFirstKeyframe(group, initialKeyframe)) {
-                        return keyframes.get(i - 1);
-                    }
-
-                    int previousGroupId = group.getId() - 2;
-                    if (previousGroupId >= 0) {
-                        return cutscene.getKeyframeGroupList()
-                                .get(previousGroupId)
-                                .getKeyframeList()
-                                .getLast();
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public boolean isFirstKeyframe(Keyframe keyframe) {
-        return keyframeGroupCounter.get() == selectedKeyframeGroup.getId()
-                && selectedKeyframeGroup.getKeyframeList().getFirst().getId() == keyframe.getId();
-    }
-
-    public boolean isFirstKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
-        return keyframeGroup.getKeyframeList().getFirst().getId() == keyframe.getId();
-    }
-
     public boolean isLastKeyframe(Keyframe keyframe) {
         return keyframeGroupCounter.get() == cutscene.getKeyframeGroupList().getLast().getId()
                 && cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId() == keyframe.getId();
-    }
-
-    public boolean isLastKeyframe(KeyframeGroup keyframeGroup, Keyframe keyframe) {
-        return keyframeGroup.getKeyframeList().getLast().getId() == keyframe.getId();
     }
 
     public void nextSecondSkip() {
@@ -411,4 +280,5 @@ public class CutsceneController {
     public double getCurrentSkipCount() {
         return currentSkipCount;
     }
+
 }

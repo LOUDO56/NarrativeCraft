@@ -84,7 +84,7 @@ public class CutsceneControllerScreen extends Screen {
         Button addKeyframe = Button.builder(ImageFontConstants.ADD_KEYFRAME, button -> {
             if (cutsceneController.addKeyframe()) {
                 client.player.displayClientMessage(
-                        Translation.message("cutscene.keyframe.added", playerSession.getCutsceneController().getSelectedKeyframeGroup().getId()),
+                        Translation.message("cutscene.keyframe.added", cutsceneController.getSelectedKeyframeGroup().getId()),
                         false
                 );
             } else {

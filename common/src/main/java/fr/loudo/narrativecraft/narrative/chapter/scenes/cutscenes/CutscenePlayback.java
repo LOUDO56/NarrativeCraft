@@ -36,7 +36,7 @@ public class CutscenePlayback  {
         this.currentIndexKeyframe = 0;
         this.currentIndexKeyframeGroup = 0;
         this.playerSession = Utils.getSessionOrNull(player);
-        this.cutsceneController = playerSession.getCutsceneController();
+        this.cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
         initValues();
     }
 
@@ -44,7 +44,7 @@ public class CutscenePlayback  {
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
         playerSession = Utils.getSessionOrNull(player);
-        cutsceneController = playerSession.getCutsceneController();
+        cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
         currentKeyframeGroup = cutsceneController.getKeyframeGroupByKeyframe(keyframe);
         currentIndexKeyframe = cutsceneController.getKeyframeIndex(currentKeyframeGroup, keyframe);
         currentIndexKeyframeGroup = currentKeyframeGroup.getId() - 1;

@@ -20,7 +20,7 @@ public class ModKeys {
     public static final KeyMapping SCREEN_KEYFRAME_OPTION = registerKey("key.cutscene.screen.keyframe_option", InputConstants.KEY_Y);
     public static final KeyMapping CREATE_KEYFRAME_GROUP = registerKey("key.cutscene.keyframes.create_group", InputConstants.KEY_J);
     public static final KeyMapping ADD_KEYFRAME = registerKey("key.cutscene.keyframes.add_keyframe", InputConstants.KEY_K);
-    public static final KeyMapping CUTSCENE_CONTROLLER_SCREEN = registerKey("key.cutscene.keyframes.cutscene_controller_screen", InputConstants.KEY_F);
+    public static final KeyMapping OPEN_KEYFRAME_EDIT_SCREEN = registerKey("key.cutscene.keyframes.cutscene_controller_screen", InputConstants.KEY_F);
 
 
     private static KeyMapping registerKey(String translationKey, int code) {

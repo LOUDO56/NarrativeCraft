@@ -1,10 +1,13 @@
 package fr.loudo.narrativecraft.events;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.keys.ModKeys;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
+import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
@@ -33,8 +36,9 @@ public class OnClientTick {
         PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
         if(playerSession == null) return;
 
-        CutsceneController cutsceneController = playerSession.getCutsceneController();
-        if(cutsceneController != null) {
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if(keyframeControllerBase == null) return;
+        if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
             ModKeys.handleKeyPress(ModKeys.CREATE_KEYFRAME_GROUP, () -> {
                 KeyframeGroup keyframeGroup = cutsceneController.createKeyframeGroup();
                 Minecraft.getInstance().player.displayClientMessage(Translation.message("cutscene.keyframegroup.created", keyframeGroup.getId()), false);
@@ -42,7 +46,7 @@ public class OnClientTick {
             ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
                 if (cutsceneController.addKeyframe()) {
                     playerSession.getPlayer().sendSystemMessage(
-                            Translation.message("cutscene.keyframe.added", playerSession.getCutsceneController().getSelectedKeyframeGroup().getId())
+                            Translation.message("cutscene.keyframe.added", cutsceneController.getSelectedKeyframeGroup().getId())
                     );
                 } else {
                     playerSession.getPlayer().sendSystemMessage(
@@ -50,8 +54,18 @@ public class OnClientTick {
                     );
                 }
             });
-            ModKeys.handleKeyPress(ModKeys.CUTSCENE_CONTROLLER_SCREEN, () -> {
-                CutsceneControllerScreen screen = new CutsceneControllerScreen(playerSession.getCutsceneController());
+            ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                CutsceneControllerScreen screen = new CutsceneControllerScreen(cutsceneController);
+                client.execute(() -> client.setScreen(screen));
+            });
+        }
+        if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
+            ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
+                CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController);
+                client.execute(() -> client.setScreen(screen));
+            });
+            ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                CameraAngleControllerScreen screen = new CameraAngleControllerScreen(cameraAngleController);
                 client.execute(() -> client.setScreen(screen));
             });
         }

@@ -3,6 +3,8 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.mixin.fields.ArmorStandFields;
+import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleOptionsScreen;
+import fr.loudo.narrativecraft.screens.cutscenes.KeyframeCutsceneOptionScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -27,7 +29,7 @@ public class Keyframe {
     private double speed;
     private KeyframeCoordinate keyframeCoordinate;
     private long startDelay, pathTime, transitionDelay;
-    private boolean isParentGroup;
+    private boolean isParentGroup, isFixed;
     private Easing easing;
 
     public Keyframe(int id, KeyframeCoordinate keyframeCoordinate, int tick, long startDelay, long pathTime) {
@@ -40,6 +42,14 @@ public class Keyframe {
         this.isParentGroup = false;
         this.speed = 1;
         this.easing = Easing.SMOOTH;
+        this.isFixed = false;
+    }
+
+    public Keyframe(int id, KeyframeCoordinate keyframeCoordinate) {
+        this.id = id;
+        this.keyframeCoordinate = keyframeCoordinate;
+        this.isParentGroup = false;
+        this.isFixed = true;
     }
 
     public void showKeyframeToClient(ServerPlayer player) {
@@ -137,7 +147,12 @@ public class Keyframe {
 
     public void openScreenOption(ServerPlayer player) {
         Minecraft client = Minecraft.getInstance();
-        KeyframeOptionScreen screen = new KeyframeOptionScreen(this, player);
+        KeyframeOptionScreen screen;
+        if(isFixed) {
+            screen = new CameraAngleOptionsScreen(this, player);
+        } else {
+            screen = new KeyframeCutsceneOptionScreen(this, player);
+        }
         client.execute(() -> client.setScreen(screen));
     }
 
@@ -167,5 +182,13 @@ public class Keyframe {
 
     public void setEasing(Easing easing) {
         this.easing = easing;
+    }
+
+    public boolean isFixed() {
+        return isFixed;
+    }
+
+    public void setFixed(boolean fixed) {
+        isFixed = fixed;
     }
 }

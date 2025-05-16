@@ -55,18 +55,7 @@ public class PlayerSessionCommand {
         }
 
         Scene scene = chapter.getSceneByName(sceneName);
-
-        PlayerSessionManager playerSessionManager = NarrativeCraftMod.getInstance().getPlayerSessionManager();
-        PlayerSession playerSession = playerSessionManager.getPlayerSession(player);
-        if(playerSession == null) {
-            playerSession = new PlayerSession(player, chapter, scene);
-            playerSessionManager.getPlayerSessions().add(playerSession);
-        } else {
-            playerSession.setChapter(chapter);
-            playerSession.setScene(scene);
-        }
-
-
+        NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(player, chapter, scene);
         context.getSource().sendSuccess(() -> Translation.message("session.set", chapter.getIndex(), scene.getName()), false);
 
         return Command.SINGLE_SUCCESS;
