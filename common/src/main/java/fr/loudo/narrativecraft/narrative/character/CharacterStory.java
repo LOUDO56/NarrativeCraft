@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.character;
 
-public class Character {
+public class CharacterStory {
 
     private String name;
     private String description;
@@ -11,11 +11,11 @@ public class Character {
     //TODO: CharacterLayer class to enable certain part of body of the character
 
 
-    public Character(String name) {
+    public CharacterStory(String name) {
         this.name = name;
     }
 
-    public Character(String name, String description, int age, String birthdate) {
+    public CharacterStory(String name, String description, int age, String birthdate) {
         this.name = name;
         this.description = description;
         this.age = age;

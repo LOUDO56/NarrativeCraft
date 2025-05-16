@@ -62,6 +62,24 @@
       "chars": [
         "\uE006"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/character.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE007"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/save.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE008"
+      ]
     }
   ]
 }

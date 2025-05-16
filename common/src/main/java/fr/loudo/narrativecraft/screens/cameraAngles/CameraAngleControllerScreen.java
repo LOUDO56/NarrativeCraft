@@ -20,11 +20,27 @@ public class CameraAngleControllerScreen extends Screen {
 
     @Override
     protected void init() {
+        int totalWidth = BUTTON_WIDTH * 3 + 5;
+        int startX = (this.width - totalWidth) / 2;
+        int y = this.height - 50;
+
         Button addKeyframe = Button.builder(ImageFontConstants.ADD_KEYFRAME, button -> {
             CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController);
             this.minecraft.setScreen(screen);
-        }).bounds(this.width / 2 - BUTTON_WIDTH / 2, this.height - 50, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(startX, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addKeyframe);
+
+        Button addCharacter = Button.builder(ImageFontConstants.CHARACTER, button -> {
+            cameraAngleController.addCharacter();
+        }).bounds(startX + BUTTON_WIDTH + 5, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(addCharacter);
+
+        Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
+            cameraAngleController.stopSession();
+            this.onClose();
+        }).bounds(startX + BUTTON_WIDTH * 2 + 10, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(saveButton);
+
     }
 
     @Override

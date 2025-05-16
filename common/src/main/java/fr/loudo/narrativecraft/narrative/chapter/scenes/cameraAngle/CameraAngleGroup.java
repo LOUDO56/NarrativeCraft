@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 
 import java.util.ArrayList;
@@ -13,12 +12,12 @@ public class CameraAngleGroup extends StoryDetails {
 
     private transient Scene scene;
     List<CameraAngle> cameraAngleList;
-    List<Character> characterList;
+    List<CameraAngleCharacterPosition> characterPositions;
 
     public CameraAngleGroup(String name, String description) {
         super(name, description);
         cameraAngleList = new ArrayList<>();
-        characterList = new ArrayList<>();
+        characterPositions = new ArrayList<>();
     }
 
     public Scene getScene() {
@@ -45,12 +44,12 @@ public class CameraAngleGroup extends StoryDetails {
         this.cameraAngleList = cameraAngleList;
     }
 
-    public List<Character> getCharacterList() {
-        return characterList;
+    public List<CameraAngleCharacterPosition> getCharacterPositions() {
+        return characterPositions;
     }
 
-    public void setCharacterList(List<Character> characterList) {
-        this.characterList = characterList;
+    public void setCharacterPositions(List<CameraAngleCharacterPosition> characterPositions) {
+        this.characterPositions = characterPositions;
     }
 
     @Override
