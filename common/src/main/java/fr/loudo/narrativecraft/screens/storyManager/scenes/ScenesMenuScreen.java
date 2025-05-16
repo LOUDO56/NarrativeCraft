@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.screens.storyManager.scenes;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
@@ -51,6 +52,10 @@ public class ScenesMenuScreen extends OptionsSubScreen {
             AnimationsScreen screen = new AnimationsScreen(scene);
             this.minecraft.setScreen(screen);
         }).build();
+        Button cameraAnglesButton = Button.builder(Translation.message("global.camera_angles"), button -> {
+            CameraAnglesScreen screen = new CameraAnglesScreen(scene);
+            this.minecraft.setScreen(screen);
+        }).build();
         Button cutscenesButton = Button.builder(Translation.message("global.cutscenes"), button -> {
             CutscenesScreen screen = new CutscenesScreen(scene);
             this.minecraft.setScreen(screen);
@@ -59,7 +64,7 @@ public class ScenesMenuScreen extends OptionsSubScreen {
             SubscenesScreen screen = new SubscenesScreen(scene);
             this.minecraft.setScreen(screen);
         }).build();
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, List.of(animationsButton, cutscenesButton, subscenesButton), List.of()));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, List.of(animationsButton, cameraAnglesButton, cutscenesButton, subscenesButton), List.of()));
     }
 
     @Override

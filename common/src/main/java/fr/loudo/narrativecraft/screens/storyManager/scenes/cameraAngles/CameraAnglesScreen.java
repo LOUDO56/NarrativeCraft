@@ -1,35 +1,25 @@
-package fr.loudo.narrativecraft.screens.storyManager.scenes.animations;
+package fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles;
 
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.StringWidget;
-import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AnimationsScreen extends StoryElementScreen {
-
+public class CameraAnglesScreen extends StoryElementScreen {
     private final Scene scene;
 
-    public AnimationsScreen(Scene scene) {
-        super(null, Minecraft.getInstance().options, Translation.message("screen.animation_manager.title", Component.literal(scene.getName()).withColor(StoryElementScreen.SCENE_NAME_COLOR)));
+    public CameraAnglesScreen(Scene scene) {
+        super(null, Minecraft.getInstance().options, Translation.message("screen.camera_angles_manager.title", Component.literal(scene.getName()).withColor(StoryElementScreen.SCENE_NAME_COLOR)));
         this.scene = scene;
-    }
-
-    @Override
-    protected void addTitle() {
-        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
-        linearlayout.defaultCellSetting().alignVerticallyMiddle();
-        linearlayout.addChild(new StringWidget(this.title, this.font));
     }
 
     @Override
@@ -42,12 +32,12 @@ public class AnimationsScreen extends StoryElementScreen {
     public void addContents() {
         List<Button> buttons = new ArrayList<>();
         List<StoryDetails> storyDetails = new ArrayList<>();
-        for(Animation animation : scene.getAnimationList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(animation.getName())), button1 -> {
-                //TODO: preview animation
+        for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
+            Button button = Button.builder(Component.literal(String.valueOf(cameraAngleGroup.getName())), button1 -> {
+                //TODO: edit camera angles
             }).build();
             buttons.add(button);
-            storyDetails.add(animation);
+            storyDetails.add(cameraAngleGroup);
         }
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
     }

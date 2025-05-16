@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -68,6 +69,8 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
                         minecraft.setScreen(new CutscenesScreen(screen2.getScene()));
                     } else if (screen instanceof SubscenesScreen screen2) {
                         minecraft.setScreen(new SubscenesScreen(screen2.getScene()));
+                    } else if (screen instanceof CameraAnglesScreen screen2) {
+                        minecraft.setScreen(new CameraAnglesScreen(screen2.getScene()));
                     } else {
                         minecraft.setScreen(screen);
                     }

@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
@@ -16,6 +17,7 @@ public class Scene extends StoryDetails {
     private List<Animation> animationList;
     private List<Cutscene> cutsceneList;
     private List<Subscene> subsceneList;
+    private List<CameraAngleGroup> cameraAngleGroupList;
 
     public Scene(String name, String description, Chapter chapter) {
         super(name, description);
@@ -23,6 +25,7 @@ public class Scene extends StoryDetails {
         this.animationList = new ArrayList<>();
         this.cutsceneList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
+        this.cameraAngleGroupList = new ArrayList<>();
     }
 
     public Chapter getChapter() {
@@ -55,9 +58,18 @@ public class Scene extends StoryDetails {
         return true;
     }
 
+    public boolean addCameraAnglesGroup(CameraAngleGroup cameraAngleGroup) {
+        cameraAngleGroupList.add(cameraAngleGroup);
+        if(!NarrativeCraftFile.updateCameraAnglesFile(this)) {
+            cameraAngleGroupList.remove(cameraAngleGroup);
+            return false;
+        }
+        return true;
+    }
+
     public boolean cutsceneExists(String name) {
         for (Cutscene cutscene : cutsceneList) {
-            if(cutscene.getName().equals(name)) {
+            if(cutscene.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
@@ -66,7 +78,16 @@ public class Scene extends StoryDetails {
 
     public boolean subsceneExists(String name) {
         for (Subscene subscene : subsceneList) {
-            if(subscene.getName().equals(name)) {
+            if(subscene.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean cameraAnglesGroupExists(String name) {
+        for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
+            if(cameraAngleGroup.getName().equalsIgnoreCase(name)) {
                 return true;
             }
         }
@@ -75,7 +96,7 @@ public class Scene extends StoryDetails {
 
     public Animation getAnimationByName(String name) {
         for(Animation animation : animationList) {
-            if(animation.getName().equals(name)) {
+            if(animation.getName().equalsIgnoreCase(name)) {
                 return animation;
             }
         }
@@ -103,6 +124,10 @@ public class Scene extends StoryDetails {
         subsceneList.remove(subscene);
     }
 
+    public void removeCameraAnglesGroup(CameraAngleGroup cameraAngleGroup) {
+        cameraAngleGroupList.remove(cameraAngleGroup);
+    }
+
     public List<Animation> getAnimationList() {
         return animationList;
     }
@@ -125,6 +150,14 @@ public class Scene extends StoryDetails {
 
     public void setSubsceneList(List<Subscene> subsceneList) {
         this.subsceneList = subsceneList;
+    }
+
+    public List<CameraAngleGroup> getCameraAngleGroupList() {
+        return cameraAngleGroupList;
+    }
+
+    public void setCameraAngleGroupList(List<CameraAngleGroup> cameraAngleGroupList) {
+        this.cameraAngleGroupList = cameraAngleGroupList;
     }
 
     @Override

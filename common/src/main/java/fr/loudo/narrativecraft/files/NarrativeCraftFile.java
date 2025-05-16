@@ -94,6 +94,7 @@ public class NarrativeCraftFile {
             new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
             new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
             new File(dataFolder.getAbsoluteFile(), "subscenes" + EXTENSION_DATA_FILE).createNewFile();
+            new File(dataFolder.getAbsoluteFile(), "camera_angles" + EXTENSION_DATA_FILE).createNewFile();
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", scene.getName(), scene.getDescription());
             try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
                 writer.write(content);
@@ -152,6 +153,19 @@ public class NarrativeCraftFile {
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update subscenes file of scene {} of chapter {} ! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean updateCameraAnglesFile(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        File subscenesFile = new File(dataFolder, "camera_angles" + EXTENSION_DATA_FILE);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(subscenesFile))) {
+            gson.toJson(scene.getCameraAngleGroupList(), writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update camera angles file of scene {} of chapter {} ! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
             return false;
         }
     }

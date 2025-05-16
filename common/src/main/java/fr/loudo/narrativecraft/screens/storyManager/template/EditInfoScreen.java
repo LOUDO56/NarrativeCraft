@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.screens.storyManager.template;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -11,6 +12,7 @@ import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -107,6 +109,9 @@ public class EditInfoScreen extends Screen {
             if(storyDetails == null && lastScreen instanceof SubscenesScreen) {
                 addSubsceneAction(name, desc);
             }
+            if(storyDetails == null && lastScreen instanceof CameraAnglesScreen) {
+                addCameraAnglesAction(name, desc);
+            }
             if(storyDetails != null && storyDetails instanceof Chapter) {
                 updateChapterAction(name, desc);
             }
@@ -121,6 +126,9 @@ public class EditInfoScreen extends Screen {
             }
             if(storyDetails != null && storyDetails instanceof Animation) {
                 updateAnimationAction(name, desc);
+            }
+            if(storyDetails != null && storyDetails instanceof CameraAngleGroup) {
+                updateCameraAnglesAction(name, desc);
             }
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(actionButton);
@@ -146,6 +154,9 @@ public class EditInfoScreen extends Screen {
         if(storyDetails == null && lastScreen instanceof SubscenesScreen screen) {
             title = Translation.message("screen.subscene_manager.add.title", screen.getScene().getName());
         }
+        if(storyDetails == null && lastScreen instanceof CameraAnglesScreen screen) {
+            title = Translation.message("screen.camera_angles_manager.add.title", screen.getScene().getName());
+        }
         if(storyDetails != null && storyDetails instanceof Chapter chapter) {
             title = Translation.message("screen.chapter_manager.edit.title", chapter.getIndex());
         }
@@ -157,6 +168,9 @@ public class EditInfoScreen extends Screen {
         }
         if(storyDetails != null && storyDetails instanceof Subscene subscene) {
             title = Translation.message("screen.subscene_manager.edit.title", subscene.getName(), subscene.getScene().getName());
+        }
+        if(storyDetails != null && storyDetails instanceof CameraAngleGroup cameraAngleGroup) {
+            title = Translation.message("screen.camera_angles_manager.edit.title", cameraAngleGroup.getName(), cameraAngleGroup.getScene().getName());
         }
         return title;
     }
@@ -252,6 +266,21 @@ public class EditInfoScreen extends Screen {
         this.minecraft.setScreen(screen);
     }
 
+    private void addCameraAnglesAction(String name, String desc) {
+        Scene scene = ((CameraAnglesScreen)lastScreen).getScene();
+        if(scene.cameraAnglesGroupExists(name)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.already_exists"));
+            return;
+        }
+        CameraAngleGroup cameraAngleGroup = new CameraAngleGroup(name, desc);
+        if(!scene.addCameraAnglesGroup(cameraAngleGroup)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.failed", name));
+            return;
+        }
+        CameraAnglesScreen screen = new CameraAnglesScreen(scene);
+        this.minecraft.setScreen(screen);
+    }
+
     private void updateChapterAction(String name, String description) {
         Chapter chapter = (Chapter) storyDetails;
         if(!NarrativeCraftFile.updateChapterDetails(chapter, name, description)) {
@@ -323,5 +352,21 @@ public class EditInfoScreen extends Screen {
         AnimationsScreen screen = new AnimationsScreen(animation.getScene());
         this.minecraft.setScreen(screen);
     }
+
+    private void updateCameraAnglesAction(String name, String desc) {
+        CameraAngleGroup cameraAngleGroup = (CameraAngleGroup) storyDetails;
+        cameraAngleGroup.setName(name);
+        cameraAngleGroup.setDescription(desc);
+        if(!NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene())) {
+            cameraAngleGroup.setName(this.name);
+            cameraAngleGroup.setDescription(description);
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.update.failed", cameraAngleGroup.getName()));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        CameraAnglesScreen screen = new CameraAnglesScreen(cameraAngleGroup.getScene());
+        this.minecraft.setScreen(screen);
+    }
+
 
 }

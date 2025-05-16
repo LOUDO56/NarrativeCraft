@@ -29,6 +29,17 @@ public class GameRendererMixin {
 
     }
 
+//    @Inject(method = "bobView", at = @At("TAIL"))
+//    private void applyCameraShake(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
+//        double time = System.currentTimeMillis() / 1000.0;
+//
+//        float intensity = 0.2f;
+//        float offsetX = (float) Math.sin(time * 0.4) * intensity;
+//        float offsetY = (float) Math.sin(time * 0.5 + 30) * intensity;
+//
+//        poseStack.translate(offsetX, offsetY, 0);
+//    }
+
     private void cutsceneControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
         CutsceneController cutsceneController = playerSession.getCutsceneController();
         if (cutsceneController == null) return;
