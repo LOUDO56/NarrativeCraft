@@ -29,16 +29,10 @@ import java.util.List;
  */
 public class ChapterManager {
 
-    private final List<Chapter> chapters;
-
-    /**
-     * Initializes the ChapterManager with an empty list of chapters.
-     */
-    public ChapterManager() {
-        this.chapters = new ArrayList<>();
-    }
+    private List<Chapter> chapters;
 
     public void init() {
+        chapters = new ArrayList<>();
         File chapterDirectory = NarrativeCraftFile.chaptersDirectory;
         File[] chapterIndexFolder = chapterDirectory.listFiles();
         if(chapterIndexFolder != null) {
