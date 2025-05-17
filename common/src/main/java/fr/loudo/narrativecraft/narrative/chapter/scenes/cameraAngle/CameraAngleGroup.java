@@ -16,8 +16,9 @@ public class CameraAngleGroup extends StoryDetails {
     List<CameraAngle> cameraAngleList;
     List<CameraAngleCharacterPosition> characterPositions;
 
-    public CameraAngleGroup(String name, String description) {
+    public CameraAngleGroup(Scene scene, String name, String description) {
         super(name, description);
+        this.scene = scene;
         cameraAngleList = new ArrayList<>();
         characterPositions = new ArrayList<>();
     }

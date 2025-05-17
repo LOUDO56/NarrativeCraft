@@ -272,7 +272,7 @@ public class EditInfoScreen extends Screen {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.already_exists"));
             return;
         }
-        CameraAngleGroup cameraAngleGroup = new CameraAngleGroup(name, desc);
+        CameraAngleGroup cameraAngleGroup = new CameraAngleGroup(scene, name, desc);
         if(!scene.addCameraAnglesGroup(cameraAngleGroup)) {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.failed", name));
             return;

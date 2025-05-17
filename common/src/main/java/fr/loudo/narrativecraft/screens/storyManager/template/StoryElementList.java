@@ -60,9 +60,8 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             buttons.add(mainButton);
 
             if (data.storyDetails != null) {
-                // Ajouter les boutons standards
-                buttons.add(createEditButton(data.storyDetails, screen));
-                buttons.add(createRemoveButton(data.storyDetails, screen));
+                buttons.add(createEditButton(data.storyDetails));
+                buttons.add(createRemoveButton(data.storyDetails));
             }
 
             if (data.extraButtons != null) {
@@ -70,19 +69,19 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             }
         }
 
-        private Button createEditButton(StoryDetails details, Screen parent) {
+        private Button createEditButton(StoryDetails details) {
             return Button.builder(ImageFontConstants.EDIT, btn -> {
-                Minecraft.getInstance().setScreen(new EditInfoScreen(parent, details));
+                Minecraft.getInstance().setScreen(new EditInfoScreen(screen, details));
             }).width(20).build();
         }
 
-        private Button createRemoveButton(StoryDetails details, Screen parent) {
+        private Button createRemoveButton(StoryDetails details) {
             return Button.builder(ImageFontConstants.REMOVE, btn -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
                     if (b) {
                         details.remove();
                     }
-                    Minecraft.getInstance().setScreen(parent);
+                    Minecraft.getInstance().setScreen(details.reloadScreen());
                 }, Component.literal(""), Translation.message("global.confirm_delete"),
                         CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
                 Minecraft.getInstance().setScreen(confirm);
