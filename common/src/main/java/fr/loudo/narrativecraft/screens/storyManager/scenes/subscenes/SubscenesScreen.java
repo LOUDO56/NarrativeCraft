@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.PickElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -34,41 +35,45 @@ public class SubscenesScreen extends StoryElementScreen {
 
     @Override
     protected void addContents() {
-        List<Button> buttons = new ArrayList<>();
-        List<StoryDetails> storyDetails = new ArrayList<>();
-        for(Subscene subscene : scene.getSubsceneList()) {
-            List<Animation> animationsAvailable = scene.getAnimationList().stream()
-                    .filter(animation -> subscene.getAnimationList().stream()
-                            .noneMatch(a -> a.getName().equals(animation.getName())))
+        List<StoryElementList.StoryEntryData> entries = new ArrayList<>();
+        for (Subscene subscene : scene.getSubsceneList()) {
+            List<Animation> availableAnimations = scene.getAnimationList().stream()
+                    .filter(anim -> subscene.getAnimationList().stream().noneMatch(a -> a.getName().equals(anim.getName())))
                     .toList();
-            Button button = Button.builder(Component.literal(String.valueOf(subscene.getName())), button1 -> {
-                PickElementScreen screen = new PickElementScreen(
-                    this,
-                    Translation.message("screen.selector.subscene.title", Translation.message("global.animations"), Component.literal(subscene.getName()).withColor(StoryElementScreen.SUBSCENE_NAME_COLOR)),
-                    Translation.message("global.animations"),
-                    animationsAvailable,
-                    subscene.getAnimationList(),
-                    (entries) -> {
-                        if(NarrativeCraftFile.subscenesFileExist(scene)) {
-                            List<String> animationStringList = new ArrayList<>();
-                            List<Animation> animationList = new ArrayList<>();
-                            for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                                animationStringList.add(entry.getStoryDetails().getName());
-                                animationList.add((Animation) entry.getStoryDetails());
+
+            Button settingsButton = Button.builder(ImageFontConstants.SETTINGS, b -> {
+                PickElementScreen screen = new PickElementScreen(this,
+                        Translation.message("screen.selector.subscene.title", Translation.message("global.animations"), Component.literal(subscene.getName())),
+                        Translation.message("global.animations"),
+                        availableAnimations,
+                        subscene.getAnimationList(),
+                        entries1 -> {
+                            if (NarrativeCraftFile.subscenesFileExist(scene)) {
+                                List<Animation> selected = new ArrayList<>();
+                                List<String> names = new ArrayList<>();
+                                for (var entry : entries1) {
+                                    Animation a = (Animation) entry.getStoryDetails();
+                                    selected.add(a);
+                                    names.add(a.getName());
+                                }
+                                subscene.setAnimationList(selected);
+                                subscene.setAnimationNameList(names);
+                                NarrativeCraftFile.updateSubsceneFile(scene);
                             }
-                            subscene.setAnimationList(animationList);
-                            subscene.setAnimationNameList(animationStringList);
-                            NarrativeCraftFile.updateSubsceneFile(scene);
-                        }
-                        this.minecraft.setScreen(new SubscenesScreen(scene));
-                });
+                            this.minecraft.setScreen(new SubscenesScreen(scene));
+                        });
                 this.minecraft.setScreen(screen);
+            }).width(20).build();
+
+            Button mainButton = Button.builder(Component.literal(subscene.getName()), b -> {
+                //
             }).build();
-            buttons.add(button);
-            storyDetails.add(subscene);
+
+            entries.add(new StoryElementList.StoryEntryData(mainButton, subscene, List.of(settingsButton)));
         }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
+
 
     public Scene getScene() {
         return scene;

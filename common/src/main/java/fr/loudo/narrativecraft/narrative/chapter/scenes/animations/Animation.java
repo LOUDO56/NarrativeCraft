@@ -4,6 +4,8 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 public class Animation extends StoryDetails {
 
@@ -50,5 +52,10 @@ public class Animation extends StoryDetails {
     public void remove() {
         scene.removeAnimation(this);
         NarrativeCraftFile.removeAnimationFileFromScene(this);
+    }
+
+    @Override
+    public Screen reloadScreen() {
+        return new AnimationsScreen(scene);
     }
 }

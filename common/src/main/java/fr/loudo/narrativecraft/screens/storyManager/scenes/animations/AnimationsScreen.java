@@ -40,17 +40,16 @@ public class AnimationsScreen extends StoryElementScreen {
 
     @Override
     public void addContents() {
-        List<Button> buttons = new ArrayList<>();
-        List<StoryDetails> storyDetails = new ArrayList<>();
-        for(Animation animation : scene.getAnimationList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(animation.getName())), button1 -> {
-                //TODO: preview animation
-            }).build();
-            buttons.add(button);
-            storyDetails.add(animation);
-        }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
+        List<StoryElementList.StoryEntryData> entries = scene.getAnimationList().stream()
+                .map(animation -> {
+                    Button button = Button.builder(Component.literal(animation.getName()), b -> {
+                        // TODO: preview animation
+                    }).build();
+                    return new StoryElementList.StoryEntryData(button, animation);
+                }).toList();
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
+
 
     public Scene getScene() {
         return scene;

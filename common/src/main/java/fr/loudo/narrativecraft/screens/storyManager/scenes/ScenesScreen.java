@@ -31,18 +31,16 @@ public class ScenesScreen extends StoryElementScreen {
 
     @Override
     protected void addContents() {
-        List<Button> buttons = new ArrayList<>();
-        List<StoryDetails> storyDetails = new ArrayList<>();
-        for(Scene scene : chapter.getSceneList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(scene.getName())), button1 -> {
-                ScenesMenuScreen screen = new ScenesMenuScreen(scene);
-                this.minecraft.setScreen(screen);
-            }).build();
-            buttons.add(button);
-            storyDetails.add(scene);
-        }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
+        List<StoryElementList.StoryEntryData> entries = chapter.getSceneList().stream()
+                .map(scene -> {
+                    Button button = Button.builder(Component.literal(scene.getName()), b -> {
+                        this.minecraft.setScreen(new ScenesMenuScreen(scene));
+                    }).build();
+                    return new StoryElementList.StoryEntryData(button, scene);
+                }).toList();
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
+
 
     protected void repositionElements() {
         super.repositionElements();

@@ -34,19 +34,17 @@ public class CameraAnglesScreen extends StoryElementScreen {
 
     @Override
     public void addContents() {
-        List<Button> buttons = new ArrayList<>();
-        List<StoryDetails> storyDetails = new ArrayList<>();
-        for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
-            Button button = Button.builder(Component.literal(String.valueOf(cameraAngleGroup.getName())), button1 -> {
-                PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(this.minecraft.player, scene.getChapter(), scene);
-                CameraAngleController cameraAngleController = new CameraAngleController(cameraAngleGroup, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()));
-                playerSession.setKeyframeControllerBase(cameraAngleController);
-                cameraAngleController.startSession();
-            }).build();
-            buttons.add(button);
-            storyDetails.add(cameraAngleGroup);
-        }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
+        List<StoryElementList.StoryEntryData> entries = scene.getCameraAngleGroupList().stream()
+                .map(group -> {
+                    Button button = Button.builder(Component.literal(group.getName()), b -> {
+                        PlayerSession session = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(this.minecraft.player, scene.getChapter(), scene);
+                        CameraAngleController controller = new CameraAngleController(group, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()));
+                        session.setKeyframeControllerBase(controller);
+                        controller.startSession();
+                    }).build();
+                    return new StoryElementList.StoryEntryData(button, group);
+                }).toList();
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
 
     public Scene getScene() {

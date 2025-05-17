@@ -31,13 +31,11 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
 
     private final CutsceneController cutsceneController;
     private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
-    protected int currentY = INITIAL_POS_Y;
 
     public KeyframeCutsceneOptionScreen(Keyframe keyframe, ServerPlayer player) {
         super(keyframe, player);
         this.cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
     }
-
 
     @Override
     protected void init() {

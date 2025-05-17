@@ -6,6 +6,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,5 +74,10 @@ public class Cutscene extends StoryDetails {
     public void remove() {
         scene.removeCutscene(this);
         NarrativeCraftFile.updateCutsceneFile(scene);
+    }
+
+    @Override
+    public Screen reloadScreen() {
+        return new CutscenesScreen(scene);
     }
 }

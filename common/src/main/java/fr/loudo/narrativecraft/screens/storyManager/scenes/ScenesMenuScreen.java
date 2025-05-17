@@ -48,24 +48,15 @@ public class ScenesMenuScreen extends OptionsSubScreen {
 
     @Override
     protected void addContents() {
-        Button animationsButton = Button.builder(Translation.message("global.animations"), button -> {
-            AnimationsScreen screen = new AnimationsScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        Button cameraAnglesButton = Button.builder(Translation.message("global.camera_angles"), button -> {
-            CameraAnglesScreen screen = new CameraAnglesScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        Button cutscenesButton = Button.builder(Translation.message("global.cutscenes"), button -> {
-            CutscenesScreen screen = new CutscenesScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        Button subscenesButton = Button.builder(Translation.message("global.subscenes"), button -> {
-            SubscenesScreen screen = new SubscenesScreen(scene);
-            this.minecraft.setScreen(screen);
-        }).build();
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, List.of(animationsButton, cameraAnglesButton, cutscenesButton, subscenesButton), List.of()));
+        List<StoryElementList.StoryEntryData> entries = List.of(
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.animations"), b -> minecraft.setScreen(new AnimationsScreen(scene))).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.camera_angles"), b -> minecraft.setScreen(new CameraAnglesScreen(scene))).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.cutscenes"), b -> minecraft.setScreen(new CutscenesScreen(scene))).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> minecraft.setScreen(new SubscenesScreen(scene))).build())
+        );
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
+
 
     @Override
     protected void addFooter() {

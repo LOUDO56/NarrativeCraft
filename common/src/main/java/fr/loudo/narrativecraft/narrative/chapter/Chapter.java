@@ -4,6 +4,9 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,5 +74,10 @@ public class Chapter extends StoryDetails {
     public void remove() {
         NarrativeCraftFile.removeChapterFolder(this);
         NarrativeCraftMod.getInstance().getChapterManager().removeChapter(this);
+    }
+
+    @Override
+    public Screen reloadScreen() {
+        return new ChaptersScreen();
     }
 }

@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.narrative;
 
+import net.minecraft.client.gui.screens.Screen;
+
 public abstract class StoryDetails {
 
     private String name, description;
@@ -26,4 +28,5 @@ public abstract class StoryDetails {
     }
 
     public abstract void remove();
+    public abstract Screen reloadScreen();
 }

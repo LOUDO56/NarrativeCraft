@@ -37,6 +37,7 @@ public class KeyframeOptionScreen extends Screen {
     protected float upDownValue, leftRightValue, rotationValue, fovValue;
     protected int currentY = INITIAL_POS_Y;
 
+
     public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
         super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;

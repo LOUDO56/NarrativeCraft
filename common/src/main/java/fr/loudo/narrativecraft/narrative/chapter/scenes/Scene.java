@@ -7,6 +7,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
+import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -164,5 +166,10 @@ public class Scene extends StoryDetails {
     public void remove() {
         chapter.removeScene(this);
         NarrativeCraftFile.removeSceneFolder(this);
+    }
+
+    @Override
+    public Screen reloadScreen() {
+        return new ScenesScreen(chapter);
     }
 }

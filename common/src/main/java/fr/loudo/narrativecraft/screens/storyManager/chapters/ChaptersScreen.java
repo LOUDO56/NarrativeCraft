@@ -12,6 +12,8 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+import java.util.List;
+
 public class ChaptersScreen extends StoryElementScreen {
 
     public ChaptersScreen() {
@@ -26,18 +28,23 @@ public class ChaptersScreen extends StoryElementScreen {
     @Override
     protected void addContents() {
         ChapterManager chapterManager = NarrativeCraftMod.getInstance().getChapterManager();
-        for(Chapter chapter : chapterManager.getChapters()) {
-            String message = String.valueOf(chapter.getIndex());
-            if(!chapter.getName().isEmpty()) {
-                message +=  " - " + chapter.getName();
-            }
-            Button button = Button.builder(Component.literal(message), button1 -> {
-                ScenesScreen screen = new ScenesScreen(chapter);
-                this.minecraft.setScreen(screen);
-            }).build();
-            buttons.add(button);
-            storyDetails.add(chapter);
-        }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, buttons, storyDetails));
+
+        List<StoryElementList.StoryEntryData> entries = chapterManager.getChapters().stream()
+                .map(chapter -> {
+                    String label = String.valueOf(chapter.getIndex());
+                    if (!chapter.getName().isEmpty()) {
+                        label += " - " + chapter.getName();
+                    }
+
+                    Button button = Button.builder(Component.literal(label), b -> {
+                        this.minecraft.setScreen(new ScenesScreen(chapter));
+                    }).build();
+
+                    return new StoryElementList.StoryEntryData(button, chapter);
+                })
+                .toList();
+
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
+
 }
