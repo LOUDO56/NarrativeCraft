@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
@@ -30,6 +31,7 @@ public class CutsceneController extends KeyframeControllerBase {
     private final AtomicInteger keyframeGroupCounter = new AtomicInteger();
     private final AtomicInteger keyframeCounter = new AtomicInteger();
 
+    private final List<Playback> playbackList;
     private final Cutscene cutscene;
     private boolean isPlaying;
     private int currentTick;
@@ -42,6 +44,7 @@ public class CutsceneController extends KeyframeControllerBase {
         this.isPlaying = false;
         this.currentTick = 0;
         this.currentSkipCount = 5 * 20;
+        this.playbackList = new ArrayList<>();
     }
 
     public void startSession() {
@@ -58,6 +61,12 @@ public class CutsceneController extends KeyframeControllerBase {
                     }
                 }
             }
+        }
+
+        for(Animation animation : cutscene.getAnimationList()) {
+            Playback playback = new Playback(animation, player.serverLevel(), Playback.PlaybackType.CUTSCENE_EDITING);
+            playback.start();
+            playbackList.add(playback);
         }
 
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
@@ -85,6 +94,10 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.stop();
+        }
+
+        for(Playback playback : playbackList) {
+            playback.stopAndKill();
         }
 
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
@@ -253,6 +266,9 @@ public class CutsceneController extends KeyframeControllerBase {
             for(Playback playback : subscene.getPlaybackList()) {
                 playback.setPlaying(isPlaying);
             }
+        }
+        for(Playback playback : playbackList) {
+            playback.setPlaying(isPlaying);
         }
     }
 

@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter;
 
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
@@ -13,6 +14,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
@@ -97,13 +100,14 @@ public class ChapterManager {
         // Animations
         File dataFolder = new File(sceneFolder, "data");
         File animationsFolder = new File(dataFolder, "animations");
+        Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
         if(animationsFolder.exists()) {
             File[] animationsFile = animationsFolder.listFiles();
             if(animationsFile != null) {
                 for(File animationFile : animationsFile) {
                     try {
                         String content = Files.readString(animationFile.toPath());
-                        Animation animation = new Gson().fromJson(content, Animation.class);
+                        Animation animation = gson.fromJson(content, Animation.class);
                         animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
