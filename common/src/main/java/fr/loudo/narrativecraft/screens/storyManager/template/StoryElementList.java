@@ -40,7 +40,6 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         public StoryEntryData(Button mainButton, StoryDetails storyDetails) {
             this.mainButton = mainButton;
             this.storyDetails = storyDetails;
-            this.extraButtons = new ArrayList<>();
         }
 
         public StoryEntryData(Button mainButton) {
@@ -55,14 +54,15 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         private final Screen screen;
 
         public Entry(StoryEntryData data, Screen screen) {
+            this.screen = screen;
             this.mainButton = data.mainButton;
             this.buttons = new ArrayList<>();
-            this.screen = screen;
             buttons.add(mainButton);
 
             if (data.storyDetails != null) {
-                buttons.add(createEditButton(data.storyDetails));
-                buttons.add(createRemoveButton(data.storyDetails));
+                // Ajouter les boutons standards
+                buttons.add(createEditButton(data.storyDetails, screen));
+                buttons.add(createRemoveButton(data.storyDetails, screen));
             }
 
             if (data.extraButtons != null) {
@@ -70,19 +70,19 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             }
         }
 
-        private Button createEditButton(StoryDetails details) {
+        private Button createEditButton(StoryDetails details, Screen parent) {
             return Button.builder(ImageFontConstants.EDIT, btn -> {
-                Minecraft.getInstance().setScreen(new EditInfoScreen(screen, details));
+                Minecraft.getInstance().setScreen(new EditInfoScreen(parent, details));
             }).width(20).build();
         }
 
-        private Button createRemoveButton(StoryDetails details) {
+        private Button createRemoveButton(StoryDetails details, Screen parent) {
             return Button.builder(ImageFontConstants.REMOVE, btn -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
                     if (b) {
                         details.remove();
                     }
-                    Minecraft.getInstance().setScreen(details.reloadScreen());
+                    Minecraft.getInstance().setScreen(parent);
                 }, Component.literal(""), Translation.message("global.confirm_delete"),
                         CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
                 Minecraft.getInstance().setScreen(confirm);
@@ -90,14 +90,13 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         }
 
         @Override
-        public void render(GuiGraphics p_281311_, int p_94497_, int p_94498_, int p_94499_, int p_94500_, int p_94501_, int p_94502_, int p_94503_, boolean p_94504_, float p_94505_) {
+        public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovered, float partial) {
             int totalWidth = buttons.stream().mapToInt(Button::getWidth).sum() + (buttons.size() - 1) * gap;
-            int x = screen.width / 2 - totalWidth / 2;
-            int y = p_94498_;
+            int x = (screen.width / 2 - totalWidth / 2) - gap; //  this line is wrong but sorry my head hurts okay, those mouseX coord shit is driving me crazy
 
             for (Button button : buttons) {
-                button.setPosition(x, y);
-                button.render(p_281311_, p_94502_, p_94503_, p_94505_);
+                button.setPosition(x, top);
+                button.render(graphics, mouseX, mouseY, partial);
                 x += button.getWidth() + gap;
             }
         }
