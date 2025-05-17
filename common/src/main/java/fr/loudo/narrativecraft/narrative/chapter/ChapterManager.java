@@ -146,7 +146,12 @@ public class ChapterManager {
                         }
                         cutscene.setScene(scene);
                         for (String animationName : cutscene.getAnimationListString()) {
-                            cutscene.getAnimationList().add(scene.getAnimationByName(animationName));
+                            Animation animation = scene.getAnimationByName(animationName);
+                            animation.setScene(scene);
+                            cutscene.getAnimationList().add(animation);
+                        }
+                        for(Subscene subscene : cutscene.getSubsceneList()) {
+                            subscene.setScene(scene);
                         }
                     }
                     scene.setCutsceneList(cutscenes);

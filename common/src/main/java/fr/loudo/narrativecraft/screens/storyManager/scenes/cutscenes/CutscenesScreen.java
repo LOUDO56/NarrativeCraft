@@ -54,7 +54,7 @@ public class CutscenesScreen extends StoryElementScreen {
                 CutsceneController controller = new CutsceneController(cutscene, Utils.getServerPlayerByUUID(minecraft.player.getUUID()));
                 NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(minecraft.player, scene.getChapter(), scene).setKeyframeControllerBase(controller);
                 controller.startSession();
-            }).width(170).build();
+            }).build();
 
             entries.add(new StoryElementList.StoryEntryData(mainButton, cutscene, extraButtons));
         }
@@ -72,7 +72,7 @@ public class CutscenesScreen extends StoryElementScreen {
                 .filter(anim -> cutscene.getAnimationList().stream()
                         .noneMatch(a -> a.getName().equals(anim.getName())))
                 .toList();
-        Button settingsButton = Button.builder(ImageFontConstants.SETTINGS, button -> {
+        return Button.builder(ImageFontConstants.SETTINGS, button -> {
             PickElementScreen screen;
             if(Screen.hasShiftDown()) {
                 screen = new PickElementScreen(
@@ -120,7 +120,6 @@ public class CutscenesScreen extends StoryElementScreen {
             }
             this.minecraft.setScreen(screen);
         }).width(20).build();
-        return settingsButton;
     }
 
     public Scene getScene() {
