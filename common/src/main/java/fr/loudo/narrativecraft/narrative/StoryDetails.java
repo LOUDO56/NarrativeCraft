@@ -4,7 +4,7 @@ import net.minecraft.client.gui.screens.Screen;
 
 public abstract class StoryDetails {
 
-    private String name, description;
+    protected String name, description;
 
     public StoryDetails(String name, String description) {
         this.name = name;

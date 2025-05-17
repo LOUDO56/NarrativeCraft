@@ -2,6 +2,8 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
@@ -51,6 +53,12 @@ public class Animation extends StoryDetails {
     @Override
     public void remove() {
         scene.removeAnimation(this);
+        for(Cutscene cutscene : scene.getCutsceneList()) {
+            cutscene.getAnimationList().removeIf(animation -> animation.getName().equals(name));
+        }
+        for(Subscene subscene : scene.getSubsceneList()) {
+            subscene.getAnimationList().removeIf(animation -> animation.getName().equals(name));
+        }
         NarrativeCraftFile.removeAnimationFileFromScene(this);
     }
 

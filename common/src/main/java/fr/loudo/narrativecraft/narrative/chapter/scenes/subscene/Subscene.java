@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.subscene;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
@@ -81,6 +82,9 @@ public class Subscene extends StoryDetails {
     @Override
     public void remove() {
         scene.removeSubscene(this);
+        for(Cutscene cutscene : scene.getCutsceneList()) {
+            cutscene.getSubsceneList().removeIf(subscene -> subscene.getName().equals(name));
+        }
         NarrativeCraftFile.updateSubsceneFile(scene);
     }
 
