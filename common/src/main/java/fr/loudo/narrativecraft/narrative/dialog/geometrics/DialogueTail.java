@@ -23,9 +23,13 @@ public class DialogueTail {
 
         float dialogWidth = maxX + minX;
         float dialogHeight = minY + maxY;
-        boolean isCenter = XPoint == dialogWidth / 2.0F; // TODO: put range of center, because it twinks a little
-        boolean isLeft = XPoint < dialogWidth / 2.0F;
-        boolean isRight = XPoint > dialogWidth / 2.0F;
+
+        float centerX = dialogWidth / 2.0F;
+        float centerTolerance = 0.5F;
+
+        boolean isCenter = Math.abs(XPoint - centerX) <= centerTolerance;
+        boolean isLeft = XPoint < centerX - centerTolerance;
+        boolean isRight = XPoint > centerX + centerTolerance;
 
         float rescaledWidth = ScreenUtils.getPixelValue(width, scale);
         float rescaledHeight = ScreenUtils.getPixelValue(height, scale);
