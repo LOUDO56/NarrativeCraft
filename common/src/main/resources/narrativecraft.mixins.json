@@ -10,6 +10,8 @@
     "LivingEntityMixin",
     "CameraMixin",
     "GameRendererMixin",
+    "GuiMixin",
+    "LivingEntityRendererMixin",
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
     "fields.TextDisplayFields",

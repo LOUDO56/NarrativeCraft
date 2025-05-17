@@ -72,6 +72,8 @@ public class CameraAngleController extends KeyframeControllerBase {
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
         NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());
+        NarrativeCraftMod.getInstance().setCutsceneMode(false);
+        Minecraft.getInstance().gameRenderer.setRenderHand(true);
     }
 
     @Override
@@ -167,15 +169,18 @@ public class CameraAngleController extends KeyframeControllerBase {
         for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
             keyframe.removeKeyframeFromClient(player);
         }
+        NarrativeCraftMod.getInstance().setCutsceneMode(true);
+        Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
 
     public void clearCurrentPreviewKeyframe() {
-        Minecraft.getInstance().options.hideGui = false;
         for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
             keyframe.showKeyframeToClient(player);
             updateKeyframeEntityName();
         }
         currentPreviewKeyframe = null;
+        NarrativeCraftMod.getInstance().setCutsceneMode(false);
+        Minecraft.getInstance().gameRenderer.setRenderHand(true);
     }
 
 }

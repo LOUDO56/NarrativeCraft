@@ -19,6 +19,7 @@ public class NarrativeCraftMod {
 
     public static MinecraftServer server;
 
+    private boolean isCutsceneMode;
     private final ChapterManager chapterManager;
     private final CharacterManager characterManager;
     private final PlayerSessionManager playerSessionManager;
@@ -31,6 +32,7 @@ public class NarrativeCraftMod {
         recordingHandler = new RecordingHandler();
         playerSessionManager = new PlayerSessionManager();
         playbackHandler = new PlaybackHandler();
+        isCutsceneMode = false;
     }
 
     public static NarrativeCraftMod getInstance() {
@@ -55,5 +57,13 @@ public class NarrativeCraftMod {
 
     public PlaybackHandler getPlaybackHandler() {
         return playbackHandler;
+    }
+
+    public boolean isCutsceneMode() {
+        return isCutsceneMode;
+    }
+
+    public void setCutsceneMode(boolean cutsceneMode) {
+        isCutsceneMode = cutsceneMode;
     }
 }

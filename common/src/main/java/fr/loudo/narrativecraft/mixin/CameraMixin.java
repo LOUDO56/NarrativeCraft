@@ -66,7 +66,6 @@ public abstract class CameraMixin {
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
         client.options.setCameraType(CameraType.FIRST_PERSON);
-        client.options.hideGui = true;
 
         if (ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
             keyframePreview.openScreenOption(playerSession.getPlayer());

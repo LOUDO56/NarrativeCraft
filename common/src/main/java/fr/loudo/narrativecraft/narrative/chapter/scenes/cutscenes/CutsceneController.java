@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
@@ -98,6 +99,8 @@ public class CutsceneController extends KeyframeControllerBase {
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
         NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
+        NarrativeCraftMod.getInstance().setCutsceneMode(false);
+        Minecraft.getInstance().gameRenderer.setRenderHand(true);
 
     }
 
@@ -199,10 +202,11 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
         changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
+        NarrativeCraftMod.getInstance().setCutsceneMode(true);
+        Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
 
     public void clearCurrentPreviewKeyframe() {
-        Minecraft.getInstance().options.hideGui = false;
         for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
             for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
                 keyframeFromGroup.showKeyframeToClient(player);
@@ -213,6 +217,8 @@ public class CutsceneController extends KeyframeControllerBase {
         }
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
+        NarrativeCraftMod.getInstance().setCutsceneMode(false);
+        Minecraft.getInstance().gameRenderer.setRenderHand(true);
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {

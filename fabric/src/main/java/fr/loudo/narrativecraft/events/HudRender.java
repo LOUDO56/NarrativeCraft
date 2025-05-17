@@ -10,6 +10,6 @@ public class HudRender {
     private static final ResourceLocation DIALOG_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "dialog-hud");
 
     public static void onHudRender(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.attachLayerBefore(IdentifiedLayer.HOTBAR_AND_BARS, DIALOG_HUD, OnHudRender::hudRender);
+        layeredDrawerWrapper.attachLayerBefore(IdentifiedLayer.CROSSHAIR, DIALOG_HUD, OnHudRender::hudRender);
     }
 }
