@@ -1,13 +1,16 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.utils.TpUtil;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -63,6 +66,14 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
 
+        if(!cutscene.getKeyframeGroupList().isEmpty()) {
+            selectedKeyframeGroup = cutscene.getKeyframeGroupList().getFirst();
+            selectedKeyframeGroup.showGlow(player);
+            selectedKeyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, selectedKeyframeGroup.getId());
+            TpUtil.teleportPlayer(player, selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3());
+            keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
+        }
+
         player.setGameMode(GameType.SPECTATOR);
         pause();
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
@@ -84,6 +95,9 @@ public class CutsceneController extends KeyframeControllerBase {
         player.setGameMode(GameType.CREATIVE);
 
         isPlaying = false;
+        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        playerSession.setKeyframeControllerBase(null);
+        NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
 
     }
 
