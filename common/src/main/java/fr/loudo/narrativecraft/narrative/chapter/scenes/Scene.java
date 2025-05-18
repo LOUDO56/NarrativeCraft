@@ -114,6 +114,24 @@ public class Scene extends StoryDetails {
         return null;
     }
 
+    public Cutscene getCutsceneByName(String name) {
+        for(Cutscene cutscene : cutsceneList) {
+            if(cutscene.getName().equalsIgnoreCase(name)) {
+                return cutscene;
+            }
+        }
+        return null;
+    }
+
+    public CameraAngleGroup getCameraAnglesGroupByName(String name) {
+        for(CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
+            if(cameraAngleGroup.getName().equalsIgnoreCase(name)) {
+                return cameraAngleGroup;
+            }
+        }
+        return null;
+    }
+
     public void removeAnimation(Animation animation) {
         animationList.remove(animation);
     }

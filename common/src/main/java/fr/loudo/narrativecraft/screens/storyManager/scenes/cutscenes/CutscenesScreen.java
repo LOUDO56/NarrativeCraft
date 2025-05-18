@@ -2,14 +2,12 @@ package fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.PickElementScreen;
@@ -51,7 +49,7 @@ public class CutscenesScreen extends StoryElementScreen {
             extraButtons.add(settingsButton);
 
             Button mainButton = Button.builder(Component.literal(cutscene.getName()), btn -> {
-                CutsceneController controller = new CutsceneController(cutscene, Utils.getServerPlayerByUUID(minecraft.player.getUUID()));
+                CutsceneController controller = new CutsceneController(cutscene, Utils.getServerPlayerByUUID(minecraft.player.getUUID()), Playback.PlaybackType.DEVELOPMENT);
                 NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(minecraft.player, scene.getChapter(), scene).setKeyframeControllerBase(controller);
                 controller.startSession();
             }).build();

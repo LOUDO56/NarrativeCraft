@@ -6,11 +6,18 @@ public class DialogLetterEffect {
     private DialogAnimationType animation;
     private long time;
     private float force;
+    private int startIndex, endIndex;
 
-    public DialogLetterEffect(DialogAnimationType animation, long time, float force) {
+    public DialogLetterEffect(DialogAnimationType animation, long time, float force, int startIndex, int endIndex) {
         this.animation = animation;
         this.time = time;
         this.force = force;
+        this.startIndex = startIndex;
+        this.endIndex = endIndex;
+    }
+
+    public DialogLetterEffect(DialogAnimationType animation) {
+        this.animation = animation;
     }
 
     public DialogAnimationType getAnimation() {
@@ -35,5 +42,13 @@ public class DialogLetterEffect {
 
     public void setForce(float force) {
         this.force = force;
+    }
+
+    public int getStartIndex() {
+        return startIndex;
+    }
+
+    public int getEndIndex() {
+        return endIndex;
     }
 }

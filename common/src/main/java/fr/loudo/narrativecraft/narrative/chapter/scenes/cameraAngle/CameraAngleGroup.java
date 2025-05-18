@@ -43,6 +43,15 @@ public class CameraAngleGroup extends StoryDetails {
         return keyframeGroup;
     }
 
+    public CameraAngle getCameraAngleByName(String name) {
+        for(CameraAngle cameraAngle : cameraAngleList) {
+            if(cameraAngle.getName().equals(name)) {
+                return cameraAngle;
+            }
+        }
+        return null;
+    }
+
     public void setCameraAngleList(List<CameraAngle> cameraAngleList) {
         this.cameraAngleList = cameraAngleList;
     }

@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.events;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
@@ -35,6 +36,10 @@ public class OnClientTick {
 
         PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
         if(playerSession == null) return;
+
+        ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
+            NarrativeCraftMod.getInstance().getStoryHandler().next();
+        });
 
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase == null) return;

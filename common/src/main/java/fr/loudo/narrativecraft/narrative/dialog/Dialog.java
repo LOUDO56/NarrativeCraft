@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Quaternionf;
@@ -34,7 +35,7 @@ public class Dialog {
     private int opacity;
     private boolean acceptNewDialog;
 
-    private Entity entityServer;
+    private LivingEntity entityServer;
     private Entity entityClient;
     private Vec3 textPosition;
     private int backgroundColor;
@@ -44,7 +45,7 @@ public class Dialog {
     private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
 
-    public Dialog(String text, Entity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor, int maxWidth) {
+    public Dialog(String text, LivingEntity entityServer, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int backgroundColor, int maxWidth) {
         this.entityServer = entityServer;
         this.textPosition = new Vec3(entityServer.getX(), entityServer.getEyeHeight(), entityServer.getZ());
         this.paddingX = paddingX;
@@ -62,12 +63,11 @@ public class Dialog {
         this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
         this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 10f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         this.acceptNewDialog = false;
-        this.dialogueTail = new DialogueTail(10f, 5f);
+        this.dialogueTail = new DialogueTail(7f, 15f);
     }
 
     public void reset() {
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
-        dialogueTail = new DialogueTail(7f, 15f);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         t = 0;

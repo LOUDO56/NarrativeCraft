@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -26,23 +27,29 @@ public class CameraAngleController extends KeyframeControllerBase {
 
     private final CameraAngleGroup cameraAngleGroup;
 
-    public CameraAngleController(CameraAngleGroup cameraAngleGroup, ServerPlayer player) {
-        super(cameraAngleGroup.getCameraAngleListAsKeyframeGroup(), player);
+    public CameraAngleController(CameraAngleGroup cameraAngleGroup, ServerPlayer player, Playback.PlaybackType playbackType) {
+        super(cameraAngleGroup.getCameraAngleListAsKeyframeGroup(), player, playbackType);
         this.cameraAngleGroup = cameraAngleGroup;
     }
 
     public void startSession() {
 
-        if(!cameraAngleGroup.getCameraAngleList().isEmpty()) {
-            TpUtil.teleportPlayer(player, cameraAngleGroup.getCameraAngleList().getFirst().getKeyframeCoordinate().getVec3());
-        }
-        for(Keyframe keyframe : cameraAngleGroup.getCameraAngleList()) {
-            keyframe.showKeyframeToClient(player);
-            keyframesEntity.add(keyframe.getCameraEntity());
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            if(!cameraAngleGroup.getCameraAngleList().isEmpty()) {
+                TpUtil.teleportPlayer(player, cameraAngleGroup.getCameraAngleList().getFirst().getKeyframeCoordinate().getVec3());
+            }
+            for(Keyframe keyframe : cameraAngleGroup.getCameraAngleList()) {
+                keyframe.showKeyframeToClient(player);
+                keyframesEntity.add(keyframe.getCameraEntity());
+            }
+
+            player.setGameMode(GameType.SPECTATOR);
+            Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CameraAngleControllerScreen(this)));
+            updateKeyframeEntityName();
         }
 
         for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
-            FakePlayer fakePlayer = new FakePlayer(player.serverLevel(), new GameProfile(UUID.randomUUID(), "fakeP"));
+            FakePlayer fakePlayer = new FakePlayer(player.serverLevel(), new GameProfile(UUID.randomUUID(), characterPosition.getCharacter().getName()));
             fakePlayer.teleportTo(characterPosition.getX(), characterPosition.getY(), characterPosition.getZ());
             fakePlayer.setXRot(characterPosition.getXRot());
             fakePlayer.setYRot(characterPosition.getYRot());
@@ -50,28 +57,26 @@ public class CameraAngleController extends KeyframeControllerBase {
             player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
             player.serverLevel().addFreshEntity(fakePlayer);
             characterPosition.setEntity(fakePlayer);
+            characterPosition.getCharacter().setEntity(fakePlayer);
         }
-
-        player.setGameMode(GameType.SPECTATOR);
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CameraAngleControllerScreen(this)));
-        updateKeyframeEntityName();
     }
 
     @Override
     public void stopSession() {
-        for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
-            keyframe.removeKeyframeFromClient(player);
-        }
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
+                keyframe.removeKeyframeFromClient(player);
+            }
 
+            player.setGameMode(GameType.CREATIVE);
+            NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());
+        }
         for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
             characterPosition.getEntity().remove(Entity.RemovalReason.KILLED);
             player.connection.send(new ClientboundRemoveEntitiesPacket(characterPosition.getEntity().getId()));
         }
-
-        player.setGameMode(GameType.CREATIVE);
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
-        NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());
         NarrativeCraftMod.getInstance().setCutsceneMode(false);
         Minecraft.getInstance().gameRenderer.setRenderHand(true);
     }
@@ -154,6 +159,10 @@ public class CameraAngleController extends KeyframeControllerBase {
         return null;
     }
 
+    public CameraAngleGroup getCameraAngleGroup() {
+        return cameraAngleGroup;
+    }
+
     private void updateKeyframeEntityName() {
         for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
             CameraAngle cameraAngle = (CameraAngle) keyframe;
@@ -165,9 +174,11 @@ public class CameraAngleController extends KeyframeControllerBase {
 
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
-        currentPreviewKeyframe.openScreenOption(player);
-        for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
-            keyframe.removeKeyframeFromClient(player);
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            currentPreviewKeyframe.openScreenOption(player);
+            for(Keyframe keyframe : keyframeGroups.getFirst().getKeyframeList()) {
+                keyframe.removeKeyframeFromClient(player);
+            }
         }
         NarrativeCraftMod.getInstance().setCutsceneMode(true);
         Minecraft.getInstance().gameRenderer.setRenderHand(false);

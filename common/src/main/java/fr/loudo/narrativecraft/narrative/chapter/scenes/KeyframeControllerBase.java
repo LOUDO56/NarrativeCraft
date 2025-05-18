@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -14,18 +15,20 @@ public abstract class KeyframeControllerBase {
     protected final ServerPlayer player;
     protected final List<Entity> keyframesEntity;
     protected Keyframe currentPreviewKeyframe;
+    protected Playback.PlaybackType playbackType;
 
-
-    public KeyframeControllerBase(List<KeyframeGroup> keyframeGroups , ServerPlayer player) {
+    public KeyframeControllerBase(List<KeyframeGroup> keyframeGroups, ServerPlayer player, Playback.PlaybackType playbackType) {
         this.keyframeGroups = keyframeGroups;
         this.player = player;
         this.keyframesEntity = new ArrayList<>();
+        this.playbackType = playbackType;
     }
 
-    public KeyframeControllerBase(KeyframeGroup keyframeGroup, ServerPlayer player) {
+    public KeyframeControllerBase(KeyframeGroup keyframeGroup, ServerPlayer player, Playback.PlaybackType playbackType) {
         this.keyframeGroups = List.of(keyframeGroup);
         this.player = player;
         this.keyframesEntity = new ArrayList<>();
+        this.playbackType = playbackType;
     }
 
     public abstract void startSession();
@@ -119,4 +122,7 @@ public abstract class KeyframeControllerBase {
         return currentPreviewKeyframe;
     }
 
+    public Playback.PlaybackType getPlaybackType() {
+        return playbackType;
+    }
 }

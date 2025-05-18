@@ -82,7 +82,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
         Component playTitle = Translation.message("screen.keyframe_option.play_from_here");
         Button playFromHere = Button.builder(playTitle, button -> {
             if(playerSession != null) {
-                CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), keyframe);
+                CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), keyframe, cutsceneController);
                 cutscenePlayback.start();
                 playerSession.setCutscenePlayback(cutscenePlayback);
                 this.onClose();

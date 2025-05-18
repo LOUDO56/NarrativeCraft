@@ -35,9 +35,9 @@ public class DialogAnimationScrollText {
     private int currentLetter;
     private float letterSpacing;
     private float gap, startY, totalHeight, screenX, endY, screenY, scale, maxLineWidth;
-    private final DialogLetterEffect dialogLetterEffect;
     private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
     private final Map<Integer, Long> letterStartTime = new HashMap<>();
+    private DialogLetterEffect dialogLetterEffect;
     private long lastTimeChar, animationTime, pauseStartTime, totalPauseTime;
 
     public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth) {
@@ -46,7 +46,7 @@ public class DialogAnimationScrollText {
         this.letterSpacing = letterSpacing;
         this.gap = gap;
         this.currentLetter = 0;
-        this.dialogLetterEffect = new DialogLetterEffect(DialogAnimationType.NONE, 0, 0);
+        this.dialogLetterEffect = new DialogLetterEffect(DialogAnimationType.NONE, 0, 0, 0, text.length() - 1);
         long now = System.currentTimeMillis();
         for (int i = 0; i < text.length(); i++) {
             letterStartTime.put(i, now + i * 50L);
@@ -112,6 +112,8 @@ public class DialogAnimationScrollText {
 
         float currentY = startY;
 
+        int globalCharIndex = 0;
+
         for (int i = 0; i < lines.size(); i++) {
             String text = lines.get(i);
             int lineLength = text.length();
@@ -119,37 +121,38 @@ public class DialogAnimationScrollText {
             shownLetters += lineLength;
 
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
-            float textPlace = textWidth == maxLineWidth ? textWidth / 2.0F : maxLineWidth / 2.0F; //TODO: add left, center and right position text setting
+            float textPlace = textWidth == maxLineWidth ? textWidth / 2.0F : maxLineWidth / 2.0F;
             float startX = screenX - ScreenUtils.getPixelValue(textPlace, scale);
-            if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING
-                    && now - animationTime >= dialogLetterEffect.getTime()
-                    && !isPaused) {
-                animationTime = now;
-                letterOffsets.clear();
-                for (int j = 0; j < lineVisibleLetters; j++) {
-                    float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
-                    float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
-                    letterOffsets.put(j, new Vector2f(offsetX, offsetY));
-                }
-            } else if (dialogLetterEffect.getAnimation() == DialogAnimationType.WAVING && !isPaused) {
-                letterOffsets.clear();
-                float waveSpacing = 0.2f;
-                double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
 
-                for (int j = 0; j < lineVisibleLetters; j++) {
-                    float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
-                    letterOffsets.put(j, new Vector2f(0, offsetY));
+            if (!isPaused) {
+                if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
+                    animationTime = now;
+                    letterOffsets.clear();
+                    for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                        float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                        float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                        letterOffsets.put(j, new Vector2f(offsetX, offsetY));
+                    }
+                } else if (dialogLetterEffect.getAnimation() == DialogAnimationType.WAVING) {
+                    letterOffsets.clear();
+                    float waveSpacing = 0.2f;
+                    double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
+
+                    for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                        float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
+                        letterOffsets.put(j, new Vector2f(0, offsetY));
+                    }
                 }
             }
 
             for (int j = 0; j < lineVisibleLetters; j++) {
-                Vector2f offset = letterOffsets.getOrDefault(j, new Vector2f(0, 0));
+                Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                drawString(guiGraphics, character, startX + ScreenUtils.getPixelValue(offset.x, scale), currentY + ScreenUtils.getPixelValue(offset.y, scale), scale, posClip);
+                drawString(guiGraphics, character,
+                        startX + ScreenUtils.getPixelValue(offset.x, scale),
+                        currentY + ScreenUtils.getPixelValue(offset.y, scale),
+                        scale, posClip);
 
-                // Why not client.font.width() to get letter's width? Because with a custom font, it returns the bad value
-                // leading in an incorrect width between text and dialog, those lines of codes get the actual letter width
-                // for whatever font you're using (normal minecraft font or custom one).
                 Style style = Style.EMPTY;
                 FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
                 GlyphInfo glyph = fontset.getGlyphInfo(text.codePointAt(j), ((FontFields) client.font).getFilterFishyGlyphs());
@@ -157,14 +160,11 @@ public class DialogAnimationScrollText {
                 float letterWidth = glyph.getAdvance(bold);
 
                 startX += (letterWidth * scale + letterSpacing * scale) / guiScale;
+
+                globalCharIndex++;
             }
 
-            // if only one line, then fill for one line, else apply gap.
-            if(lines.size() > 1) {
-                currentY += ScreenUtils.getPixelValue(gap, scale);
-            } else {
-                currentY += ScreenUtils.getPixelValue(client.font.lineHeight, scale);
-            }
+            currentY += ScreenUtils.getPixelValue(lines.size() > 1 ? gap : client.font.lineHeight, scale);
         }
     }
 
@@ -276,5 +276,12 @@ public class DialogAnimationScrollText {
 
     public DialogLetterEffect getDialogLetterEffect() {
         return dialogLetterEffect;
+    }
+
+    public void setDialogLetterEffect(DialogLetterEffect dialogLetterEffect) {
+        this.dialogLetterEffect = dialogLetterEffect;
+    }
+
+    public void applyEffect(DialogLetterEffect dialogEffect, int startIndex, int endIndex) {
     }
 }

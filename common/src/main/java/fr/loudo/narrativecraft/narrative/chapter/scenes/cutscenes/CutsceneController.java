@@ -33,18 +33,20 @@ public class CutsceneController extends KeyframeControllerBase {
 
     private final List<Playback> playbackList;
     private final Cutscene cutscene;
+    private final Playback.PlaybackType playbackType;
     private boolean isPlaying;
     private int currentTick;
     private double currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
 
-    public CutsceneController(Cutscene cutscene, ServerPlayer player) {
-        super(cutscene.getKeyframeGroupList(), player);
+    public CutsceneController(Cutscene cutscene, ServerPlayer player, Playback.PlaybackType playbackType) {
+        super(cutscene.getKeyframeGroupList(), player, playbackType);
         this.cutscene = cutscene;
         this.isPlaying = false;
         this.currentTick = 0;
         this.currentSkipCount = 5 * 20;
         this.playbackList = new ArrayList<>();
+        this.playbackType = playbackType;
     }
 
     public void startSession() {
@@ -52,7 +54,7 @@ public class CutsceneController extends KeyframeControllerBase {
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            subscene.start(player, Playback.PlaybackType.CUTSCENE_EDITING);
+            subscene.start(player, playbackType);
             for(Playback playback : subscene.getPlaybackList()) {
                 LivingEntity entity = playback.getEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
@@ -64,29 +66,32 @@ public class CutsceneController extends KeyframeControllerBase {
         }
 
         for(Animation animation : cutscene.getAnimationList()) {
-            Playback playback = new Playback(animation, player.serverLevel(), Playback.PlaybackType.CUTSCENE_EDITING);
+            Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType);
             playback.start();
             playbackList.add(playback);
         }
 
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                keyframe.showKeyframeToClient(player);
-                keyframesEntity.add(keyframe.getCameraEntity());
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+
+            for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+                for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
+                    keyframe.showKeyframeToClient(player);
+                    keyframesEntity.add(keyframe.getCameraEntity());
+                }
             }
-        }
 
-        if(!cutscene.getKeyframeGroupList().isEmpty()) {
-            selectedKeyframeGroup = cutscene.getKeyframeGroupList().getFirst();
-            selectedKeyframeGroup.showGlow(player);
-            selectedKeyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, selectedKeyframeGroup.getId());
-            TpUtil.teleportPlayer(player, selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3());
-            keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
-        }
+            if(!cutscene.getKeyframeGroupList().isEmpty()) {
+                selectedKeyframeGroup = cutscene.getKeyframeGroupList().getFirst();
+                selectedKeyframeGroup.showGlow(player);
+                selectedKeyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, selectedKeyframeGroup.getId());
+                TpUtil.teleportPlayer(player, selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3());
+                keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
+            }
 
-        player.setGameMode(GameType.SPECTATOR);
-        pause();
-        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
+            player.setGameMode(GameType.SPECTATOR);
+            pause();
+            Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
+        }
 
     }
 
@@ -100,20 +105,23 @@ public class CutsceneController extends KeyframeControllerBase {
             playback.stopAndKill();
         }
 
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                keyframe.removeKeyframeFromClient(player);
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+                for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
+                    keyframe.removeKeyframeFromClient(player);
+                }
             }
+            player.setGameMode(GameType.CREATIVE);
         }
 
-        player.setGameMode(GameType.CREATIVE);
-
-        isPlaying = false;
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
-        NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
+        }
         NarrativeCraftMod.getInstance().setCutsceneMode(false);
         Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        isPlaying = false;
 
     }
 
@@ -208,13 +216,15 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe, boolean seamless) {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
-        currentPreviewKeyframe.openScreenOption(player);
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
-                keyframeFromGroup.removeKeyframeFromClient(player);
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            currentPreviewKeyframe.openScreenOption(player);
+            for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+                for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                    keyframeFromGroup.removeKeyframeFromClient(player);
+                }
             }
+            changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
         }
-        changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
         NarrativeCraftMod.getInstance().setCutsceneMode(true);
         Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
@@ -258,7 +268,9 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void next() {
         if(isPlaying) currentTick++;
-        checkEndedPlayback();
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            checkEndedPlayback();
+        }
     }
 
     private void changePlayingPlaybackState() {
@@ -317,4 +329,7 @@ public class CutsceneController extends KeyframeControllerBase {
         return currentSkipCount;
     }
 
+    public Playback.PlaybackType getPlaybackType() {
+        return playbackType;
+    }
 }

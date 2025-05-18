@@ -226,6 +226,11 @@ public class NarrativeCraftFile {
         return new File(animationsFolder, getCamelCaseName(animationName) + EXTENSION_DATA_FILE).exists();
     }
 
+    public static String getStoryFile() throws IOException {
+        File buildFolder = new File(mainDirectory, "build");
+        return Files.readString(new File(buildFolder, "story.json").toPath());
+    }
+
     private static String getCamelCaseName(String name) {
         return String.join("_", name.toLowerCase().split(" "));
     }

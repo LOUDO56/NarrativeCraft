@@ -10,6 +10,7 @@ public class CommandsRegister {
             PlayerSessionCommand.register(commandDispatcher);
             RecordCommand.register(commandDispatcher);
             TestCommand.register(commandDispatcher);
+            StoryCommand.register(commandDispatcher);
         });
     }
 

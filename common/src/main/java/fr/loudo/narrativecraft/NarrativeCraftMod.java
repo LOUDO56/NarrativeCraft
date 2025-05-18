@@ -2,9 +2,11 @@ package fr.loudo.narrativecraft;
 
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ public class NarrativeCraftMod {
 
     public static MinecraftServer server;
 
+    private StoryHandler storyHandler;
     private boolean isCutsceneMode;
     private final ChapterManager chapterManager;
     private final CharacterManager characterManager;
@@ -65,5 +68,13 @@ public class NarrativeCraftMod {
 
     public void setCutsceneMode(boolean cutsceneMode) {
         isCutsceneMode = cutsceneMode;
+    }
+
+    public StoryHandler getStoryHandler() {
+        return storyHandler;
+    }
+
+    public void setStoryHandler(StoryHandler storyHandler) {
+        this.storyHandler = storyHandler;
     }
 }

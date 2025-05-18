@@ -9,6 +9,7 @@ import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.events.OnHudRender;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
@@ -113,15 +114,16 @@ public class TestCommand {
 
     private static int changeDialogAnimation(CommandContext<CommandSourceStack> commandContext, String animation, long time, float force) {
 
-        if(OnHudRender.dialog == null) {
+        Dialog dialog = NarrativeCraftMod.getInstance().getStoryHandler().getCurrentDialogBox();
+        if(dialog == null) {
             commandContext.getSource().sendFailure(Component.literal("Dialog not set."));
             return 0;
         }
 
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setAnimation(DialogAnimationType.valueOf(animation));
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setTime(time);
-        OnHudRender.dialog.getDialogScrollText().getDialogLetterEffect().setForce(force);
-        OnHudRender.dialog.getDialogScrollText().reset();
+        dialog.getDialogScrollText().getDialogLetterEffect().setAnimation(DialogAnimationType.valueOf(animation));
+        dialog.getDialogScrollText().getDialogLetterEffect().setTime(time);
+        dialog.getDialogScrollText().getDialogLetterEffect().setForce(force);
+        dialog.getDialogScrollText().reset();
 
         commandContext.getSource().sendSuccess(() -> (Component.literal("Animation set to " + animation + " time " + time + " force " + force)), false);
 
@@ -130,25 +132,26 @@ public class TestCommand {
 
     private static int dialogText(CommandContext<CommandSourceStack> context, String text, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int bcColor, int maxWidth) {
 
+        Dialog dialog = NarrativeCraftMod.getInstance().getStoryHandler().getCurrentDialogBox();
         text = String.join(" ", text.split("_"));
         ServerPlayer player = context.getSource().getPlayer();
-        if(OnHudRender.dialog != null) {
-            OnHudRender.dialog.setPaddingX(paddingX);
-            OnHudRender.dialog.setPaddingY(paddingY);
-            OnHudRender.dialog.setScale(scale);
-            OnHudRender.dialog.setBackgroundColor(bcColor);
-            OnHudRender.dialog.getDialogScrollText().setGap(gap);
-            OnHudRender.dialog.getDialogScrollText().setLetterSpacing(letterSpacing);
-            OnHudRender.dialog.getDialogScrollText().setMaxWidth(maxWidth);
-            OnHudRender.dialog.getDialogScrollText().setText(text);
-            OnHudRender.dialog.reset();
+        if(dialog != null) {
+            dialog.setPaddingX(paddingX);
+            dialog.setPaddingY(paddingY);
+            dialog.setScale(scale);
+            dialog.setBackgroundColor(bcColor);
+            dialog.getDialogScrollText().setGap(gap);
+            dialog.getDialogScrollText().setLetterSpacing(letterSpacing);
+            dialog.getDialogScrollText().setMaxWidth(maxWidth);
+            dialog.getDialogScrollText().setText(text);
+            dialog.reset();
             return Command.SINGLE_SUCCESS;
         }
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
-        OnHudRender.dialog = new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor, maxWidth);
+        NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor, maxWidth));
 
         return Command.SINGLE_SUCCESS;
     }

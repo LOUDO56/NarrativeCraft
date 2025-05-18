@@ -1,7 +1,10 @@
 package fr.loudo.narrativecraft.narrative.character;
 
+import net.minecraft.world.entity.LivingEntity;
+
 public class CharacterStory {
 
+    private transient LivingEntity entity;
     private String name;
     private String description;
     private int age;
@@ -37,5 +40,13 @@ public class CharacterStory {
 
     public String getBirthdate() {
         return birthdate;
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
     }
 }

@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
@@ -12,7 +13,7 @@ import net.minecraft.client.gui.screens.Screen;
 public class Animation extends StoryDetails {
 
     private transient Scene scene;
-    private Character character;
+    private CharacterStory character;
     private ActionsData actionsData;
 
     public Animation(Scene scene, String name, String description) {
@@ -26,11 +27,11 @@ public class Animation extends StoryDetails {
         this.actionsData = new ActionsData();
     }
 
-    public Character getCharacter() {
+    public CharacterStory getCharacter() {
         return character;
     }
 
-    public void setCharacter(Character character) {
+    public void setCharacter(CharacterStory character) {
         this.character = character;
     }
 

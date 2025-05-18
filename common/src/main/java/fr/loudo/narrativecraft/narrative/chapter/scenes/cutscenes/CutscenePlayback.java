@@ -1,7 +1,9 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -26,8 +28,9 @@ public class CutscenePlayback  {
     private ServerPlayer player;
     private PlayerSession playerSession;
     private CutsceneController cutsceneController;
+    private Runnable onCutsceneEnd;
 
-    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList) {
+    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, CutsceneController cutsceneController) {
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
         this.currentKeyframeGroup = keyframeGroupList.getFirst();
@@ -36,15 +39,15 @@ public class CutscenePlayback  {
         this.currentIndexKeyframe = 0;
         this.currentIndexKeyframeGroup = 0;
         this.playerSession = Utils.getSessionOrNull(player);
-        this.cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
+        this.cutsceneController = cutsceneController;
         initValues();
     }
 
-    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, Keyframe keyframe) {
+    public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, Keyframe keyframe, CutsceneController cutsceneController) {
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
+        this.cutsceneController = cutsceneController;
         playerSession = Utils.getSessionOrNull(player);
-        cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
         currentKeyframeGroup = cutsceneController.getKeyframeGroupByKeyframe(keyframe);
         currentIndexKeyframe = cutsceneController.getKeyframeIndex(currentKeyframeGroup, keyframe);
         currentIndexKeyframeGroup = currentKeyframeGroup.getId() - 1;
@@ -74,16 +77,26 @@ public class CutscenePlayback  {
     }
 
     public void start() {
+        next();
         playerSession.setCutscenePlayback(this);
         cutsceneController.resume();
+        NarrativeCraftMod.getInstance().setCutsceneMode(true);
+        Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
 
     public void stop() {
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
         TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
         cutsceneController.pause();
-        cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
+        if(cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
+            cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
+        } else {
+            cutsceneController.stopSession();
+        }
         playerSession.setCutscenePlayback(null);
+        onCutsceneEnd.run();
+        NarrativeCraftMod.getInstance().setCutsceneMode(true);
+        Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
 
     private void initValues() {
@@ -202,5 +215,13 @@ public class CutscenePlayback  {
 
     public KeyframeCoordinate getCurrentLoc() {
         return currentLoc;
+    }
+
+    public Runnable getOnCutsceneEnd() {
+        return onCutsceneEnd;
+    }
+
+    public void setOnCutsceneEnd(Runnable onCutsceneEnd) {
+        this.onCutsceneEnd = onCutsceneEnd;
     }
 }

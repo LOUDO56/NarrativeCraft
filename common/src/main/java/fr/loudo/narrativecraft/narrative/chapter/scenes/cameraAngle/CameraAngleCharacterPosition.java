@@ -3,16 +3,17 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 
 public class CameraAngleCharacterPosition {
 
-    private transient Entity entity;
+    private transient LivingEntity entity;
     private CharacterStory character;
     private double x, y, z;
     private float XRot, YRot;
 
-    public CameraAngleCharacterPosition(Entity entity, CharacterStory character, double x, double y, double z, float XRot, float YRot) {
+    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, double x, double y, double z, float XRot, float YRot) {
         this.entity = entity;
         this.character = character;
         this.x = x;
@@ -22,7 +23,7 @@ public class CameraAngleCharacterPosition {
         this.YRot = YRot;
     }
 
-    public CameraAngleCharacterPosition(Entity entity, CharacterStory character, Vec3 vec3, float XRot, float YRot) {
+    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, Vec3 vec3, float XRot, float YRot) {
         this.entity = entity;
         this.character = character;
         this.x = vec3.x;
@@ -36,7 +37,7 @@ public class CameraAngleCharacterPosition {
         return entity;
     }
 
-    public void setEntity(Entity entity) {
+    public void setEntity(LivingEntity entity) {
         this.entity = entity;
     }
 

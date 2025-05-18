@@ -34,7 +34,7 @@ public class Subscene extends StoryDetails {
         }
         for(String animationName : animationNameList) {
             Animation animation = scene.getAnimationByName(animationName);
-            Playback playback = new Playback(animation, player.serverLevel(), playbackType);
+            Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType);
             playback.start();
             playbackList.add(playback);
         }

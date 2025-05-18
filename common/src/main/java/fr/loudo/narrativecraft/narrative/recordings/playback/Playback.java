@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings.playback;
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
@@ -17,7 +18,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
-import net.minecraft.world.entity.Pose;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +25,7 @@ import java.util.UUID;
 public class Playback {
 
     private Animation animation;
+    private CharacterStory character;
     private LivingEntity entity;
     private ServerLevel serverLevel;
     private PlaybackType playbackType;
@@ -32,10 +33,11 @@ public class Playback {
 
     private int tick;
 
-    public Playback(Animation animation, ServerLevel serverLevel, PlaybackType playbackType) {
+    public Playback(Animation animation, ServerLevel serverLevel, CharacterStory character, PlaybackType playbackType) {
         this.animation = animation;
         this.serverLevel = serverLevel;
         this.playbackType = playbackType;
+        this.character = character;
         this.isPlaying = false;
         this.hasEnded = false;
     }
@@ -51,8 +53,9 @@ public class Playback {
     }
 
     private void spawnEntity(MovementData loc) {
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         entity = new FakePlayer(serverLevel, gameProfile);
+        character.setEntity(entity);
         moveEntitySilent(entity, loc);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
@@ -63,8 +66,9 @@ public class Playback {
     }
 
     private void spawnEntity(MovementData loc, Entity oldEntity) {
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), "fakeP");
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         entity = new FakePlayer(serverLevel, gameProfile);
+        character.setEntity(entity);
         moveEntitySilent(entity, loc);
         entity.setPose(oldEntity.getPose());
         SynchedEntityData entityData = entity.getEntityData();
@@ -102,7 +106,7 @@ public class Playback {
         if(!entity.isAlive()) return;
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
         if(tick >= movementDataList.size() - 1) {
-            if(playbackType == PlaybackType.RECORDING) {
+            if(playbackType == PlaybackType.DEVELOPMENT) {
                 stopAndKill();
             } else {
                 stop();
@@ -235,9 +239,12 @@ public class Playback {
         return entity;
     }
 
+    public CharacterStory getCharacter() {
+        return character;
+    }
+
     public enum PlaybackType {
-        RECORDING,
-        CUTSCENE_EDITING,
-        CUTSCENE,
+        DEVELOPMENT,
+        PRODUCTION,
     }
 }

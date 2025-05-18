@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ public class PlayerSession {
     private List<Subscene> subscenesPlaying;
     private KeyframeControllerBase keyframeControllerBase;
     private CutscenePlayback cutscenePlayback;
+    private StoryHandler storyHandler;
     private boolean overwriteState;
 
     public PlayerSession(ServerPlayer player) {
@@ -79,6 +81,14 @@ public class PlayerSession {
 
     public void setCutscenePlayback(CutscenePlayback cutscenePlayback) {
         this.cutscenePlayback = cutscenePlayback;
+    }
+
+    public StoryHandler getStoryHandler() {
+        return storyHandler;
+    }
+
+    public void setStoryHandler(StoryHandler storyHandler) {
+        this.storyHandler = storyHandler;
     }
 
     public void reset() {

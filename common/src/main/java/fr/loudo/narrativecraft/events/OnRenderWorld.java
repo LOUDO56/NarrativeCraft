@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 
 public class OnRenderWorld {
@@ -13,10 +14,12 @@ public class OnRenderWorld {
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
             KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
             if(keyframeControllerBase == null) return;
-            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
-                if (cutsceneController.getCurrentPreviewKeyframe() == null) {
-                    for (KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
-                        keyframeGroup.showLineBetweenKeyframes(poseStack);
+            if(keyframeControllerBase.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
+                if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                    if (cutsceneController.getCurrentPreviewKeyframe() == null) {
+                        for (KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
+                            keyframeGroup.showLineBetweenKeyframes(poseStack);
+                        }
                     }
                 }
             }
