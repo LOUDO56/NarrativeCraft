@@ -2,16 +2,17 @@ package fr.loudo.narrativecraft.narrative.chapter;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Chapter extends StoryDetails {
+public class Chapter extends NarrativeEntry {
 
     private int index;
     private List<Scene> sceneList;
@@ -68,6 +69,18 @@ public class Chapter extends StoryDetails {
 
     public List<Scene> getSceneList() {
         return sceneList;
+    }
+
+    @Override
+    public void update(String name, String description) {
+        if(!NarrativeCraftFile.updateChapterDetails(this, name, description)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.chapter_manager.update.failed"));
+            return;
+        }
+        this.name = name;
+        this.description = description;
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", index));
+        reloadScreen();
     }
 
     @Override

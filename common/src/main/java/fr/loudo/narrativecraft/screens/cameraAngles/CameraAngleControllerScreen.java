@@ -30,7 +30,7 @@ public class CameraAngleControllerScreen extends Screen {
         }).bounds(startX, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addKeyframe);
 
-        Button addCharacter = Button.builder(ImageFontConstants.CHARACTER, button -> {
+        Button addCharacter = Button.builder(ImageFontConstants.CHARACTER_ADD, button -> {
             cameraAngleController.addCharacter();
         }).bounds(startX + BUTTON_WIDTH + 5, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addCharacter);

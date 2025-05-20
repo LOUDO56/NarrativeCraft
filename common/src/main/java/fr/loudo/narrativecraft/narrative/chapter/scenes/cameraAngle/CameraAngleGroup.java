@@ -1,16 +1,18 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CameraAngleGroup extends StoryDetails {
+public class CameraAngleGroup extends NarrativeEntry {
 
     private transient Scene scene;
     List<CameraAngle> cameraAngleList;
@@ -62,6 +64,21 @@ public class CameraAngleGroup extends StoryDetails {
 
     public void setCharacterPositions(List<CameraAngleCharacterPosition> characterPositions) {
         this.characterPositions = characterPositions;
+    }
+
+    @Override
+    public void update(String name, String description) {
+        String oldName = this.name;
+        String oldDescription = this.description;
+        this.name = name;
+        this.description = description;
+        if(!NarrativeCraftFile.updateCameraAnglesFile(scene)) {
+            this.name = oldName;
+            this.description = oldDescription;
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.update.failed", name));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
     }
 
     @Override

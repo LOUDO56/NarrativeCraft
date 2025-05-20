@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
@@ -52,7 +51,7 @@ public class SubscenesScreen extends StoryElementScreen {
                                 List<Animation> selected = new ArrayList<>();
                                 List<String> names = new ArrayList<>();
                                 for (var entry : entries1) {
-                                    Animation a = (Animation) entry.getStoryDetails();
+                                    Animation a = (Animation) entry.getNarrativeEntry();
                                     selected.add(a);
                                     names.add(a.getName());
                                 }

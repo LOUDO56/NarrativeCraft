@@ -105,6 +105,11 @@ public class StoryHandler {
         }
     }
 
+    /**
+     * This translates text effects such as waiving and shaking into effects in-game, as well as giving a cleaned dialog text
+     * @param rawText
+     * @return A ParsedDialog instance
+     */
     private ParsedDialog parseDialogContent(String rawText) {
         List<TextEffect> effects = new ArrayList<>();
         StringBuilder cleanText = new StringBuilder();

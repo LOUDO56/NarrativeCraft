@@ -5,15 +5,17 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Subscene extends StoryDetails {
+public class Subscene extends NarrativeEntry {
 
     private transient Scene scene;
     private transient List<Animation> animationList;
@@ -77,6 +79,22 @@ public class Subscene extends StoryDetails {
 
     public void setAnimationNameList(List<String> animationNameList) {
         this.animationNameList = animationNameList;
+    }
+
+    @Override
+    public void update(String name, String description) {
+        String oldName = this.name;
+        String oldDescription = this.description;
+        this.name = name;
+        this.description = description;
+        if(!NarrativeCraftFile.updateSubsceneFile(scene)) {
+            this.name = oldName;
+            this.description = oldDescription;
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.update.failed", name));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        reloadScreen();
     }
 
     @Override

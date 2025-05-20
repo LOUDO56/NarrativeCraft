@@ -84,7 +84,7 @@ public class CutscenesScreen extends StoryElementScreen {
                                 List<String> selectedAnimationsString = new ArrayList<>();
                                 List<Animation> selectedAnimations = new ArrayList<>();
                                 for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                                    Animation animation = (Animation) entry.getStoryDetails();
+                                    Animation animation = (Animation) entry.getNarrativeEntry();
                                     selectedAnimationsString.add(animation.getName());
                                     selectedAnimations.add(animation);
                                 }
@@ -106,7 +106,7 @@ public class CutscenesScreen extends StoryElementScreen {
                             if(NarrativeCraftFile.cutscenesFileExist(scene)) {
                                 List<Subscene> selectedSubscene = new ArrayList<>();
                                 for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                                    Subscene subscene = (Subscene) entry.getStoryDetails();
+                                    Subscene subscene = (Subscene) entry.getNarrativeEntry();
                                     selectedSubscene.add(subscene);
                                 }
                                 cutscene.setSubsceneList(selectedSubscene);

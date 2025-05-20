@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager.template;
 
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -28,18 +28,18 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
 
     public static class StoryEntryData {
         public final Button mainButton;
-        public StoryDetails storyDetails;
+        public NarrativeEntry narrativeEntry;
         public List<Button> extraButtons;
 
-        public StoryEntryData(Button mainButton, StoryDetails storyDetails, List<Button> extraButtons) {
+        public StoryEntryData(Button mainButton, NarrativeEntry narrativeEntry, List<Button> extraButtons) {
             this.mainButton = mainButton;
-            this.storyDetails = storyDetails;
+            this.narrativeEntry = narrativeEntry;
             this.extraButtons = extraButtons;
         }
 
-        public StoryEntryData(Button mainButton, StoryDetails storyDetails) {
+        public StoryEntryData(Button mainButton, NarrativeEntry narrativeEntry) {
             this.mainButton = mainButton;
-            this.storyDetails = storyDetails;
+            this.narrativeEntry = narrativeEntry;
         }
 
         public StoryEntryData(Button mainButton) {
@@ -59,9 +59,9 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             this.buttons = new ArrayList<>();
             buttons.add(mainButton);
 
-            if (data.storyDetails != null) {
-                buttons.add(createEditButton(data.storyDetails));
-                buttons.add(createRemoveButton(data.storyDetails));
+            if (data.narrativeEntry != null) {
+                buttons.add(createEditButton(data.narrativeEntry));
+                buttons.add(createRemoveButton(data.narrativeEntry));
             }
 
             if (data.extraButtons != null) {
@@ -69,13 +69,13 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             }
         }
 
-        private Button createEditButton(StoryDetails details) {
+        private Button createEditButton(NarrativeEntry details) {
             return Button.builder(ImageFontConstants.EDIT, btn -> {
                 Minecraft.getInstance().setScreen(new EditInfoScreen(screen, details));
             }).width(20).build();
         }
 
-        private Button createRemoveButton(StoryDetails details) {
+        private Button createRemoveButton(NarrativeEntry details) {
             return Button.builder(ImageFontConstants.REMOVE, btn -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
                     if (b) {

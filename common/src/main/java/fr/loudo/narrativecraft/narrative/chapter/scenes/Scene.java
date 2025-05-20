@@ -6,14 +6,16 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene extends StoryDetails {
+public class Scene extends NarrativeEntry {
 
     private Chapter chapter;
     private List<Animation> animationList;
@@ -179,6 +181,19 @@ public class Scene extends StoryDetails {
     public void setCameraAngleGroupList(List<CameraAngleGroup> cameraAngleGroupList) {
         this.cameraAngleGroupList = cameraAngleGroupList;
     }
+
+    @Override
+    public void update(String name, String description) {
+        if(!NarrativeCraftFile.updateSceneDetails(this, name, description)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.update.failed", name));
+            return;
+        }
+        this.name = name;
+        this.description = description;
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
+        reloadScreen();
+    }
+
 
     @Override
     public void remove() {

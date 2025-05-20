@@ -2,11 +2,11 @@ package fr.loudo.narrativecraft.narrative;
 
 import net.minecraft.client.gui.screens.Screen;
 
-public abstract class StoryDetails {
+public abstract class NarrativeEntry {
 
     protected String name, description;
 
-    public StoryDetails(String name, String description) {
+    public NarrativeEntry(String name, String description) {
         this.name = name;
         this.description = description;
     }
@@ -27,6 +27,7 @@ public abstract class StoryDetails {
         this.description = description;
     }
 
+    public abstract void update(String name, String description);
     public abstract void remove();
     public abstract Screen reloadScreen();
 }

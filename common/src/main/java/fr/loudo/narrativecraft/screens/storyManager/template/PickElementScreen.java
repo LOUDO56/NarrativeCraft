@@ -1,8 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager.template;
 
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
-import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -24,7 +23,7 @@ public class PickElementScreen extends Screen {
     private static final Component SELECTED_TITLE = Component.translatable("pack.selected.title");
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final Screen lastScreen;
-    private final List<? extends StoryDetails> storyDetails1, storyDetails2;
+    private final List<? extends NarrativeEntry> narrativeEntry1, narrativeEntry2;
     private Button moveButton, doneButton;
     private TransferableStorySelectionList availableList, selectedList;
     private StringWidget availableString, selectedString, headTitle;
@@ -34,22 +33,22 @@ public class PickElementScreen extends Screen {
     public PickElementScreen(Screen lastScreen,
                              Component title,
                              Component selector,
-                             List<? extends StoryDetails> storyDetails1,
-                             List<? extends StoryDetails> storyDetails2,
+                             List<? extends NarrativeEntry> narrativeEntry1,
+                             List<? extends NarrativeEntry> narrativeEntry2,
                              Consumer<List<TransferableStorySelectionList.Entry>> onDone
     ) {
         super(title);
         this.selector = selector;
-        this.storyDetails1 = storyDetails1;
-        this.storyDetails2 = storyDetails2;
+        this.narrativeEntry1 = narrativeEntry1;
+        this.narrativeEntry2 = narrativeEntry2;
         this.onDone = onDone;
         this.lastScreen = lastScreen;
     }
 
     @Override
     protected void init() {
-        this.availableList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails1, 200, 240));
-        this.selectedList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, storyDetails2, 200, 240));
+        this.availableList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, narrativeEntry1, 200, 240));
+        this.selectedList = this.addRenderableWidget(new TransferableStorySelectionList(this.minecraft, narrativeEntry2, 200, 240));
         this.availableList.setOtherList(selectedList);
         this.selectedList.setOtherList(availableList);
         this.moveButton = this.addRenderableWidget(Button.builder(Component.literal("◀"), button -> {
@@ -107,10 +106,10 @@ public class PickElementScreen extends Screen {
 
         private TransferableStorySelectionList otherList;
 
-        public TransferableStorySelectionList(Minecraft minecraft, List<? extends StoryDetails> storyDetailsList, int width, int height) {
+        public TransferableStorySelectionList(Minecraft minecraft, List<? extends NarrativeEntry> narrativeEntries, int width, int height) {
             super(minecraft, width, height, 33, 18);
-            for (StoryDetails storyDetails : storyDetailsList) {
-                Entry entry = new Entry(storyDetails);
+            for (NarrativeEntry narrativeEntry : narrativeEntries) {
+                Entry entry = new Entry(narrativeEntry);
                 this.addEntry(entry);
             }
         }
@@ -146,24 +145,24 @@ public class PickElementScreen extends Screen {
 
         public class Entry extends ObjectSelectionList.Entry<Entry> {
 
-            private final StoryDetails storyDetails;
+            private final NarrativeEntry narrativeEntry;
 
-            public Entry(StoryDetails storyDetails) {
-                this.storyDetails = storyDetails;
+            public Entry(NarrativeEntry narrativeEntry) {
+                this.narrativeEntry = narrativeEntry;
             }
 
             @Override
             public Component getNarration() {
-                return Component.literal(storyDetails.getName());
+                return Component.literal(narrativeEntry.getName());
             }
 
             @Override
             public void render(GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovering, float partialTick) {
-                guiGraphics.drawCenteredString(minecraft.font, storyDetails.getName(), left + 4 + TransferableStorySelectionList.this.width / 2, top + height / 2 - 4, -1);
+                guiGraphics.drawCenteredString(minecraft.font, narrativeEntry.getName(), left + 4 + TransferableStorySelectionList.this.width / 2, top + height / 2 - 4, -1);
             }
 
-            public StoryDetails getStoryDetails() {
-                return storyDetails;
+            public NarrativeEntry getNarrativeEntry() {
+                return narrativeEntry;
             }
         }
     }

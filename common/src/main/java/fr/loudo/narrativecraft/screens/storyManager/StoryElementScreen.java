@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager;
 
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.template.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -25,12 +25,12 @@ public class StoryElementScreen extends OptionsSubScreen {
 
     protected StoryElementList storyElementList;
     protected List<Button> buttons;
-    protected List<StoryDetails> storyDetails;
+    protected List<NarrativeEntry> narrativeEntries;
 
     public StoryElementScreen(Screen lastScreen, Options options, Component title) {
         super(lastScreen, options, title);
         buttons = new ArrayList<>();
-        storyDetails = new ArrayList<>();
+        narrativeEntries = new ArrayList<>();
     }
 
     @Override

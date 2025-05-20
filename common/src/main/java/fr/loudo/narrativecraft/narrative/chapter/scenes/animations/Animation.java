@@ -6,11 +6,13 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
-import fr.loudo.narrativecraft.narrative.StoryDetails;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.screens.Screen;
 
-public class Animation extends StoryDetails {
+public class Animation extends NarrativeEntry {
 
     private transient Scene scene;
     private CharacterStory character;
@@ -25,6 +27,23 @@ public class Animation extends StoryDetails {
     public Animation(String name, String description) {
         super(name, description);
         this.actionsData = new ActionsData();
+    }
+
+    @Override
+    public void update(String name, String description) {
+        NarrativeCraftFile.removeAnimationFileFromScene(this);
+        String oldName = this.name;
+        String oldDescription = this.description;
+        this.name = name;
+        this.description = description;
+        if(!NarrativeCraftFile.updateAnimationFile(this)) {
+            this.name = oldName;
+            this.description = oldDescription;
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.animation_manager.update.failed", name));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        reloadScreen();
     }
 
     public CharacterStory getCharacter() {
