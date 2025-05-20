@@ -1,13 +1,16 @@
 package fr.loudo.narrativecraft.screens.storyManager.template;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
@@ -109,6 +112,9 @@ public class EditInfoScreen extends Screen {
             if(narrativeEntry == null && lastScreen instanceof CameraAnglesScreen) {
                 addCameraAnglesAction(name, desc);
             }
+            if(narrativeEntry == null && lastScreen instanceof CharactersScreen) {
+                addCharacter(name, desc);
+            }
             if(narrativeEntry != null) {
                 narrativeEntry.update(name, desc);
             }
@@ -139,6 +145,9 @@ public class EditInfoScreen extends Screen {
         if(narrativeEntry == null && lastScreen instanceof CameraAnglesScreen screen) {
             title = Translation.message("screen.camera_angles_manager.add.title", screen.getScene().getName());
         }
+        if(narrativeEntry == null && lastScreen instanceof CharactersScreen) {
+            title = Translation.message("screen.characters_manager.add.title");
+        }
         if(narrativeEntry != null && narrativeEntry instanceof Chapter chapter) {
             title = Translation.message("screen.chapter_manager.edit.title", chapter.getIndex());
         }
@@ -153,6 +162,9 @@ public class EditInfoScreen extends Screen {
         }
         if(narrativeEntry != null && narrativeEntry instanceof CameraAngleGroup cameraAngleGroup) {
             title = Translation.message("screen.camera_angles_manager.edit.title", cameraAngleGroup.getName(), cameraAngleGroup.getScene().getName());
+        }
+        if(narrativeEntry != null && lastScreen instanceof CharactersScreen charactersScreen) {
+            title = Translation.message("screen.characters_manager.edit.title");
         }
         return title;
     }
@@ -260,6 +272,21 @@ public class EditInfoScreen extends Screen {
             return;
         }
         CameraAnglesScreen screen = new CameraAnglesScreen(scene);
+        this.minecraft.setScreen(screen);
+    }
+
+    private void addCharacter(String name, String desc) {
+        if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(name)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.already_exists"));
+            return;
+        }
+        CharacterStory characterStory = new CharacterStory(name, desc);
+        if(!NarrativeCraftFile.updateCharacterFile(characterStory)) {
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.failed", name));
+            return;
+        }
+        NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(characterStory);
+        CharactersScreen screen = new CharactersScreen();
         this.minecraft.setScreen(screen);
     }
 

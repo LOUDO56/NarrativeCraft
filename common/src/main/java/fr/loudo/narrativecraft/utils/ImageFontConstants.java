@@ -11,7 +11,8 @@ public class ImageFontConstants {
     public static final Component ADD = Component.literal("\uE004");
     public static final Component EDIT = Component.literal("\uE005");
     public static final Component REMOVE = Component.literal("\uE006");
-    public static final Component CHARACTER = Component.literal("\uE007");
+    public static final Component CHARACTER_ADD = Component.literal("\uE007");
     public static final Component SAVE = Component.literal("\uE008");
+    public static final Component CHARACTER = Component.literal("\uE009");
 
 }

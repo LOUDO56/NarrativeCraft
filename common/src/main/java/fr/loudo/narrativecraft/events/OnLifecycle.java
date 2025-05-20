@@ -11,6 +11,7 @@ public class OnLifecycle {
         NarrativeCraftFile.init(server);
         NarrativeCraftMod.server = server;
         NarrativeCraftMod.getInstance().getChapterManager().init();
+        NarrativeCraftMod.getInstance().getCharacterManager().init();
     }
 
 }

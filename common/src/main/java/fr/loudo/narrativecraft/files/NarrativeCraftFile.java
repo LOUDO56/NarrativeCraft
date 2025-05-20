@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
@@ -183,6 +184,22 @@ public class NarrativeCraftFile {
             NarrativeCraftMod.LOG.error("Couldn't update animation {} file of scene {} of chapter {} ! {}", animation.getName(), animation.getScene().getName(), animation.getScene().getChapter().getIndex(), e.getMessage());
             return false;
         }
+    }
+
+    public static boolean updateCharacterFile(CharacterStory characterStory) {
+        File animationFile = createFile(characterDirectory, getCamelCaseName(characterStory.getName()) + EXTENSION_DATA_FILE);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
+            gson.toJson(characterStory, writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update character {} file! {}", characterStory.getName(), e.getMessage());
+            return false;
+        }
+    }
+
+    public static void removeCharacterFile(CharacterStory characterStory) {
+        new File(characterDirectory, getCamelCaseName(characterStory.getName()) + EXTENSION_DATA_FILE).delete();
     }
 
     public static void removeChapterFolder(Chapter chapter) {

@@ -65,7 +65,7 @@
     },
     {
       "type": "bitmap",
-      "file": "minecraft:font/character.png",
+      "file": "minecraft:font/character_add.png",
       "ascent": 10,
       "height": 14,
       "chars": [
@@ -79,6 +79,15 @@
       "height": 14,
       "chars": [
         "\uE008"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/character.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE009"
       ]
     }
   ]

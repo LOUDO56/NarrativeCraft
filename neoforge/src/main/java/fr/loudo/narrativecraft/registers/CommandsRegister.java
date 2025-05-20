@@ -18,6 +18,7 @@ public class CommandsRegister {
         PlayerSessionCommand.register(event.getDispatcher());
         RecordCommand.register(event.getDispatcher());
         TestCommand.register(event.getDispatcher());
+        OpenScreenCommand.register(event.getDispatcher());
     }
 
 }

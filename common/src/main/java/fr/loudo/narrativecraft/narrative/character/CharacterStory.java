@@ -1,6 +1,12 @@
 package fr.loudo.narrativecraft.narrative.character;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
+import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -26,6 +32,14 @@ public class CharacterStory extends NarrativeEntry {
         this.birthdate = birthdate;
     }
 
+    public CharacterStory(String name, String description) {
+        super(name, description);
+        this.name = name;
+        this.description = description;
+        this.age = age;
+        this.birthdate = birthdate;
+    }
+
     public int getAge() {
         return age;
     }
@@ -44,16 +58,29 @@ public class CharacterStory extends NarrativeEntry {
 
     @Override
     public void update(String name, String description) {
-
+        NarrativeCraftFile.removeCharacterFile(this);
+        String oldName = this.name;
+        String oldDescription = this.description;
+        this.name = name;
+        this.description = description;
+        if(!NarrativeCraftFile.updateCharacterFile(this)) {
+            this.name = oldName;
+            this.description = oldDescription;
+            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.update.failed", name));
+            return;
+        }
+        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        Minecraft.getInstance().setScreen(reloadScreen());
     }
 
     @Override
     public void remove() {
-
+        NarrativeCraftMod.getInstance().getCharacterManager().removeCharacter(this);
+        NarrativeCraftFile.removeCharacterFile(this);
     }
 
     @Override
     public Screen reloadScreen() {
-        return null;
+        return new CharactersScreen();
     }
 }
