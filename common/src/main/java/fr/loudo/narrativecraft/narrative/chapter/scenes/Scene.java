@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
@@ -191,7 +192,7 @@ public class Scene extends NarrativeEntry {
         this.name = name;
         this.description = description;
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
-        reloadScreen();
+        Minecraft.getInstance().setScreen(reloadScreen());
     }
 
 

@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -94,7 +95,7 @@ public class Subscene extends NarrativeEntry {
             return;
         }
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
-        reloadScreen();
+        Minecraft.getInstance().setScreen(reloadScreen());
     }
 
     @Override

@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
 public class Animation extends NarrativeEntry {
@@ -43,7 +44,7 @@ public class Animation extends NarrativeEntry {
             return;
         }
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
-        reloadScreen();
+        Minecraft.getInstance().setScreen(reloadScreen());
     }
 
     public CharacterStory getCharacter() {

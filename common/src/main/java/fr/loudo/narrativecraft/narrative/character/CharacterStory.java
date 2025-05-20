@@ -1,12 +1,12 @@
 package fr.loudo.narrativecraft.narrative.character;
 
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.LivingEntity;
 
-public class CharacterStory {
+public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
-    private String name;
-    private String description;
     private int age;
     private String birthdate;
     //TODO: custom skin, one string attr to means either a player name, mineskin url or local skin path.
@@ -15,23 +15,15 @@ public class CharacterStory {
 
 
     public CharacterStory(String name) {
-        this.name = name;
+        super(name, "");
     }
 
     public CharacterStory(String name, String description, int age, String birthdate) {
+        super(name, description);
         this.name = name;
         this.description = description;
         this.age = age;
         this.birthdate = birthdate;
-    }
-
-
-    public String getName() {
-        return name;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public int getAge() {
@@ -48,5 +40,20 @@ public class CharacterStory {
 
     public void setEntity(LivingEntity entity) {
         this.entity = entity;
+    }
+
+    @Override
+    public void update(String name, String description) {
+
+    }
+
+    @Override
+    public void remove() {
+
+    }
+
+    @Override
+    public Screen reloadScreen() {
+        return null;
     }
 }
