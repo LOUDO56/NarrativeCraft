@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.screens.storyManager.scenes.animations;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

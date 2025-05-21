@@ -3,10 +3,15 @@ package fr.loudo.narrativecraft.screens.storyManager.characters;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.storyManager.template.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.components.EditCharacterInfoScreen;
+import fr.loudo.narrativecraft.screens.storyManager.components.EditInfoScreen;
+import fr.loudo.narrativecraft.screens.storyManager.components.StoryElementList;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
@@ -16,6 +21,17 @@ public class CharactersScreen extends StoryElementScreen {
 
     public CharactersScreen() {
         super(null, Minecraft.getInstance().options, Translation.message("screen.characters_manager.title"));
+    }
+
+    @Override
+    protected void addTitle() {
+        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout.defaultCellSetting().alignVerticallyMiddle();
+        linearlayout.addChild(new StringWidget(this.title, this.font));
+        linearlayout.addChild(Button.builder(ImageFontConstants.ADD, button -> {
+            EditCharacterInfoScreen screen = new EditCharacterInfoScreen(this);
+            this.minecraft.setScreen(screen);
+        }).width(25).build());
     }
 
     @Override

@@ -88,6 +88,7 @@
   "narrativecraft.screen.characters_manager.title": "Characters list",
   "narrativecraft.screen.characters_manager.add.title": "Add a character",
   "narrativecraft.screen.characters_manager.edit.title": "Edit character",
+  "narrativecraft.screen.characters_manager.age": "Age",
 
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",

@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.storyManager.template;
+package fr.loudo.narrativecraft.screens.storyManager.components;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
@@ -17,6 +17,7 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesSc
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.MultiLineEditBox;
@@ -27,17 +28,19 @@ import net.minecraft.network.chat.Component;
 
 public class EditInfoScreen extends Screen {
 
-    private final int WIDGET_WIDTH = 190;
-    private final int EDIT_BOX_NAME_HEIGHT = 20;
-    private final int EDIT_BOX_DESCRIPTION_HEIGHT = 90;
-    private final int BUTTON_HEIGHT = 20;
-    private final int GAP = 5;
+    protected final int WIDGET_WIDTH = 190;
+    protected final int EDIT_BOX_NAME_HEIGHT = 20;
+    protected final int EDIT_BOX_DESCRIPTION_HEIGHT = 90;
+    protected final int BUTTON_HEIGHT = 20;
+    protected final int GAP = 5;
 
-    private String name, description;
-    private EditBox nameBox;
-    private MultiLineEditBox descriptionBox;
-    private Screen lastScreen;
-    private NarrativeEntry narrativeEntry;
+    protected String name, description;
+    protected Button actionButton, backButton;
+    protected ScreenUtils.LabelBox nameBox;
+    protected ScreenUtils.MultilineLabelBox descriptionBox;
+    protected StringWidget titleWidget;
+    protected Screen lastScreen;
+    protected NarrativeEntry narrativeEntry;
 
     public EditInfoScreen(Screen lastScreen) {
         super(Component.literal("Edit info"));
@@ -65,34 +68,44 @@ public class EditInfoScreen extends Screen {
         int centerX = this.width / 2 - WIDGET_WIDTH / 2;
         int centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
 
-        StringWidget titleWidget = ScreenUtils.text(title, this.font, titleX, centerY - labelHeight);
+        titleWidget = ScreenUtils.text(title, this.font, titleX, centerY - labelHeight);
         this.addRenderableWidget(titleWidget);
 
         Component nameLabel = Translation.message("screen.story.name")
                 .append(Component.literal(" *").withStyle(style -> style.withColor(0xE62E37)));
 
-        nameBox = labelBox(nameLabel,
+        nameBox = new ScreenUtils.LabelBox(
+                nameLabel,
+                font,
                 WIDGET_WIDTH,
                 EDIT_BOX_NAME_HEIGHT,
                 centerX,
-                centerY
+                centerY,
+                ScreenUtils.Align.VERTICAL
         );
-        nameBox.setValue(name);
-        nameBox.setFilter(text -> !text.matches(".*[\\\\/:*?\"<>|].*"));
+        nameBox.getEditBox().setValue(name);
+        nameBox.getEditBox().setFilter(text -> !text.matches(".*[\\\\/:*?\"<>|].*"));
+        this.addRenderableWidget(nameBox.getStringWidget());
+        this.addRenderableWidget(nameBox.getEditBox());
+
         centerY += labelHeight + EDIT_BOX_NAME_HEIGHT + GAP;
-        descriptionBox = multiLineBoxLabel(
-                Translation.message("screen.story.description").getString(),
+        descriptionBox = new ScreenUtils.MultilineLabelBox(
+                Translation.message("screen.story.description"),
+                font,
                 WIDGET_WIDTH,
                 EDIT_BOX_DESCRIPTION_HEIGHT,
                 centerX,
                 centerY
         );
-        descriptionBox.setValue(description);
+        descriptionBox.getMultiLineEditBox().setValue(description);
+
+        this.addRenderableWidget(descriptionBox.getStringWidget());
+        this.addRenderableWidget(descriptionBox.getMultiLineEditBox());
 
         centerY += labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + GAP;
-        Button actionButton = Button.builder(buttonActionMessage, button -> {
-            String name = nameBox.getValue();
-            String desc = descriptionBox.getValue();
+        actionButton = Button.builder(buttonActionMessage, button -> {
+            String name = nameBox.getEditBox().getValue();
+            String desc = descriptionBox.getMultiLineEditBox().getValue();
             if(name.isEmpty()) {
                 ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.story.name.required"));
                 return;
@@ -122,7 +135,7 @@ public class EditInfoScreen extends Screen {
         this.addRenderableWidget(actionButton);
 
         centerY += BUTTON_HEIGHT + GAP;
-        Button backButton = Button.builder(CommonComponents.GUI_BACK, button -> {
+        backButton = Button.builder(CommonComponents.GUI_BACK, button -> {
             this.minecraft.setScreen(lastScreen);
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(backButton);
@@ -172,37 +185,6 @@ public class EditInfoScreen extends Screen {
     @Override
     public void onClose() {
         this.minecraft.setScreen(lastScreen);
-    }
-
-    private EditBox labelBox(Component text, int width, int height, int x, int y) {
-        StringWidget stringWidget = ScreenUtils.text(text, this.font, x, y);
-        EditBox editBox = new EditBox(
-                this.font,
-                x,
-                y + this.font.lineHeight + 5,
-                width,
-                height,
-                Component.literal(text + " value")
-        );
-        this.addRenderableWidget(stringWidget);
-        this.addRenderableWidget(editBox);
-        return editBox;
-    }
-
-    private MultiLineEditBox multiLineBoxLabel(String text, int width, int height, int x, int y) {
-        StringWidget stringWidget = ScreenUtils.text(Component.literal(text), this.font, x, y);
-        MultiLineEditBox multiLineEditBox = new MultiLineEditBox(
-                this.font,
-                x,
-                y + this.font.lineHeight + 5,
-                width,
-                height,
-                Component.literal("Once upon a time... In a wild... wild world... there were two wolf brothers, living in their home lair with their papa wolf..."),
-                Component.literal("")
-        );
-        this.addRenderableWidget(stringWidget);
-        this.addRenderableWidget(multiLineEditBox);
-        return multiLineEditBox;
     }
 
     private void addChapterAction(String name, String description) {
@@ -289,6 +271,5 @@ public class EditInfoScreen extends Screen {
         CharactersScreen screen = new CharactersScreen();
         this.minecraft.setScreen(screen);
     }
-
 
 }

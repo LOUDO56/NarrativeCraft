@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.storyManager.template;
+package fr.loudo.narrativecraft.screens.storyManager.components;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
