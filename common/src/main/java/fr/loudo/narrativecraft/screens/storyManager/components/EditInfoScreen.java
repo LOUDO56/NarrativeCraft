@@ -125,9 +125,6 @@ public class EditInfoScreen extends Screen {
             if(narrativeEntry == null && lastScreen instanceof CameraAnglesScreen) {
                 addCameraAnglesAction(name, desc);
             }
-            if(narrativeEntry == null && lastScreen instanceof CharactersScreen) {
-                addCharacter(name, desc);
-            }
             if(narrativeEntry != null) {
                 narrativeEntry.update(name, desc);
             }
@@ -254,21 +251,6 @@ public class EditInfoScreen extends Screen {
             return;
         }
         CameraAnglesScreen screen = new CameraAnglesScreen(scene);
-        this.minecraft.setScreen(screen);
-    }
-
-    private void addCharacter(String name, String desc) {
-        if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.already_exists"));
-            return;
-        }
-        CharacterStory characterStory = new CharacterStory(name, desc);
-        if(!NarrativeCraftFile.updateCharacterFile(characterStory)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.failed", name));
-            return;
-        }
-        NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(characterStory);
-        CharactersScreen screen = new CharactersScreen();
         this.minecraft.setScreen(screen);
     }
 

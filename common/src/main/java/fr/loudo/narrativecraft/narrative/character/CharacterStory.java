@@ -13,7 +13,6 @@ import net.minecraft.world.entity.LivingEntity;
 public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
-    private int age;
     private String birthdate;
     //TODO: custom skin, one string attr to means either a player name, mineskin url or local skin path.
     //TODO: Custom dialogue of character options here?
@@ -24,24 +23,11 @@ public class CharacterStory extends NarrativeEntry {
         super(name, "");
     }
 
-    public CharacterStory(String name, String description, int age, String birthdate) {
+    public CharacterStory(String name, String description, String day, String month, String year) {
         super(name, description);
         this.name = name;
         this.description = description;
-        this.age = age;
-        this.birthdate = birthdate;
-    }
-
-    public CharacterStory(String name, String description) {
-        super(name, description);
-        this.name = name;
-        this.description = description;
-        this.age = age;
-        this.birthdate = birthdate;
-    }
-
-    public int getAge() {
-        return age;
+        this.birthdate = day + "/" + month + "/" + year;
     }
 
     public String getBirthdate() {
@@ -56,22 +42,27 @@ public class CharacterStory extends NarrativeEntry {
         this.entity = entity;
     }
 
-    @Override
-    public void update(String name, String description) {
+    public void update(String name, String description, String day, String month, String year) {
         NarrativeCraftFile.removeCharacterFile(this);
         String oldName = this.name;
         String oldDescription = this.description;
+        String oldBirthdate = this.birthdate;
         this.name = name;
         this.description = description;
+        this.birthdate = day + "/" + month + "/" + year;
         if(!NarrativeCraftFile.updateCharacterFile(this)) {
             this.name = oldName;
             this.description = oldDescription;
+            this.birthdate = oldBirthdate;
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.update.failed", name));
             return;
         }
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
         Minecraft.getInstance().setScreen(reloadScreen());
     }
+
+    @Override
+    public void update(String name, String description) {}
 
     @Override
     public void remove() {

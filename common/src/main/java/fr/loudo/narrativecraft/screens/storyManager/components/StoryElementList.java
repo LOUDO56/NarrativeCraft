@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager.components;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -71,7 +72,11 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
 
         private Button createEditButton(NarrativeEntry details) {
             return Button.builder(ImageFontConstants.EDIT, btn -> {
-                Minecraft.getInstance().setScreen(new EditInfoScreen(screen, details));
+                if(details instanceof CharacterStory characterStory) {
+                    Minecraft.getInstance().setScreen(new EditCharacterInfoScreen(screen, characterStory));
+                } else {
+                    Minecraft.getInstance().setScreen(new EditInfoScreen(screen, details));
+                }
             }).width(20).build();
         }
 
