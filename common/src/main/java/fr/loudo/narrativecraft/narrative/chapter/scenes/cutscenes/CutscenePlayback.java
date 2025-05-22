@@ -94,7 +94,9 @@ public class CutscenePlayback  {
             cutsceneController.stopSession();
         }
         playerSession.setCutscenePlayback(null);
-        onCutsceneEnd.run();
+        if(onCutsceneEnd != null) {
+            onCutsceneEnd.run();
+        }
         NarrativeCraftMod.getInstance().setCutsceneMode(true);
         Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }

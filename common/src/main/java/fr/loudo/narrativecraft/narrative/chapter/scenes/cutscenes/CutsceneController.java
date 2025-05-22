@@ -251,6 +251,9 @@ public class CutsceneController extends KeyframeControllerBase {
                 playback.changeLocationByTick(newTick, seamless);
             }
         }
+        for(Playback playback : playbackList) {
+            playback.changeLocationByTick(newTick, seamless);
+        }
     }
 
     public boolean isLastKeyframe(Keyframe keyframe) {

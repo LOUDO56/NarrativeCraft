@@ -8,7 +8,7 @@ public enum Easing {
     public static double getInterpolation(Easing easing, double t) {
         switch (easing) {
             case SMOOTH -> {
-                return t * t * (3 - 2 * t);
+                return t * t * t * (t * (6 * t - 15) + 10);
             }
             case LINEAR -> {
                 return t;
