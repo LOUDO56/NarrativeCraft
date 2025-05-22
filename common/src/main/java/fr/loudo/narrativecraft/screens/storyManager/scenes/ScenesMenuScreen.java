@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.Animations
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
-import fr.loudo.narrativecraft.screens.storyManager.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;

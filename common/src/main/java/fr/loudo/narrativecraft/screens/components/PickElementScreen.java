@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.storyManager.components;
+package fr.loudo.narrativecraft.screens.components;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.utils.ScreenUtils;

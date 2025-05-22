@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.cutscenes;
+package fr.loudo.narrativecraft.screens.components;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,12 +11,12 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 
 import java.util.List;
 
-public class CutsceneSettingsList extends ContainerObjectSelectionList<CutsceneSettingsList.Entry> {
+public class ObjectListScreen extends ContainerObjectSelectionList<ObjectListScreen.Entry> {
 
     private static final int BUTTON_WIDTH = 170;
     private final OptionsSubScreen screen;
 
-    public CutsceneSettingsList(Minecraft minecraft, int width, OptionsSubScreen screen) {
+    public ObjectListScreen(Minecraft minecraft, int width, OptionsSubScreen screen) {
         super(minecraft, width, screen.layout.getContentHeight(), screen.layout.getHeaderHeight(), 25);
         this.centerListVertically = false;
         this.screen = screen;

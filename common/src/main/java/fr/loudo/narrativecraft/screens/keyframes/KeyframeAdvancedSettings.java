@@ -2,12 +2,11 @@ package fr.loudo.narrativecraft.screens.keyframes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
-import fr.loudo.narrativecraft.screens.cutscenes.CutsceneSettingsList;
+import fr.loudo.narrativecraft.screens.components.ObjectListScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneSettingsScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.options.SoundOptionsScreen;
 
 public class KeyframeAdvancedSettings extends CutsceneSettingsScreen {
 
@@ -20,15 +19,15 @@ public class KeyframeAdvancedSettings extends CutsceneSettingsScreen {
 
     @Override
     protected void addContents() {
-        this.cutsceneSettingsList = new CutsceneSettingsList(this.minecraft, this.width, this);
+        this.objectListScreen = new ObjectListScreen(this.minecraft, this.width, this);
         Button easingsButton = Button.builder(Translation.message("screen.keyframe_advanced.easings"), button -> {
             KeyframeEasingsScreen screen = new KeyframeEasingsScreen(this.lastScreen, this.options, keyframe);
             this.minecraft.setScreen(screen);
         }).build();
 
-        cutsceneSettingsList.addButton(easingsButton);
+        objectListScreen.addButton(easingsButton);
 
-        cutsceneSettingsList = this.layout.addToContents(cutsceneSettingsList);
+        objectListScreen = this.layout.addToContents(objectListScreen);
 
     }
 }

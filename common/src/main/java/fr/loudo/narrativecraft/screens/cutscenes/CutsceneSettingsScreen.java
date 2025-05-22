@@ -1,23 +1,19 @@
 package fr.loudo.narrativecraft.screens.cutscenes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
+import fr.loudo.narrativecraft.screens.components.ObjectListScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.layouts.LayoutElement;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class CutsceneSettingsScreen extends OptionsSubScreen {
 
     protected Screen lastScreen;
     protected CutsceneController cutsceneController;
-    protected CutsceneSettingsList cutsceneSettingsList;
+    protected ObjectListScreen objectListScreen;
 
     public CutsceneSettingsScreen(CutsceneController cutsceneController, Screen lastScreen, Component title) {
         super(lastScreen, Minecraft.getInstance().options, title);
@@ -28,7 +24,7 @@ public class CutsceneSettingsScreen extends OptionsSubScreen {
     @Override
     protected void addContents() {
 
-        this.cutsceneSettingsList = new CutsceneSettingsList(this.minecraft, this.width, this);
+        this.objectListScreen = new ObjectListScreen(this.minecraft, this.width, this);
 
         Button changeTimeSkip = Button.builder(Translation.message("screen.cutscenes_settings.time_skip"), button -> {
             CutsceneChangeTimeSkipScreen screen = new CutsceneChangeTimeSkipScreen(cutsceneController, this);
@@ -40,9 +36,9 @@ public class CutsceneSettingsScreen extends OptionsSubScreen {
             this.minecraft.setScreen(screen);
         }).build();
 
-        cutsceneSettingsList.addButton(changeTimeSkip);
-        cutsceneSettingsList.addButton(selectKeyframeGroup);
-        cutsceneSettingsList = this.layout.addToContents(cutsceneSettingsList);
+        objectListScreen.addButton(changeTimeSkip);
+        objectListScreen.addButton(selectKeyframeGroup);
+        objectListScreen = this.layout.addToContents(objectListScreen);
 
     }
 
@@ -54,8 +50,8 @@ public class CutsceneSettingsScreen extends OptionsSubScreen {
     @Override
     protected void repositionElements() {
         this.layout.arrangeElements();
-        if (this.cutsceneSettingsList != null) {
-            this.cutsceneSettingsList.updateSize(this.width, this.layout);
+        if (this.objectListScreen != null) {
+            this.objectListScreen.updateSize(this.width, this.layout);
         }
 
     }

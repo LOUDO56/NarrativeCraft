@@ -1,9 +1,12 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.animations;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.storyManager.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
@@ -39,14 +42,25 @@ public class AnimationsScreen extends StoryElementScreen {
     public void addContents() {
         List<StoryElementList.StoryEntryData> entries = scene.getAnimationList().stream()
                 .map(animation -> {
+
+                    Button settingsButton = createSettingsButton(animation);
+
                     Button button = Button.builder(Component.literal(animation.getName()), b -> {
                         // TODO: preview animation
                     }).build();
-                    return new StoryElementList.StoryEntryData(button, animation);
+                    return new StoryElementList.StoryEntryData(button, animation, List.of(settingsButton));
                 }).toList();
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }
 
+    private Button createSettingsButton(Animation animation) {
+
+        return Button.builder(ImageFontConstants.SETTINGS, button1 -> {
+            AnimationCharacterLinkScreen screen = new AnimationCharacterLinkScreen(this, animation);
+            this.minecraft.setScreen(screen);
+        }).build();
+
+    }
 
     public Scene getScene() {
         return scene;

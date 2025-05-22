@@ -10,8 +10,10 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
@@ -178,12 +180,17 @@ public class RecordCommand {
             playerSession.setOverwriteState(false);
         }
 
+        animation.setCharacter(NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories().getFirst());
+
         if (recording.save(animation)) {
             Animation finalAnimation = animation;
             context.getSource().sendSuccess(() -> Translation.message("record.save.success", finalAnimation.getName(), playerSession.getScene().getName(), playerSession.getChapter().getIndex()), true);
         } else {
             context.getSource().sendFailure(Translation.message("record.save.fail", animation.getName(), playerSession.getChapter().getIndex(), playerSession.getScene().getName()));
         }
+
+        AnimationCharacterLinkScreen screen = new AnimationCharacterLinkScreen(null, animation);
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
 
         return Command.SINGLE_SUCCESS;
 

@@ -1,4 +1,4 @@
-package fr.loudo.narrativecraft.screens.storyManager.components;
+package fr.loudo.narrativecraft.screens.components;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
@@ -66,6 +66,9 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
             }
 
             if (data.extraButtons != null) {
+                data.extraButtons.forEach(button -> {
+                    button.setWidth(20);
+                });
                 buttons.addAll(data.extraButtons);
             }
         }
