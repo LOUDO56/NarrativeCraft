@@ -24,12 +24,21 @@ public class DialogAppearAnimation {
         this.opacity = 0;
     }
 
-    public DialogAppearAnimation getNextValues(double t) {
+    public DialogAppearAnimation getAppearNextValue(double t) {
         double x = MathUtils.lerp(startPosition.x, endPosition.x, t);
         double y = MathUtils.lerp(startPosition.y, endPosition.y, t);
         double z = MathUtils.lerp(startPosition.z, endPosition.z, t);
         float scale = (float) MathUtils.lerp(0, endScale, t);
         int opacity = (int) MathUtils.lerp(0, 255, t);
+        return new DialogAppearAnimation(new Vec3(x, y, z), scale, opacity);
+    }
+
+    public DialogAppearAnimation getDisappearNextValue(double t) {
+        double x = MathUtils.lerp(endPosition.x, startPosition.x, t);
+        double y = MathUtils.lerp(endPosition.y, startPosition.y, t);
+        double z = MathUtils.lerp(endPosition.z, startPosition.z, t);
+        float scale = (float) MathUtils.lerp(endScale, 0, t);
+        int opacity = (int) MathUtils.lerp(255, 0, t);
         return new DialogAppearAnimation(new Vec3(x, y, z), scale, opacity);
     }
 

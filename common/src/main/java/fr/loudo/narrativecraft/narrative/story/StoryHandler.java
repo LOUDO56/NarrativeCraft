@@ -93,18 +93,22 @@ public class StoryHandler {
             currentDialogBox.getDialogScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
-            CharacterStory currentCharacter = currentCharacters.stream()
-                    .filter(characterStory -> characterStory.getName().equalsIgnoreCase(characterName))
-                    .findFirst()
-                    .orElseThrow(() -> new RuntimeException("Character not found: " + characterName));
+            if (currentDialogBox != null) {
+                currentDialogBox.endDialog();
+                return;
+            } else {
+                CharacterStory currentCharacter = currentCharacters.stream()
+                        .filter(characterStory -> characterStory.getName().equalsIgnoreCase(characterName))
+                        .findFirst()
+                        .orElseThrow(() -> new RuntimeException("Character not found: " + characterName));
 
-            currentDialogBox = new Dialog(
-                    parsed.cleanedText,
-                    currentCharacter.getEntity(),
-                    3, 5, 0.5f,
-                    10, 15, 0, 100
-            );
-            applyTextEffects(parsed.effects);
+                currentDialogBox = new Dialog(
+                        parsed.cleanedText,
+                        currentCharacter.getEntity(),
+                        3, 5, 0.5f,
+                        10, 15, 0, 100
+                );
+            }
             currentCharacterTalking = characterName;
         }
         applyTextEffects(parsed.effects);

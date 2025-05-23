@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
@@ -33,8 +34,9 @@ public class Dialog {
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth, tailXPoint, tailYPoint;
     private int opacity;
-    private boolean acceptNewDialog;
+    private boolean acceptNewDialog, endDialog, dialogEnded;
 
+    private Runnable onEndDialog;
     private LivingEntity entityServer;
     private Entity entityClient;
     private Vec3 textPosition;
@@ -64,28 +66,42 @@ public class Dialog {
         this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 10f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         this.acceptNewDialog = false;
         this.dialogueTail = new DialogueTail(7f, 15f);
+        this.endDialog = false;
+        this.dialogEnded = false;
     }
 
     public void reset() {
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
-        t = 0;
+        endDialog = false;
+        dialogEnded = false;
         dialogAnimationScrollText.reset();
+        t = 0;
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
-        if (t < 1.0 && !acceptNewDialog) {
-            dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
-            dialogAppearAnimation.setEndPosition(textPosition);
+        if ((t < 1.0 && !acceptNewDialog) || endDialog) {
             long currentTime = System.currentTimeMillis();
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));
-            DialogAppearAnimation interpolation = dialogAppearAnimation.getNextValues(t);
+            dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
+            dialogAppearAnimation.setEndPosition(textPosition);
+            DialogAppearAnimation interpolation;
+            if(!acceptNewDialog && !endDialog) {
+                interpolation = dialogAppearAnimation.getAppearNextValue(t);
+            } else {
+                interpolation = dialogAppearAnimation.getDisappearNextValue(t);
+            }
             textPosition = interpolation.getTextPosition();
             scale = interpolation.getScale();
             opacity = interpolation.getOpacity();
+        }
+        if (t >= 1.0 && endDialog && !dialogEnded) {
+            dialogEnded = true;
+            NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(null);
+            NarrativeCraftMod.getInstance().getStoryHandler().showDialog();
         }
         Minecraft client = Minecraft.getInstance();
         fov = ((GameRendererFields)client.gameRenderer).callGetFov(
@@ -160,7 +176,6 @@ public class Dialog {
     }
 
     private void drawTextDialog(GuiGraphics guiGraphics, float screenX, float screenY) {
-        Minecraft client = Minecraft.getInstance();
         float resizedScale = getResizedScale(scale);
         float maxWidth = dialogAnimationScrollText.getMaxWidthLine();
         if(t >= 1.0) {
@@ -296,5 +311,15 @@ public class Dialog {
     public void setScale(float scale) {
         this.scale = scale;
         dialogAppearAnimation.setScale(scale);
+    }
+
+    public void setOnDialogEnd(Runnable onEndDialog) {
+        this.onEndDialog = onEndDialog;
+    }
+
+    public void endDialog() {
+        startTime = System.currentTimeMillis();
+        endDialog = true;
+        t = 0;
     }
 }
