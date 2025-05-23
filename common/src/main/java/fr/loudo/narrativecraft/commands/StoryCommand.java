@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
 
 public class StoryCommand {
 
@@ -17,6 +18,9 @@ public class StoryCommand {
                 .then(Commands.literal("story")
                         .then(Commands.literal("play")
                                 .executes(StoryCommand::playStory)
+                        )
+                        .then(Commands.literal("stop")
+                                .executes(StoryCommand::stopStory)
                         )
                 )
         );
@@ -27,6 +31,20 @@ public class StoryCommand {
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
         NarrativeCraftMod.getInstance().setStoryHandler(new StoryHandler(firstChapter, firstScene));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int stopStory(CommandContext<CommandSourceStack> context) {
+
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) {
+            context.getSource().sendFailure(Component.literal("No story is playing."));
+            return 0;
+        }
+
+        storyHandler.stop();
+        context.getSource().sendSuccess(() -> Component.literal("Story stopped."), false);
 
         return Command.SINGLE_SUCCESS;
     }

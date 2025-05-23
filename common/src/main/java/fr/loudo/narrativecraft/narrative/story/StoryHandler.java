@@ -50,6 +50,9 @@ public class StoryHandler {
 
     private void initStory() {
         try {
+            if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
+                NarrativeCraftMod.getInstance().getStoryHandler().stop();
+            }
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
             isRunning = true;
@@ -63,6 +66,16 @@ public class StoryHandler {
 
     public void stop() {
         isRunning = false;
+        for(CharacterStory characterStory : currentCharacters) {
+            characterStory.kill();
+        }
+        for(CharacterStory characterStory : currentNpcs) {
+            characterStory.kill();
+        }
+        NarrativeCraftMod.getInstance().setStoryHandler(null);
+        NarrativeCraftMod.getInstance().setCutsceneMode(false);
+        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        playerSession.reset();
     }
 
     public void next() {
