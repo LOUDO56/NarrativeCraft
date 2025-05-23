@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScrollText;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
+import fr.loudo.narrativecraft.narrative.dialog.animations.DialogEntityBobbing;
 import fr.loudo.narrativecraft.narrative.dialog.geometrics.DialogueTail;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -30,6 +31,7 @@ public class Dialog {
     private final Easing easing = Easing.SMOOTH;
 
     private DialogAnimationArrowSkip dialogAnimationArrowSkip;
+    private DialogEntityBobbing dialogEntityBobbing;
     private DialogueTail dialogueTail;
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth, tailXPoint, tailYPoint;
@@ -67,6 +69,7 @@ public class Dialog {
         this.dialogueTail = new DialogueTail(7f, 15f);
         this.endDialog = false;
         this.dialogEnded = false;
+        this.dialogEntityBobbing = new DialogEntityBobbing(this);
     }
 
     public void reset() {
@@ -231,6 +234,7 @@ public class Dialog {
             oldHeight = height;
             oldPaddingX = paddingX;
             oldPaddingY = paddingY;
+            dialogEntityBobbing.updateLookDirection();
         } else {
             if(acceptNewDialog) {
                 if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale && oldMaxWidth == dialogAnimationScrollText.getMaxWidthLine()) {
