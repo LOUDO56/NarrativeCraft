@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.TpUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,6 +33,13 @@ public class OnServerTick {
         for(Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
             if(playback.isPlaying()) {
                 playback.next();
+            }
+        }
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null) {
+            KeyframeCoordinate soloPoint = storyHandler.getCurrentKeyframeCoordinate();
+            if(soloPoint != null) {
+                TpUtil.teleportPlayer(storyHandler.getPlayerSession().getPlayer(), soloPoint.getVec3());
             }
         }
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {

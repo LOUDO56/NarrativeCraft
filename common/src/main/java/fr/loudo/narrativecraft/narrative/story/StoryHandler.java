@@ -14,7 +14,11 @@ import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,6 +32,7 @@ public class StoryHandler {
 
     private final List<CharacterStory> currentCharacters;
     private final List<CharacterStory> currentNpcs;
+    private final List<SimpleSoundInstance> simpleSoundInstanceList;
     private final PlayerSession playerSession;
     private final InkTagTranslators inkTagTranslators;
     private Story story;
@@ -45,6 +50,7 @@ public class StoryHandler {
         currentNpcs = new ArrayList<>();
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
+        simpleSoundInstanceList = new ArrayList<>();
         initStory();
     }
 
@@ -75,6 +81,9 @@ public class StoryHandler {
         NarrativeCraftMod.getInstance().setStoryHandler(null);
         NarrativeCraftMod.getInstance().setCutsceneMode(false);
         Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        for(SimpleSoundInstance simpleSoundInstance : simpleSoundInstanceList) {
+            Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
+        }
         playerSession.reset();
     }
 
@@ -202,6 +211,19 @@ public class StoryHandler {
         }
     }
 
+    public void playSound(SoundEvent sound, float volume, float pitch, boolean loop) {
+        SimpleSoundInstance simpleSoundInstance = new SimpleSoundInstance(sound.location(), SoundSource.MASTER, volume, pitch, SoundInstance.createUnseededRandom(), loop, 0, SoundInstance.Attenuation.NONE, (double)0.0F, (double)0.0F, (double)0.0F, true);
+        simpleSoundInstanceList.add(simpleSoundInstance);
+        Minecraft.getInstance().getSoundManager().play(simpleSoundInstance);
+    }
+
+    public void stopSound(SoundEvent sound) {
+        for(SimpleSoundInstance simpleSoundInstance : simpleSoundInstanceList) {
+            if(simpleSoundInstance.getSound().getLocation().getPath().equals(sound.location().getPath())) {
+                Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
+            }
+        }
+    }
 
     public PlayerSession getPlayerSession() {
         return playerSession;
@@ -237,6 +259,10 @@ public class StoryHandler {
 
     public InkTagTranslators getInkTagTranslators() {
         return inkTagTranslators;
+    }
+
+    public List<SimpleSoundInstance> getSimpleSoundInstanceList() {
+        return simpleSoundInstanceList;
     }
 
     private static class TextEffect {

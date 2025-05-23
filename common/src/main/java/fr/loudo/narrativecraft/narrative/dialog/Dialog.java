@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
-import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScrollText;
+import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
 import fr.loudo.narrativecraft.narrative.dialog.geometrics.DialogueTail;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -36,7 +36,6 @@ public class Dialog {
     private int opacity;
     private boolean acceptNewDialog, endDialog, dialogEnded;
 
-    private Runnable onEndDialog;
     private LivingEntity entityServer;
     private Entity entityClient;
     private Vec3 textPosition;
@@ -311,10 +310,6 @@ public class Dialog {
     public void setScale(float scale) {
         this.scale = scale;
         dialogAppearAnimation.setScale(scale);
-    }
-
-    public void setOnDialogEnd(Runnable onEndDialog) {
-        this.onEndDialog = onEndDialog;
     }
 
     public void endDialog() {

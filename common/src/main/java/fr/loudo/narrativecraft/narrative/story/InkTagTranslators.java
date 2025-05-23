@@ -11,6 +11,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,24 +69,57 @@ public class InkTagTranslators {
     }
 
     public boolean executeTag(String tag) {
-        if(tag.contains("start cutscene")) {
+        String[] tagSplit = tag.split(" ");
+        if(tag.contains("cutscene start")) {
             storyHandler.setCurrentKeyframeCoordinate(null);
-            String cutsceneName = tag.split(" ")[2];
+            String cutsceneName = tagSplit[2];
             Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(cutsceneName);
             if(cutscene != null) {
                 executeCutscene(cutscene);
                 return false;
             }
-        } else if(tag.contains("set camera")) {
+        } else if(tag.contains("camera set")) {
             storyHandler.setCurrentKeyframeCoordinate(null);
-            String cameraAnglesGroupName = tag.split(" ")[2];
-            String cameraAngleName = tag.split(" ")[3];
+            String cameraAnglesGroupName = tagSplit[2];
+            String cameraAngleName = tagSplit[3];
             CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(cameraAnglesGroupName);
             //TODO: error handler for tags
             CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(cameraAngleName);
             if(cameraAngle != null) {
                 executeCameraAngle(cameraAngleGroup, cameraAngle);
             }
+        } else if (tag.contains("song start") || tag.contains("sfx start")) {
+            String songName = tagSplit[2];
+            boolean loop = false;
+            float volume = 1.0F;
+            float pitch = 1.0F;
+            if(tagSplit.length >= 4) {
+                String volValue = tagSplit[3];
+                try {
+                  volume = Float.parseFloat(volValue);
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("Volume value is not a number:" + e);
+                }
+            }
+            if(tagSplit.length >= 5) {
+                String pitchValue = tagSplit[4];
+                try {
+                    pitch = Float.parseFloat(pitchValue);
+                } catch (NumberFormatException e) {
+                    throw new RuntimeException("Pitch value is not a number:" + e);
+                }
+            }
+            if(tagSplit.length >= 6 && tagSplit[5].equals("loop")) {
+                loop = true;
+            }
+            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(songName);
+            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
+            storyHandler.playSound(sound, volume, pitch, loop);
+        } else if (tag.contains("song stop") || tag.contains("sfx stop")) {
+            String songName = tagSplit[2];
+            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(songName);
+            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
+            storyHandler.stopSound(sound);
         }
         return true;
     }
@@ -97,7 +132,6 @@ public class InkTagTranslators {
         storyHandler.setCurrentDialogBox(null);
         KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-            //TODO: fix concurent shit
             cameraAngleController.stopSession();
             storyHandler.getCurrentDialogBox().reset();
         }
