@@ -132,9 +132,7 @@ public class TestCommand {
 
     private static int dialogText(CommandContext<CommandSourceStack> context, String text, float paddingX, float paddingY, float letterSpacing, float gap, float scale, int bcColor, int maxWidth) {
 
-        Dialog dialog = NarrativeCraftMod.getInstance().getStoryHandler().getCurrentDialogBox();
-        text = String.join(" ", text.split("_"));
-        ServerPlayer player = context.getSource().getPlayer();
+        Dialog dialog = NarrativeCraftMod.getInstance().getTestDialog();
         if(dialog != null) {
             dialog.setPaddingX(paddingX);
             dialog.setPaddingY(paddingY);
@@ -147,11 +145,13 @@ public class TestCommand {
             dialog.reset();
             return Command.SINGLE_SUCCESS;
         }
+
+        ServerPlayer player = context.getSource().getPlayer();
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "a"));
         fakePlayer.snapTo(context.getSource().getPosition());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
-        NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor, maxWidth));
+        NarrativeCraftMod.getInstance().setTestDialog(new Dialog(text, fakePlayer, paddingX, paddingY, letterSpacing, gap, scale, bcColor, maxWidth));
 
         return Command.SINGLE_SUCCESS;
     }

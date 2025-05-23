@@ -28,6 +28,7 @@ public class NarrativeCraftMod {
     private final PlayerSessionManager playerSessionManager;
     private final RecordingHandler recordingHandler;
     private final PlaybackHandler playbackHandler;
+    private Dialog testDialog;
 
     public NarrativeCraftMod() {
         chapterManager = new ChapterManager();
@@ -76,5 +77,13 @@ public class NarrativeCraftMod {
 
     public void setStoryHandler(StoryHandler storyHandler) {
         this.storyHandler = storyHandler;
+    }
+
+    public Dialog getTestDialog() {
+        return testDialog;
+    }
+
+    public void setTestDialog(Dialog testDialog) {
+        this.testDialog = testDialog;
     }
 }

@@ -78,7 +78,6 @@ public class Dialog {
         if(textPosition == null) return;
         updateTextPosition(deltaTracker);
         if (t < 1.0 && !acceptNewDialog) {
-            //TODO: interpolate by transform and scale, not position.
             dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
             dialogAppearAnimation.setEndPosition(textPosition);
             long currentTime = System.currentTimeMillis();
@@ -168,9 +167,11 @@ public class Dialog {
             oldScale = scale;
             oldMaxWidth = maxWidth;
         } else {
-            if(oldScale != scale || oldMaxWidth != maxWidth) {
-                resizedScale = (float) MathUtils.lerp(getResizedScale(oldScale), getResizedScale(scale), t);
-                maxWidth = (float) MathUtils.lerp(oldMaxWidth, maxWidth, t);
+            if(acceptNewDialog) {
+                if(oldScale != scale || oldMaxWidth != maxWidth) {
+                    resizedScale = (float) MathUtils.lerp(getResizedScale(oldScale), getResizedScale(scale), t);
+                    maxWidth = (float) MathUtils.lerp(oldMaxWidth, maxWidth, t);
+                }
             }
         }
 
@@ -217,18 +218,20 @@ public class Dialog {
             oldPaddingX = paddingX;
             oldPaddingY = paddingY;
         } else {
-            if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale && oldMaxWidth == dialogAnimationScrollText.getMaxWidthLine()) {
-                t = 1.0;
-            } else {
-                // All scaled stuff is to interpolate and match the player's distance and fov (or else during the interpolation, width and height remains the same on UI).
-                float scaledOldPixelPaddingX = ScreenUtils.getPixelValue(oldPaddingX, resizedScale);
-                float scaledOldPixelPaddingY = ScreenUtils.getPixelValue(oldPaddingY, resizedScale);
-                float scaledOldWidth = ScreenUtils.getPixelValue(oldWidth, resizedScale) + 2 * scaledOldPixelPaddingX;
-                float scaledOldHeight = ScreenUtils.getPixelValue(oldHeight, resizedScale) + 2 * scaledOldPixelPaddingY;
-                long currentTime = System.currentTimeMillis();
-                totalWidth = (float) MathUtils.lerp(scaledOldWidth, totalWidth, t);
-                totalHeight = (float) MathUtils.lerp(scaledOldHeight, totalHeight, t);
-                t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / DIALOG_CHANGE_TIME, 1.0));
+            if(acceptNewDialog) {
+                if(oldWidth == width && oldHeight == height && oldPaddingX == paddingX && oldPaddingY == paddingY && oldScale == scale && oldMaxWidth == dialogAnimationScrollText.getMaxWidthLine()) {
+                    t = 1.0;
+                } else {
+                    // All scaled stuff is to interpolate and match the player's distance and fov (or else during the interpolation, width and height remains the same on UI).
+                    float scaledOldPixelPaddingX = ScreenUtils.getPixelValue(oldPaddingX, resizedScale);
+                    float scaledOldPixelPaddingY = ScreenUtils.getPixelValue(oldPaddingY, resizedScale);
+                    float scaledOldWidth = ScreenUtils.getPixelValue(oldWidth, resizedScale) + 2 * scaledOldPixelPaddingX;
+                    float scaledOldHeight = ScreenUtils.getPixelValue(oldHeight, resizedScale) + 2 * scaledOldPixelPaddingY;
+                    long currentTime = System.currentTimeMillis();
+                    totalWidth = (float) MathUtils.lerp(scaledOldWidth, totalWidth, t);
+                    totalHeight = (float) MathUtils.lerp(scaledOldHeight, totalHeight, t);
+                    t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / DIALOG_CHANGE_TIME, 1.0));
+                }
             }
         }
 
