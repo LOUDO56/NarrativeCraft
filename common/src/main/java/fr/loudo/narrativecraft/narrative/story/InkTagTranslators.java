@@ -41,6 +41,19 @@ public class InkTagTranslators {
         }
     }
 
+    public void handleEndCutscene(CutsceneController cutsceneController) {
+        for(Playback playback : cutsceneController.getPlaybackList()) {
+            NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
+        }
+        if(tagsToExecuteLater.isEmpty()) {
+            storyHandler.setCurrentKeyframeCoordinate(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
+            storyHandler.showDialog();
+            return;
+        }
+        executeLaterTags();
+
+    }
+
     public void executeLaterTags() {
         for (int i = 0; i < tagsToExecuteLater.size(); i++) {
             String tag = tagsToExecuteLater.get(i);
@@ -55,6 +68,7 @@ public class InkTagTranslators {
 
     public boolean executeTag(String tag) {
         if(tag.contains("start cutscene")) {
+            storyHandler.setCurrentKeyframeCoordinate(null);
             String cutsceneName = tag.split(" ")[2];
             Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(cutsceneName);
             if(cutscene != null) {
@@ -62,6 +76,7 @@ public class InkTagTranslators {
                 return false;
             }
         } else if(tag.contains("set camera")) {
+            storyHandler.setCurrentKeyframeCoordinate(null);
             String cameraAnglesGroupName = tag.split(" ")[2];
             String cameraAngleName = tag.split(" ")[3];
             CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(cameraAnglesGroupName);
@@ -75,6 +90,11 @@ public class InkTagTranslators {
     }
 
     private void executeCutscene(Cutscene cutscene) {
+        for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
+            characterStory.kill();
+        }
+        storyHandler.getCurrentCharacters().clear();
+        storyHandler.setCurrentDialogBox(null);
         KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             //TODO: fix concurent shit
@@ -86,8 +106,7 @@ public class InkTagTranslators {
         storyHandler.getPlayerSession().setKeyframeControllerBase(cutsceneController);
         CutscenePlayback cutscenePlayback = new CutscenePlayback(storyHandler.getPlayerSession().getPlayer(), cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
         cutscenePlayback.start();
-        cutscenePlayback.setOnCutsceneEnd(this::executeLaterTags);
-        storyHandler.getCurrentCharacters().clear();
+        cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
             storyHandler.getCurrentCharacters().add(playback.getCharacter());
         }
@@ -107,6 +126,7 @@ public class InkTagTranslators {
         cameraAngleController.setCurrentPreviewKeyframe(cameraAngle);
     }
 
-
-
+    public List<String> getTagsToExecuteLater() {
+        return tagsToExecuteLater;
+    }
 }

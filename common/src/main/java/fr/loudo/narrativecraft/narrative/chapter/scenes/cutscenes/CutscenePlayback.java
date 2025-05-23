@@ -85,6 +85,9 @@ public class CutscenePlayback  {
     }
 
     public void stop() {
+        if(onCutsceneEnd != null) {
+            onCutsceneEnd.run();
+        }
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
         TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
         cutsceneController.pause();
@@ -94,11 +97,6 @@ public class CutscenePlayback  {
             cutsceneController.stopSession();
         }
         playerSession.setCutscenePlayback(null);
-        if(onCutsceneEnd != null) {
-            onCutsceneEnd.run();
-        }
-        NarrativeCraftMod.getInstance().setCutsceneMode(true);
-        Minecraft.getInstance().gameRenderer.setRenderHand(false);
     }
 
     private void initValues() {
@@ -122,7 +120,7 @@ public class CutscenePlayback  {
     public KeyframeCoordinate next() {
         long currentTime = System.currentTimeMillis();
         Minecraft minecraft = Minecraft.getInstance();
-        if(minecraft.options.keyShift.isDown()) {
+        if(minecraft.options.keyShift.isDown() && cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             cutsceneController.pause();
             cutsceneController.setCurrentPreviewKeyframe(firstKeyframe, false);
@@ -226,4 +224,6 @@ public class CutscenePlayback  {
     public void setOnCutsceneEnd(Runnable onCutsceneEnd) {
         this.onCutsceneEnd = onCutsceneEnd;
     }
+
+
 }

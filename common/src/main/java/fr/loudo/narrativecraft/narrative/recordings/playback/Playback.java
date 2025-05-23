@@ -86,14 +86,12 @@ public class Playback {
     public void stop() {
         isPlaying = false;
         hasEnded = true;
-        //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
     }
 
     public void stopAndKill() {
         isPlaying = false;
         hasEnded = true;
         killEntity();
-        //NarrativeCraft.getInstance().getPlaybackHandler().getPlaybacks().remove(this);
     }
 
 

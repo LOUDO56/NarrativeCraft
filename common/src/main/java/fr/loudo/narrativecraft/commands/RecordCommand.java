@@ -61,7 +61,7 @@ public class RecordCommand {
         }
 
         for(Subscene subscene : playerSession.getSubscenesPlaying()) {
-            subscene.stop();
+            subscene.stopAndKill();
         }
 
         if(NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
@@ -134,7 +134,7 @@ public class RecordCommand {
         }
 
         for(Subscene subscene : playerSession.getSubscenesPlaying()) {
-            subscene.stop();
+            subscene.stopAndKill();
         }
 
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);

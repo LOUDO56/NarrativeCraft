@@ -4,11 +4,16 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.List;
 
 public class CharacterStory extends NarrativeEntry {
 
@@ -73,5 +78,14 @@ public class CharacterStory extends NarrativeEntry {
     @Override
     public Screen reloadScreen() {
         return new CharactersScreen();
+    }
+
+    public void kill() {
+        if(entity != null) {
+            entity.remove(Entity.RemovalReason.KILLED);
+            if(entity instanceof FakePlayer fakePlayer) {
+                NarrativeCraftMod.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
+            }
+        }
     }
 }

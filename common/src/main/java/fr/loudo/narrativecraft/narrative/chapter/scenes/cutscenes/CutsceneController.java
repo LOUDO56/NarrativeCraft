@@ -98,11 +98,19 @@ public class CutsceneController extends KeyframeControllerBase {
     public void stopSession() {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            subscene.stop();
+            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+                subscene.stopAndKill();
+            } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                subscene.stop();
+            }
         }
 
         for(Playback playback : playbackList) {
-            playback.stopAndKill();
+            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+                playback.stopAndKill();
+            } else if (playbackType == Playback.PlaybackType.PRODUCTION) {
+                playback.stop();
+            }
         }
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
@@ -119,8 +127,10 @@ public class CutsceneController extends KeyframeControllerBase {
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
         }
-        NarrativeCraftMod.getInstance().setCutsceneMode(false);
-        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            NarrativeCraftMod.getInstance().setCutsceneMode(false);
+            Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        }
         isPlaying = false;
 
     }
@@ -334,5 +344,9 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public Playback.PlaybackType getPlaybackType() {
         return playbackType;
+    }
+
+    public List<Playback> getPlaybackList() {
+        return playbackList;
     }
 }

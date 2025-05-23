@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
@@ -26,11 +27,13 @@ import java.util.regex.Pattern;
 public class StoryHandler {
 
     private final List<CharacterStory> currentCharacters;
+    private final List<CharacterStory> currentNpcs;
     private final PlayerSession playerSession;
     private final InkTagTranslators inkTagTranslators;
     private Story story;
     private String currentDialog, currentCharacterTalking;
     private Dialog currentDialogBox;
+    private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning;
 
     public StoryHandler(Chapter chapter, Scene scene) {
@@ -38,8 +41,9 @@ public class StoryHandler {
         playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, chapter, scene);
         playerSession.setChapter(chapter);
         playerSession.setScene(scene);
-        this.currentCharacters = new ArrayList<>();
-        this.isRunning = true;
+        currentCharacters = new ArrayList<>();
+        currentNpcs = new ArrayList<>();
+        isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
         initStory();
     }
@@ -103,6 +107,7 @@ public class StoryHandler {
             applyTextEffects(parsed.effects);
             currentCharacterTalking = characterName;
         }
+        applyTextEffects(parsed.effects);
     }
 
     /**
@@ -203,6 +208,18 @@ public class StoryHandler {
 
     public void setCurrentDialogBox(Dialog currentDialogBox) {
         this.currentDialogBox = currentDialogBox;
+    }
+
+    public KeyframeCoordinate getCurrentKeyframeCoordinate() {
+        return currentKeyframeCoordinate;
+    }
+
+    public void setCurrentKeyframeCoordinate(KeyframeCoordinate currentKeyframeCoordinate) {
+        this.currentKeyframeCoordinate = currentKeyframeCoordinate;
+    }
+
+    public InkTagTranslators getInkTagTranslators() {
+        return inkTagTranslators;
     }
 
     private static class TextEffect {

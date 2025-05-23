@@ -1,12 +1,12 @@
 package fr.loudo.narrativecraft.mixin;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -15,8 +15,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Objects;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -30,6 +28,7 @@ public class GameRendererMixin {
 
         keyframeControllerFov(playerSession, callbackInfo);
         cutscenePlayingFov(playerSession, callbackInfo);
+        storyCurrentCamera(callbackInfo);
 
     }
 
@@ -61,5 +60,17 @@ public class GameRendererMixin {
 
         KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
         callbackInfo.setReturnValue((currentLoc.getFov()));
+    }
+
+    private void storyCurrentCamera(CallbackInfoReturnable<Float> callbackInfo) {
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
+
+        KeyframeCoordinate position = storyHandler.getCurrentKeyframeCoordinate();
+
+        if(position != null) {
+            callbackInfo.setReturnValue(position.getFov());
+        }
+
     }
 }

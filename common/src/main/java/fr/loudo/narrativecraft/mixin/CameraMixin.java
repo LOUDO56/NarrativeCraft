@@ -1,13 +1,13 @@
 package fr.loudo.narrativecraft.mixin;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Camera;
 import net.minecraft.client.CameraType;
@@ -22,8 +22,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Objects;
 
 @Mixin(Camera.class)
 public abstract class CameraMixin {
@@ -47,6 +45,7 @@ public abstract class CameraMixin {
 
         keyframePreviewAction(playerSession, ci);
         cutscenePlaying(playerSession, ci);
+        storyCurrentCamera(ci);
 
     }
 
@@ -85,5 +84,21 @@ public abstract class CameraMixin {
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
         ci.cancel();
+    }
+
+    private void storyCurrentCamera(CallbackInfo ci) {
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
+
+        KeyframeCoordinate position = storyHandler.getCurrentKeyframeCoordinate();
+
+        if(position != null) {
+            this.setPosition(position.getX(), position.getY(), position.getZ());
+            this.setRotation(position.getYRot(), position.getXRot());
+            this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
+
+            ci.cancel();
+        }
+
     }
 }

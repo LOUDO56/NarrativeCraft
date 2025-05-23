@@ -43,9 +43,16 @@ public class Subscene extends NarrativeEntry {
         }
     }
 
-    public void stop() {
+    public void stopAndKill() {
         for(Playback playback : playbackList) {
             playback.stopAndKill();
+        }
+        playbackList.clear();
+    }
+
+    public void stop() {
+        for(Playback playback : playbackList) {
+            playback.stop();
         }
         playbackList.clear();
     }
