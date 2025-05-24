@@ -18,6 +18,9 @@ public class StoryCommand {
                 .then(Commands.literal("story")
                         .then(Commands.literal("play")
                                 .executes(StoryCommand::playStory)
+                                .then(Commands.literal("debug")
+                                        .executes(StoryCommand::playStoryDebug)
+                                )
                         )
                         .then(Commands.literal("stop")
                                 .executes(StoryCommand::stopStory)
@@ -26,11 +29,21 @@ public class StoryCommand {
         );
     }
 
+
     private static int playStory(CommandContext<CommandSourceStack> context) {
 
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
         NarrativeCraftMod.getInstance().setStoryHandler(new StoryHandler(firstChapter, firstScene));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int playStoryDebug(CommandContext<CommandSourceStack> context) {
+        Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
+        Scene firstScene = firstChapter.getSceneList().getFirst();
+        StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene, true);
+        NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
 
         return Command.SINGLE_SUCCESS;
     }

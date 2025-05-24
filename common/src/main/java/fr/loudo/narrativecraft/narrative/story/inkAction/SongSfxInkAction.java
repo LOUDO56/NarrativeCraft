@@ -52,7 +52,6 @@ public class SongSfxInkAction extends InkAction {
 
     @Override
     void sendDebugDetails() {
-        NarrativeCraftMod.LOG.info(Translation.message("debug.song/sfx", name, volume, pitch, loop).getString());
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx", name, volume, pitch, loop), false);
         }

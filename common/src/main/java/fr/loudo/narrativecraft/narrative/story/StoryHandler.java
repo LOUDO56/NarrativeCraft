@@ -12,6 +12,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class StoryHandler {
 
@@ -42,6 +42,7 @@ public class StoryHandler {
     private Dialog currentDialogBox;
     private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning, isDebugMode;
+    private FadeScreenInkAction fadeScreenInkAction;
 
     public StoryHandler(Chapter chapter, Scene scene) {
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
@@ -54,6 +55,20 @@ public class StoryHandler {
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         isDebugMode = false;
+        initStory();
+    }
+
+    public StoryHandler(Chapter chapter, Scene scene, boolean isDebugMode) {
+        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
+        playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, chapter, scene);
+        playerSession.setChapter(chapter);
+        playerSession.setScene(scene);
+        currentCharacters = new ArrayList<>();
+        currentNpcs = new ArrayList<>();
+        isRunning = true;
+        inkTagTranslators = new InkTagTranslators(this);
+        typedSoundInstanceList = new ArrayList<>();
+        this.isDebugMode = isDebugMode;
         initStory();
     }
 
@@ -87,13 +102,22 @@ public class StoryHandler {
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
+        fadeScreenInkAction = null;
         playerSession.reset();
     }
 
     public void next() {
         try {
+            if(!story.canContinue()) {
+                stop();
+                return;
+            }
             currentDialog = story.Continue();
             if(inkTagTranslators.executeCurrentTags()) {
+                if(!story.canContinue() && !story.getCurrentTags().isEmpty()) {
+                    stop();
+                    return;
+                }
                 showDialog();
             }
         } catch (StoryException e) {
@@ -105,6 +129,7 @@ public class StoryHandler {
 
     public void showDialog() {
         String[] splittedDialog = currentDialog.split(":");
+        if(splittedDialog.length < 2) return;
         String characterName = splittedDialog[0].trim();
         String dialogContent = splittedDialog[1].trim();
 
@@ -114,7 +139,7 @@ public class StoryHandler {
 
         ParsedDialog parsed = parseDialogContent(dialogContent);
 
-        if (characterName.equalsIgnoreCase(currentCharacterTalking)) {
+        if (characterName.equalsIgnoreCase(currentCharacterTalking) && currentDialogBox != null) {
             currentDialogBox.getDialogScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
@@ -289,6 +314,14 @@ public class StoryHandler {
 
     public void setDebugMode(boolean debugMode) {
         isDebugMode = debugMode;
+    }
+
+    public FadeScreenInkAction getFadeScreenInkAction() {
+        return fadeScreenInkAction;
+    }
+
+    public void setFadeScreenInkAction(FadeScreenInkAction fadeScreenInkAction) {
+        this.fadeScreenInkAction = fadeScreenInkAction;
     }
 
     private static class TextEffect {

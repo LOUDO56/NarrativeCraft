@@ -49,7 +49,6 @@ public class CameraAngleInkAction extends InkAction {
 
     @Override
     void sendDebugDetails() {
-        NarrativeCraftMod.LOG.info(Translation.message("debug.camera_angle", name, child).getString());
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.cutscene", name, child), false);
         }

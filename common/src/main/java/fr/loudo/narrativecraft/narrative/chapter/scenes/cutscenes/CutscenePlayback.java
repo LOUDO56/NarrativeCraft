@@ -85,9 +85,6 @@ public class CutscenePlayback  {
     }
 
     public void stop() {
-        if(onCutsceneEnd != null) {
-            onCutsceneEnd.run();
-        }
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
         TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
         cutsceneController.pause();
@@ -97,6 +94,9 @@ public class CutscenePlayback  {
             cutsceneController.stopSession();
         }
         playerSession.setCutscenePlayback(null);
+        if(onCutsceneEnd != null) {
+            onCutsceneEnd.run();
+        }
     }
 
     private void initValues() {

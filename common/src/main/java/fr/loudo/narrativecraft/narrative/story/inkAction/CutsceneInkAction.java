@@ -49,6 +49,7 @@ public class CutsceneInkAction extends InkAction {
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
             storyHandler.getCurrentCharacters().add(playback.getCharacter());
         }
+        sendDebugDetails();
     }
 
     private void handleEndCutscene(CutsceneController cutsceneController) {
@@ -57,13 +58,18 @@ public class CutsceneInkAction extends InkAction {
         }
         storyHandler.setCurrentKeyframeCoordinate(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
         storyHandler.getInkTagTranslators().executeLaterTags();
+        if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty()) {
+            if(!storyHandler.getStory().canContinue()) {
+                storyHandler.stop();
+                return;
+            }
+        }
         storyHandler.getInkTagTranslators().getTagsToExecuteLater().clear();
 
     }
 
     @Override
     void sendDebugDetails() {
-        NarrativeCraftMod.LOG.info(Translation.message("debug.cutscene", name).getString());
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.cutscene", name), false);
         }

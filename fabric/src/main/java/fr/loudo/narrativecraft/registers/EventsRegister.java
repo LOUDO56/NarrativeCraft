@@ -24,6 +24,7 @@ public class EventsRegister {
         UseEntityCallback.EVENT.register(EntityRightClick::onEntityRightClick);
         ClientTickEvents.END_CLIENT_TICK.register(OnClientTick::clientTick);
         HudLayerRegistrationCallback.EVENT.register(HudRender::onHudRender);
+        HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
         WorldRenderEvents.AFTER_ENTITIES.register(RenderWorldEvent::onRenderWorld);
     }
 

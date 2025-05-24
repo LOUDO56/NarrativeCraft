@@ -1,9 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import fr.loudo.narrativecraft.narrative.story.inkAction.CameraAngleInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.CutsceneInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
@@ -77,6 +74,8 @@ public class InkTagTranslators {
             }
         } else if (tag.contains("sound stop all")) {
             storyHandler.stopAllSound();
+        } else if (tag.contains("fade")) {
+            inkAction = new FadeScreenInkAction(storyHandler);
         }
         if(inkAction == null) return true; // If there's no action, then continue story
         return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)

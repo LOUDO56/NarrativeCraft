@@ -11,7 +11,6 @@ public abstract class InkAction {
         this.storyHandler = storyHandler;
     }
 
-
     public abstract boolean execute(String[] command);
     abstract void sendDebugDetails();
 
