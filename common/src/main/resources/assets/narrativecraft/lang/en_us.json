@@ -126,5 +126,9 @@
   "narrativecraft.cutscene.keyframe.added": "Keyframe added to keyframe group ID #%d",
   "narrativecraft.cutscene.keyframe.added.fail": "§cYou need to select a keyframe group or create a new one.",
 
-  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds"
+  "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
+
+  "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
+  "narrativecraft.debug.camera_angle": "Set to camera angle parent %s child %s",
+  "narrativecraft.debug.song/sfx": "Song/Sfx %s playing now volume %d pitch %d isLooping? %s"
 }

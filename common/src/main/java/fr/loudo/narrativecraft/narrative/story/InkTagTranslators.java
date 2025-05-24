@@ -1,16 +1,9 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
-import fr.loudo.narrativecraft.narrative.character.CharacterStory;
-import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.narrative.story.inkAction.CameraAngleInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.CutsceneInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
@@ -43,19 +36,6 @@ public class InkTagTranslators {
         }
     }
 
-    public void handleEndCutscene(CutsceneController cutsceneController) {
-        for(Playback playback : cutsceneController.getPlaybackList()) {
-            NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
-        }
-        if(tagsToExecuteLater.isEmpty()) {
-            storyHandler.setCurrentKeyframeCoordinate(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
-            storyHandler.showDialog();
-            return;
-        }
-        executeLaterTags();
-
-    }
-
     public void executeLaterTags() {
         for (int i = 0; i < tagsToExecuteLater.size(); i++) {
             String tag = tagsToExecuteLater.get(i);
@@ -63,103 +43,44 @@ public class InkTagTranslators {
                 tagsToExecuteLater.addAll(tagsToExecuteLater.subList(i + 1, tagsToExecuteLater.size() - 1));
                 break;
             }
-            storyHandler.showDialog();
         }
+        storyHandler.showDialog();
 
     }
 
     public boolean executeTag(String tag) {
         String[] tagSplit = tag.split(" ");
+        InkAction inkAction = null;
         if(tag.contains("cutscene start")) {
-            storyHandler.setCurrentKeyframeCoordinate(null);
-            String cutsceneName = tagSplit[2];
-            Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(cutsceneName);
-            if(cutscene != null) {
-                executeCutscene(cutscene);
-                return false;
-            }
+            inkAction = new CutsceneInkAction(storyHandler);
         } else if(tag.contains("camera set")) {
-            storyHandler.setCurrentKeyframeCoordinate(null);
-            String cameraAnglesGroupName = tagSplit[2];
-            String cameraAngleName = tagSplit[3];
-            CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(cameraAnglesGroupName);
-            //TODO: error handler for tags
-            CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(cameraAngleName);
-            if(cameraAngle != null) {
-                executeCameraAngle(cameraAngleGroup, cameraAngle);
-            }
+            inkAction = new CameraAngleInkAction(storyHandler);
         } else if (tag.contains("song start") || tag.contains("sfx start")) {
-            String songName = tagSplit[2];
-            boolean loop = false;
-            float volume = 1.0F;
-            float pitch = 1.0F;
-            if(tagSplit.length >= 4) {
-                String volValue = tagSplit[3];
-                try {
-                  volume = Float.parseFloat(volValue);
-                } catch (NumberFormatException e) {
-                    throw new RuntimeException("Volume value is not a number:" + e);
-                }
-            }
-            if(tagSplit.length >= 5) {
-                String pitchValue = tagSplit[4];
-                try {
-                    pitch = Float.parseFloat(pitchValue);
-                } catch (NumberFormatException e) {
-                    throw new RuntimeException("Pitch value is not a number:" + e);
-                }
-            }
-            if(tagSplit.length >= 6 && tagSplit[5].equals("loop")) {
-                loop = true;
-            }
-            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(songName);
-            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-            storyHandler.playSound(sound, volume, pitch, loop);
+            SongSfxInkAction.SoundType soundType;
+            if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
+            else soundType = SongSfxInkAction.SoundType.SFX;
+            inkAction = new SongSfxInkAction(storyHandler, soundType);
         } else if (tag.contains("song stop") || tag.contains("sfx stop")) {
-            String songName = tagSplit[2];
-            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(songName);
-            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-            storyHandler.stopSound(sound);
-        }
-        return true;
-    }
-
-    private void executeCutscene(Cutscene cutscene) {
-        for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-            characterStory.kill();
-        }
-        storyHandler.getCurrentCharacters().clear();
-        storyHandler.setCurrentDialogBox(null);
-        KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
-        if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-            cameraAngleController.stopSession();
-            storyHandler.getCurrentDialogBox().reset();
-        }
-        CutsceneController cutsceneController = new CutsceneController(cutscene, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
-        cutsceneController.startSession();
-        storyHandler.getPlayerSession().setKeyframeControllerBase(cutsceneController);
-        CutscenePlayback cutscenePlayback = new CutscenePlayback(storyHandler.getPlayerSession().getPlayer(), cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
-        cutscenePlayback.start();
-        cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
-        for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
-            storyHandler.getCurrentCharacters().add(playback.getCharacter());
-        }
-    }
-
-    private void executeCameraAngle(CameraAngleGroup cameraAngleGroup, CameraAngle cameraAngle) {
-        CameraAngleController cameraAngleController = (CameraAngleController) storyHandler.getPlayerSession().getKeyframeControllerBase();
-        if(cameraAngleController == null) {
-            cameraAngleController = new CameraAngleController(cameraAngleGroup, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
-            cameraAngleController.startSession();
-            storyHandler.getPlayerSession().setKeyframeControllerBase(cameraAngleController);
-            storyHandler.getCurrentCharacters().clear();
-            for(CameraAngleCharacterPosition characterPosition : cameraAngleController.getCameraAngleGroup().getCharacterPositions()) {
-                storyHandler.getCurrentCharacters().add(characterPosition.getCharacter());
+            if(tagSplit.length < 3) {
+                throw new RuntimeException("No parameter set for song/sfx");
             }
+            String value = tagSplit[2];
+            if(value.equalsIgnoreCase("all")) {
+                SongSfxInkAction.SoundType soundType;
+                if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
+                else soundType = SongSfxInkAction.SoundType.SFX;
+                storyHandler.stopAllSoundByType(soundType);
+            } else {
+                ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(value);
+                SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
+                storyHandler.stopSound(sound);
+            }
+        } else if (tag.contains("sound stop all")) {
+            storyHandler.stopAllSound();
         }
-        cameraAngleController.setCurrentPreviewKeyframe(cameraAngle);
+        if(inkAction == null) return true; // If there's no action, then continue story
+        return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
     }
-
     public List<String> getTagsToExecuteLater() {
         return tagsToExecuteLater;
     }
