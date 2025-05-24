@@ -43,7 +43,7 @@ public class Dialog {
     private Vec3 textPosition;
     private int backgroundColor;
     private long startTime, pauseStartTime;
-    private double t; // Used to make transitions between two points*
+    private double t; // Used to make transitions between two points
 
     private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
@@ -64,7 +64,7 @@ public class Dialog {
                 scale
         );
         this.dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth);
-        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 10f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
+        this.dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         this.acceptNewDialog = false;
         this.dialogueTail = new DialogueTail(7f, 15f);
         this.endDialog = false;
@@ -73,7 +73,6 @@ public class Dialog {
     }
 
     public void reset() {
-        dialogAnimationArrowSkip = new DialogAnimationArrowSkip(5f, 3f, 5f, -5f, 200L, 0xFFFFFF, 80, Easing.SMOOTH);
         acceptNewDialog = true;
         startTime = System.currentTimeMillis();
         endDialog = false;

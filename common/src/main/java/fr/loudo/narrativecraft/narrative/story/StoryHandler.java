@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
@@ -21,6 +22,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.level.GameType;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -80,6 +82,7 @@ public class StoryHandler {
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
             isRunning = true;
+            StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, true);
             next();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -96,8 +99,7 @@ public class StoryHandler {
         for(CharacterStory characterStory : currentNpcs) {
             characterStory.kill();
         }
-        NarrativeCraftMod.getInstance().setCutsceneMode(false);
-        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, false);
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
@@ -154,7 +156,7 @@ public class StoryHandler {
                 currentDialogBox = new Dialog(
                         parsed.cleanedText,
                         currentCharacter.getEntity(),
-                        3, 5, 0.5f,
+                        3, 4, 0.5f,
                         10, 15, 0, 100
                 );
             }
@@ -321,6 +323,22 @@ public class StoryHandler {
 
     public void setFadeScreenInkAction(FadeScreenInkAction fadeScreenInkAction) {
         this.fadeScreenInkAction = fadeScreenInkAction;
+    }
+
+    public static void changePlayerCutsceneMode(ServerPlayer player, Playback.PlaybackType playbackType, boolean state) {
+        NarrativeCraftMod.getInstance().setCutsceneMode(state);
+        if(state) {
+            player.setGameMode(GameType.SPECTATOR);
+        } else {
+            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+                PlayerSession playerSession1 = Utils.getSessionOrNull(player);
+                if(playerSession1 != null && playerSession1.getKeyframeControllerBase() == null) {
+                    player.setGameMode(GameType.CREATIVE);
+                }
+            } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                player.setGameMode(GameType.ADVENTURE);
+            }
+        }
     }
 
     private static class TextEffect {

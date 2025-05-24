@@ -13,16 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Gui.class)
 public class GuiMixin {
 
-    @Inject(method = "renderCrosshair", at = @At(value = "HEAD"), cancellable = true)
-    private void renderCrosshair(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if(NarrativeCraftMod.getInstance().isCutsceneMode()) ci.cancel();
-    }
-
-    @Inject(method = "renderItemHotbar", at = @At(value = "HEAD"), cancellable = true)
-    private void renderItemHotbar(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        if(NarrativeCraftMod.getInstance().isCutsceneMode()) ci.cancel();
-    }
-
     @Inject(method = "renderChat", at = @At(value = "HEAD"), cancellable = true)
     private void renderChat(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();

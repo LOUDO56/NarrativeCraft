@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.TpUtil;
@@ -77,8 +78,7 @@ public class CameraAngleController extends KeyframeControllerBase {
         }
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
-        NarrativeCraftMod.getInstance().setCutsceneMode(false);
-        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
     }
 
     @Override
@@ -180,8 +180,7 @@ public class CameraAngleController extends KeyframeControllerBase {
                 keyframe.removeKeyframeFromClient(player);
             }
         }
-        NarrativeCraftMod.getInstance().setCutsceneMode(true);
-        Minecraft.getInstance().gameRenderer.setRenderHand(false);
+        StoryHandler.changePlayerCutsceneMode(player, playbackType, true);
     }
 
     public void clearCurrentPreviewKeyframe() {
@@ -190,8 +189,7 @@ public class CameraAngleController extends KeyframeControllerBase {
             updateKeyframeEntityName();
         }
         currentPreviewKeyframe = null;
-        NarrativeCraftMod.getInstance().setCutsceneMode(false);
-        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
     }
 
 }

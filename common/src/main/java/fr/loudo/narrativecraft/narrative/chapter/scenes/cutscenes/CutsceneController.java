@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.utils.TpUtil;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -113,6 +114,10 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
 
+        for(Playback playback : playbackList) {
+            NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
+        }
+
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
                 for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
@@ -128,8 +133,7 @@ public class CutsceneController extends KeyframeControllerBase {
             NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
         }
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-            NarrativeCraftMod.getInstance().setCutsceneMode(false);
-            Minecraft.getInstance().gameRenderer.setRenderHand(true);
+            StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
         }
         isPlaying = false;
 
@@ -235,8 +239,7 @@ public class CutsceneController extends KeyframeControllerBase {
             }
             changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
         }
-        NarrativeCraftMod.getInstance().setCutsceneMode(true);
-        Minecraft.getInstance().gameRenderer.setRenderHand(false);
+        StoryHandler.changePlayerCutsceneMode(player, playbackType, true);
     }
 
     public void clearCurrentPreviewKeyframe() {
@@ -250,8 +253,7 @@ public class CutsceneController extends KeyframeControllerBase {
         }
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
-        NarrativeCraftMod.getInstance().setCutsceneMode(false);
-        Minecraft.getInstance().gameRenderer.setRenderHand(true);
+        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {

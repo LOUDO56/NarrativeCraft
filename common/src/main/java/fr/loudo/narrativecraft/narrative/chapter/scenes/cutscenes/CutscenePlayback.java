@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
@@ -80,8 +81,7 @@ public class CutscenePlayback  {
         next();
         playerSession.setCutscenePlayback(this);
         cutsceneController.resume();
-        NarrativeCraftMod.getInstance().setCutsceneMode(true);
-        Minecraft.getInstance().gameRenderer.setRenderHand(false);
+        StoryHandler.changePlayerCutsceneMode(player, cutsceneController.getPlaybackType(), true);
     }
 
     public void stop() {
