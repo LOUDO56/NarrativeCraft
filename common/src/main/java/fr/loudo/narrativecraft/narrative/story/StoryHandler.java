@@ -104,6 +104,7 @@ public class StoryHandler {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
         fadeScreenInkAction = null;
+        currentKeyframeCoordinate = null;
         playerSession.reset();
     }
 

@@ -35,32 +35,5 @@ public class OnServerTick {
                 playback.next();
             }
         }
-        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler != null) {
-            KeyframeCoordinate soloPoint = storyHandler.getCurrentKeyframeCoordinate();
-            if(soloPoint != null) {
-                TpUtil.teleportPlayer(storyHandler.getPlayerSession().getPlayer(), soloPoint.getVec3());
-            }
-        }
-        for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
-            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
-            if(keyframeControllerBase == null) return;
-            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
-                cutsceneController.next();
-                Keyframe keyframePreview = cutsceneController.getCurrentPreviewKeyframe();
-                if(keyframePreview != null) {
-                    KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
-                    TpUtil.teleportPlayer(playerSession.getPlayer(), position.getVec3());
-                }
-            }
-            CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
-            if(cutscenePlayback != null) {
-                KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
-                if(currentLoc != null) {
-                    // Teleport player every tick to handle chunk loading while camera moves.
-                    TpUtil.teleportPlayer(playerSession.getPlayer(), currentLoc.getVec3());
-                }
-            }
-        }
     }
 }

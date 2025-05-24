@@ -58,7 +58,12 @@ public abstract class CameraMixin {
         if (keyframePreview == null) return;
 
         Minecraft client = Minecraft.getInstance();
+        LocalPlayer localPlayer = client.player;
+
         KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
+        localPlayer.setPos(position.getX(), position.getY(), position.getZ());
+        localPlayer.setYRot(position.getYRot());
+        localPlayer.setXRot(position.getXRot());
 
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
@@ -74,10 +79,15 @@ public abstract class CameraMixin {
     }
 
     private void cutscenePlaying(PlayerSession playerSession, CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
         CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
         if(cutscenePlayback == null) return;
 
+        LocalPlayer localPlayer = client.player;
         KeyframeCoordinate position = cutscenePlayback.next();
+        localPlayer.setPos(position.getX(), position.getY(), position.getZ());
+        localPlayer.setYRot(position.getYRot());
+        localPlayer.setXRot(position.getXRot());
 
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
@@ -87,12 +97,17 @@ public abstract class CameraMixin {
     }
 
     private void storyCurrentCamera(CallbackInfo ci) {
+        Minecraft client = Minecraft.getInstance();
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) return;
 
         KeyframeCoordinate position = storyHandler.getCurrentKeyframeCoordinate();
 
         if(position != null) {
+            LocalPlayer localPlayer = client.player;
+            localPlayer.setPos(position.getX(), position.getY(), position.getZ());
+            localPlayer.setYRot(position.getYRot());
+            localPlayer.setXRot(position.getXRot());
             this.setPosition(position.getX(), position.getY(), position.getZ());
             this.setRotation(position.getYRot(), position.getXRot());
             this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
