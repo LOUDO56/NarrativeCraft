@@ -5,12 +5,19 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 
 public class OnRenderWorld {
 
     public static void renderWorld(PoseStack poseStack) {
+
+        Dialog dialog = NarrativeCraftMod.getInstance().getTestDialog();
+        if(dialog != null) {
+            dialog.render(poseStack);
+        }
+
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
             KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
             if(keyframeControllerBase == null) return;

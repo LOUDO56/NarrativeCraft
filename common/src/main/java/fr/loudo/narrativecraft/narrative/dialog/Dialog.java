@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.mixin.fields.GameRendererFields;
@@ -15,6 +16,8 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -79,6 +82,60 @@ public class Dialog {
         dialogEnded = false;
         dialogAnimationScrollText.reset();
         t = 0;
+    }
+
+    public void render(PoseStack poseStack) {
+        // Rework code to draw it in 3d world instead of gui
+        Minecraft mc = Minecraft.getInstance();
+        Camera camera = mc.gameRenderer.getMainCamera();
+        Vec3 cameraPos = camera.getPosition();
+        LocalPlayer player = mc.player;
+
+        double worldX = -42;
+        double worldY = 69;
+        double worldZ = 61;
+
+        // ↘️ Conversion en coordonnées relatives à la caméra
+        double x = worldX - cameraPos.x;
+        double y = worldY - cameraPos.y;
+        double z = worldZ - cameraPos.z;
+
+        poseStack.pushPose();
+
+        poseStack.translate(x, y, z);
+        Quaternionf quaternion = new Quaternionf()
+                .rotationYXZ(
+                        (float) (-Math.toRadians(camera.getYRot())),
+                        (float) (Math.toRadians(camera.getXRot())),
+                        0
+                );
+        poseStack.mulPose(quaternion);
+
+
+        // Dessiner un rectangle en 3D (XY plan autour du joueur)
+        drawRectangle(poseStack);
+
+        poseStack.popPose();
+    }
+
+    private void drawRectangle(PoseStack poseStack) {
+        MultiBufferSource.BufferSource bufferSource = Minecraft.getInstance().renderBuffers().bufferSource();
+
+        float size = 4f;
+
+        float scale = 1f / 16f;
+        float width = 30 * scale;
+        float height = 10 * scale;
+        float zOffset = 0f; // Sur le même plan
+
+        Matrix4f matrix = poseStack.last().pose();
+        VertexConsumer consumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());
+
+        consumer.addVertex(matrix, -width, height, 0).setColor(0.0f, 0.0f, 0.0f, 1.0f).setUv2(0, 1); // bas gauche
+        consumer.addVertex(matrix, width, height, 0).setColor(0.0f, 0.0f, 0.0f, 1.0f).setUv2(0, 1);  // bas droite
+        consumer.addVertex(matrix, width, -height, 0).setColor(0.0f, 0.0f, 0.0f, 1.0f).setUv2(0, 1);   // haut droite
+        consumer.addVertex(matrix, -width, -height, 0).setColor(0.0f, 0.0f, 0.0f, 1.0f).setUv2(0, 1);  // haut gauche
+        bufferSource.endBatch();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
