@@ -340,4 +340,8 @@ public class Dialog {
         endDialog = true;
         t = 0;
     }
+
+    public boolean isAnimating() {
+        return t < 1.0;
+    }
 }

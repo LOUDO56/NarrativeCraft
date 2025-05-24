@@ -6,7 +6,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
@@ -38,6 +40,19 @@ public class OnClientTick {
         if(playerSession == null) return;
 
         ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler == null) return;
+            Dialog dialog = storyHandler.getCurrentDialogBox();
+            if(dialog == null) return;
+            if(dialog.isAnimating()) return;
+            if(!dialog.getDialogScrollText().isFinished()) {
+                dialog.getDialogScrollText().forceFinish();
+                return;
+            }
+            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+            if(keyframeControllerBase instanceof CutsceneController) {
+                return;
+            }
             NarrativeCraftMod.getInstance().getStoryHandler().next();
         });
 

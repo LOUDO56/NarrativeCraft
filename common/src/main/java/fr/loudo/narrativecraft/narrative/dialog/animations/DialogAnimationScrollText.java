@@ -168,7 +168,6 @@ public class DialogAnimationScrollText {
         }
     }
 
-
     private void drawString(GuiGraphics guiGraphics, String character, float screenX, float screenY, float scale, Vector4f posClip) {
         Minecraft client = Minecraft.getInstance();
         if (posClip.w <= 0) return;
@@ -220,6 +219,10 @@ public class DialogAnimationScrollText {
 
     public boolean isFinished() {
         return currentLetter == lines.stream().mapToInt(String::length).sum();
+    }
+
+    public void forceFinish() {
+        currentLetter = lines.stream().mapToInt(String::length).sum();
     }
 
     public float getMaxWidthLine() {
