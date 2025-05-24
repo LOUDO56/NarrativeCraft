@@ -57,6 +57,7 @@ public class StoryCommand {
         }
 
         storyHandler.stop();
+        NarrativeCraftMod.getInstance().setStoryHandler(null);
         context.getSource().sendSuccess(() -> Component.literal("Story stopped."), false);
 
         return Command.SINGLE_SUCCESS;

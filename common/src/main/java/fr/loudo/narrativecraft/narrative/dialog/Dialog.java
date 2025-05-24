@@ -36,14 +36,14 @@ public class Dialog {
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth, tailXPoint, tailYPoint;
     private int opacity;
-    private boolean acceptNewDialog, endDialog, dialogEnded;
+    private boolean acceptNewDialog, endDialog, dialogEnded, isPaused;
 
     private LivingEntity entityServer;
     private Entity entityClient;
     private Vec3 textPosition;
     private int backgroundColor;
-    private long startTime;
-    private double t; // Used to make transitions between two points
+    private long startTime, pauseStartTime;
+    private double t; // Used to make transitions between two points*
 
     private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
@@ -84,10 +84,21 @@ public class Dialog {
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if(textPosition == null) return;
+        Minecraft minecraft = Minecraft.getInstance();
+        long currentAppearTime = APPEAR_TIME;
+        long currentTime = System.currentTimeMillis();
         updateTextPosition(deltaTracker);
+        if(minecraft.isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = currentTime;
+        } else if(!minecraft.isPaused() && isPaused) {
+            isPaused = false;
+            currentAppearTime += currentTime - pauseStartTime;
+        }
         if ((t < 1.0 && !acceptNewDialog) || endDialog) {
-            long currentTime = System.currentTimeMillis();
-            t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));
+            if(!isPaused) {
+                t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / currentAppearTime, 1.0));
+            }
             dialogAppearAnimation.setStartPosition(textPosition.add(0, -1, 0));
             dialogAppearAnimation.setEndPosition(textPosition);
             DialogAppearAnimation interpolation;
@@ -229,6 +240,12 @@ public class Dialog {
         float totalWidth = ScreenUtils.getPixelValue(width, resizedScale) + 2 * pixelPaddingX;
         float totalHeight = ScreenUtils.getPixelValue(height, resizedScale) + 2 * pixelPaddingY;
 
+        long currentChangeDialogTime = DIALOG_CHANGE_TIME;
+        if(!client.isPaused() && isPaused) {
+            // This work but not as expected but eh it's not a big deal
+            currentChangeDialogTime += System.currentTimeMillis() - pauseStartTime;
+        }
+
         if (t >= 1.0) {
             oldWidth = width;
             oldHeight = height;
@@ -248,7 +265,9 @@ public class Dialog {
                     long currentTime = System.currentTimeMillis();
                     totalWidth = (float) MathUtils.lerp(scaledOldWidth, totalWidth, t);
                     totalHeight = (float) MathUtils.lerp(scaledOldHeight, totalHeight, t);
-                    t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / DIALOG_CHANGE_TIME, 1.0));
+                    if(!isPaused) {
+                        t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / currentChangeDialogTime, 1.0));
+                    }
                 }
             }
         }

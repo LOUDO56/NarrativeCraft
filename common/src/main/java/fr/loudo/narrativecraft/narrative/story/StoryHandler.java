@@ -96,7 +96,6 @@ public class StoryHandler {
         for(CharacterStory characterStory : currentNpcs) {
             characterStory.kill();
         }
-        NarrativeCraftMod.getInstance().setStoryHandler(null);
         NarrativeCraftMod.getInstance().setCutsceneMode(false);
         Minecraft.getInstance().gameRenderer.setRenderHand(true);
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {

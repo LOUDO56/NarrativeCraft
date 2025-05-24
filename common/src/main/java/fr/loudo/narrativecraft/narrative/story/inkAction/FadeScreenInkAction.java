@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -13,6 +12,7 @@ public class FadeScreenInkAction extends InkAction {
     private double fadeIn, stay, fadeOut, t;
     private int color;
     private long startTime, pauseStartTime;
+    private boolean isPaused;
     private FadeCurrentState fadeCurrentState;
 
     public FadeScreenInkAction(StoryHandler storyHandler) {
@@ -46,12 +46,20 @@ public class FadeScreenInkAction extends InkAction {
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+        Minecraft minecraft = Minecraft.getInstance();
         int width = Minecraft.getInstance().getWindow().getWidth();
         int height = Minecraft.getInstance().getWindow().getHeight();
         long now = System.currentTimeMillis();
         long elapsedTime = now - startTime;
         long endTime = 0L;
         int opacityInterpolate = 255;
+        if(minecraft.isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = now;
+        } else if(!minecraft.isPaused() && isPaused) {
+            isPaused = false;
+            endTime += now - pauseStartTime;
+        }
         switch (fadeCurrentState) {
             case FADE_IN -> {
                 endTime = (long) (fadeIn * 1000L);
@@ -71,22 +79,24 @@ public class FadeScreenInkAction extends InkAction {
         }
         int newColor = (opacityInterpolate << 24) | (color & 0xFFFFFF);
         guiGraphics.fill(0, 0, width, height, newColor);
-        t = Math.min((double) elapsedTime / endTime, 1.0);
-        if(t >= 1.0) {
-            t = 0.0;
-            startTime = System.currentTimeMillis();
-            switch (fadeCurrentState) {
-                case FADE_IN -> fadeCurrentState = FadeCurrentState.STAY;
-                case STAY -> fadeCurrentState = FadeCurrentState.FADE_OUT;
-                case FADE_OUT -> {
-                    storyHandler.setFadeScreenInkAction(null);
-                    if(!storyHandler.getStory().canContinue()) {
-                        storyHandler.stop();
+        if(!isPaused) {
+            t = Math.min((double) elapsedTime / endTime, 1.0);
+            if(t >= 1.0) {
+                t = 0.0;
+                startTime = System.currentTimeMillis();
+                switch (fadeCurrentState) {
+                    case FADE_IN -> fadeCurrentState = FadeCurrentState.STAY;
+                    case STAY -> fadeCurrentState = FadeCurrentState.FADE_OUT;
+                    case FADE_OUT -> {
+                        storyHandler.setFadeScreenInkAction(null);
+                        if(!storyHandler.getStory().canContinue()) {
+                            storyHandler.stop();
+                        }
                         return;
                     }
                 }
+                sendDebugDetails();
             }
-            sendDebugDetails();
         }
     }
 
