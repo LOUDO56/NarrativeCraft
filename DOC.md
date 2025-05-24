@@ -36,11 +36,11 @@ Name is resource location from minecraft e.g. custom.piano
 
 ### Song
 
-``song start {song.name}``
+``song start {song.name} (volume) (pitch) (loop)``
 
 ### Sfx
 
-``sfx start {song.name}``
+``sfx start {song.name} (volume) (pitch) (loop)``
 
 ## Stop sound
 
