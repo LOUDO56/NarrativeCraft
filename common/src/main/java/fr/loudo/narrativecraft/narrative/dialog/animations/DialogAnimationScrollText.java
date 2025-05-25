@@ -88,19 +88,10 @@ public class DialogAnimationScrollText {
         long now = System.currentTimeMillis();
         int guiScale = client.options.guiScale().get() > 0 ? client.options.guiScale().get() : 1;
 
-        if (client.isPaused() && !isPaused) {
-            isPaused = true;
-            pauseStartTime = now;
-        } else if (!client.isPaused() && isPaused) {
-            isPaused = false;
-            totalPauseTime += now - pauseStartTime;
-            lastTimeChar += totalPauseTime;
-        }
-
         int totalLetters = lines.stream().mapToInt(String::length).sum();
         int shownLetters = 0;
 
-        if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !isPaused) {
+        if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !client.isPaused()) {
             ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
             SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
             float pitch = 0.8F + new Random().nextFloat() * 0.4F;
