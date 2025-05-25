@@ -34,7 +34,9 @@ public class StoryCommand {
 
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
-        NarrativeCraftMod.getInstance().setStoryHandler(new StoryHandler(firstChapter, firstScene));
+        StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene);
+        storyHandler.start();
+        NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
 
         return Command.SINGLE_SUCCESS;
     }
@@ -43,6 +45,7 @@ public class StoryCommand {
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
         StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene, true);
+        storyHandler.start();
         NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
 
         return Command.SINGLE_SUCCESS;

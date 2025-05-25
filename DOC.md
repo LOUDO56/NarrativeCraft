@@ -3,7 +3,7 @@
 ## Dialog
 
 ## Speak
-``{character_name}: {dialog}``
+``<character_name>: <dialog>``
 
 e.g.
 
@@ -14,9 +14,9 @@ You need to spawn it in the world BEFORE making it talk with starting an animati
 
 ## Text effect
 ```
-[effect (time=) (force=)]text[/effect]
-ex: [waving]hello[/waving]
-ex: [shaking time=0.02, force=0.2]text[/effect]
+[<effet> (time=<timeValue>) (force=<forceValue>)]<texte>[/<effet>]
+ex: [waving]Hellooo!![/waving]
+ex: [shaking time=0.02, force=0.2]I'm angry![/effect]
 ```
 
 ## Cutscene
@@ -24,11 +24,11 @@ ex: [shaking time=0.02, force=0.2]text[/effect]
 Blocking command: Means that it will continue the story after this command ended.
 
 
-``cutscene start {cutscene_name}``
+``cutscene start <cutscene_name>``
 
 ## Camera angle
 
-``camera set {parent} {child}``
+``camera set <parent> <child>``
 
 ## Play sound
 
@@ -36,20 +36,25 @@ Name is resource location from minecraft e.g. custom.piano
 
 ### Song
 
-``song start {song.name} (volume) (pitch) (loop)``
+``song start <category.name> [volume] [pitch] [loop=true/false] [fadein fadeTime]``
 
 ### Sfx
 
-``sfx start {song.name} (volume) (pitch) (loop)``
+``sfx start start <category.name> [volume] [pitch] [loop=true/false] [fadein fadeTime]``
 
 ## Stop sound
 
-``song stop {song.name}``
+``song stop <category.name> [fadeout fadeTime]``
 
-``sfx stop {song.name}``
+``sfx stop <category.name> [fadeout fadeTime]``
 
 ``song stop all``
 
 ``sfx stop all``
 
 ``sound stop all`` Stop song and sfx at the same time
+
+## Fade effect
+
+```fade [fadeInValue] [stayValue] [fadeOutValue] [hexColor]```
+Shows a color screen

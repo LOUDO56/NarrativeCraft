@@ -13,7 +13,7 @@ import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -44,7 +44,7 @@ public class StoryHandler {
     private Dialog currentDialogBox;
     private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning, isDebugMode;
-    private FadeScreenInkAction fadeScreenInkAction;
+    private final List<InkAction> inkActionList;
 
     public StoryHandler(Chapter chapter, Scene scene) {
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
@@ -56,25 +56,15 @@ public class StoryHandler {
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
-        isDebugMode = false;
-        initStory();
+        inkActionList = new ArrayList<>();
     }
 
     public StoryHandler(Chapter chapter, Scene scene, boolean isDebugMode) {
-        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
-        playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, chapter, scene);
-        playerSession.setChapter(chapter);
-        playerSession.setScene(scene);
-        currentCharacters = new ArrayList<>();
-        currentNpcs = new ArrayList<>();
-        isRunning = true;
-        inkTagTranslators = new InkTagTranslators(this);
-        typedSoundInstanceList = new ArrayList<>();
+        this(chapter, scene);
         this.isDebugMode = isDebugMode;
-        initStory();
     }
 
-    private void initStory() {
+    public void start() {
         try {
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop();
@@ -103,9 +93,11 @@ public class StoryHandler {
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
-        fadeScreenInkAction = null;
+        inkActionList.clear();
         currentKeyframeCoordinate = null;
         playerSession.reset();
+        currentCharacters.clear();
+        currentNpcs.clear();
     }
 
     public void next() {
@@ -120,7 +112,9 @@ public class StoryHandler {
                     stop();
                     return;
                 }
-                showDialog();
+                if(!currentCharacters.isEmpty()) {
+                    showDialog();
+                }
             }
         } catch (StoryException e) {
             throw new RuntimeException(e);
@@ -164,6 +158,10 @@ public class StoryHandler {
             currentCharacterTalking = characterName;
         }
         applyTextEffects(parsed.effects);
+    }
+
+    public void tick() {
+
     }
 
     /**
@@ -230,6 +228,17 @@ public class StoryHandler {
             double time = Double.parseDouble(effect.parameters.getOrDefault("time", "1"));
             float force = Float.parseFloat(effect.parameters.getOrDefault("force", "0"));
 
+            switch (effect.type) {
+                case WAVING -> {
+                    time = 0.3;
+                    force = 1f;
+                }
+                case SHAKING -> {
+                    time = 0.02;
+                    force = 0.5f;
+                }
+            }
+
             DialogLetterEffect dialogEffect = new DialogLetterEffect(
                     effect.type,
                     (long) (time * 1000L),
@@ -241,10 +250,11 @@ public class StoryHandler {
         }
     }
 
-    public void playSound(SoundEvent sound, float volume, float pitch, boolean loop, SongSfxInkAction.SoundType soundType) {
+    public TypedSoundInstance playSound(SoundEvent sound, float volume, float pitch, boolean loop, SongSfxInkAction.SoundType soundType) {
         TypedSoundInstance soundInstance = new TypedSoundInstance(sound.location(), SoundSource.MASTER, volume, pitch, SoundInstance.createUnseededRandom(), loop, soundType);
         typedSoundInstanceList.add(soundInstance);
         Minecraft.getInstance().getSoundManager().play(soundInstance);
+        return soundInstance;
     }
 
     public void stopSound(SoundEvent sound) {
@@ -269,6 +279,7 @@ public class StoryHandler {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
     }
+
 
     public PlayerSession getPlayerSession() {
         return playerSession;
@@ -318,12 +329,8 @@ public class StoryHandler {
         isDebugMode = debugMode;
     }
 
-    public FadeScreenInkAction getFadeScreenInkAction() {
-        return fadeScreenInkAction;
-    }
-
-    public void setFadeScreenInkAction(FadeScreenInkAction fadeScreenInkAction) {
-        this.fadeScreenInkAction = fadeScreenInkAction;
+    public List<InkAction> getInkActionList() {
+        return inkActionList;
     }
 
     public static void changePlayerCutsceneMode(ServerPlayer player, Playback.PlaybackType playbackType, boolean state) {
@@ -340,6 +347,12 @@ public class StoryHandler {
                 player.setGameMode(GameType.ADVENTURE);
             }
         }
+    }
+
+    public enum FadeCurrentState {
+        FADE_IN,
+        STAY,
+        FADE_OUT
     }
 
     private static class TextEffect {

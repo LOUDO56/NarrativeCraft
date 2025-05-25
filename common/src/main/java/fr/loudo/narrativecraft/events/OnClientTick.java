@@ -9,6 +9,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
@@ -19,11 +21,34 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class OnClientTick {
 
     public static void clientTick(Minecraft client) {
 
         if(client.player == null) return;
+
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null && storyHandler.isRunning()) {
+            List<InkAction> toRemove = new ArrayList<>();
+            List<InkAction> inkActionToLoop = List.copyOf(storyHandler.getInkActionList());
+            for (InkAction inkAction : inkActionToLoop) {
+                if (inkAction instanceof SongSfxInkAction songSfxInkAction) {
+                    if(!songSfxInkAction.isDoneFading()) {
+                        songSfxInkAction.applyFade();
+                    }
+                    boolean doneFadeAndHasFadedOut = songSfxInkAction.isDoneFading() && songSfxInkAction.getFadeCurrentState() == StoryHandler.FadeCurrentState.FADE_OUT;
+                    boolean isStillPlaying = client.getSoundManager().isActive(songSfxInkAction.getSimpleSoundInstance());
+                    if (doneFadeAndHasFadedOut || !isStillPlaying) {
+                        toRemove.add(inkAction);
+                    }
+                }
+            }
+            storyHandler.getInkActionList().removeAll(toRemove);
+
+        }
 
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
             Screen screen;
@@ -40,7 +65,6 @@ public class OnClientTick {
         if(playerSession == null) return;
 
         ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
-            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler == null) return;
             Dialog dialog = storyHandler.getCurrentDialogBox();
             if(dialog == null) return;
@@ -57,7 +81,6 @@ public class OnClientTick {
         });
 
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
-        if(keyframeControllerBase == null) return;
         if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
             ModKeys.handleKeyPress(ModKeys.CREATE_KEYFRAME_GROUP, () -> {
                 KeyframeGroup keyframeGroup = cutsceneController.createKeyframeGroup();

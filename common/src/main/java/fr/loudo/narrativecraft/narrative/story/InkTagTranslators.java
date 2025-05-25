@@ -1,8 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story;
 
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.sounds.SoundEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,13 +62,15 @@ public class InkTagTranslators {
             String value = tagSplit[2];
             if(value.equalsIgnoreCase("all")) {
                 SongSfxInkAction.SoundType soundType;
-                if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
+                if(tag.contains("song stop")) soundType = SongSfxInkAction.SoundType.SONG;
                 else soundType = SongSfxInkAction.SoundType.SFX;
                 storyHandler.stopAllSoundByType(soundType);
             } else {
-                ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(value);
-                SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-                storyHandler.stopSound(sound);
+                for(InkAction inkAction1 : storyHandler.getInkActionList()) {
+                    if(inkAction1.getName().equals(value)) {
+                        inkAction = inkAction1;
+                    }
+                }
             }
         } else if (tag.contains("sound stop all")) {
             storyHandler.stopAllSound();

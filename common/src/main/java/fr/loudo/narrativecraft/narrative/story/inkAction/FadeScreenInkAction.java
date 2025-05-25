@@ -12,16 +12,17 @@ public class FadeScreenInkAction extends InkAction {
     private double fadeIn, stay, fadeOut, t;
     private int color;
     private long startTime, pauseStartTime;
-    private boolean isPaused;
-    private FadeCurrentState fadeCurrentState;
+    private boolean isPaused, isDoneFading;
+    private StoryHandler.FadeCurrentState fadeCurrentState;
 
     public FadeScreenInkAction(StoryHandler storyHandler) {
         super(storyHandler);
+        isDoneFading = false;
     }
 
     @Override
     public boolean execute(String[] command) {
-        fadeCurrentState = FadeCurrentState.FADE_IN;
+        fadeCurrentState = StoryHandler.FadeCurrentState.FADE_IN;
         startTime = System.currentTimeMillis();
         fadeIn = 2.0;
         stay = 1.0;
@@ -40,7 +41,7 @@ public class FadeScreenInkAction extends InkAction {
         if(command.length >= 5) {
             color = Integer.parseInt(command[4], 16);
         }
-        storyHandler.setFadeScreenInkAction(this);
+        storyHandler.getInkActionList().add(this);
         sendDebugDetails();
         return true;
     }
@@ -53,13 +54,6 @@ public class FadeScreenInkAction extends InkAction {
         long elapsedTime = now - startTime;
         long endTime = 0L;
         int opacityInterpolate = 255;
-        if(minecraft.isPaused() && !isPaused) {
-            isPaused = true;
-            pauseStartTime = now;
-        } else if(!minecraft.isPaused() && isPaused) {
-            isPaused = false;
-            endTime += now - pauseStartTime;
-        }
         switch (fadeCurrentState) {
             case FADE_IN -> {
                 endTime = (long) (fadeIn * 1000L);
@@ -77,6 +71,13 @@ public class FadeScreenInkAction extends InkAction {
                 }
             }
         }
+        if(minecraft.isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = now;
+        } else if(!minecraft.isPaused() && isPaused) {
+            isPaused = false;
+            endTime += now - pauseStartTime;
+        }
         int newColor = (opacityInterpolate << 24) | (color & 0xFFFFFF);
         guiGraphics.fill(0, 0, width, height, newColor);
         if(!isPaused) {
@@ -85,10 +86,10 @@ public class FadeScreenInkAction extends InkAction {
                 t = 0.0;
                 startTime = System.currentTimeMillis();
                 switch (fadeCurrentState) {
-                    case FADE_IN -> fadeCurrentState = FadeCurrentState.STAY;
-                    case STAY -> fadeCurrentState = FadeCurrentState.FADE_OUT;
+                    case FADE_IN -> fadeCurrentState = StoryHandler.FadeCurrentState.STAY;
+                    case STAY -> fadeCurrentState = StoryHandler.FadeCurrentState.FADE_OUT;
                     case FADE_OUT -> {
-                        storyHandler.setFadeScreenInkAction(null);
+                        isDoneFading = true;
                         if(!storyHandler.getStory().canContinue()) {
                             storyHandler.stop();
                         }
@@ -99,6 +100,11 @@ public class FadeScreenInkAction extends InkAction {
             }
         }
     }
+
+    public boolean isDoneFading() {
+        return isDoneFading;
+    }
+
 
     @Override
     void sendDebugDetails() {
@@ -111,12 +117,6 @@ public class FadeScreenInkAction extends InkAction {
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.fade", fadeCurrentState.name(), seconds), false);
         }
-    }
-
-    enum FadeCurrentState {
-        FADE_IN,
-        STAY,
-        FADE_OUT
     }
 
 }

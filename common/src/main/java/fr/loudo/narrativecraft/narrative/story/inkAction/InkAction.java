@@ -9,9 +9,13 @@ public abstract class InkAction {
 
     public InkAction(StoryHandler storyHandler) {
         this.storyHandler = storyHandler;
+        this.name = "";
     }
 
     public abstract boolean execute(String[] command);
     abstract void sendDebugDetails();
 
+    public String getName() {
+        return name;
+    }
 }
