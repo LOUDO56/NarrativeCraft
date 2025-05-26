@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story;
 
+import com.bladecoder.ink.runtime.Choice;
 import com.bladecoder.ink.runtime.Story;
 import com.bladecoder.ink.runtime.StoryException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
@@ -15,6 +16,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
+import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -42,8 +44,9 @@ public class StoryHandler {
     private Story story;
     private String currentDialog, currentCharacterTalking;
     private Dialog currentDialogBox;
+    private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
-    private boolean isRunning, isDebugMode;
+    private boolean isRunning, isDebugMode, OnCutscene;
     private final List<InkAction> inkActionList;
 
     public StoryHandler(Chapter chapter, Scene scene) {
@@ -57,6 +60,8 @@ public class StoryHandler {
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
+        currentChoices = new ArrayList<>();
+
     }
 
     public StoryHandler(Chapter chapter, Scene scene, boolean isDebugMode) {
@@ -100,27 +105,39 @@ public class StoryHandler {
         currentNpcs.clear();
     }
 
-    public void next() {
+    public boolean next() {
         try {
-            if(!story.canContinue()) {
-                stop();
-                return;
+            if(!currentChoices.isEmpty()) {
+                showChoices();
+                return false;
             }
             currentDialog = story.Continue();
+            currentChoices = story.getCurrentChoices();
             if(inkTagTranslators.executeCurrentTags()) {
-                if(!story.canContinue() && !story.getCurrentTags().isEmpty()) {
-                    stop();
-                    return;
-                }
                 if(!currentCharacters.isEmpty()) {
                     showDialog();
                 }
             }
         } catch (StoryException e) {
-            throw new RuntimeException(e);
+            stop();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        return true;
+    }
+
+    public void showChoices() {
+        if(!currentChoices.isEmpty()) {
+            if(currentDialogBox != null) {
+                currentDialogBox.endDialog();
+            }
+            ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices);
+            Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));
+        }
+    }
+
+    public boolean isFinished() {
+        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty();
     }
 
     public void showDialog() {
@@ -331,6 +348,10 @@ public class StoryHandler {
 
     public List<InkAction> getInkActionList() {
         return inkActionList;
+    }
+
+    public List<Choice> getCurrentChoices() {
+        return currentChoices;
     }
 
     public static void changePlayerCutsceneMode(ServerPlayer player, Playback.PlaybackType playbackType, boolean state) {

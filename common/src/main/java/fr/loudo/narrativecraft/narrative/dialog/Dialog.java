@@ -170,7 +170,9 @@ public class Dialog {
         if (t >= 1.0 && endDialog && !dialogEnded) {
             dialogEnded = true;
             NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(null);
-            NarrativeCraftMod.getInstance().getStoryHandler().showDialog();
+            if(NarrativeCraftMod.getInstance().getStoryHandler().getCurrentChoices().isEmpty()) {
+                NarrativeCraftMod.getInstance().getStoryHandler().showDialog();
+            }
         }
         Minecraft client = Minecraft.getInstance();
         fov = ((GameRendererFields)client.gameRenderer).callGetFov(

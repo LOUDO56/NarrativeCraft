@@ -90,9 +90,6 @@ public class FadeScreenInkAction extends InkAction {
                     case STAY -> fadeCurrentState = StoryHandler.FadeCurrentState.FADE_OUT;
                     case FADE_OUT -> {
                         isDoneFading = true;
-                        if(!storyHandler.getStory().canContinue()) {
-                            storyHandler.stop();
-                        }
                         return;
                     }
                 }

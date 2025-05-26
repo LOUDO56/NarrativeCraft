@@ -77,7 +77,7 @@ public class OnClientTick {
             if(keyframeControllerBase instanceof CutsceneController) {
                 return;
             }
-            NarrativeCraftMod.getInstance().getStoryHandler().next();
+            storyHandler.next();
         });
 
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();

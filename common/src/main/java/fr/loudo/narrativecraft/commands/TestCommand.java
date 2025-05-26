@@ -10,11 +10,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.events.OnHudRender;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
+import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -37,6 +37,7 @@ import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -55,6 +56,9 @@ public class TestCommand {
                         )
                         .then(Commands.literal("testScreen")
                                 .executes(TestCommand::openTestScreen)
+                        )
+                        .then(Commands.literal("choice")
+                                .executes(TestCommand::choiceScreen)
                         )
                 )
                 .then(Commands.literal("keyframeDisplay")
@@ -110,6 +114,14 @@ public class TestCommand {
 
                 )
         );
+    }
+
+    private static int choiceScreen(CommandContext<CommandSourceStack> context) {
+
+//        ChoicesScreen choicesScreen = new ChoicesScreen(List.of("I love you.", "Take care.", "What are you talking about?"));
+//        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));
+
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int changeDialogAnimation(CommandContext<CommandSourceStack> commandContext, String animation, long time, float force) {

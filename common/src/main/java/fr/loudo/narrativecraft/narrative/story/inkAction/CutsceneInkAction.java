@@ -58,11 +58,8 @@ public class CutsceneInkAction extends InkAction {
         }
         storyHandler.setCurrentKeyframeCoordinate(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
         storyHandler.getInkTagTranslators().executeLaterTags();
-        if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty()) {
-            if(!storyHandler.getStory().canContinue()) {
-                storyHandler.stop();
-                return;
-            }
+        if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty() && storyHandler.isFinished()) {
+            storyHandler.stop();
         }
         storyHandler.getInkTagTranslators().getTagsToExecuteLater().clear();
 

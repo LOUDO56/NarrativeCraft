@@ -25,6 +25,9 @@ public class InkTagTranslators {
                     return false;
                 }
             }
+            if(storyHandler.isFinished()) {
+                storyHandler.stop();
+            }
             return true;
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -40,6 +43,9 @@ public class InkTagTranslators {
             }
         }
         storyHandler.showDialog();
+        if(storyHandler.isFinished()) {
+            storyHandler.stop();
+        }
 
     }
 
