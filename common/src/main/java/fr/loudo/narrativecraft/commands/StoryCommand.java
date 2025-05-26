@@ -46,8 +46,6 @@ public class StoryCommand {
         Scene firstScene = firstChapter.getSceneList().getFirst();
         StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene, true);
         storyHandler.start();
-        NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
-
         return Command.SINGLE_SUCCESS;
     }
 
@@ -60,7 +58,6 @@ public class StoryCommand {
         }
 
         storyHandler.stop();
-        NarrativeCraftMod.getInstance().setStoryHandler(null);
         context.getSource().sendSuccess(() -> Component.literal("Story stopped."), false);
 
         return Command.SINGLE_SUCCESS;

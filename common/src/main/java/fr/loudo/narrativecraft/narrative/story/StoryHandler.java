@@ -78,6 +78,7 @@ public class StoryHandler {
             story = new Story(content);
             isRunning = true;
             StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, true);
+            NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -103,10 +104,15 @@ public class StoryHandler {
         playerSession.reset();
         currentCharacters.clear();
         currentNpcs.clear();
+        NarrativeCraftMod.getInstance().setStoryHandler(null);
     }
 
     public boolean next() {
         try {
+            if(!story.canContinue() && currentChoices.isEmpty()) {
+                stop();
+                return false;
+            }
             if(!currentChoices.isEmpty()) {
                 showChoices();
                 return false;
@@ -119,7 +125,7 @@ public class StoryHandler {
                 }
             }
         } catch (StoryException e) {
-            stop();
+            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
