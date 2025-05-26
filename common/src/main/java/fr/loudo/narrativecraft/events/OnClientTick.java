@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.WaitInkAction;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
@@ -42,6 +43,14 @@ public class OnClientTick {
                     boolean doneFadeAndHasFadedOut = songSfxInkAction.isDoneFading() && songSfxInkAction.getFadeCurrentState() == StoryHandler.FadeCurrentState.FADE_OUT;
                     boolean isStillPlaying = client.getSoundManager().isActive(songSfxInkAction.getSimpleSoundInstance());
                     if (doneFadeAndHasFadedOut || !isStillPlaying) {
+                        toRemove.add(inkAction);
+                    }
+                }
+                if(inkAction instanceof WaitInkAction waitInkAction) {
+                    long now = System.currentTimeMillis();
+                    long elapsedTime = now - waitInkAction.getStartTime();
+                    if(elapsedTime >= waitInkAction.getSecondsToWait()) {
+                        storyHandler.getInkTagTranslators().executeLaterTags();
                         toRemove.add(inkAction);
                     }
                 }

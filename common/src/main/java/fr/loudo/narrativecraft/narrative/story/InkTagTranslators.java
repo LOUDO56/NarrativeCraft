@@ -8,7 +8,7 @@ import java.util.List;
 public class InkTagTranslators {
 
     private final StoryHandler storyHandler;
-    private final List<String> tagsToExecuteLater;
+    private List<String> tagsToExecuteLater;
 
     public InkTagTranslators(StoryHandler storyHandler) {
         this.storyHandler = storyHandler;
@@ -21,7 +21,7 @@ public class InkTagTranslators {
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
                 if(!executeTag(tag)) {
-                    tagsToExecuteLater.addAll(tags.subList(i + 1, tags.size()));
+                    tagsToExecuteLater.addAll(tags.subList(Math.min(i + 1, tags.size() - 1), tags.size()));
                     return false;
                 }
             }
@@ -38,10 +38,11 @@ public class InkTagTranslators {
         for (int i = 0; i < tagsToExecuteLater.size(); i++) {
             String tag = tagsToExecuteLater.get(i);
             if(!executeTag(tag)) {
-                tagsToExecuteLater.addAll(tagsToExecuteLater.subList(i + 1, tagsToExecuteLater.size() - 1));
-                break;
+                tagsToExecuteLater = tagsToExecuteLater.subList(i + 1, tagsToExecuteLater.size());
+                return;
             }
         }
+        tagsToExecuteLater.clear();
         storyHandler.showDialog();
         if(storyHandler.isFinished()) {
             storyHandler.stop();
@@ -82,6 +83,8 @@ public class InkTagTranslators {
             storyHandler.stopAllSound();
         } else if (tag.contains("fade")) {
             inkAction = new FadeScreenInkAction(storyHandler);
+        } else if (tag.contains("wait")) {
+            inkAction = new WaitInkAction(storyHandler);
         }
         if(inkAction == null) return true; // If there's no action, then continue story
         return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)

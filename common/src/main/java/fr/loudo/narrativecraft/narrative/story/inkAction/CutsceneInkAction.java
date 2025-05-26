@@ -61,7 +61,6 @@ public class CutsceneInkAction extends InkAction {
         if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty() && storyHandler.isFinished()) {
             storyHandler.stop();
         }
-        storyHandler.getInkTagTranslators().getTagsToExecuteLater().clear();
 
     }
 

@@ -58,3 +58,8 @@ Name is resource location from minecraft e.g. custom.piano
 
 ```fade [fadeInValue] [stayValue] [fadeOutValue] [hexColor]```
 Shows a color screen
+
+## Cooldown
+
+```wait [value] [seconds, minutes, hours]```
+Blocking command. Wait before moving on to the next tag or dialog.
