@@ -39,7 +39,7 @@ public class Dialog {
     private Vector4f posClip;
     private float fov, paddingX, paddingY, scale, oldWidth, oldHeight, oldScale, oldPaddingX, oldPaddingY, oldMaxWidth, tailXPoint, tailYPoint;
     private int opacity;
-    private boolean acceptNewDialog, endDialog, dialogEnded, isPaused;
+    private boolean acceptNewDialog, endDialog, dialogEnded, isPaused, isUnskippable, dontSkip;
 
     private LivingEntity entityServer;
     private Entity entityClient;
@@ -73,6 +73,8 @@ public class Dialog {
         this.endDialog = false;
         this.dialogEnded = false;
         this.dialogEntityBobbing = new DialogEntityBobbing(this);
+        this.isUnskippable = false;
+        this.dontSkip = false;
     }
 
     public void reset() {
@@ -95,7 +97,6 @@ public class Dialog {
         double worldY = 69;
         double worldZ = 61;
 
-        // ↘️ Conversion en coordonnées relatives à la caméra
         double x = worldX - cameraPos.x;
         double y = worldY - cameraPos.y;
         double z = worldZ - cameraPos.z;
@@ -111,8 +112,6 @@ public class Dialog {
                 );
         poseStack.mulPose(quaternion);
 
-
-        // Dessiner un rectangle en 3D (XY plan autour du joueur)
         drawRectangle(poseStack);
 
         poseStack.popPose();
@@ -126,7 +125,7 @@ public class Dialog {
         float scale = 1f / 16f;
         float width = 30 * scale;
         float height = 10 * scale;
-        float zOffset = 0f; // Sur le même plan
+        float zOffset = 0f;
 
         Matrix4f matrix = poseStack.last().pose();
         VertexConsumer consumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());
@@ -170,7 +169,7 @@ public class Dialog {
         if (t >= 1.0 && endDialog && !dialogEnded) {
             dialogEnded = true;
             NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(null);
-            if(NarrativeCraftMod.getInstance().getStoryHandler().getCurrentChoices().isEmpty()) {
+            if(NarrativeCraftMod.getInstance().getStoryHandler().getCurrentChoices().isEmpty() && !dontSkip) {
                 NarrativeCraftMod.getInstance().getStoryHandler().showDialog();
             }
         }
@@ -393,13 +392,27 @@ public class Dialog {
         dialogAppearAnimation.setScale(scale);
     }
 
+    public boolean isUnskippable() {
+        return isUnskippable;
+    }
+
+    public void setUnskippable(boolean unskippable) {
+        isUnskippable = unskippable;
+    }
+
     public void endDialog() {
         startTime = System.currentTimeMillis();
         endDialog = true;
         t = 0;
     }
 
+    public void endDialogAndDontSkip() {
+        dontSkip = true;
+        endDialog();
+    }
+
     public boolean isAnimating() {
         return t < 1.0;
     }
+
 }

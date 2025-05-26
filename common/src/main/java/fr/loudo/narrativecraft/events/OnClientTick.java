@@ -49,9 +49,19 @@ public class OnClientTick {
                 if(inkAction instanceof WaitInkAction waitInkAction) {
                     long now = System.currentTimeMillis();
                     long elapsedTime = now - waitInkAction.getStartTime();
-                    if(elapsedTime >= waitInkAction.getSecondsToWait()) {
-                        storyHandler.getInkTagTranslators().executeLaterTags();
-                        toRemove.add(inkAction);
+                    if(client.isPaused() && !waitInkAction.isPaused()) {
+                        waitInkAction.setPaused(true);
+                        waitInkAction.setPauseStartTime(now);
+                    } else if (!client.isPaused() && waitInkAction.isPaused()) {
+                        long pauseTime = now - waitInkAction.getPauseStartTime();
+                        waitInkAction.setSecondsToWait(waitInkAction.getSecondsToWait() + pauseTime);
+                        waitInkAction.setPaused(false);
+                    }
+                    if(!waitInkAction.isPaused()) {
+                        if(elapsedTime >= waitInkAction.getSecondsToWait()) {
+                            storyHandler.getInkTagTranslators().executeLaterTags();
+                            toRemove.add(inkAction);
+                        }
                     }
                 }
             }
@@ -78,6 +88,7 @@ public class OnClientTick {
             Dialog dialog = storyHandler.getCurrentDialogBox();
             if(dialog == null) return;
             if(dialog.isAnimating()) return;
+            if(dialog.isUnskippable()) return;
             if(!dialog.getDialogScrollText().isFinished()) {
                 dialog.getDialogScrollText().forceFinish();
                 return;
@@ -85,6 +96,9 @@ public class OnClientTick {
             KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
             if(keyframeControllerBase instanceof CutsceneController) {
                 return;
+            }
+            for(InkAction inkAction : storyHandler.getInkActionList()) {
+                if(inkAction instanceof WaitInkAction) return;
             }
             storyHandler.next();
         });

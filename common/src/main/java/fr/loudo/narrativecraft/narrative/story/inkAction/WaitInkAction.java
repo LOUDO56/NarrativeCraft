@@ -7,7 +7,8 @@ import net.minecraft.client.Minecraft;
 public class WaitInkAction extends InkAction {
 
     private long startTime;
-    private long secondsToWait;
+    private long secondsToWait, pauseStartTime;
+    private boolean isPaused;
     private String unitTime;
 
     public WaitInkAction(StoryHandler storyHandler) {
@@ -27,6 +28,9 @@ public class WaitInkAction extends InkAction {
         }
         startTime = System.currentTimeMillis();
         storyHandler.getInkActionList().add(this);
+        if(storyHandler.getCurrentDialogBox() != null) {
+            storyHandler.getCurrentDialogBox().endDialogAndDontSkip();
+        }
         sendDebugDetails();
         return false;
     }
@@ -44,5 +48,25 @@ public class WaitInkAction extends InkAction {
 
     public long getSecondsToWait() {
         return secondsToWait;
+    }
+
+    public void setSecondsToWait(long secondsToWait) {
+        this.secondsToWait = secondsToWait;
+    }
+
+    public long getPauseStartTime() {
+        return pauseStartTime;
+    }
+
+    public void setPauseStartTime(long pauseStartTime) {
+        this.pauseStartTime = pauseStartTime;
+    }
+
+    public boolean isPaused() {
+        return isPaused;
+    }
+
+    public void setPaused(boolean paused) {
+        isPaused = paused;
     }
 }
