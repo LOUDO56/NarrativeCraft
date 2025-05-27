@@ -15,10 +15,10 @@ public class ChoiceButtonWidget extends AbstractButton {
     private final int index;
     private final int paddingX;
     private final int paddingY;
-    private final int color;
-    private final int hoverColor;
     private final int hoverWidth;
     private final boolean hoverBorder;
+    private int backgroundColor, textColor, hoverColor;
+    private boolean canPress;
 
     public ChoiceButtonWidget(Choice choice) {
         super(0, 0, 0, 0, Component.literal(choice.getText()));
@@ -28,10 +28,12 @@ public class ChoiceButtonWidget extends AbstractButton {
         index = choice.getIndex();
         paddingX = 9;
         paddingY = 6;
-        color = 0xFF000000;
+        backgroundColor = 0x000000;
+        textColor = 0xFFFFFF;
+        hoverColor = 0xFFFFFF;
         hoverBorder = true;
-        hoverColor = 0xFFFFFFFF;
         hoverWidth = 1;
+        canPress = true;
         this.setWidth(width + paddingX * 2);
         this.setHeight(height + paddingY * 2);
     }
@@ -44,18 +46,18 @@ public class ChoiceButtonWidget extends AbstractButton {
         int right = left + this.getWidth();
         int bottom = top + this.getHeight();
 
-        if (this.isHovered && hoverBorder) {
+        if (this.isHovered && hoverBorder && canPress) {
             guiGraphics.fill(left - hoverWidth, top - hoverWidth, right + hoverWidth, bottom + hoverWidth, hoverColor);
         }
 
-        guiGraphics.fill(left, top, right, bottom, color);
+        guiGraphics.fill(left, top, right, bottom, backgroundColor);
 
         guiGraphics.drawString(
                 Minecraft.getInstance().font,
                 this.getMessage().getString(),
                 left + paddingX,
                 top + paddingY + 1,
-                0xFFFFFF,
+                textColor,
                 false
         );
     }
@@ -63,6 +65,7 @@ public class ChoiceButtonWidget extends AbstractButton {
 
     @Override
     public void onPress() {
+        if(!canPress) return;
         Minecraft.getInstance().setScreen(null);
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         try {
@@ -93,5 +96,19 @@ public class ChoiceButtonWidget extends AbstractButton {
         } else {
             return false;
         }
+    }
+
+    public void setOpacity(int opacity) {
+        backgroundColor = (opacity << 24) | (backgroundColor & 0x00FFFFFF);
+        textColor = (opacity << 24) | (textColor & 0x00FFFFFF);
+        hoverColor = (opacity << 24) | (hoverColor & 0x00FFFFFF);
+    }
+
+    public boolean isCanPress() {
+        return canPress;
+    }
+
+    public void setCanPress(boolean canPress) {
+        this.canPress = canPress;
     }
 }

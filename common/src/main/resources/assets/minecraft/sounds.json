@@ -2,5 +2,9 @@
   "custom.dialog_sound": {
     "category": "master",
     "sounds": ["custom/dialog_sound"]
+  },
+  "custom.choice_appear": {
+    "category": "master",
+    "sounds": ["custom/choice_appear"]
   }
 }
