@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
@@ -31,6 +32,7 @@ public class OnClientTick {
 
         if(client.player == null) return;
 
+        // Handle ink action currently playing.
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null && storyHandler.isRunning()) {
             List<InkAction> toRemove = new ArrayList<>();
@@ -49,14 +51,7 @@ public class OnClientTick {
                 if(inkAction instanceof WaitInkAction waitInkAction) {
                     long now = System.currentTimeMillis();
                     long elapsedTime = now - waitInkAction.getStartTime();
-                    if(client.isPaused() && !waitInkAction.isPaused()) {
-                        waitInkAction.setPaused(true);
-                        waitInkAction.setPauseStartTime(now);
-                    } else if (!client.isPaused() && waitInkAction.isPaused()) {
-                        long pauseTime = now - waitInkAction.getPauseStartTime();
-                        waitInkAction.setSecondsToWait(waitInkAction.getSecondsToWait() + pauseTime);
-                        waitInkAction.setPaused(false);
-                    }
+                    waitInkAction.checkForPause();
                     if(!waitInkAction.isPaused()) {
                         if(elapsedTime >= waitInkAction.getSecondsToWait()) {
                             storyHandler.getInkTagTranslators().executeLaterTags();
@@ -69,6 +64,7 @@ public class OnClientTick {
 
         }
 
+        // Open story manager screen trigger
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
             Screen screen;
             PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
@@ -83,6 +79,7 @@ public class OnClientTick {
         PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
         if(playerSession == null) return;
 
+        // Next dialog trigger
         ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
             if(storyHandler == null) return;
             Dialog dialog = storyHandler.getCurrentDialogBox();
@@ -103,8 +100,11 @@ public class OnClientTick {
             storyHandler.next();
         });
 
+
+        // KeyframeControllerBase verification
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+            if(cutsceneController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.CREATE_KEYFRAME_GROUP, () -> {
                 KeyframeGroup keyframeGroup = cutsceneController.createKeyframeGroup();
                 Minecraft.getInstance().player.displayClientMessage(Translation.message("cutscene.keyframegroup.created", keyframeGroup.getId()), false);
@@ -126,6 +126,7 @@ public class OnClientTick {
             });
         }
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
+            if(cameraAngleController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
                 CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController);
                 client.execute(() -> client.setScreen(screen));

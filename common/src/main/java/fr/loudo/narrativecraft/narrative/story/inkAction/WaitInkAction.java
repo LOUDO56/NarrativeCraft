@@ -35,6 +35,19 @@ public class WaitInkAction extends InkAction {
         return false;
     }
 
+    public void checkForPause() {
+        Minecraft client = Minecraft.getInstance();
+        long now = System.currentTimeMillis();
+        if(client.isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = now;
+        } else if (!client.isPaused() && isPaused) {
+            long pauseTime = now - pauseStartTime;
+            secondsToWait += pauseTime;
+            isPaused = false;
+        }
+    }
+
     @Override
     void sendDebugDetails() {
         if(storyHandler.isDebugMode()) {
@@ -50,23 +63,8 @@ public class WaitInkAction extends InkAction {
         return secondsToWait;
     }
 
-    public void setSecondsToWait(long secondsToWait) {
-        this.secondsToWait = secondsToWait;
-    }
-
-    public long getPauseStartTime() {
-        return pauseStartTime;
-    }
-
-    public void setPauseStartTime(long pauseStartTime) {
-        this.pauseStartTime = pauseStartTime;
-    }
-
     public boolean isPaused() {
         return isPaused;
     }
 
-    public void setPaused(boolean paused) {
-        isPaused = paused;
-    }
 }
