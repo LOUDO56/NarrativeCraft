@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScroll
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogEntityBobbing;
 import fr.loudo.narrativecraft.narrative.dialog.geometrics.DialogueTail;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -168,9 +169,10 @@ public class Dialog {
         }
         if (t >= 1.0 && endDialog && !dialogEnded) {
             dialogEnded = true;
-            NarrativeCraftMod.getInstance().getStoryHandler().setCurrentDialogBox(null);
-            if(NarrativeCraftMod.getInstance().getStoryHandler().getCurrentChoices().isEmpty() && !dontSkip) {
-                NarrativeCraftMod.getInstance().getStoryHandler().showDialog();
+            if(!dontSkip) {
+                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+                storyHandler.setCurrentDialogBox(null);
+                storyHandler.showDialog();
             }
         }
         Minecraft client = Minecraft.getInstance();

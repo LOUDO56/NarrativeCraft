@@ -47,6 +47,7 @@ public class CutsceneInkAction extends InkAction {
         cutscenePlayback.start();
         cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
+            storyHandler.getCurrentCharacters().removeIf(characterStory -> characterStory.getName().equals(playback.getCharacter().getName()));
             storyHandler.getCurrentCharacters().add(playback.getCharacter());
         }
         sendDebugDetails();

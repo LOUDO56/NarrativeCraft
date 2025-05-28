@@ -53,7 +53,9 @@ public class InkTagTranslators {
     public boolean executeTag(String tag) {
         String[] tagSplit = tag.split(" ");
         InkAction inkAction = null;
-        if(tag.contains("cutscene start")) {
+        if(tag.contains("on enter")) {
+            storyHandler.checkSwitchChapterOrScene();
+        } else if(tag.contains("cutscene start")) {
             inkAction = new CutsceneInkAction(storyHandler);
         } else if(tag.contains("camera set")) {
             inkAction = new CameraAngleInkAction(storyHandler);

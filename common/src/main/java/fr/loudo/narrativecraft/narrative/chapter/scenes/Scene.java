@@ -189,10 +189,13 @@ public class Scene extends NarrativeEntry {
             ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.update.failed", name));
             return;
         }
+        String oldName = this.name;
         this.name = name;
         this.description = description;
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
         Minecraft.getInstance().setScreen(reloadScreen());
+        NarrativeCraftFile.updateMainInkFile();
+        NarrativeCraftFile.updateKnotSceneNameFromChapter(chapter, oldName, name);
     }
 
 
@@ -200,6 +203,7 @@ public class Scene extends NarrativeEntry {
     public void remove() {
         chapter.removeScene(this);
         NarrativeCraftFile.removeSceneFolder(this);
+        NarrativeCraftFile.updateMainInkFile();
     }
 
     @Override

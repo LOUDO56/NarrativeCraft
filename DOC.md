@@ -63,3 +63,8 @@ Shows a color screen
 
 ```wait [value] [seconds, minutes, hours]```
 Blocking command. Wait before moving on to the next tag or dialog.
+
+## Change chapter or scene
+
+```#on enter```
+Important and to not remove!! It's used to change between scene and chapter when playing the story.

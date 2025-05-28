@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.story;
 import com.bladecoder.ink.runtime.Choice;
 import com.bladecoder.ink.runtime.Story;
 import com.bladecoder.ink.runtime.StoryException;
+import com.bladecoder.ink.runtime.StoryState;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
@@ -14,9 +15,11 @@ import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.inkAction.CutsceneInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
+import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -27,10 +30,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,7 +46,7 @@ public class StoryHandler {
     private Dialog currentDialogBox;
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
-    private boolean isRunning, isDebugMode, OnCutscene;
+    private boolean isRunning, isDebugMode, OnCutscene, onChoice;
     private final List<InkAction> inkActionList;
 
     public StoryHandler(Chapter chapter, Scene scene) {
@@ -61,6 +61,7 @@ public class StoryHandler {
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
         currentChoices = new ArrayList<>();
+        onChoice = false;
 
     }
 
@@ -76,12 +77,11 @@ public class StoryHandler {
             }
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
+            story.choosePathString(NarrativeCraftFile.getChapterSceneCamelCase(playerSession.getScene()));
             isRunning = true;
             StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, true);
             NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -95,6 +95,10 @@ public class StoryHandler {
         for(CharacterStory characterStory : currentNpcs) {
             characterStory.kill();
         }
+        for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
+            playback.stopAndKill();
+        }
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().clear();
         StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, false);
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
@@ -114,11 +118,16 @@ public class StoryHandler {
                 return false;
             }
             if(!currentChoices.isEmpty()) {
+                onChoice = true;
                 showChoices();
                 return false;
             }
+            onChoice = false;
             currentDialog = story.Continue();
             currentChoices = story.getCurrentChoices();
+//            if(story.getCurrentTags().isEmpty()) {
+//                checkSwitchChapterOrScene();
+//            }
             if(inkTagTranslators.executeCurrentTags()) {
                 if(!currentCharacters.isEmpty()) {
                     showDialog();
@@ -130,6 +139,33 @@ public class StoryHandler {
             throw new RuntimeException(e);
         }
         return true;
+    }
+
+    public boolean checkSwitchChapterOrScene() {
+        StoryState state = story.getState();
+        String currentKnot = state.previousPathString();
+        if(currentKnot != null) {
+            String[] splitedKnot = currentKnot.split("\\.");
+            String knot = splitedKnot[0];
+            String stitch = splitedKnot.length > 1 ? splitedKnot[1] : "";
+            if(!knot.equals(NarrativeCraftFile.getChapterSceneCamelCase(playerSession.getScene()))) {
+                String[] chapterSceneName = knot.split("_");
+                int chapterIndex = Integer.parseInt(chapterSceneName[1]);
+                List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
+                String sceneName = String.join(" ", splitSceneName);
+                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+                Scene scene = chapter.getSceneByName(sceneName);
+                playerSession.setChapter(chapter);
+                playerSession.setScene(scene);
+                if(isDebugMode) {
+                    Minecraft.getInstance().player.displayClientMessage(
+                            Translation.message("debug.switch_chapter_scene", chapter.getIndex(), scene.getName()),
+                            false);
+                }
+                return true;
+            }
+        }
+        return false;
     }
 
     public void showChoices() {
@@ -148,7 +184,7 @@ public class StoryHandler {
 
     public void showDialog() {
         String[] splittedDialog = currentDialog.split(":");
-        if(splittedDialog.length < 2) return;
+        if(splittedDialog.length < 2 || onChoice) return;
         String characterName = splittedDialog[0].trim();
         String dialogContent = splittedDialog[1].trim();
 

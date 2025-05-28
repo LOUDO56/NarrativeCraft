@@ -33,6 +33,7 @@ public class Chapter extends NarrativeEntry {
     public boolean addScene(Scene scene) {
         if(NarrativeCraftFile.createSceneFolder(scene)) {
             sceneList.add(scene);
+            NarrativeCraftFile.updateMainInkFile();
             return true;
         }
         return false;
@@ -82,12 +83,14 @@ public class Chapter extends NarrativeEntry {
         this.description = description;
         ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", index));
         Minecraft.getInstance().setScreen(reloadScreen());
+        NarrativeCraftFile.updateMainInkFile();
     }
 
     @Override
     public void remove() {
         NarrativeCraftFile.removeChapterFolder(this);
         NarrativeCraftMod.getInstance().getChapterManager().removeChapter(this);
+        NarrativeCraftFile.updateMainInkFile();
     }
 
     @Override

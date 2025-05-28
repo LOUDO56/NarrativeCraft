@@ -60,6 +60,7 @@ public class ChapterManager {
                 initScenesOfChapter(chapterIndex, chapter);
                 chapters.add(chapter);
             }
+            NarrativeCraftFile.updateMainInkFile();
         }
     }
 
@@ -200,6 +201,7 @@ public class ChapterManager {
         Chapter chapter = new Chapter(chapters.size() + 1, name, description);
         if(NarrativeCraftFile.createChapterDirectory(chapter)) {
             chapters.add(chapter);
+            NarrativeCraftFile.updateMainInkFile();
             return true;
         } else {
             return false;

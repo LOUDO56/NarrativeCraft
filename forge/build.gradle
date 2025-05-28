@@ -82,6 +82,7 @@ dependencies {
     implementation(jarJar(group: 'com.bladecoder.ink', name: 'blade-ink', version: '[1.0,1.2)') {
         jarJar.pin(it, '1.2.0')
     })
+    implementation('com.bladecoder.ink:blade-ink:1.2.0');
 }
 
 tasks.named('build') {

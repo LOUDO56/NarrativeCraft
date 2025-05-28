@@ -2,9 +2,12 @@ package fr.loudo.narrativecraft.commands;
 
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.commands.CommandSourceStack;
@@ -21,6 +24,16 @@ public class StoryCommand {
                                 .then(Commands.literal("debug")
                                         .executes(StoryCommand::playStoryDebug)
                                 )
+                                .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
+                                        .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
+                                        .then(Commands.argument("scene_name", StringArgumentType.string())
+                                                .suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
+                                                .executes(context -> playStoryChapterStory(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name"), false))
+                                                .then(Commands.literal("debug")
+                                                        .executes(context -> playStoryChapterStory(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name"), true))
+                                                )
+                                        )
+                                )
                         )
                         .then(Commands.literal("stop")
                                 .executes(StoryCommand::stopStory)
@@ -36,7 +49,16 @@ public class StoryCommand {
         Scene firstScene = firstChapter.getSceneList().getFirst();
         StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene);
         storyHandler.start();
-        NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
+
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int playStoryChapterStory(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, boolean debug) {
+
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        Scene scene = chapter.getSceneByName(sceneName);
+        StoryHandler storyHandler = new StoryHandler(chapter, scene, debug);
+        storyHandler.start();
 
         return Command.SINGLE_SUCCESS;
     }

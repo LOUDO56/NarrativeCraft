@@ -133,5 +133,6 @@
   "narrativecraft.debug.song/sfx.start": "%s %s playing now volume=%d pitch=%d isLooping=%s fadeEffect=%s fadeTime=%d",
   "narrativecraft.debug.song/sfx.stop": "%s %s stop playing fadeEffect=%s fadeTime=%d",
   "narrativecraft.debug.fade": "Start fade=%s seconds=%d",
-  "narrativecraft.debug.wait": "Wait %d %s"
+  "narrativecraft.debug.wait": "Wait %d %s",
+  "narrativecraft.debug.switch_chapter_scene": "Switched to chapter %d scene %s"
 }

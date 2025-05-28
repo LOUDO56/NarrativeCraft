@@ -12,6 +12,7 @@ import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.List;
 
 public class NarrativeCraftFile {
 
@@ -22,6 +23,7 @@ public class NarrativeCraftFile {
 
     private static final String BUILD_DIRECTORY_NAME = "build";
     private static final String CHAPTERS_DIRECTORY_NAME = "chapters";
+    private static final String SCENES_DIRECTORY_NAME = "scenes";
     private static final String CHARACTERS_DIRECTORY_NAME = "characters";
     private static final String SAVES_DIRECTORY_NAME = "saves";
     private static final String MAIN_INK_NAME = "main" + EXTENSION_SCRIPT_FILE;
@@ -50,16 +52,23 @@ public class NarrativeCraftFile {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(chapter.getIndex()));
         if(!chapterFolder.exists()) return false;
         try {
-            new File(chapterFolder, "scenes").mkdir();
+            File chapterDirectory = new File(chapterFolder, SCENES_DIRECTORY_NAME);
+            if(chapterDirectory.exists()) return true;
+            chapterDirectory.mkdir();
+            File chapterInkFile = new File(chapterFolder, "chapter_" + chapter.getIndex() + EXTENSION_SCRIPT_FILE);
             File detailsFile = getDetailsFile(chapterFolder);
             detailsFile.createNewFile();
+            chapterInkFile.createNewFile();
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", chapter.getName(), chapter.getDescription());
             try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
                 writer.write(content);
             }
+            try(Writer writer = new BufferedWriter(new FileWriter(chapterInkFile))) {
+                writer.write("=== chapter_" + chapter.getIndex() + " ===");
+            }
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create details file! " + e.getMessage());
+            NarrativeCraftMod.LOG.error("Couldn't create chapter!  " + e.getMessage());
             return false;
         }
 
@@ -83,15 +92,17 @@ public class NarrativeCraftFile {
     public static boolean createSceneFolder(Scene scene) {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         if(!chapterFolder.exists()) createChapterDirectory(scene.getChapter());
-        File scenesFolder = new File(chapterFolder.getAbsoluteFile(), "scenes");
-        File sceneFolder = new File(scenesFolder.getAbsoluteFile(), String.join("_", scene.getName().toLowerCase().split(" ")));
+        File scenesFolder = new File(chapterFolder.getAbsoluteFile(), SCENES_DIRECTORY_NAME);
+        File sceneFolder = new File(scenesFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()));
+        if(sceneFolder.exists()) return true;
         sceneFolder.mkdir();
         File dataFolder = new File(sceneFolder.getAbsoluteFile(), "data");
         dataFolder.mkdir();
         try {
             File detailsFile = getDetailsFile(dataFolder);
             detailsFile.createNewFile();
-            new File(sceneFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE).createNewFile();
+            File sceneScriptFile = new File(sceneFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
+            sceneScriptFile.createNewFile();
             new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
             new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
             new File(dataFolder.getAbsoluteFile(), "subscenes" + EXTENSION_DATA_FILE).createNewFile();
@@ -100,9 +111,12 @@ public class NarrativeCraftFile {
             try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
                 writer.write(content);
             }
+            try(Writer writer = new BufferedWriter(new FileWriter(sceneScriptFile))) {
+                writer.write(getKnotSceneName(scene) + "\n#on enter");
+            }
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create details file! " + e.getMessage());
+            NarrativeCraftMod.LOG.error("Couldn't create scene! {}", e.getMessage());
             return false;
         }
 
@@ -110,7 +124,7 @@ public class NarrativeCraftFile {
 
     public static boolean updateSceneDetails(Scene scene, String name, String description) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
-        File scenesFolder = new File(chapterFolder, "scenes");
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
         try {
             File newSceneFolder = new File(scenesFolder, getCamelCaseName(name));
@@ -128,6 +142,28 @@ public class NarrativeCraftFile {
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
+            return false;
+        }
+    }
+
+    public static boolean updateKnotSceneNameFromChapter(Chapter chapter, String oldName, String newName) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
+        try {
+            for(Scene scene : chapter.getSceneList()) {
+                File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
+                File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
+                String scriptContent = Files.readString(scriptFile.toPath());
+                if(scriptContent.contains(NarrativeCraftFile.getChapterSceneCamelCase(chapter.getIndex(), oldName))) {
+                    scriptContent = scriptContent.replace(getChapterSceneCamelCase(chapter.getIndex(), oldName), getChapterSceneCamelCase(chapter.getIndex(), newName));
+                    try(Writer writer = new BufferedWriter(new FileWriter(scriptFile))) {
+                        writer.write(scriptContent);
+                    }
+                }
+            }
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update knot scen name file of chapter {} ! {}", chapter.getIndex(), e.getMessage());
             return false;
         }
     }
@@ -205,13 +241,15 @@ public class NarrativeCraftFile {
     public static void removeChapterFolder(Chapter chapter) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
         deleteDirectory(chapterFolder);
+        updateMainInkFile();
     }
 
     public static void removeSceneFolder(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
-        File scenesFolder = new File(chapterFolder, "scenes");
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
         deleteDirectory(sceneFolder);
+        updateMainInkFile();
     }
 
     public static void removeAnimationFileFromScene(Animation animation) {
@@ -248,13 +286,61 @@ public class NarrativeCraftFile {
         return Files.readString(new File(buildFolder, "story.json").toPath());
     }
 
+    public static void updateMainInkFile() {
+        List<Chapter> chapterList = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
+        StringBuilder stringBuilder = new StringBuilder();
+        String chapterPath = CHAPTERS_DIRECTORY_NAME + "\\";
+        String scenesPath = SCENES_DIRECTORY_NAME + "\\";
+        for(Chapter chapter : chapterList) {
+            stringBuilder.append("INCLUDE ")
+                    .append(chapterPath)
+                    .append(chapter.getIndex())
+                    .append("\\")
+                    .append("chapter_")
+                    .append(chapter.getIndex())
+                    .append(EXTENSION_SCRIPT_FILE)
+                    .append("\n");
+            for(Scene scene : chapter.getSceneList()) {
+                stringBuilder.append("INCLUDE ")
+                        .append(chapterPath)
+                        .append(chapter.getIndex())
+                        .append("\\")
+                        .append(scenesPath)
+                        .append(getCamelCaseName(scene.getName()))
+                        .append("\\")
+                        .append(getCamelCaseName(scene.getName()))
+                        .append(EXTENSION_SCRIPT_FILE)
+                        .append("\n");
+            }
+        }
+        stringBuilder.append("\n").append("-> chapter_1");
+        try(Writer writer = new BufferedWriter(new FileWriter(mainInkFile))) {
+            writer.write(stringBuilder.toString());
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Can't update main ink file! {}", e.getMessage());
+            throw new RuntimeException("Can't update main ink file! ", e);
+        }
+    }
+
+    public static String getChapterSceneCamelCase(Scene scene) {
+        return "chapter_" + scene.getChapter().getIndex() + "_" + getCamelCaseName(scene.getName());
+    }
+
+    private static String getChapterSceneCamelCase(int chapterIndex, String sceneName) {
+        return "chapter_" + chapterIndex + "_" + getCamelCaseName(sceneName);
+    }
+
+    private static String getKnotSceneName(Scene scene) {
+        return "=== " + getChapterSceneCamelCase(scene) + " ===";
+    }
+
     private static String getCamelCaseName(String name) {
         return String.join("_", name.toLowerCase().split(" "));
     }
 
     private static File getDataFolderOfScene(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
-        File scenesFolder = new File(chapterFolder, "scenes");
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
         return new File(sceneFolder, "data");
     }
