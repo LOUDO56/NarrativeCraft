@@ -12,10 +12,12 @@ https://www.youtube.com/watch?v=OZl5FM3JZmA (note that it's not a mod, but made 
 
 **Note:** The dialog display mode will be replaced by progressive text accompanied by a small sound when a letter appears, as well as manual interaction via input to move on to the next dialog.
 
-# My vision of NarrativeCraft
+# First demo so far
 
 
-https://github.com/user-attachments/assets/bd1d328d-1f89-48eb-85c3-737d04cb8e33
+
+https://github.com/user-attachments/assets/5df41d12-713a-4cc7-8545-5b61c3732d53
+
 
 
 
