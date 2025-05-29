@@ -12,6 +12,8 @@ import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class NarrativeCraftFile {
@@ -284,6 +286,18 @@ public class NarrativeCraftFile {
     public static String getStoryFile() throws IOException {
         File buildFolder = new File(mainDirectory, "build");
         return Files.readString(new File(buildFolder, "story.json").toPath());
+    }
+
+    public static List<String> readSceneLines(Scene scene) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
+        File sceneFolder = new File(scenesFolder, scene.getCamelCase());
+        File sceneScript = new File(sceneFolder, scene.getCamelCase() + EXTENSION_SCRIPT_FILE);
+        try {
+            return Arrays.stream(Files.readString(sceneScript.toPath()).split("\n")).toList();
+        } catch (IOException e) {
+            return Collections.emptyList();
+        }
     }
 
     public static void updateMainInkFile() {

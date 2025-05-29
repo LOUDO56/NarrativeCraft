@@ -59,10 +59,10 @@ public class CharacterStory extends NarrativeEntry {
             this.name = oldName;
             this.description = oldDescription;
             this.birthdate = oldBirthdate;
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.update.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.update.failed", name));
             return;
         }
-        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated"));
         Minecraft.getInstance().setScreen(reloadScreen());
     }
 

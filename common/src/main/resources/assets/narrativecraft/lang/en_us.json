@@ -13,14 +13,19 @@
   "narrativecraft.global.subscenes": "Subscenes",
   "narrativecraft.global.camera_angles": "Camera Angles",
   "narrativecraft.global.confirm_delete": "Are you sure? This can't be undone!",
+  "narrativecraft.global.error": "Error",
+  "narrativecraft.global.info": "Info",
+  "narrativecraft.global.warn": "Warn",
+  "narrativecraft.global.line": "Line",
+  "narrativecraft.global.color": "Color",
+  "narrativecraft.global.volume": "Volume",
+  "narrativecraft.global.pitch": "Pitch",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
   "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
   "narrativecraft.session.cleared": "Session cleared.",
   "narrativecraft.session.cleared.fail": "You don't have a session set.",
 
-  "narrativecraft.toast.error": "Error",
-  "narrativecraft.toast.info": "Info",
   "narrativecraft.toast.description.updated": "Updated Successfully!",
 
   "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
@@ -134,5 +139,22 @@
   "narrativecraft.debug.song/sfx.stop": "%s %s stop playing fadeEffect=%s fadeTime=%d",
   "narrativecraft.debug.fade": "Start fade=%s seconds=%d",
   "narrativecraft.debug.wait": "Wait %d %s",
-  "narrativecraft.debug.switch_chapter_scene": "Switched to chapter %d scene %s"
+  "narrativecraft.debug.switch_chapter_scene": "Switched to chapter %d scene %s",
+
+  "narrativecraft.validation.missing_name": "Missing name.",
+  "narrativecraft.validation.cutscene": "Cutscene %s doesn't exists.",
+  "narrativecraft.validation.camera_angle_missing_parent": "Missing parent name.",
+  "narrativecraft.validation.camera_angle_missing_child": "Missing child name.",
+  "narrativecraft.validation.camera_angle_parent": "Camera angle parent %s doesn't exists.",
+  "narrativecraft.validation.camera_angle_child": "Camera angle child %s of parent %s doesn't exists.",
+  "narrativecraft.validation.number": "%s value is not a valid number.",
+  "narrativecraft.validation.missing_sound_name": "Missing sound name.",
+  "narrativecraft.validation.sound_loop": "Invalid value for the loop. True corresponds to enable looping, false corresponds to not loop the sound.",
+  "narrativecraft.validation.sound_start_fade_in": "This effect does not apply for starting a song, only \"fadein\" is available ",
+  "narrativecraft.validation.sound_start_fade_out": "This effect does not apply for stopping a song, only \"fadeout\" is available ",
+  "narrativecraft.validation.sound": "Sound %s does not exists. If you are using a custom resource pack, check the correct name in sounds.json and whether its .ogg file also exists.",
+  "narrativecraft.validation.missing_wait_value": "Missing wait value.",
+  "narrativecraft.validation.wrong_unit": "Wrong unit value. Only use second, minute or hour",
+  "narrativecraft.validation.found_errors": "Found %d errors while validating full story",
+  "narrativecraft.validation.no_errors": "The story successfully passed validation! :p"
 }

@@ -76,12 +76,12 @@ public class Chapter extends NarrativeEntry {
     @Override
     public void update(String name, String description) {
         if(!NarrativeCraftFile.updateChapterDetails(this, name, description)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.chapter_manager.update.failed"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.chapter_manager.update.failed"));
             return;
         }
         this.name = name;
         this.description = description;
-        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", index));
+        ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated", index));
         Minecraft.getInstance().setScreen(reloadScreen());
         NarrativeCraftFile.updateMainInkFile();
     }

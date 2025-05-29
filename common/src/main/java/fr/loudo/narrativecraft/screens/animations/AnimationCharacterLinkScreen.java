@@ -50,7 +50,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
         }
         if(!NarrativeCraftFile.updateAnimationFile(animation)) {
             animation.setCharacter(oldCharacter);
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.animation_manager.update.failed", animation.getName()));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.animation_manager.update.failed", animation.getName()));
         }
     }
 

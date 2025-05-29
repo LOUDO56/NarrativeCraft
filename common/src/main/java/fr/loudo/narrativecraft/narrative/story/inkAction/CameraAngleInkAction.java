@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
@@ -9,10 +9,13 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 
 public class CameraAngleInkAction extends InkAction {
 
     private String child;
+
+    public CameraAngleInkAction() {}
 
     public CameraAngleInkAction(StoryHandler storyHandler) {
         super(storyHandler);
@@ -53,4 +56,47 @@ public class CameraAngleInkAction extends InkAction {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.cutscene", name, child), false);
         }
     }
+
+    @Override
+    public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
+        if(command.length < 3) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.camera_angle_missing_parent").getString(),
+                    lineText
+            );
+        }
+        if(command.length < 4) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.camera_angle_missing_child").getString(),
+                    lineText
+            );
+        }
+        String parent = command[2];
+        String child = command[3];
+        CameraAngleGroup cameraAngleGroup = scene.getCameraAnglesGroupByName(parent);
+        if(cameraAngleGroup == null) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.camera_angle_parent", parent).getString(),
+                    lineText
+            );
+        }
+        CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(child);
+        if(cameraAngle == null) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.camera_angle_child", child, parent).getString(),
+                    lineText
+            );
+        }
+        return null;
+    }
+
+
 }

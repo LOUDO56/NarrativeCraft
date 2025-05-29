@@ -118,7 +118,7 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
             String month = monthBox.getEditBox().getValue();
             String year = yearBox.getEditBox().getValue();
             if(name.isEmpty()) {
-                ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.story.name.required"));
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.story.name.required"));
                 return;
             }
             if(narrativeEntry == null) {
@@ -136,7 +136,7 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
 
     private void addCharacter(String name, String desc, String day, String month, String year) {
         if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.already_exists"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.already_exists"));
             return;
         }
         CharacterStory characterStory = new CharacterStory(
@@ -147,7 +147,7 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
                 year
         );
         if(!NarrativeCraftFile.updateCharacterFile(characterStory)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.characters_manager.add.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.failed", name));
             return;
         }
         NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(characterStory);

@@ -15,9 +15,7 @@ import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.story.inkAction.CutsceneInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -219,8 +217,37 @@ public class StoryHandler {
         applyTextEffects(parsed.effects);
     }
 
-    public void tick() {
-
+    public static List<InkAction.ErrorLine> validateStory() {
+        List<InkAction.ErrorLine> errorLineList = new ArrayList<>();
+        for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
+            for(Scene scene : chapter.getSceneList()) {
+                List<String> lines = NarrativeCraftFile.readSceneLines(scene);
+                for (int i = 0; i < lines.size(); i++) {
+                    String line = lines.get(i);
+                    if(line.contains("# ")) {
+                        line = line.replaceFirst("^\\s+", "");
+                        line = line.substring(2);
+                        String[] command = line.split(" ");
+                        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(line);
+                        InkAction inkAction = null;
+                        switch (tagType) {
+                            case CUTSCENE -> inkAction = new CutsceneInkAction();
+                            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction();
+                            case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
+                            case FADE -> inkAction = new FadeScreenInkAction();
+                            case WAIT -> inkAction = new WaitInkAction();
+                        }
+                        if(inkAction != null) {
+                            InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, line, scene);
+                            if(errorLine != null) {
+                                errorLineList.add(errorLine);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return errorLineList;
     }
 
     /**

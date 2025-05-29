@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
@@ -13,6 +14,9 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 
 public class CutsceneInkAction extends InkAction {
+
+    public CutsceneInkAction() {}
+
     public CutsceneInkAction(StoryHandler storyHandler) {
         super(storyHandler);
     }
@@ -70,5 +74,28 @@ public class CutsceneInkAction extends InkAction {
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.cutscene", name), false);
         }
+    }
+
+    @Override
+    public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
+        if(command.length < 3) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.missing_name").getString(),
+                    lineText
+            );
+        }
+        name = command[2];
+        Cutscene cutscene = scene.getCutsceneByName(name);
+        if(cutscene == null) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.cutscene", name).getString(),
+                    lineText
+            );
+        }
+        return null;
     }
 }

@@ -1,23 +1,29 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.TypedSoundInstance;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SoundEventRegistration;
+import net.minecraft.client.sounds.WeighedSoundEvents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
 public class SongSfxInkAction extends InkAction {
 
-    private final SoundType soundType;
+    private SoundType soundType;
     private boolean loop, isStart, isPaused;
     private float volume, pitch;
     private double fadeTime, t;
     private StoryHandler.FadeCurrentState fadeCurrentState;
     private long startTime, pauseStartTime;
     private TypedSoundInstance soundInstance;
+
+    public SongSfxInkAction() {}
 
     public SongSfxInkAction(StoryHandler storyHandler, SoundType soundType) {
         super(storyHandler);
@@ -127,6 +133,111 @@ public class SongSfxInkAction extends InkAction {
                 Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx.stop", soundInstance.getSoundType().name(), name, fadeCurrentState.name(), fadeTime), false);
             }
         }
+    }
+
+    @Override
+    public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
+
+        if(command.length < 3) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.missing_sound_name").getString(),
+                    lineText
+            );
+        }
+
+        String soundName = command[2];
+        ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(soundName);
+        WeighedSoundEvents registration = Minecraft.getInstance().getSoundManager().getSoundEvent(soundRes);
+
+        if(registration == null) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.sound", soundName).getString(),
+                    lineText
+            );
+        }
+
+        if(command[1].equals("start")) {
+            isStart = true;
+        } else {
+            isStart = false;
+        }
+
+        if(command.length >= 4 && isStart) {
+            String volValue = command[3];
+            try {
+                Float.parseFloat(volValue);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", Translation.message("global.volume")).getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 5 && isStart) {
+            String pitchValue = command[4];
+            try {
+                Float.parseFloat(pitchValue);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", Translation.message("global.pitch")).getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 6 && isStart) {
+            if(!command[5].equals("true") && !command[5].equals("false")) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.sound_loop").getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 8) {
+            if(isStart && !command[6].equals("fadein")) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.sound_start_fade_in").getString(),
+                        lineText
+                );
+            }
+        }
+        if(!isStart) {
+            if(command.length >= 4 && !command[3].equals("fadeout")) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.sound_start_fade_out").getString(),
+                        lineText
+                );
+            }
+        }
+
+        if(command.length >= 8) {
+            try {
+                Double.parseDouble(command[7]);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", command[6].toUpperCase()).getString(),
+                        lineText
+                );
+            }
+        }
+
+
+        return null;
     }
 
     public SimpleSoundInstance getSimpleSoundInstance() {

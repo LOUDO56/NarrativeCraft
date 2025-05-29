@@ -53,40 +53,39 @@ public class InkTagTranslators {
     public boolean executeTag(String tag) {
         String[] tagSplit = tag.split(" ");
         InkAction inkAction = null;
-        if(tag.contains("on enter")) {
-            storyHandler.checkSwitchChapterOrScene();
-        } else if(tag.contains("cutscene start")) {
-            inkAction = new CutsceneInkAction(storyHandler);
-        } else if(tag.contains("camera set")) {
-            inkAction = new CameraAngleInkAction(storyHandler);
-        } else if (tag.contains("song start") || tag.contains("sfx start")) {
-            SongSfxInkAction.SoundType soundType;
-            if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
-            else soundType = SongSfxInkAction.SoundType.SFX;
-            inkAction = new SongSfxInkAction(storyHandler, soundType);
-        } else if (tag.contains("song stop") || tag.contains("sfx stop")) {
-            if(tagSplit.length < 3) {
-                throw new RuntimeException("No parameter set for song/sfx");
-            }
-            String value = tagSplit[2];
-            if(value.equalsIgnoreCase("all")) {
+        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
+        switch (tagType) {
+            case ON_ENTER -> storyHandler.checkSwitchChapterOrScene();
+            case CUTSCENE -> inkAction = new CutsceneInkAction(storyHandler);
+            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction(storyHandler);
+            case SONG_SFX_START -> {
                 SongSfxInkAction.SoundType soundType;
-                if(tag.contains("song stop")) soundType = SongSfxInkAction.SoundType.SONG;
+                if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
                 else soundType = SongSfxInkAction.SoundType.SFX;
-                storyHandler.stopAllSoundByType(soundType);
-            } else {
-                for(InkAction inkAction1 : storyHandler.getInkActionList()) {
-                    if(inkAction1.getName().equals(value)) {
-                        inkAction = inkAction1;
+                inkAction = new SongSfxInkAction(storyHandler, soundType);
+            }
+            case SONG_SFX_STOP -> {
+                if(tagSplit.length < 3) {
+                    throw new RuntimeException("No parameter set for song/sfx");
+                }
+                String value = tagSplit[2];
+                if(value.equalsIgnoreCase("all")) {
+                    SongSfxInkAction.SoundType soundType;
+                    if(tag.contains("song stop")) soundType = SongSfxInkAction.SoundType.SONG;
+                    else soundType = SongSfxInkAction.SoundType.SFX;
+                    storyHandler.stopAllSoundByType(soundType);
+                } else {
+                    for(InkAction inkAction1 : storyHandler.getInkActionList()) {
+                        if(inkAction1.getName().equals(value)) {
+                            inkAction = inkAction1;
+                        }
                     }
                 }
             }
-        } else if (tag.contains("sound stop all")) {
-            storyHandler.stopAllSound();
-        } else if (tag.contains("fade")) {
-            inkAction = new FadeScreenInkAction(storyHandler);
-        } else if (tag.contains("wait")) {
-            inkAction = new WaitInkAction(storyHandler);
+            case SOUND_STOP_ALL -> storyHandler.stopAllSound();
+            case FADE -> inkAction = new FadeScreenInkAction(storyHandler);
+            case WAIT -> inkAction = new WaitInkAction(storyHandler);
+            case null -> {}
         }
         if(inkAction == null) return true; // If there's no action, then continue story
         return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)

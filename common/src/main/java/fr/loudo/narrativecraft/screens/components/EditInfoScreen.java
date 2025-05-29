@@ -107,7 +107,7 @@ public class EditInfoScreen extends Screen {
             String name = nameBox.getEditBox().getValue();
             String desc = descriptionBox.getMultiLineEditBox().getValue();
             if(name.isEmpty()) {
-                ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.story.name.required"));
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.story.name.required"));
                 return;
             }
             if(narrativeEntry == null && lastScreen instanceof ChaptersScreen) {
@@ -186,7 +186,7 @@ public class EditInfoScreen extends Screen {
 
     private void addChapterAction(String name, String description) {
         if(!NarrativeCraftMod.getInstance().getChapterManager().addChapter(name, description)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.chapter_manager.add.failed"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.chapter_manager.add.failed"));
             return;
         }
         ChaptersScreen screen = new ChaptersScreen();
@@ -196,12 +196,12 @@ public class EditInfoScreen extends Screen {
     private void addSceneAction(String name, String description) {
         Chapter chapter = ((ScenesScreen)lastScreen).getChapter();
         if(chapter.sceneExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.add.already_exists"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.scene_manager.add.already_exists"));
             return;
         }
         Scene scene = new Scene(name, description, chapter);
         if(!chapter.addScene(scene)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.add.failed"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.scene_manager.add.failed"));
             return;
         }
         ScenesScreen screen = new ScenesScreen(chapter);
@@ -212,12 +212,12 @@ public class EditInfoScreen extends Screen {
 
         Scene scene = ((CutscenesScreen)lastScreen).getScene();
         if(scene.cutsceneExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.add.already_exists"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.cutscene_manager.add.already_exists"));
             return;
         }
         Cutscene cutscene = new Cutscene(scene, name, desc);
         if(!scene.addCutscene(cutscene)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.add.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.cutscene_manager.add.failed", name));
             return;
         }
         CutscenesScreen screen = new CutscenesScreen(scene);
@@ -227,12 +227,12 @@ public class EditInfoScreen extends Screen {
     private void addSubsceneAction(String name, String desc) {
         Scene scene = ((SubscenesScreen)lastScreen).getScene();
         if(scene.subsceneExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.add.already_exists"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.subscene_manager.add.already_exists"));
             return;
         }
         Subscene subscene = new Subscene(scene, name, desc);
         if(!scene.addSubscene(subscene)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.subscene_manager.add.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.subscene_manager.add.failed", name));
             return;
         }
         SubscenesScreen screen = new SubscenesScreen(scene);
@@ -242,12 +242,12 @@ public class EditInfoScreen extends Screen {
     private void addCameraAnglesAction(String name, String desc) {
         Scene scene = ((CameraAnglesScreen)lastScreen).getScene();
         if(scene.cameraAnglesGroupExists(name)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.already_exists"));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.camera_angles_manager.add.already_exists"));
             return;
         }
         CameraAngleGroup cameraAngleGroup = new CameraAngleGroup(scene, name, desc);
         if(!scene.addCameraAnglesGroup(cameraAngleGroup)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.camera_angles_manager.add.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.camera_angles_manager.add.failed", name));
             return;
         }
         CameraAnglesScreen screen = new CameraAnglesScreen(scene);

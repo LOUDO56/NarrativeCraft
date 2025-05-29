@@ -7,18 +7,24 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.*;
+import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+
+import java.util.List;
 
 public class StoryCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("nc")
                 .then(Commands.literal("story")
+                        .then(Commands.literal("validate")
+                                .executes(StoryCommand::executeValidateStory)
+                        )
                         .then(Commands.literal("play")
                                 .executes(StoryCommand::playStory)
                                 .then(Commands.literal("debug")
@@ -42,8 +48,32 @@ public class StoryCommand {
         );
     }
 
+    private static int validateStory(CommandContext<CommandSourceStack> context) {
+
+        List<InkAction.ErrorLine> errorLineList = StoryHandler.validateStory();
+        for(InkAction.ErrorLine errorLine : errorLineList) {
+            context.getSource().sendSystemMessage(errorLine.toMessage());
+        }
+
+        if(!errorLineList.isEmpty()) {
+            context.getSource().sendSystemMessage(Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(0xC97C08)).withColor(0xF24949));
+        }
+
+        return errorLineList.isEmpty() ? Command.SINGLE_SUCCESS : 0;
+    }
+
+    private static int executeValidateStory(CommandContext<CommandSourceStack> context) {
+
+        if(validateStory(context) == 0) return 0;
+        context.getSource().sendSystemMessage(Translation.message("validation.no_errors").withColor(0x40ed7a));
+
+        return Command.SINGLE_SUCCESS;
+    }
+
 
     private static int playStory(CommandContext<CommandSourceStack> context) {
+
+        if(validateStory(context) == 0) return 0;
 
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
@@ -55,6 +85,8 @@ public class StoryCommand {
 
     private static int playStoryChapterStory(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, boolean debug) {
 
+        if(validateStory(context) == 0) return 0;
+
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
         Scene scene = chapter.getSceneByName(sceneName);
         StoryHandler storyHandler = new StoryHandler(chapter, scene, debug);
@@ -64,6 +96,9 @@ public class StoryCommand {
     }
 
     private static int playStoryDebug(CommandContext<CommandSourceStack> context) {
+
+        if(validateStory(context) == 0) return 0;
+
         Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
         Scene firstScene = firstChapter.getSceneList().getFirst();
         StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene, true);

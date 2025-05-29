@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -11,20 +12,22 @@ public class WaitInkAction extends InkAction {
     private boolean isPaused;
     private String unitTime;
 
+    public WaitInkAction() {}
+
     public WaitInkAction(StoryHandler storyHandler) {
         super(storyHandler);
     }
 
     @Override
     public boolean execute(String[] command) {
-        long timeValue = Long.parseLong(command[1]);
+        double timeValue = Double.parseDouble(command[1]);
         unitTime = command[2];
         if(unitTime.contains("second")) {
-            secondsToWait = timeValue * 1000L;
+            secondsToWait = (long) timeValue * 1000L;
         } else if(unitTime.contains("minute")) {
-            secondsToWait = timeValue * 60 * 1000L;
+            secondsToWait = (long) timeValue * 60 * 1000L;
         } else if (unitTime.contains("hour")) {
-            secondsToWait = timeValue * 60 * 60 * 1000L;
+            secondsToWait = (long) timeValue * 60 * 60 * 1000L;
         }
         startTime = System.currentTimeMillis();
         storyHandler.getInkActionList().add(this);
@@ -53,6 +56,38 @@ public class WaitInkAction extends InkAction {
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.wait", secondsToWait / 1000L, unitTime), false);
         }
+    }
+
+    @Override
+    public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
+        if(command.length < 2) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.missing_wait_value").getString(),
+                    lineText
+            );
+        }
+        String unitTime = command[2];
+        if(!unitTime.contains("second") && !unitTime.contains("minute") && !unitTime.contains("hour")) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.wrong_unit").getString(),
+                    lineText
+            );
+        }
+        try {
+            Double.parseDouble(command[1]);
+        } catch (NumberFormatException e) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.number", unitTime.toUpperCase()).getString(),
+                    lineText
+            );
+        }
+        return null;
     }
 
     public long getStartTime() {

@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -14,6 +15,8 @@ public class FadeScreenInkAction extends InkAction {
     private long startTime, pauseStartTime;
     private boolean isPaused, isDoneFading;
     private StoryHandler.FadeCurrentState fadeCurrentState;
+
+    public FadeScreenInkAction() {}
 
     public FadeScreenInkAction(StoryHandler storyHandler) {
         super(storyHandler);
@@ -114,6 +117,59 @@ public class FadeScreenInkAction extends InkAction {
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.fade", fadeCurrentState.name(), seconds), false);
         }
+    }
+
+    @Override
+    public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
+        if(command.length >= 2) {
+            try {
+                Double.parseDouble(command[1]);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 3) {
+            try {
+                Double.parseDouble(command[2]);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", StoryHandler.FadeCurrentState.STAY.name()).getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 4) {
+            try {
+                Double.parseDouble(command[3]);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
+                        lineText
+                );
+            }
+        }
+        if(command.length >= 5) {
+            try {
+                Double.parseDouble(command[4]);
+            } catch (NumberFormatException e) {
+                return new ErrorLine(
+                        line,
+                        scene,
+                        Translation.message("validation.number", Translation.message("global.color")).getString(),
+                        lineText
+                );
+            }
+        }
+        return null;
     }
 
 }

@@ -82,10 +82,10 @@ public class Cutscene extends NarrativeEntry {
         if(!NarrativeCraftFile.updateCutsceneFile(scene)) {
             this.name = oldName;
             this.description = oldDescription;
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.cutscene_manager.update.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.cutscene_manager.update.failed", name));
             return;
         }
-        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated"));
+        ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated"));
         Minecraft.getInstance().setScreen(reloadScreen());
     }
 

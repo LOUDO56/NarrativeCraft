@@ -183,16 +183,20 @@ public class Scene extends NarrativeEntry {
         this.cameraAngleGroupList = cameraAngleGroupList;
     }
 
+    public String getCamelCase() {
+        return String.join("_", name.toLowerCase().split(" "));
+    }
+
     @Override
     public void update(String name, String description) {
         if(!NarrativeCraftFile.updateSceneDetails(this, name, description)) {
-            ScreenUtils.sendToast(Translation.message("toast.error"), Translation.message("screen.scene_manager.update.failed", name));
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.scene_manager.update.failed", name));
             return;
         }
         String oldName = this.name;
         this.name = name;
         this.description = description;
-        ScreenUtils.sendToast(Translation.message("toast.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
+        ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
         Minecraft.getInstance().setScreen(reloadScreen());
         NarrativeCraftFile.updateMainInkFile();
         NarrativeCraftFile.updateKnotSceneNameFromChapter(chapter, oldName, name);
