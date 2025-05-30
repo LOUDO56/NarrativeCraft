@@ -47,6 +47,7 @@ public class ItemChangeAction extends Action {
                 entity.getId(),
                 List.of(new Pair<>(EquipmentSlot.valueOf(equipmentSlot), itemStack))
         ));
+        entity.setItemSlot(EquipmentSlot.valueOf(equipmentSlot), itemStack);
     }
 
 }

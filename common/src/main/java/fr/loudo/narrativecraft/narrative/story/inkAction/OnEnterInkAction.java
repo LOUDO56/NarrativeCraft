@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 
@@ -35,6 +36,9 @@ public class OnEnterInkAction extends InkAction {
                 Scene scene = chapter.getSceneByName(sceneName);
                 storyHandler.getPlayerSession().setChapter(chapter);
                 storyHandler.getPlayerSession().setScene(scene);
+                NarrativeCraftFile.writeSave(storyHandler);
+                storyHandler.setSaving(true);
+                StorySave.startTimeSaveIcon = System.currentTimeMillis();
                 sendDebugDetails();
             }
         }

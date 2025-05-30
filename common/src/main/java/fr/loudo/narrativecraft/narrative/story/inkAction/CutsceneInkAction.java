@@ -23,7 +23,7 @@ public class CutsceneInkAction extends InkAction {
 
     @Override
     public boolean execute(String[] command) {
-        storyHandler.setCurrentKeyframeCoordinate(null);
+        storyHandler.getPlayerSession().setSoloCam(null);
         name = command[2];
         Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(name);
         if(cutscene != null) {
@@ -61,7 +61,7 @@ public class CutsceneInkAction extends InkAction {
         for(Playback playback : cutsceneController.getPlaybackList()) {
             NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
         }
-        storyHandler.setCurrentKeyframeCoordinate(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
+        storyHandler.getPlayerSession().setSoloCam(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
         if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty() && storyHandler.isFinished()) {
             storyHandler.stop();
         }

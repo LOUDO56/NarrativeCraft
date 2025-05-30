@@ -23,7 +23,7 @@ public class CameraAngleInkAction extends InkAction {
 
     @Override
     public boolean execute(String[] command) {
-        storyHandler.setCurrentKeyframeCoordinate(null);
+        storyHandler.getPlayerSession().setSoloCam(null);
         name = command[2];
         child = command[3];
         CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(name);

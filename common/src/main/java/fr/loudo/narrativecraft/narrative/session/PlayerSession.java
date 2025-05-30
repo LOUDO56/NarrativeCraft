@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.server.level.ServerPlayer;
@@ -15,13 +16,14 @@ import java.util.List;
 
 public class PlayerSession {
 
-    private ServerPlayer player;
+    private transient ServerPlayer player;
+    private transient List<Subscene> subscenesPlaying;
+    private transient CutscenePlayback cutscenePlayback;
+    private transient boolean overwriteState;
     private Chapter chapter;
     private Scene scene;
-    private List<Subscene> subscenesPlaying;
     private KeyframeControllerBase keyframeControllerBase;
-    private CutscenePlayback cutscenePlayback;
-    private boolean overwriteState;
+    private KeyframeCoordinate soloCam;
 
     public PlayerSession(ServerPlayer player) {
         this.player = player;
@@ -33,9 +35,19 @@ public class PlayerSession {
         this.player = player;
         this.overwriteState = false;
     }
+    public PlayerSession(Chapter chapter, Scene scene) {
+        this.chapter = chapter;
+        this.scene = scene;
+        this.subscenesPlaying = new ArrayList<>();
+        this.overwriteState = false;
+    }
 
     public ServerPlayer getPlayer() {
         return player;
+    }
+
+    public void setPlayer(ServerPlayer player) {
+        this.player = player;
     }
 
     public Chapter getChapter() {
@@ -80,6 +92,14 @@ public class PlayerSession {
 
     public void setCutscenePlayback(CutscenePlayback cutscenePlayback) {
         this.cutscenePlayback = cutscenePlayback;
+    }
+
+    public KeyframeCoordinate getSoloCam() {
+        return soloCam;
+    }
+
+    public void setSoloCam(KeyframeCoordinate soloCam) {
+        this.soloCam = soloCam;
     }
 
     public void reset() {

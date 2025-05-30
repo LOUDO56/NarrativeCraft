@@ -101,7 +101,7 @@ public abstract class CameraMixin {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) return;
 
-        KeyframeCoordinate position = storyHandler.getCurrentKeyframeCoordinate();
+        KeyframeCoordinate position = storyHandler.getPlayerSession().getSoloCam();
 
         if(position != null) {
             LocalPlayer localPlayer = client.player;

@@ -1,17 +1,26 @@
 package fr.loudo.narrativecraft.files;
 
+import com.bladecoder.ink.runtime.Story;
+import com.bladecoder.ink.runtime.StoryState;
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.StorySave;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -340,6 +349,30 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static boolean writeSave(StoryHandler storyHandler) {
+       try {
+           File saveFile = new File(savesDirectory, "save.json");
+           StorySave save = new StorySave(storyHandler);
+           try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
+               new Gson().toJson(save, writer);
+           }
+           return true;
+       } catch (Exception e) {
+           throw new RuntimeException(e);
+       }
+    }
+
+    public static StorySave getSave() {
+        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        if(!saveFile.exists()) return null;
+        try {
+            String saveContent = Files.readString(saveFile.toPath());
+            return new Gson().fromJson(saveContent, StorySave.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static String getChapterSceneCamelCase(Scene scene) {
         return "chapter_" + scene.getChapter().getIndex() + "_" + getCamelCaseName(scene.getName());
     }
@@ -392,4 +425,5 @@ public class NarrativeCraftFile {
         }
         directoryToBeDeleted.delete();
     }
+
 }

@@ -9,12 +9,14 @@ public class HudRender {
 
     private static final ResourceLocation DIALOG_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "dialog-hud");
     private static final ResourceLocation FADE_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "fade-hud");
+    private static final ResourceLocation SAVE_ICON_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "save-icon-hud");
 
     public static void onHudRender(LayeredDrawerWrapper layeredDrawerWrapper) {
         layeredDrawerWrapper.attachLayerBefore(IdentifiedLayer.CROSSHAIR, DIALOG_HUD, OnHudRender::hudRender);
     }
 
     public static void fadeHUDRender(LayeredDrawerWrapper layeredDrawerWrapper) {
+        layeredDrawerWrapper.attachLayerAfter(IdentifiedLayer.CROSSHAIR, SAVE_ICON_HUD, OnHudRender::saveIconRender);
         layeredDrawerWrapper.attachLayerAfter(IdentifiedLayer.CROSSHAIR, FADE_HUD, OnHudRender::fadeRender);
     }
 }

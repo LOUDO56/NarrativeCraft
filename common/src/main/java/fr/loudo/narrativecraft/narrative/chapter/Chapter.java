@@ -16,7 +16,7 @@ import java.util.List;
 public class Chapter extends NarrativeEntry {
 
     private int index;
-    private List<Scene> sceneList;
+    private final List<Scene> sceneList;
 
     public Chapter(int index) {
         super("", "");

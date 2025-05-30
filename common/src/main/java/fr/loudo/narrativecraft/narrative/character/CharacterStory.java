@@ -19,6 +19,7 @@ public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
     private String birthdate;
+    private CharacterType characterType;
     //TODO: custom skin, one string attr to means either a player name, mineskin url or local skin path.
     //TODO: Custom dialogue of character options here?
     //TODO: CharacterLayer class to enable certain part of body of the character
@@ -26,6 +27,7 @@ public class CharacterStory extends NarrativeEntry {
 
     public CharacterStory(String name) {
         super(name, "");
+        characterType = CharacterType.MAIN;
     }
 
     public CharacterStory(String name, String description, String day, String month, String year) {
@@ -33,6 +35,7 @@ public class CharacterStory extends NarrativeEntry {
         this.name = name;
         this.description = description;
         this.birthdate = day + "/" + month + "/" + year;
+        characterType = CharacterType.MAIN;
     }
 
     public String getBirthdate() {
@@ -87,5 +90,18 @@ public class CharacterStory extends NarrativeEntry {
                 NarrativeCraftMod.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
             }
         }
+    }
+
+    public CharacterType getCharacterType() {
+        return characterType;
+    }
+
+    public void setCharacterType(CharacterType characterType) {
+        this.characterType = characterType;
+    }
+
+    public enum CharacterType {
+        MAIN,
+        NPC
     }
 }

@@ -80,9 +80,7 @@ public class StoryCommand {
 
         if(validateStory(context) == 0) return 0;
 
-        Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
-        Scene firstScene = firstChapter.getSceneList().getFirst();
-        StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene);
+        StoryHandler storyHandler = new StoryHandler();
         storyHandler.start();
 
         return Command.SINGLE_SUCCESS;
@@ -94,7 +92,8 @@ public class StoryCommand {
 
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
         Scene scene = chapter.getSceneByName(sceneName);
-        StoryHandler storyHandler = new StoryHandler(chapter, scene, debug);
+        StoryHandler storyHandler = new StoryHandler(chapter, scene);
+        storyHandler.setDebugMode(debug);
         storyHandler.start();
 
         return Command.SINGLE_SUCCESS;
@@ -104,9 +103,8 @@ public class StoryCommand {
 
         if(validateStory(context) == 0) return 0;
 
-        Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
-        Scene firstScene = firstChapter.getSceneList().getFirst();
-        StoryHandler storyHandler = new StoryHandler(firstChapter, firstScene, true);
+        StoryHandler storyHandler = new StoryHandler();
+        storyHandler.setDebugMode(true);
         storyHandler.start();
         return Command.SINGLE_SUCCESS;
     }

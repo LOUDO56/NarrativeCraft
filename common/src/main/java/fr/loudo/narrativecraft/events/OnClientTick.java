@@ -76,8 +76,6 @@ public class OnClientTick {
             client.execute(() -> client.setScreen(screen));
         });
 
-        PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
-        if(playerSession == null) return;
 
         // Next dialog trigger
         ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
@@ -90,7 +88,7 @@ public class OnClientTick {
                 dialog.getDialogScrollText().forceFinish();
                 return;
             }
-            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+            KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
             if(keyframeControllerBase instanceof CutsceneController) {
                 return;
             }
@@ -99,6 +97,9 @@ public class OnClientTick {
             }
             storyHandler.next();
         });
+
+        PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
+        if(playerSession == null) return;
 
 
         // KeyframeControllerBase verification

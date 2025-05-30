@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import net.minecraft.client.DeltaTracker;
@@ -39,4 +40,11 @@ public class OnHudRender {
         storyHandler.getInkActionList().removeAll(toRemove);
     }
 
+    public static void saveIconRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
+        if(storyHandler.isSaving()) {
+            StorySave.showSaveIcon(guiGraphics, deltaTracker);
+        }
+    }
 }

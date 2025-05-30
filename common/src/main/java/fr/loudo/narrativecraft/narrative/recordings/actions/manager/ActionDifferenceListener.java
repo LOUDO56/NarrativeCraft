@@ -118,7 +118,7 @@ public class ActionDifferenceListener {
         if(componentsTag == null) {
             itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, equipmentSlot.name(), Item.getId(itemStack.getItem()));
         } else {
-            itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, Item.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
+            itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, BuiltInRegistries.ITEM.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }
         recording.getActionsData().addAction(itemChangeAction);
     }

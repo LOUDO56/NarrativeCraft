@@ -11,9 +11,9 @@ import java.util.List;
 
 public abstract class KeyframeControllerBase {
 
+    protected transient final List<Entity> keyframesEntity;
+    protected transient final ServerPlayer player;
     protected List<KeyframeGroup> keyframeGroups;
-    protected final ServerPlayer player;
-    protected final List<Entity> keyframesEntity;
     protected Keyframe currentPreviewKeyframe;
     protected Playback.PlaybackType playbackType;
 
