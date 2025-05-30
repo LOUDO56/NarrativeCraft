@@ -11,6 +11,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -50,13 +52,16 @@ public class StoryCommand {
 
     private static int validateStory(CommandContext<CommandSourceStack> context) {
 
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer localPlayer = minecraft.player;
+
         List<InkAction.ErrorLine> errorLineList = StoryHandler.validateStory();
         for(InkAction.ErrorLine errorLine : errorLineList) {
-            context.getSource().sendSystemMessage(errorLine.toMessage());
+            localPlayer.displayClientMessage(errorLine.toMessage(), false);
         }
 
         if(!errorLineList.isEmpty()) {
-            context.getSource().sendSystemMessage(Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(0xC97C08)).withColor(0xF24949));
+            localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(0xC97C08)).withColor(0xF24949)), false);
         }
 
         return errorLineList.isEmpty() ? Command.SINGLE_SUCCESS : 0;

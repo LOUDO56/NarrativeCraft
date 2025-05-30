@@ -55,7 +55,7 @@ public class InkTagTranslators {
         InkAction inkAction = null;
         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
         switch (tagType) {
-            case ON_ENTER -> storyHandler.checkSwitchChapterOrScene();
+            case ON_ENTER -> inkAction = new OnEnterInkAction(storyHandler);
             case CUTSCENE -> inkAction = new CutsceneInkAction(storyHandler);
             case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction(storyHandler);
             case SONG_SFX_START -> {

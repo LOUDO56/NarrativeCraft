@@ -139,33 +139,6 @@ public class StoryHandler {
         return true;
     }
 
-    public boolean checkSwitchChapterOrScene() {
-        StoryState state = story.getState();
-        String currentKnot = state.previousPathString();
-        if(currentKnot != null) {
-            String[] splitedKnot = currentKnot.split("\\.");
-            String knot = splitedKnot[0];
-            String stitch = splitedKnot.length > 1 ? splitedKnot[1] : "";
-            if(!knot.equals(NarrativeCraftFile.getChapterSceneCamelCase(playerSession.getScene()))) {
-                String[] chapterSceneName = knot.split("_");
-                int chapterIndex = Integer.parseInt(chapterSceneName[1]);
-                List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
-                String sceneName = String.join(" ", splitSceneName);
-                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
-                Scene scene = chapter.getSceneByName(sceneName);
-                playerSession.setChapter(chapter);
-                playerSession.setScene(scene);
-                if(isDebugMode) {
-                    Minecraft.getInstance().player.displayClientMessage(
-                            Translation.message("debug.switch_chapter_scene", chapter.getIndex(), scene.getName()),
-                            false);
-                }
-                return true;
-            }
-        }
-        return false;
-    }
-
     public void showChoices() {
         if(!currentChoices.isEmpty()) {
             if(currentDialogBox != null) {
@@ -226,8 +199,20 @@ public class StoryHandler {
                     String line = lines.get(i);
                     if(line.contains("# ")) {
                         line = line.replaceFirst("^\\s+", "");
+                        String rawLine = line;
                         line = line.substring(2);
                         String[] command = line.split(" ");
+                        if(i + 1 == 2 && !line.equals("on enter")) {
+                            errorLineList.add(
+                                    new InkAction.ErrorLine(
+                                            i + 1,
+                                            scene,
+                                            Translation.message("validation.on_enter").getString(),
+                                            line
+                                    )
+                            );
+                            break;
+                        }
                         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(line);
                         InkAction inkAction = null;
                         switch (tagType) {
@@ -238,7 +223,7 @@ public class StoryHandler {
                             case WAIT -> inkAction = new WaitInkAction();
                         }
                         if(inkAction != null) {
-                            InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, line, scene);
+                            InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, rawLine, scene);
                             if(errorLine != null) {
                                 errorLineList.add(errorLine);
                             }

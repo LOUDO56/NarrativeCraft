@@ -289,15 +289,19 @@ public class NarrativeCraftFile {
     }
 
     public static List<String> readSceneLines(Scene scene) {
-        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
-        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder, scene.getCamelCase());
-        File sceneScript = new File(sceneFolder, scene.getCamelCase() + EXTENSION_SCRIPT_FILE);
+        File sceneScript = getSceneFile(scene);
         try {
             return Arrays.stream(Files.readString(sceneScript.toPath()).split("\n")).toList();
         } catch (IOException e) {
             return Collections.emptyList();
         }
+    }
+
+    public static File getSceneFile(Scene scene) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
+        File sceneFolder = new File(scenesFolder, scene.getCamelCase());
+        return new File(sceneFolder, scene.getCamelCase() + EXTENSION_SCRIPT_FILE);
     }
 
     public static void updateMainInkFile() {

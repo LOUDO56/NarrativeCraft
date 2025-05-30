@@ -5,7 +5,11 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
+import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 
 public abstract class InkAction {
@@ -98,7 +102,12 @@ public abstract class InkAction {
                     )
                     .append(Component.literal("(" + fileName + ")")
                             .withColor(0xb0b0b0)
-                            .withStyle(style -> style.withBold(false))
+                            .withStyle(style -> style.withBold(false)
+                                    .withClickEvent(new ClickEvent.OpenFile(
+                                            NarrativeCraftFile.getSceneFile(scene)
+                                    ))
+                                    .withHoverEvent(new HoverEvent.ShowText(Translation.message("validation.quick_edit")))
+                            )
                     )
                     .append("\n")
                     .append(Translation.message("global.line")

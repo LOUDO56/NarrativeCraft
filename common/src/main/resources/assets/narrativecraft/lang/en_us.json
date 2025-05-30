@@ -155,6 +155,8 @@
   "narrativecraft.validation.sound": "Sound %s does not exists. If you are using a custom resource pack, check the correct name in sounds.json and whether its .ogg file also exists.",
   "narrativecraft.validation.missing_wait_value": "Missing wait value.",
   "narrativecraft.validation.wrong_unit": "Wrong unit value. Only use second, minute or hour",
+  "narrativecraft.validation.on_enter": "Line 2 of a scene MUST BE \"#on enter\" in order to make the story working correctly.",
   "narrativecraft.validation.found_errors": "Found %d errors while validating full story",
-  "narrativecraft.validation.no_errors": "The story successfully passed validation! :p"
+  "narrativecraft.validation.no_errors": "The story successfully passed validation! :p",
+  "narrativecraft.validation.quick_edit": "Click to quick edit"
 }
