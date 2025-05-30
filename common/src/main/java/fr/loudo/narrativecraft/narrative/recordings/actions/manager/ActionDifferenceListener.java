@@ -1,10 +1,13 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
-import fr.loudo.narrativecraft.narrative.recordings.actions.*;
+import fr.loudo.narrativecraft.narrative.recordings.actions.EntityByteAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.LivingEntityByteAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerPlayer;
@@ -106,7 +109,7 @@ public class ActionDifferenceListener {
 
     private void onItemChange(ItemStack itemStack, EquipmentSlot equipmentSlot, int tick) {
         if(itemStack.isEmpty()) {
-            recording.getActionsData().addAction(new ItemChangeAction(tick, ActionType.ITEM_CHANGE, equipmentSlot.name(), Item.getId(itemStack.getItem())));
+            recording.getActionsData().addAction(new ItemChangeAction(tick, ActionType.ITEM_CHANGE, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem())));
             return;
         }
         Tag tag = itemStack.save(player.registryAccess());

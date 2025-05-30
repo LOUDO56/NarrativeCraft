@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -35,7 +36,7 @@ public class ItemChangeAction extends Action {
 
     @Override
     public void execute(LivingEntity entity) {
-        Item item = Item.byId(itemId);
+        Item item = BuiltInRegistries.ITEM.byId(itemId);
         ItemStack itemStack = new ItemStack(item);
         CompoundTag tag = Utils.tagFromIdAndComponents(item, data);
         if (tag != null) {
