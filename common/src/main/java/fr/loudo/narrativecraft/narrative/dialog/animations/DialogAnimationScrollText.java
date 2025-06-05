@@ -1,13 +1,13 @@
 package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.font.GlyphInfo;
+import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.utils.MathUtils;
-import fr.loudo.narrativecraft.utils.ScreenUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.FontSet;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.FormattedText;
@@ -17,7 +17,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
 import org.joml.Random;
 import org.joml.Vector2f;
-import org.joml.Vector4f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,19 +27,20 @@ public class DialogAnimationScrollText {
 
     private final long showLetterDelay = 30L;
     private final float offset = 4.1f;
+    private final Dialog dialog;
 
     private int maxWidth;
     private boolean isPaused;
     private List<String> lines;
     private int currentLetter;
     private float letterSpacing;
-    private float gap, startY, totalHeight, screenX, endY, screenY, scale, maxLineWidth;
+    private float gap, totalHeight, maxLineWidth;
     private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
     private final Map<Integer, Long> letterStartTime = new HashMap<>();
     private DialogLetterEffect dialogLetterEffect;
     private long lastTimeChar, animationTime, pauseStartTime, totalPauseTime;
 
-    public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth) {
+    public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth, Dialog dialog) {
         this.maxWidth = maxWidth;
         this.lines = splitText(text);
         this.letterSpacing = letterSpacing;
@@ -51,43 +51,33 @@ public class DialogAnimationScrollText {
         for (int i = 0; i < text.length(); i++) {
             letterStartTime.put(i, now + i * 50L);
         }
+        this.dialog = dialog;
+        init();
     }
 
-    public void init(float screenX, float screenY, float paddingY, float scale) {
+    public void init() {
         Minecraft client = Minecraft.getInstance();
         maxLineWidth = 0;
         for (String line : lines) {
             float lineWidth = client.font.width(line) + (line.length() - 1) * letterSpacing;
             maxLineWidth = Math.max(maxLineWidth, lineWidth);
         }
-        this.screenX = screenX;
-        this.screenY = screenY;
-        this.scale = scale;
-        float totalGap = (lines.size() - 1) * gap;
-        startY = screenY - ScreenUtils.getPixelValue(offset + totalGap, scale) - ScreenUtils.getPixelValue(paddingY, scale);
-        //startY = (offset + totalGap) - paddingY;
-        endY = startY;
         totalHeight = 0;
         for (String text : lines) {
             if(lines.size() > 1) {
                 totalHeight += gap;
-                endY += ScreenUtils.getPixelValue(gap, scale);
             } else {
                 totalHeight += client.font.lineHeight;
-                endY += ScreenUtils.getPixelValue(client.font.lineHeight, scale);
             }
         }
         if(lines.size() > 1) {
             totalHeight -= gap - client.font.lineHeight;
-            endY -= ScreenUtils.getPixelValue(gap - client.font.lineHeight, scale);
         }
     }
 
-    public void show(GuiGraphics guiGraphics, Vector4f posClip) {
+    public void show(PoseStack poseStack, MultiBufferSource bufferSource) {
         Minecraft client = Minecraft.getInstance();
         long now = System.currentTimeMillis();
-        int guiScale = client.options.guiScale().get() > 0 ? client.options.guiScale().get() : 1;
-
         int totalLetters = lines.stream().mapToInt(String::length).sum();
         int shownLetters = 0;
 
@@ -101,7 +91,7 @@ public class DialogAnimationScrollText {
             lastTimeChar = now;
         }
 
-        float currentY = startY;
+        float currentY = -getTotalHeight() + dialog.getPaddingY() * 2 + 0.7f;
 
         int globalCharIndex = 0;
 
@@ -112,8 +102,7 @@ public class DialogAnimationScrollText {
             shownLetters += lineLength;
 
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
-            float textPlace = textWidth == maxLineWidth ? textWidth / 2.0F : maxLineWidth / 2.0F;
-            float startX = screenX - ScreenUtils.getPixelValue(textPlace, scale);
+            float startX = textWidth == maxLineWidth ? -textWidth / 2.0F : -maxLineWidth / 2.0F;
 
             if (!isPaused) {
                 if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
@@ -139,10 +128,7 @@ public class DialogAnimationScrollText {
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                drawString(guiGraphics, character,
-                        startX + ScreenUtils.getPixelValue(offset.x, scale),
-                        currentY + ScreenUtils.getPixelValue(offset.y, scale),
-                        scale, posClip);
+                drawString(character, poseStack, bufferSource, startX + offset.x, currentY + offset.y);
 
                 Style style = Style.EMPTY;
                 FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
@@ -150,45 +136,35 @@ public class DialogAnimationScrollText {
                 boolean bold = style.isBold();
                 float letterWidth = glyph.getAdvance(bold);
 
-                startX += (letterWidth * scale + letterSpacing * scale) / guiScale;
+                startX += letterWidth + letterSpacing;
 
                 globalCharIndex++;
             }
 
-            currentY += ScreenUtils.getPixelValue(lines.size() > 1 ? gap : client.font.lineHeight, scale);
+            currentY += lines.size() > 1 ? gap : client.font.lineHeight;
         }
+
+        dialog.getDialogEntityBobbing().updateLookDirection();
+
     }
 
-    private void drawString(GuiGraphics guiGraphics, String character, float screenX, float screenY, float scale, Vector4f posClip) {
+    private void drawString(String character, PoseStack poseStack, MultiBufferSource bufferSource, float x, float y) {
         Minecraft client = Minecraft.getInstance();
-        if (posClip.w <= 0) return;
 
-        MultiBufferSource.BufferSource buffers = client.renderBuffers().bufferSource();
-
-        guiGraphics.pose().pushPose();
-        int guiScale = client.options.guiScale().get();
-        if (guiScale == 0) guiScale = 1;
-        scale /= guiScale;
-        guiGraphics.pose().scale(scale, scale, 2.0f);
-
-        int color = 0xFFFFFF;
+        int color = dialog.getTextDialogColor();
 
         client.font.drawInBatch(
                 character,
-                (screenX / scale),
-                (screenY / scale) - (client.font.lineHeight / 2.0F),
+                x,
+                y,
                 color,
                 false,
-                guiGraphics.pose().last().pose(),
-                buffers,
-                Font.DisplayMode.NORMAL,
+                poseStack.last().pose(),
+                bufferSource,
+                Font.DisplayMode.SEE_THROUGH,
                 0,
                 15728880
         );
-
-
-        guiGraphics.pose().popPose();
-        buffers.endBatch();
 
     }
 
@@ -222,6 +198,7 @@ public class DialogAnimationScrollText {
 
     public void reset() {
         currentLetter = 0;
+        init();
     }
 
     public List<String> getLines() {
@@ -253,15 +230,7 @@ public class DialogAnimationScrollText {
     }
 
     public float getTotalHeight() {
-        return totalHeight;
-    }
-
-    public float getStartY() {
-        return startY;
-    }
-
-    public float getEndY() {
-        return endY;
+        return totalHeight + 4 * dialog.getPaddingY();
     }
 
     public void setMaxWidth(int maxWidth) {

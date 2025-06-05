@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 
 public class OnRenderWorld {
 
@@ -16,6 +17,11 @@ public class OnRenderWorld {
         Dialog dialog = NarrativeCraftMod.getInstance().getTestDialog();
         if(dialog != null) {
             dialog.render(poseStack);
+        }
+
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null && storyHandler.getCurrentDialogBox() != null) {
+            storyHandler.getCurrentDialogBox().render(poseStack);
         }
 
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {

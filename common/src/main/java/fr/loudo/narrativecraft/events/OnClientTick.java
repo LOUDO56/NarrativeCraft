@@ -83,9 +83,9 @@ public class OnClientTick {
             Dialog dialog = storyHandler.getCurrentDialogBox();
             if(dialog == null) return;
             if(dialog.isAnimating()) return;
-            if(dialog.isUnskippable()) return;
-            if(!dialog.getDialogScrollText().isFinished()) {
-                dialog.getDialogScrollText().forceFinish();
+            if(dialog.isUnSkippable()) return;
+            if(!dialog.getDialogAnimationScrollText().isFinished()) {
+                dialog.getDialogAnimationScrollText().forceFinish();
                 return;
             }
             KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();

@@ -14,13 +14,13 @@ import java.util.List;
 public class OnHudRender {
 
     public static void hudRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if(NarrativeCraftMod.getInstance().getTestDialog() != null) {
-            NarrativeCraftMod.getInstance().getTestDialog().render(guiGraphics, deltaTracker);
-        }
-        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler == null) return;
-        if(storyHandler.getCurrentDialogBox() == null) return;
-        storyHandler.getCurrentDialogBox().render(guiGraphics, deltaTracker);
+//        if(NarrativeCraftMod.getInstance().getTestDialog() != null) {
+//            NarrativeCraftMod.getInstance().getTestDialog().render(guiGraphics, deltaTracker);
+//        }
+//        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+//        if(storyHandler == null) return;
+//        if(storyHandler.getCurrentDialogBox() == null) return;
+//        storyHandler.getCurrentDialogBox().render(guiGraphics, deltaTracker);
     }
 
     public static void fadeRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

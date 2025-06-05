@@ -210,7 +210,7 @@ public class StoryHandler {
         ParsedDialog parsed = parseDialogContent(dialogContent);
 
         if (characterName.equalsIgnoreCase(currentCharacterTalking) && currentDialogBox != null) {
-            currentDialogBox.getDialogScrollText().setText(parsed.cleanedText);
+            currentDialogBox.getDialogAnimationScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
             if (currentDialogBox != null) {
@@ -223,10 +223,11 @@ public class StoryHandler {
                         .orElseThrow(() -> new RuntimeException("Character not found: " + characterName));
 
                 currentDialogBox = new Dialog(
-                        parsed.cleanedText,
                         currentCharacter.getEntity(),
-                        3, 4, 0.5f,
-                        10, 15, 0, 100
+                        parsed.cleanedText,
+                        -1, 1, 3,
+                        4, 0.8F, 0.1F, 10,
+                        90
                 );
             }
             currentCharacterTalking = characterName;
@@ -336,7 +337,7 @@ public class StoryHandler {
             DialogLetterEffect dialogEffect = new DialogLetterEffect(
                     DialogAnimationType.NONE
             );
-            currentDialogBox.getDialogScrollText().setDialogLetterEffect(dialogEffect);
+            currentDialogBox.getDialogAnimationScrollText().setDialogLetterEffect(dialogEffect);
             return;
         }
         for (TextEffect effect : effects) {
@@ -361,7 +362,7 @@ public class StoryHandler {
                     effect.startIndex,
                     effect.endIndex
             );
-            currentDialogBox.getDialogScrollText().setDialogLetterEffect(dialogEffect);
+            currentDialogBox.getDialogAnimationScrollText().setDialogLetterEffect(dialogEffect);
         }
     }
 

@@ -159,7 +159,7 @@ public class FadeScreenInkAction extends InkAction {
         }
         if(command.length >= 5) {
             try {
-                Double.parseDouble(command[4]);
+                Integer.parseInt(command[4], 16);
             } catch (NumberFormatException e) {
                 return new ErrorLine(
                         line,

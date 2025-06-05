@@ -48,9 +48,9 @@ public class StorySave {
     public static void showSaveIcon(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 
 
-        long fadeInDuration = 500;
-        long stayDuration = 1000;
-        long fadeOutDuration = 500;
+        long fadeInDuration = 200;
+        long stayDuration = 900;
+        long fadeOutDuration = 200;
 
         long elapsed = System.currentTimeMillis() - startTimeSaveIcon;
         long totalDuration = fadeInDuration + stayDuration + fadeOutDuration;
