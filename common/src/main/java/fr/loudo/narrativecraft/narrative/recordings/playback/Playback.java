@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 
+import java.io.File;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,9 +56,33 @@ public class Playback {
 
     private void spawnEntity(MovementData loc) {
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
+        loadSkin();
+        entity = new FakePlayer(serverLevel, gameProfile);
+        SynchedEntityData entityData = entity.getEntityData();
+        EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
+        entityData.set(ENTITY_LAYER, (byte) 0b01111111);
+        moveEntitySilent(entity, loc);
+        if(entity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+            serverLevel.addNewPlayer(fakePlayer);
+        } else {
+            serverLevel.addFreshEntity(entity);
+        }
+        character.setEntity(entity);
+    }
+
+    private void spawnEntity(MovementData loc, Entity oldEntity) {
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
+        loadSkin();
         entity = new FakePlayer(serverLevel, gameProfile);
         character.setEntity(entity);
         moveEntitySilent(entity, loc);
+        entity.setPose(oldEntity.getPose());
+        SynchedEntityData entityData = entity.getEntityData();
+        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
+        entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
+        entityData.set(ENTITY_LAYER, (byte) 0b01111111);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
             serverLevel.addNewPlayer(fakePlayer);
@@ -65,22 +91,14 @@ public class Playback {
         }
     }
 
-    private void spawnEntity(MovementData loc, Entity oldEntity) {
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
-        entity = new FakePlayer(serverLevel, gameProfile);
-        character.setEntity(entity);
-        moveEntitySilent(entity, loc);
-        entity.setPose(oldEntity.getPose());
-        SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
-        if(entity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-            serverLevel.addNewPlayer(fakePlayer);
-        } else {
-            serverLevel.addFreshEntity(entity);
+    private void loadSkin() {
+        File skinFile = null;
+        if(playbackType == PlaybackType.DEVELOPMENT) {
+            skinFile = NarrativeCraftFile.getSkinFile(character, animation.getSkinName());
+        } else if (playbackType == PlaybackType.PRODUCTION){
+            skinFile = character.getSkinFile(animation.getSkinName());
         }
-
+        character.setCurrentSkin(skinFile);
     }
 
     public void stop() {

@@ -14,6 +14,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -109,6 +110,8 @@ public class ChapterManager {
                     try {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = gson.fromJson(content, Animation.class);
+                        CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
+                        animation.setCharacter(characterStory);
                         animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {

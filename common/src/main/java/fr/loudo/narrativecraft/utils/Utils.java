@@ -63,4 +63,8 @@ public class Utils {
         }
         return playerSession;
     }
+
+    public static String getSnakeCase(String text) {
+        return String.join("_", text.toLowerCase().split(" "));
+    }
 }

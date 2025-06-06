@@ -75,7 +75,7 @@ public abstract class InkAction {
         public ErrorLine(int line, Scene scene, String message, String lineText) {
             this.line = line;
             this.scene = scene;
-            this.fileName = scene.getCamelCase() + NarrativeCraftFile.EXTENSION_SCRIPT_FILE;
+            this.fileName = scene.getSnakeCase() + NarrativeCraftFile.EXTENSION_SCRIPT_FILE;
             this.message = message;
             this.lineText = lineText;
         }

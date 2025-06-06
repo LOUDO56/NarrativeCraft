@@ -46,7 +46,7 @@ public class Dialog {
         this.entity = entity;
         dialogBackgroundColor = backgroundColor;
         textDialogColor = textColor;
-        dialogOffset = new Vec3(2, -0.7, 0);
+        dialogOffset = new Vec3(0, 0.8, 0);
         dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth, this);
         dialogAppearAnimation = new DialogAppearAnimation(this);
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);

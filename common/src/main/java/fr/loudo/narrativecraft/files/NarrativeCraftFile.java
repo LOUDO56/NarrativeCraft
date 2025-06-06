@@ -1,29 +1,26 @@
 package fr.loudo.narrativecraft.files;
 
-import com.bladecoder.ink.runtime.Story;
-import com.bladecoder.ink.runtime.StoryState;
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
-import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
-import java.lang.reflect.Type;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class NarrativeCraftFile {
 
@@ -104,7 +101,7 @@ public class NarrativeCraftFile {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         if(!chapterFolder.exists()) createChapterDirectory(scene.getChapter());
         File scenesFolder = new File(chapterFolder.getAbsoluteFile(), SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()));
+        File sceneFolder = new File(scenesFolder.getAbsoluteFile(), getSnakeCaseName(scene.getName()));
         if(sceneFolder.exists()) return true;
         sceneFolder.mkdir();
         File dataFolder = new File(sceneFolder.getAbsoluteFile(), "data");
@@ -112,7 +109,7 @@ public class NarrativeCraftFile {
         try {
             File detailsFile = getDetailsFile(dataFolder);
             detailsFile.createNewFile();
-            File sceneScriptFile = new File(sceneFolder.getAbsoluteFile(), getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
+            File sceneScriptFile = new File(sceneFolder.getAbsoluteFile(), getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
             sceneScriptFile.createNewFile();
             new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
             new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
@@ -136,9 +133,9 @@ public class NarrativeCraftFile {
     public static boolean updateSceneDetails(Scene scene, String name, String description) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
+        File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
         try {
-            File newSceneFolder = new File(scenesFolder, getCamelCaseName(name));
+            File newSceneFolder = new File(scenesFolder, getSnakeCaseName(name));
             if(!scene.getName().equals(name)) {
                 Files.move(sceneFolder.toPath(), newSceneFolder.toPath());
                 sceneFolder = newSceneFolder;
@@ -148,8 +145,8 @@ public class NarrativeCraftFile {
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
                 writer.write(content);
             }
-            File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
-            scriptFile.renameTo(new File(sceneFolder, getCamelCaseName(name) + EXTENSION_SCRIPT_FILE));
+            File scriptFile = new File(sceneFolder, getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
+            scriptFile.renameTo(new File(sceneFolder, getSnakeCaseName(name) + EXTENSION_SCRIPT_FILE));
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e.getMessage());
@@ -162,8 +159,8 @@ public class NarrativeCraftFile {
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         try {
             for(Scene scene : chapter.getSceneList()) {
-                File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
-                File scriptFile = new File(sceneFolder, getCamelCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
+                File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
+                File scriptFile = new File(sceneFolder, getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
                 String scriptContent = Files.readString(scriptFile.toPath());
                 if(scriptContent.contains(NarrativeCraftFile.getChapterSceneCamelCase(chapter.getIndex(), oldName))) {
                     scriptContent = scriptContent.replace(getChapterSceneCamelCase(chapter.getIndex(), oldName), getChapterSceneCamelCase(chapter.getIndex(), newName));
@@ -174,7 +171,7 @@ public class NarrativeCraftFile {
             }
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't update knot scen name file of chapter {} ! {}", chapter.getIndex(), e.getMessage());
+            NarrativeCraftMod.LOG.error("Couldn't update knot scene name file of chapter {} ! {}", chapter.getIndex(), e.getMessage());
             return false;
         }
     }
@@ -222,7 +219,7 @@ public class NarrativeCraftFile {
         File dataFolder = getDataFolderOfScene(animation.getScene());
         File animationFolder = new File(dataFolder, "animations");
         if(!animationFolder.exists()) animationFolder.mkdir();
-        File animationFile = createFile(animationFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE);
+        File animationFile = createFile(animationFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
         Gson gson = new GsonBuilder().create();
         try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
             gson.toJson(animation, writer);
@@ -233,20 +230,45 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static boolean updateCharacterFile(CharacterStory characterStory) {
-        File animationFile = createFile(characterDirectory, getCamelCaseName(characterStory.getName()) + EXTENSION_DATA_FILE);
+    public static boolean createCharacterFile(CharacterStory characterStory) {
+        File characterFolder = createDirectory(characterDirectory, getSnakeCaseName(characterStory.getName()));
+        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
+        File skinsFolder = createDirectory(characterFolder, "skins");
+        PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
+        File mainSkinFile = createFile(skinsFolder, "main.png");
+        try(InputStream inputStream = Minecraft.getInstance().getResourceManager().open(defaultPlayerSkin.texture())) {
+            mainSkinFile.createNewFile();
+            OutputStream out = new FileOutputStream(mainSkinFile);
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesRead);
+            }
+        } catch (IOException ignored) {} // Don't really need to handle
+
         Gson gson = new GsonBuilder().create();
-        try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
+        try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
             gson.toJson(characterStory, writer);
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't update character {} file! {}", characterStory.getName(), e.getMessage());
+            NarrativeCraftMod.LOG.error("Couldn't create character {} file! {}", characterStory.getName(), e.getMessage());
             return false;
         }
     }
 
-    public static void removeCharacterFile(CharacterStory characterStory) {
-        new File(characterDirectory, getCamelCaseName(characterStory.getName()) + EXTENSION_DATA_FILE).delete();
+    public static boolean updateCharacterFolder(String oldName, String newName) {
+        File characterFolder = new File(characterDirectory, getSnakeCaseName(oldName));
+        try {
+            Files.move(characterFolder.toPath(), new File(characterDirectory, getSnakeCaseName(newName)).toPath());
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update character {} file! {}", oldName, e.getMessage());
+            return false;
+        }
+    }
+
+    public static void removeCharacterFolder(CharacterStory characterStory) {
+        deleteDirectory(new File(characterDirectory, getSnakeCaseName(characterStory.getName())));
     }
 
     public static void removeChapterFolder(Chapter chapter) {
@@ -258,7 +280,7 @@ public class NarrativeCraftFile {
     public static void removeSceneFolder(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
+        File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
         deleteDirectory(sceneFolder);
         updateMainInkFile();
     }
@@ -266,7 +288,7 @@ public class NarrativeCraftFile {
     public static void removeAnimationFileFromScene(Animation animation) {
         File dataFolder = getDataFolderOfScene(animation.getScene());
         File animationsFolder = new File(dataFolder, "animations");
-        File animationFile = new File(animationsFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE);
+        File animationFile = new File(animationsFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
         animationFile.delete();
     }
 
@@ -283,13 +305,13 @@ public class NarrativeCraftFile {
     public static boolean animationFileExist(Scene scene, Animation animation) {
         File dataFolder = getDataFolderOfScene(scene);
         File animationsFolder = new File(dataFolder, "animations");
-        return new File(animationsFolder, getCamelCaseName(animation.getName()) + EXTENSION_DATA_FILE).exists();
+        return new File(animationsFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE).exists();
     }
 
     public static boolean animationFileExist(Scene scene, String animationName) {
         File dataFolder = getDataFolderOfScene(scene);
         File animationsFolder = new File(dataFolder, "animations");
-        return new File(animationsFolder, getCamelCaseName(animationName) + EXTENSION_DATA_FILE).exists();
+        return new File(animationsFolder, getSnakeCaseName(animationName) + EXTENSION_DATA_FILE).exists();
     }
 
     public static String getStoryFile() throws IOException {
@@ -309,8 +331,8 @@ public class NarrativeCraftFile {
     public static File getSceneFile(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder, scene.getCamelCase());
-        return new File(sceneFolder, scene.getCamelCase() + EXTENSION_SCRIPT_FILE);
+        File sceneFolder = new File(scenesFolder, scene.getSnakeCase());
+        return new File(sceneFolder, scene.getSnakeCase() + EXTENSION_SCRIPT_FILE);
     }
 
     public static void updateMainInkFile() {
@@ -333,9 +355,9 @@ public class NarrativeCraftFile {
                         .append(chapter.getIndex())
                         .append("\\")
                         .append(scenesPath)
-                        .append(getCamelCaseName(scene.getName()))
+                        .append(getSnakeCaseName(scene.getName()))
                         .append("\\")
-                        .append(getCamelCaseName(scene.getName()))
+                        .append(getSnakeCaseName(scene.getName()))
                         .append(EXTENSION_SCRIPT_FILE)
                         .append("\n");
             }
@@ -374,25 +396,25 @@ public class NarrativeCraftFile {
     }
 
     public static String getChapterSceneCamelCase(Scene scene) {
-        return "chapter_" + scene.getChapter().getIndex() + "_" + getCamelCaseName(scene.getName());
+        return "chapter_" + scene.getChapter().getIndex() + "_" + getSnakeCaseName(scene.getName());
     }
 
     private static String getChapterSceneCamelCase(int chapterIndex, String sceneName) {
-        return "chapter_" + chapterIndex + "_" + getCamelCaseName(sceneName);
+        return "chapter_" + chapterIndex + "_" + getSnakeCaseName(sceneName);
     }
 
     private static String getKnotSceneName(Scene scene) {
         return "=== " + getChapterSceneCamelCase(scene) + " ===";
     }
 
-    private static String getCamelCaseName(String name) {
+    private static String getSnakeCaseName(String name) {
         return String.join("_", name.toLowerCase().split(" "));
     }
 
     private static File getDataFolderOfScene(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
-        File sceneFolder = new File(scenesFolder, getCamelCaseName(scene.getName()));
+        File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
         return new File(sceneFolder, "data");
     }
 
@@ -426,4 +448,14 @@ public class NarrativeCraftFile {
         directoryToBeDeleted.delete();
     }
 
+    public static File getSkinFile(CharacterStory characterStory, String name) {
+        File characterFolder = new File(characterDirectory, getSnakeCaseName(characterStory.getName()));
+        File skinsFolder = new File(characterFolder, "skins");
+        File skin = new File(skinsFolder, name);
+        if(skin.exists()) {
+            return skin;
+        } else {
+            return null;
+        }
+    }
 }

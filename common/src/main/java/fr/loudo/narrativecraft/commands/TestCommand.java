@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.commands;
 
+import com.google.common.io.Files;
 import com.mojang.authlib.GameProfile;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.FloatArgumentType;
@@ -10,6 +12,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
@@ -18,6 +21,7 @@ import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.commands.CommandSourceStack;
@@ -37,6 +41,8 @@ import net.minecraft.world.item.Items;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -63,6 +69,9 @@ public class TestCommand {
                 .then(Commands.literal("fake_player")
                         .then(Commands.argument("name", StringArgumentType.string())
                                 .executes(commandContext -> spawnFakePlayer(commandContext, StringArgumentType.getString(commandContext, "name")))
+                        )
+                        .then(Commands.literal("skin")
+                                .executes(TestCommand::registerSkin)
                         )
                 )
                 .then(Commands.literal("keyframeDisplay")
@@ -135,6 +144,25 @@ public class TestCommand {
 
                 )
         );
+    }
+
+    private static int registerSkin(CommandContext<CommandSourceStack> context) {
+        Minecraft.getInstance().execute(() -> {
+            try {
+                File file = new File(NarrativeCraftFile.mainDirectory, "skin.png");
+                byte[] array = Files.toByteArray(file);
+                NativeImage nativeImage = NativeImage.read(array);
+                DynamicTexture texture = new DynamicTexture(() -> "skin_texture", nativeImage);
+                Minecraft.getInstance().getTextureManager().register(
+                        ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "skin.png"),
+                        texture
+                );
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int spawnFakePlayer(CommandContext<CommandSourceStack> context, String name) {

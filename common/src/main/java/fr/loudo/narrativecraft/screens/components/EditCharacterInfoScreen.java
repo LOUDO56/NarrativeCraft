@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 
 import java.time.LocalDate;
@@ -142,11 +143,12 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
         CharacterStory characterStory = new CharacterStory(
                 name,
                 desc,
+                PlayerSkin.Model.WIDE,
                 day,
                 month,
                 year
         );
-        if(!NarrativeCraftFile.updateCharacterFile(characterStory)) {
+        if(!NarrativeCraftFile.createCharacterFile(characterStory)) {
             ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.failed", name));
             return;
         }

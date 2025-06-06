@@ -6,21 +6,24 @@
   "compatibilityLevel": "JAVA_18",
   "mixins": [
     "EntityMixin",
-    "ServerLevelMixin",
     "LivingEntityMixin",
+    "LivingEntityRendererMixin",
+    "fields.ArmorStandFields",
+    "fields.DisplayFields",
+    "fields.ItemDisplayFields",
+    "fields.TextDisplayFields"
+  ],
+  "client": [
     "CameraMixin",
     "GameRendererMixin",
     "GuiMixin",
-    "LivingEntityRendererMixin",
-    "fields.DisplayFields",
-    "fields.ItemDisplayFields",
-    "fields.TextDisplayFields",
-    "fields.ArmorStandFields",
-    "fields.GameRendererFields",
-    "fields.FontFields"
+    "PlayerInfoMixin",
+    "fields.FontFields",
+    "fields.GameRendererFields"
   ],
-  "client": [],
-  "server": [],
+  "server": [
+    "ServerLevelMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

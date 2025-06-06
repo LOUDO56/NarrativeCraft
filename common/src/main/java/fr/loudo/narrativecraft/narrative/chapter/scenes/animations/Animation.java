@@ -18,6 +18,7 @@ public class Animation extends NarrativeEntry {
     private transient Scene scene;
     private CharacterStory character;
     private ActionsData actionsData;
+    private String skinName = "main.png";
 
     public Animation(Scene scene, String name, String description) {
         super(name, description);
@@ -69,6 +70,14 @@ public class Animation extends NarrativeEntry {
 
     public void setActionsData(ActionsData actionsData) {
         this.actionsData = actionsData;
+    }
+
+    public String getSkinName() {
+        return skinName;
+    }
+
+    public void setSkinName(String skinName) {
+        this.skinName = skinName;
     }
 
     @Override

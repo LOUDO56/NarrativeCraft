@@ -1,11 +1,8 @@
 package fr.loudo.narrativecraft.narrative.character;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.io.File;
@@ -25,18 +22,20 @@ public class CharacterManager {
     public void init() {
         characterStories = new ArrayList<>();
         File characterDirectory = NarrativeCraftFile.characterDirectory;
-        File[] characterFiles = characterDirectory.listFiles();
-        if(characterFiles != null) {
-            for(File characterFile : characterFiles) {
+        File[] characterFolders = characterDirectory.listFiles();
+        if(characterFolders != null) {
+            for(File characterFolder : characterFolders) {
                 try {
-                    String content = Files.readString(characterFile.toPath());
+                    String content = Files.readString(new File(characterFolder, "data" + NarrativeCraftFile.EXTENSION_DATA_FILE).toPath());
                     CharacterStory characterStory = new Gson().fromJson(content, CharacterStory.class);
+                    characterStory.setSkins(new ArrayList<>());
                     characterStories.add(characterStory);
                 } catch (IOException e) {
-                    throw new RuntimeException("Characters couldn't be loaded!: " + e);
+                    throw new RuntimeException("Character " + characterFolder.getName()  + " couldn't be loaded!: " + e);
                 }
             }
         }
+        reloadSkin();
     }
 
     public List<CharacterStory> getCharacterStories() {
@@ -47,7 +46,7 @@ public class CharacterManager {
         this.characterStories = characterStories;
     }
 
-    public LivingEntity getCharacterEntityByName(String name) {
+    public LivingEntity getCharacterEntity(String name) {
         for(CharacterStory characterStory : characterStories) {
             if(characterStory.getName().equalsIgnoreCase(name)) {
                 return characterStory.getEntity();
@@ -65,11 +64,34 @@ public class CharacterManager {
         return false;
     }
 
+    public CharacterStory getCharacter(String name) {
+        for(CharacterStory characterStory : characterStories) {
+            if(characterStory.getName().equalsIgnoreCase(name)) {
+                return characterStory;
+            }
+        }
+        return null;
+    }
+
     public void addCharacter(CharacterStory characterStory) {
         characterStories.add(characterStory);
     }
 
     public void removeCharacter(CharacterStory characterStory) {
         characterStories.remove(characterStory);
+    }
+
+    public void reloadSkin() {
+        for(CharacterStory characterStory : characterStories) {
+            File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
+            File skins = new File(characterFolder, "skins");
+            File[] skinFiles = skins.listFiles();
+            if(skinFiles != null) {
+                characterStory.getSkins().clear();
+                for(File skin : skinFiles) {
+                    characterStory.getSkins().add(skin);
+                }
+            }
+        }
     }
 }

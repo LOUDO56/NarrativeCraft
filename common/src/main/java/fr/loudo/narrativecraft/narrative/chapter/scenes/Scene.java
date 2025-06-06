@@ -183,7 +183,7 @@ public class Scene extends NarrativeEntry {
         this.cameraAngleGroupList = cameraAngleGroupList;
     }
 
-    public String getCamelCase() {
+    public String getSnakeCase() {
         return String.join("_", name.toLowerCase().split(" "));
     }
 
