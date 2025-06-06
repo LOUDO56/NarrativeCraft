@@ -8,10 +8,12 @@ import net.minecraft.server.MinecraftServer;
 public class OnLifecycle {
 
     public static void execute(MinecraftServer server) {
-        NarrativeCraftFile.init(server);
-        NarrativeCraftMod.server = server;
-        NarrativeCraftMod.getInstance().getChapterManager().init();
-        NarrativeCraftMod.getInstance().getCharacterManager().init();
+        if(server != null) {
+            NarrativeCraftFile.init(server);
+            NarrativeCraftMod.server = server;
+            NarrativeCraftMod.getInstance().getChapterManager().init();
+            NarrativeCraftMod.getInstance().getCharacterManager().init();
+        }
     }
 
 }

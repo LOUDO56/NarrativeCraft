@@ -16,7 +16,7 @@ public class BlockItemMixin {
 
     @Inject(method = "placeBlock", at = @At(value = "HEAD"))
     private void atPlaceBlock(BlockPlaceContext context, BlockState state, CallbackInfoReturnable<Boolean> cir) {
-        if (!context.getLevel().isClientSide) {
+        if (!context.getLevel().isClientSide && NarrativeCraftMod.server != null) {
             ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(context.getPlayer().getUUID());
             OnPlaceBlock.placeBlock(state, context.getClickedPos(), serverPlayer);
         }

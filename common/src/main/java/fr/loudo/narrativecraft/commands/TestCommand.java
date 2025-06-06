@@ -60,6 +60,11 @@ public class TestCommand {
                                 .executes(TestCommand::choiceScreen)
                         )
                 )
+                .then(Commands.literal("fake_player")
+                        .then(Commands.argument("name", StringArgumentType.string())
+                                .executes(commandContext -> spawnFakePlayer(commandContext, StringArgumentType.getString(commandContext, "name")))
+                        )
+                )
                 .then(Commands.literal("keyframeDisplay")
                         .executes(TestCommand::createKeyFrameItem)
                 )
@@ -130,6 +135,16 @@ public class TestCommand {
 
                 )
         );
+    }
+
+    private static int spawnFakePlayer(CommandContext<CommandSourceStack> context, String name) {
+
+        ServerPlayer player = context.getSource().getPlayer();
+        FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), name));
+        fakePlayer.snapTo(context.getSource().getPosition());
+        context.getSource().getLevel().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+        context.getSource().getLevel().addFreshEntity(fakePlayer);
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int choiceScreen(CommandContext<CommandSourceStack> context) {

@@ -11,7 +11,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class BlockBreakEvent {
     public static void onBlockBreak(Level level, Player player, BlockPos blockPos, BlockState blockState, @Nullable BlockEntity blockEntity) {
-        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(player.getUUID());
-        OnBreakBlock.breakBlock(blockState, blockPos, serverPlayer);
+        if(NarrativeCraftMod.server != null) {
+            ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(player.getUUID());
+            OnBreakBlock.breakBlock(blockState, blockPos, serverPlayer);
+        }
     }
 }

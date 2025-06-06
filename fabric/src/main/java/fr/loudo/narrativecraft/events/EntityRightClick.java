@@ -13,7 +13,7 @@ import org.jetbrains.annotations.Nullable;
 public class EntityRightClick {
     public static InteractionResult onEntityRightClick(Player player, Level level, InteractionHand hand, Entity entity, @Nullable EntityHitResult entityHitResult) {
 
-        if(level.isClientSide) {
+        if(level.isClientSide && NarrativeCraftMod.server != null) {
             ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(player.getUUID());
             OnEntityRightClick.entityRightClick(serverPlayer, entity);
         }
