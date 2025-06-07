@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
@@ -97,11 +98,12 @@ public class Dialog {
         drawDialogBackground(poseStack, bufferSource);
         dialogueTail.draw(poseStack, bufferSource, minecraft.gameRenderer.getMainCamera());
 
-        bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
 
         if(!dialogAppearAnimation.isAnimating() && t >= 1.0) {
             dialogAnimationScrollText.show(poseStack, bufferSource);
         }
+
+        bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
         if(dialogAnimationScrollText.isFinished() && !endDialog) {
             dialogAnimationArrowSkip.render(poseStack, minecraft, bufferSource);
         }

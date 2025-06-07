@@ -130,7 +130,8 @@ public class Playback {
             } else {
                 stop();
             }
-        };
+        }
+
 
         MovementData movementData = movementDataList.get(tick);
         MovementData movementDataNext = movementDataList.get(tick);

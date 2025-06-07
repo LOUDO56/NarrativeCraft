@@ -37,6 +37,8 @@ public class OnRenderWorld {
                 }
             }
         }
+
+//        matrix4fstack.popMatrix();
     }
 
 }

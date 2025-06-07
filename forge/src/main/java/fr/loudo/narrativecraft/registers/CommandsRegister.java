@@ -15,6 +15,7 @@ public class CommandsRegister {
         RecordCommand.register(event.getDispatcher());
         TestCommand.register(event.getDispatcher());
         OpenScreenCommand.register(event.getDispatcher());
+        StoryCommand.register(event.getDispatcher());
     }
 
 }
