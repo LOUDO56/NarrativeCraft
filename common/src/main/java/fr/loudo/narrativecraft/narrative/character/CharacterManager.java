@@ -28,14 +28,13 @@ public class CharacterManager {
                 try {
                     String content = Files.readString(new File(characterFolder, "data" + NarrativeCraftFile.EXTENSION_DATA_FILE).toPath());
                     CharacterStory characterStory = new Gson().fromJson(content, CharacterStory.class);
-                    characterStory.setSkins(new ArrayList<>());
+                    characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
                     characterStories.add(characterStory);
                 } catch (IOException e) {
                     throw new RuntimeException("Character " + characterFolder.getName()  + " couldn't be loaded!: " + e);
                 }
             }
         }
-        reloadSkin();
     }
 
     public List<CharacterStory> getCharacterStories() {
@@ -81,17 +80,31 @@ public class CharacterManager {
         characterStories.remove(characterStory);
     }
 
-    public void reloadSkin() {
+    public void reloadSkins() {
         for(CharacterStory characterStory : characterStories) {
             File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
             File skins = new File(characterFolder, "skins");
             File[] skinFiles = skins.listFiles();
             if(skinFiles != null) {
-                characterStory.getSkins().clear();
+                characterStory.getCharacterSkinController().getSkins().clear();
                 for(File skin : skinFiles) {
-                    characterStory.getSkins().add(skin);
+                    characterStory.getCharacterSkinController().getSkins().add(skin);
                 }
+                characterStory.getCharacterSkinController().cacheSkins();
             }
+        }
+    }
+
+    public void reloadSkin(CharacterStory characterStory) {
+        File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
+        File skins = new File(characterFolder, "skins");
+        File[] skinFiles = skins.listFiles();
+        if(skinFiles != null) {
+            characterStory.getCharacterSkinController().getSkins().clear();
+            for(File skin : skinFiles) {
+                characterStory.getCharacterSkinController().getSkins().add(skin);
+            }
+            characterStory.getCharacterSkinController().cacheSkins();
         }
     }
 }

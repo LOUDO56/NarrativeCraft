@@ -27,8 +27,7 @@ import java.util.List;
 public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
-    private transient List<File> skins;
-    private transient File currentSkin;
+    private transient CharacterSkinController characterSkinController;
     private PlayerSkin.Model model;
     private String birthdate;
     private CharacterType characterType;
@@ -39,7 +38,7 @@ public class CharacterStory extends NarrativeEntry {
     public CharacterStory(String name) {
         super(name, "");
         characterType = CharacterType.MAIN;
-        skins = new ArrayList<>();
+        characterSkinController = new CharacterSkinController(this);
     }
 
     public CharacterStory(String name, String description, PlayerSkin.Model model, String day, String month, String year) {
@@ -49,7 +48,7 @@ public class CharacterStory extends NarrativeEntry {
         this.birthdate = day + "/" + month + "/" + year;
         this.model = model;
         characterType = CharacterType.MAIN;
-        skins = new ArrayList<>();
+        characterSkinController = new CharacterSkinController(this);
     }
 
     public void update(String name, String description, String day, String month, String year) {
@@ -93,60 +92,12 @@ public class CharacterStory extends NarrativeEntry {
         }
     }
 
-    public void registerSkin(File skin) {
-        Minecraft minecraft = Minecraft.getInstance();
-        String path = "character/" + Utils.getSnakeCase(name) + "/" + Utils.getSnakeCase(skin.getName());
-        minecraft.execute(() -> {
-            minecraft.getTextureManager().release(ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, path));
-            try {
-                byte[] array = Files.toByteArray(skin);
-                NativeImage nativeImage = NativeImage.read(array);
-                DynamicTexture texture = new DynamicTexture(
-                        () -> NarrativeCraftMod.MOD_ID + "_" + name + "_" + Utils.getSnakeCase(skin.getName()) + "_skin_texture",
-                        nativeImage
-                );
-                minecraft.getTextureManager().register(
-                        ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, path),
-                        texture
-                );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
-    }
-
-    public File getMainSkinFile() {
-        for(File skin : skins) {
-            if(skin.getName().equals("main.png")) {
-                return skin;
-            }
-        }
-        return null;
-    }
-
-    public File getSkinFile(String name) {
-        for(File skin : skins) {
-            if(skin.getName().equals(name)) {
-                return skin;
-            }
-        }
-        return null;
-    }
-
     public String getBirthdate() {
         return birthdate;
     }
 
     public LivingEntity getEntity() {
         return entity;
-    }
-
-    public List<File> getSkins() {
-        return skins;
-    }
-
-    public void setSkins(List<File> skins) {
-        this.skins = skins;
     }
 
     public void setEntity(LivingEntity entity) {
@@ -161,23 +112,20 @@ public class CharacterStory extends NarrativeEntry {
         this.characterType = characterType;
     }
 
-    public File getCurrentSkin() {
-        return currentSkin;
-    }
-
-    public void setCurrentSkin(File skin) {
-        this.currentSkin = skin;
-        if(skin != null && skin.exists()) {
-            registerSkin(skin);
-        }
-    }
-
     public PlayerSkin.Model getModel() {
         return model;
     }
 
     public void setModel(PlayerSkin.Model model) {
         this.model = model;
+    }
+
+    public CharacterSkinController getCharacterSkinController() {
+        return characterSkinController;
+    }
+
+    public void setCharacterSkinController(CharacterSkinController characterSkinController) {
+        this.characterSkinController = characterSkinController;
     }
 
     public enum CharacterType {

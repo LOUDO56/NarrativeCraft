@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.story;
 import com.bladecoder.ink.runtime.Choice;
 import com.bladecoder.ink.runtime.Story;
 import com.bladecoder.ink.runtime.StoryException;
-import com.bladecoder.ink.runtime.StoryState;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
@@ -28,7 +27,6 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
 
-import java.io.IOException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,7 +79,7 @@ public class StoryHandler {
 
     public void start() {
         try {
-            NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin();
+            NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop();
             }

@@ -31,14 +31,14 @@ public class PlayerInfoMixin {
         List<CharacterStory> characters = getRelevantCharacters();
 
         for (CharacterStory character : characters) {
-            if (character.getEntity() == null || character.getCurrentSkin() == null) continue;
+            if (character.getEntity() == null || character.getCharacterSkinController().getCurrentSkin() == null) continue;
             if (!(character.getEntity() instanceof Player)) continue;
             if (!playerUUID.equals(character.getEntity().getUUID())) continue;
 
             PlayerSkin.Model model = character.getModel();
             ResourceLocation skinLocation = ResourceLocation.fromNamespaceAndPath(
                     NarrativeCraftMod.MOD_ID,
-                    "character/" + Utils.getSnakeCase(character.getName()) + "/" + Utils.getSnakeCase(character.getCurrentSkin().getName())
+                    "character/" + Utils.getSnakeCase(character.getName()) + "/" + Utils.getSnakeCase(character.getCharacterSkinController().getCurrentSkin().getName())
             );
 
             PlayerSkin playerSkin = new PlayerSkin(

@@ -51,6 +51,9 @@ public class Playback {
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
         spawnEntity(firstLoc);
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
+        if(playbackType == PlaybackType.DEVELOPMENT) {
+            NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(character);
+        }
         return true;
     }
 
@@ -96,9 +99,9 @@ public class Playback {
         if(playbackType == PlaybackType.DEVELOPMENT) {
             skinFile = NarrativeCraftFile.getSkinFile(character, animation.getSkinName());
         } else if (playbackType == PlaybackType.PRODUCTION){
-            skinFile = character.getSkinFile(animation.getSkinName());
+            skinFile = character.getCharacterSkinController().getSkinFile(animation.getSkinName());
         }
-        character.setCurrentSkin(skinFile);
+        character.getCharacterSkinController().setCurrentSkin(skinFile);
     }
 
     public void stop() {
