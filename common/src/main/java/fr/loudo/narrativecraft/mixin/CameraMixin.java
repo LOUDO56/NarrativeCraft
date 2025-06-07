@@ -34,7 +34,7 @@ public abstract class CameraMixin {
 
     @Shadow @Final private Quaternionf rotation;
 
-    @Inject(method = "setup", at = @At(value = "HEAD"), cancellable = true)
+    @Inject(method = "setup", at = @At(value = "RETURN"))
     private void update(BlockGetter level, Entity entity, boolean detached, boolean thirdPersonReverse, float partialTick, CallbackInfo ci) {
 
         LocalPlayer localPlayer = Minecraft.getInstance().player;
@@ -43,13 +43,13 @@ public abstract class CameraMixin {
         PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
         if (playerSession == null) return;
 
-        keyframePreviewAction(playerSession, ci);
-        cutscenePlaying(playerSession, ci);
-        storyCurrentCamera(ci);
+        keyframePreviewAction(playerSession);
+        cutscenePlaying(playerSession);
+        storyCurrentCamera();
 
     }
 
-    private void keyframePreviewAction(PlayerSession playerSession, CallbackInfo ci) {
+    private void keyframePreviewAction(PlayerSession playerSession) {
 
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if (keyframeControllerBase == null) return;
@@ -61,8 +61,9 @@ public abstract class CameraMixin {
         LocalPlayer localPlayer = client.player;
 
         KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
-        localPlayer.setPos(position.getX(), position.getY(), position.getZ());
+        localPlayer.setPos(position.getX(), position.getY() - localPlayer.getEyeHeight(), position.getZ());
         localPlayer.setYRot(position.getYRot());
+        localPlayer.setYHeadRot(position.getYRot());
         localPlayer.setXRot(position.getXRot());
 
         this.setPosition(position.getX(), position.getY(), position.getZ());
@@ -75,10 +76,9 @@ public abstract class CameraMixin {
             keyframePreview.openScreenOption(playerSession.getPlayer());
         }
 
-        ci.cancel();
     }
 
-    private void cutscenePlaying(PlayerSession playerSession, CallbackInfo ci) {
+    private void cutscenePlaying(PlayerSession playerSession) {
         Minecraft client = Minecraft.getInstance();
         CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
         if(cutscenePlayback == null) return;
@@ -93,10 +93,9 @@ public abstract class CameraMixin {
         this.setRotation(position.getYRot(), position.getXRot());
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
-        ci.cancel();
     }
 
-    private void storyCurrentCamera(CallbackInfo ci) {
+    private void storyCurrentCamera() {
         Minecraft client = Minecraft.getInstance();
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) return;
@@ -105,14 +104,14 @@ public abstract class CameraMixin {
 
         if(position != null) {
             LocalPlayer localPlayer = client.player;
-            localPlayer.setPos(position.getX(), position.getY(), position.getZ());
+            localPlayer.setPos(position.getX(), position.getY() - localPlayer.getEyeHeight(), position.getZ());
             localPlayer.setYRot(position.getYRot());
+            localPlayer.setYHeadRot(position.getYRot());
             localPlayer.setXRot(position.getXRot());
             this.setPosition(position.getX(), position.getY(), position.getZ());
             this.setRotation(position.getYRot(), position.getXRot());
             this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
-            ci.cancel();
         }
 
     }
