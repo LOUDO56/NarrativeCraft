@@ -91,10 +91,10 @@ public class CutscenePlayback  {
             cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
         } else {
             cutsceneController.stopSession();
-        }
-        playerSession.setCutscenePlayback(null);
-        if(onCutsceneEnd != null) {
-            onCutsceneEnd.run();
+            playerSession.setCutscenePlayback(null);
+            if(onCutsceneEnd != null) {
+                onCutsceneEnd.run();
+            }
         }
     }
 
@@ -147,7 +147,9 @@ public class CutscenePlayback  {
         currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             if(cutsceneController.isLastKeyframe(secondKeyframe)) {
-                stop();
+                if(cutsceneController.getCurrentTick() >= cutsceneController.getTotalTick()) {
+                    stop();
+                }
             } else {
                 nextFrame();
             }

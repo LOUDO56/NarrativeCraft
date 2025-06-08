@@ -307,6 +307,33 @@ public class CutsceneController extends KeyframeControllerBase {
                 }
             }
         }
+        for(Playback playback : playbackList) {
+            if(playback.hasEnded()) {
+                player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
+            }
+        }
+    }
+
+    public int getTotalTick() {
+        int totalTick = 0;
+        int totalPlayback = 0;
+        for(Subscene subscene : cutscene.getSubsceneList()) {
+            for(Playback playback : subscene.getPlaybackList()) {
+                totalTick += playback.getAnimation().getActionsData().getMovementData().size();
+                totalPlayback++;
+            }
+        }
+        for(Playback playback : playbackList) {
+            if(playback.hasEnded()) {
+                totalTick += playback.getAnimation().getActionsData().getMovementData().size();
+                totalPlayback++;
+            }
+        }
+        return totalTick / totalPlayback;
+    }
+
+    public int getCurrentTick() {
+        return currentTick;
     }
 
     public Cutscene getCutscene() {

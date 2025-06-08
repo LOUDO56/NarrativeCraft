@@ -5,27 +5,20 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayba
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeAdvancedSettings;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
-import java.util.function.Function;
 
 public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
 
@@ -45,8 +38,9 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
             speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
         }
         if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe)) {
-            transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getTransitionDelay())));
-
+            if(!cutsceneController.isLastKeyframe(keyframe)) {
+                transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getTransitionDelay())));
+            }
         } else {
             startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getStartDelay())));
         }
@@ -106,9 +100,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(advancedButton);
-        if(!cutsceneController.isLastKeyframe(keyframe)) {
-            this.addRenderableWidget(playFromHere);
-        }
+        this.addRenderableWidget(playFromHere);
         this.addRenderableWidget(removeKeyframe);
     }
 

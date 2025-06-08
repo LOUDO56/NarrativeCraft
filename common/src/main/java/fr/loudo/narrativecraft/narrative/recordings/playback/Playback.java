@@ -3,13 +3,18 @@ package fr.loudo.narrativecraft.narrative.recordings.playback;
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
+import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -124,8 +129,10 @@ public class Playback {
     public void next() {
         if(!entity.isAlive()) return;
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
+        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(tick >= movementDataList.size() - 1) {
-            if(playbackType == PlaybackType.DEVELOPMENT) {
+            if(playbackType == PlaybackType.DEVELOPMENT && !(keyframeControllerBase instanceof CutsceneController)) {
                 stopAndKill();
             } else {
                 stop();
