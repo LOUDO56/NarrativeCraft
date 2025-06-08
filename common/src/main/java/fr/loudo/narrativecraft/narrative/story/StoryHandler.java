@@ -26,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.level.GameType;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -258,18 +259,13 @@ public class StoryHandler {
                         line = line.substring(2);
                         String[] command = line.split(" ");
                         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(line);
-                        InkAction inkAction = null;
-                        switch (tagType) {
-                            case CUTSCENE -> inkAction = new CutsceneInkAction();
-                            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction();
-                            case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
-                            case FADE -> inkAction = new FadeScreenInkAction();
-                            case WAIT -> inkAction = new WaitInkAction();
-                        }
-                        if(inkAction != null) {
-                            InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, rawLine, scene);
-                            if(errorLine != null) {
-                                errorLineList.add(errorLine);
+                        if(tagType != null) {
+                            InkAction inkAction = getInkAction(tagType);
+                            if(inkAction != null) {
+                                InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, rawLine, scene);
+                                if(errorLine != null) {
+                                    errorLineList.add(errorLine);
+                                }
                             }
                         }
                     }
@@ -277,6 +273,18 @@ public class StoryHandler {
             }
         }
         return errorLineList;
+    }
+
+    private static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
+        InkAction inkAction = null;
+        switch (tagType) {
+            case CUTSCENE -> inkAction = new CutsceneInkAction();
+            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction();
+            case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
+            case FADE -> inkAction = new FadeScreenInkAction();
+            case WAIT -> inkAction = new WaitInkAction();
+        }
+        return inkAction;
     }
 
     /**

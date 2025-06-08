@@ -2,10 +2,13 @@ package fr.loudo.narrativecraft.mixin;
 
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.PlayerInfo;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
@@ -55,10 +58,13 @@ public class PlayerInfoMixin {
     }
 
     private List<CharacterStory> getRelevantCharacters() {
+        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
         NarrativeCraftMod mod = NarrativeCraftMod.getInstance();
         StoryHandler storyHandler = mod.getStoryHandler();
         if (storyHandler != null) {
             return storyHandler.getCurrentCharacters();
+        } else if (playerSession != null && playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
+            return cameraAngleController.getCharacters();
         } else {
             return mod.getPlaybackHandler()
                     .getPlaybacks()

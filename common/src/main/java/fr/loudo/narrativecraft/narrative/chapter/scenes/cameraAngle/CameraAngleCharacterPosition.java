@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
-import fr.loudo.narrativecraft.utils.FakePlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
@@ -10,6 +9,7 @@ public class CameraAngleCharacterPosition {
 
     private transient LivingEntity entity;
     private CharacterStory character;
+    private String skinName = "main.png";
     private double x, y, z;
     private float XRot, YRot;
 
@@ -47,6 +47,14 @@ public class CameraAngleCharacterPosition {
 
     public void setCharacter(CharacterStory character) {
         this.character = character;
+    }
+
+    public String getSkinName() {
+        return skinName;
+    }
+
+    public void setSkinName(String skinName) {
+        this.skinName = skinName;
     }
 
     public double getX() {

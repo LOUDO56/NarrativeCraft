@@ -42,12 +42,9 @@ public class CameraAngleInkAction extends InkAction {
             cameraAngleController = new CameraAngleController(cameraAngleGroup, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
             cameraAngleController.startSession();
             storyHandler.getPlayerSession().setKeyframeControllerBase(cameraAngleController);
-            storyHandler.getCurrentCharacters().clear();
-            for(CameraAngleCharacterPosition characterPosition : cameraAngleController.getCameraAngleGroup().getCharacterPositions()) {
-                storyHandler.getCurrentCharacters().add(characterPosition.getCharacter());
-            }
         }
         cameraAngleController.setCurrentPreviewKeyframe(cameraAngle);
+        storyHandler.showDialog();
     }
 
     @Override

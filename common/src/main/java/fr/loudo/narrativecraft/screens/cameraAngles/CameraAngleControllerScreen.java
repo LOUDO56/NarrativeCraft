@@ -20,7 +20,8 @@ public class CameraAngleControllerScreen extends Screen {
 
     @Override
     protected void init() {
-        int totalWidth = BUTTON_WIDTH * 3 + 5;
+        int spacing = 5;
+        int totalWidth = BUTTON_WIDTH * 4 + spacing * 3;
         int startX = (this.width - totalWidth) / 2;
         int y = this.height - 50;
 
@@ -32,13 +33,19 @@ public class CameraAngleControllerScreen extends Screen {
 
         Button addCharacter = Button.builder(ImageFontConstants.CHARACTER_ADD, button -> {
             cameraAngleController.addCharacter();
-        }).bounds(startX + BUTTON_WIDTH + 5, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(startX + (BUTTON_WIDTH + spacing) * 1, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addCharacter);
+
+        Button recordMenu = Button.builder(Component.literal("R"), button -> {
+            CameraAngleAddRecord cameraAngleAddRecord = new CameraAngleAddRecord(cameraAngleController.getCameraAngleGroup());
+            minecraft.setScreen(cameraAngleAddRecord);
+        }).bounds(startX + (BUTTON_WIDTH + spacing) * 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(recordMenu);
 
         Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
             cameraAngleController.stopSession();
             this.onClose();
-        }).bounds(startX + BUTTON_WIDTH * 2 + 10, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        }).bounds(startX + (BUTTON_WIDTH + spacing) * 3, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(saveButton);
 
     }

@@ -9,9 +9,9 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
@@ -130,6 +130,7 @@ public class ChapterManager {
                 List<CameraAngleGroup> cameraAngleGroupList = new Gson().fromJson(content, listType);
                 if(cameraAngleGroupList != null) {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
+                        cameraAngleGroup.setTemplateRecord(new ArrayList<>());
                         cameraAngleGroup.setScene(scene);
                     }
                     scene.setCameraAngleGroupList(cameraAngleGroupList);

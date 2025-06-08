@@ -37,13 +37,12 @@ public class CutsceneInkAction extends InkAction {
         for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
             characterStory.kill();
         }
-        storyHandler.getCurrentCharacters().clear();
-        storyHandler.setCurrentDialogBox(null);
         KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             cameraAngleController.stopSession();
-            storyHandler.getCurrentDialogBox().reset();
         }
+        storyHandler.getCurrentCharacters().clear();
+        storyHandler.setCurrentDialogBox(null);
         CutsceneController cutsceneController = new CutsceneController(cutscene, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
         cutsceneController.startSession();
         storyHandler.getPlayerSession().setKeyframeControllerBase(cutsceneController);
