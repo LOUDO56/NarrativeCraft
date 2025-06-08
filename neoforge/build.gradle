@@ -36,13 +36,17 @@ neoForge {
     }
 }
 
+repositories {
+    mavenLocal()
+}
+
 dependencies {
     jarJar(implementation("com.bladecoder.ink:blade-ink")) {
         version {
-            prefer '1.2.0'
+            prefer '1.2.0+nc'
         }
     }
-    additionalRuntimeClasspath 'com.bladecoder.ink:blade-ink:1.2.0'
+    additionalRuntimeClasspath 'com.bladecoder.ink:blade-ink:1.2.0+nc'
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

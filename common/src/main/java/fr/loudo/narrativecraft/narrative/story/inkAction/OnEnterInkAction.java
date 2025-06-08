@@ -22,25 +22,20 @@ public class OnEnterInkAction extends InkAction {
     @Override
     public boolean execute(String[] command) {
         StoryState state = storyHandler.getStory().getState();
-        String currentKnot = state.previousPathString();
-        if(currentKnot != null) {
-            String[] splitedKnot = currentKnot.split("\\.");
-            String knot = splitedKnot[0];
-            String stitch = splitedKnot.length > 1 ? splitedKnot[1] : "";
-            if(!knot.equals(NarrativeCraftFile.getChapterSceneCamelCase(storyHandler.getPlayerSession().getScene()))) {
-                String[] chapterSceneName = knot.split("_");
-                int chapterIndex = Integer.parseInt(chapterSceneName[1]);
-                List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
-                String sceneName = String.join(" ", splitSceneName);
-                Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
-                Scene scene = chapter.getSceneByName(sceneName);
-                storyHandler.getPlayerSession().setChapter(chapter);
-                storyHandler.getPlayerSession().setScene(scene);
-                NarrativeCraftFile.writeSave(storyHandler);
-                storyHandler.setSaving(true);
-                StorySave.startTimeSaveIcon = System.currentTimeMillis();
-                sendDebugDetails();
-            }
+        String currentKnot = state.getCurrentKnot();
+        if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneCamelCase(storyHandler.getPlayerSession().getScene()))) {
+            String[] chapterSceneName = currentKnot.split("_");
+            int chapterIndex = Integer.parseInt(chapterSceneName[1]);
+            List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
+            String sceneName = String.join(" ", splitSceneName);
+            Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+            Scene scene = chapter.getSceneByName(sceneName);
+            storyHandler.getPlayerSession().setChapter(chapter);
+            storyHandler.getPlayerSession().setScene(scene);
+            NarrativeCraftFile.writeSave(storyHandler);
+            storyHandler.setSaving(true);
+            StorySave.startTimeSaveIcon = System.currentTimeMillis();
+            sendDebugDetails();
         }
         return true;
     }

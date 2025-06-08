@@ -3,6 +3,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0.24,6.2)'
     id 'org.spongepowered.mixin' version '0.7-SNAPSHOT'
 }
+
 base {
     archivesName = "${mod_name}-forge-${minecraft_version}"
 }
@@ -73,6 +74,13 @@ minecraft {
 
 sourceSets.main.resources.srcDir 'src/generated/resources'
 
+repositories {
+    maven { name = "Forge"; url = "https://maven.minecraftforge.net" }
+    maven { name = "Mojang"; url = "https://libraries.minecraft.net" }
+    mavenLocal()
+}
+
+
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     annotationProcessor("org.spongepowered:mixin:0.8.5-SNAPSHOT:processor")
@@ -80,9 +88,9 @@ dependencies {
     // Forge's hack fix
     implementation('net.sf.jopt-simple:jopt-simple:5.0.4') { version { strictly '5.0.4' } }
     implementation(jarJar(group: 'com.bladecoder.ink', name: 'blade-ink', version: '[1.0,1.2)') {
-        jarJar.pin(it, '1.2.0')
+        jarJar.pin(it, '1.2.0+nc')
     })
-    implementation('com.bladecoder.ink:blade-ink:1.2.0');
+    implementation('com.bladecoder.ink:blade-ink:1.2.0+nc');
 }
 
 tasks.named('build') {
