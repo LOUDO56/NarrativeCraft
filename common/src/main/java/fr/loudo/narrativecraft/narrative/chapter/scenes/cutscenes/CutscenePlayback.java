@@ -143,13 +143,16 @@ public class CutscenePlayback  {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             return currentLoc;
         }
-        t = Easing.getInterpolation(secondKeyframe.getEasing(), Math.min((double) elapsedTime / endTime, 1.0));
-        currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
+        if(secondKeyframe.getEasing() == Easing.SMOOTH) {
+            List<Keyframe> keyframes = currentKeyframeGroup.getKeyframeList();
+            currentLoc = getInterpolatedPosition(keyframes, firstKeyframe, elapsedTime);
+        } else {
+            t = Easing.getInterpolation(secondKeyframe.getEasing(), Math.min((double) elapsedTime / endTime, 1.0));
+            currentLoc = getNextPosition(firstKeyframe.getKeyframeCoordinate(), secondKeyframe.getKeyframeCoordinate(), t);
+        }
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             if(cutsceneController.isLastKeyframe(secondKeyframe)) {
-                if(cutsceneController.getCurrentTick() >= cutsceneController.getTotalTick()) {
-                    stop();
-                }
+                stop();
             } else {
                 nextFrame();
             }
@@ -197,6 +200,124 @@ public class CutscenePlayback  {
 
         return interpolated;
     }
+
+    private float interpolateAngleCatmullRom(float a0, float a1, float a2, float a3, double t) {
+        a0 = unwrapAngle(a0, a1);
+        a2 = unwrapAngle(a2, a1);
+        a3 = unwrapAngle(a3, a2);
+
+        double t2 = t * t;
+        double t3 = t2 * t;
+
+        float angle = (float) (0.5 * ((2.0 * a1)
+                + (-a0 + a2) * t
+                + (2.0 * a0 - 5.0 * a1 + 4.0 * a2 - a3) * t2
+                + (-a0 + 3.0 * a1 - 3.0 * a2 + a3) * t3));
+
+        return wrapAngle(angle);
+    }
+
+    private float unwrapAngle(float angle, float reference) {
+        float diff = angle - reference;
+        while (diff < -180) diff += 360;
+        while (diff > 180) diff -= 360;
+        return reference + diff;
+    }
+
+    private float wrapAngle(float angle) {
+        while (angle <= -180) angle += 360;
+        while (angle > 180) angle -= 360;
+        return angle;
+    }
+
+    public KeyframeCoordinate getInterpolatedPosition(List<Keyframe> keyframes, Keyframe firstKeyframe, long elapsedTime) {
+        if (keyframes.size() < 2) return keyframes.getFirst().getKeyframeCoordinate();
+        int startIndex = 0;
+        for(Keyframe keyframe : keyframes) {
+            if(keyframe.getId() == firstKeyframe.getId()) {
+                break;
+            }
+            startIndex++;
+        }
+
+        long accumulatedTime = 0;
+        for (int i = startIndex; i < keyframes.size() - 1; i++) {
+            Keyframe k1 = keyframes.get(i);
+            Keyframe k2 = keyframes.get(i + 1);
+
+            long segmentDuration = k2.getPathTime();
+            if (elapsedTime < accumulatedTime + segmentDuration) {
+                t = (double) (elapsedTime - accumulatedTime) / segmentDuration;
+
+                Keyframe p0 = keyframes.get(Math.max(i - 1, 0));
+                Keyframe p1 = k1;
+                Keyframe p2 = k2;
+                Keyframe p3 = keyframes.get(Math.min(i + 2, keyframes.size() - 1));
+
+                return interpolateCatmullRom(
+                        p0.getKeyframeCoordinate(),
+                        p1.getKeyframeCoordinate(),
+                        p2.getKeyframeCoordinate(),
+                        p3.getKeyframeCoordinate(),
+                        t
+                );
+            }
+
+            accumulatedTime += segmentDuration;
+        }
+
+        return keyframes.getLast().getKeyframeCoordinate();
+    }
+
+
+    private KeyframeCoordinate interpolateCatmullRom(KeyframeCoordinate p0, KeyframeCoordinate p1, KeyframeCoordinate p2, KeyframeCoordinate p3, double t) {
+        double t2 = t * t;
+        double t3 = t2 * t;
+
+        double x = 0.5 * ((2.0 * p1.getX())
+                + (-p0.getX() + p2.getX()) * t
+                + (2.0 * p0.getX() - 5.0 * p1.getX() + 4.0 * p2.getX() - p3.getX()) * t2
+                + (-p0.getX() + 3.0 * p1.getX() - 3.0 * p2.getX() + p3.getX()) * t3);
+
+        double y = 0.5 * ((2.0 * p1.getY())
+                + (-p0.getY() + p2.getY()) * t
+                + (2.0 * p0.getY() - 5.0 * p1.getY() + 4.0 * p2.getY() - p3.getY()) * t2
+                + (-p0.getY() + 3.0 * p1.getY() - 3.0 * p2.getY() + p3.getY()) * t3);
+
+        double z = 0.5 * ((2.0 * p1.getZ())
+                + (-p0.getZ() + p2.getZ()) * t
+                + (2.0 * p0.getZ() - 5.0 * p1.getZ() + 4.0 * p2.getZ() - p3.getZ()) * t2
+                + (-p0.getZ() + 3.0 * p1.getZ() - 3.0 * p2.getZ() + p3.getZ()) * t3);
+
+        float XRot = (float) (0.5 * ((2.0 * p1.getXRot())
+                        + (-p0.getXRot() + p2.getXRot()) * t
+                        + (2.0 * p0.getXRot() - 5.0 * p1.getXRot() + 4.0 * p2.getXRot() - p3.getXRot()) * t2
+                        + (-p0.getXRot() + 3.0 * p1.getXRot() - 3.0 * p2.getXRot() + p3.getXRot()) * t3));
+
+        float YRot = interpolateAngleCatmullRom(
+                p0.getYRot(),
+                p1.getYRot(),
+                p2.getYRot(),
+                p3.getYRot(),
+                t
+        );
+
+        float ZRot = interpolateAngleCatmullRom(
+                p0.getZRot(),
+                p1.getZRot(),
+                p2.getZRot(),
+                p3.getZRot(),
+                t
+        );
+
+        float fov = (float) (0.5 * ((2.0 * p1.getFov())
+                + (-p0.getFov() + p2.getFov()) * t
+                + (2.0 * p0.getFov() - 5.0 * p1.getFov() + 4.0 * p2.getFov() - p3.getFov()) * t2
+                + (-p0.getFov() + 3.0 * p1.getFov() - 3.0 * p2.getFov() + p3.getFov()) * t3));
+
+        return new KeyframeCoordinate(x, y, z, XRot, YRot, ZRot, fov);
+    }
+
 
     public ServerPlayer getPlayer() {
         return player;
