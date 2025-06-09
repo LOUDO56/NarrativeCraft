@@ -23,6 +23,7 @@ public class OnEnterInkAction extends InkAction {
     public boolean execute(String[] command) {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
+        if(currentKnot == null) return true;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneCamelCase(storyHandler.getPlayerSession().getScene()))) {
             String[] chapterSceneName = currentKnot.split("_");
             int chapterIndex = Integer.parseInt(chapterSceneName[1]);

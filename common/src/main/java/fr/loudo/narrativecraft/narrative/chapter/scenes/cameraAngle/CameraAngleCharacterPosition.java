@@ -96,4 +96,5 @@ public class CameraAngleCharacterPosition {
     public void setYRot(float YRot) {
         this.YRot = YRot;
     }
+
 }

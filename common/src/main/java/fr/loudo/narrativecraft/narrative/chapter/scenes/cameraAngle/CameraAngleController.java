@@ -6,27 +6,23 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
-import fr.loudo.narrativecraft.utils.TpUtil;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -45,7 +41,9 @@ public class CameraAngleController extends KeyframeControllerBase {
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
             if(!cameraAngleGroup.getCameraAngleList().isEmpty()) {
-                TpUtil.teleportPlayer(player, cameraAngleGroup.getCameraAngleList().getFirst().getKeyframeCoordinate().getVec3());
+                KeyframeCoordinate keyframeCoordinate = cameraAngleGroup.getCameraAngleList().getFirst().getKeyframeCoordinate();
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                localPlayer.setPos(keyframeCoordinate.getVec3());
             }
             for(Keyframe keyframe : cameraAngleGroup.getCameraAngleList()) {
                 keyframe.showKeyframeToClient(player);
@@ -57,46 +55,7 @@ public class CameraAngleController extends KeyframeControllerBase {
             updateKeyframeEntityName();
         }
 
-        for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
-            if(characterPosition.getCharacter().getCharacterSkinController() == null) {
-                characterPosition.getCharacter().setCharacterSkinController(new CharacterSkinController(characterPosition.getCharacter()));
-            }
-
-            File skinFile = null;
-            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                skinFile = NarrativeCraftFile.getSkinFile(characterPosition.getCharacter(), characterPosition.getSkinName());
-            } else if (playbackType == Playback.PlaybackType.PRODUCTION){
-                skinFile = characterPosition.getCharacter().getCharacterSkinController().getSkinFile(characterPosition.getSkinName());
-            }
-            characterPosition.getCharacter().getCharacterSkinController().setCurrentSkin(skinFile);
-
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-                if(!storyHandler
-                        .getCurrentCharacters()
-                        .stream()
-                        .filter(characterStory -> characterPosition.getCharacter().getName().equals(characterStory.getName()))
-                        .toList()
-                        .isEmpty()) {
-                    continue;
-                }
-            }
-
-            FakePlayer fakePlayer = new FakePlayer(player.serverLevel(), new GameProfile(UUID.randomUUID(), characterPosition.getCharacter().getName()));
-            fakePlayer.teleportTo(characterPosition.getX(), characterPosition.getY(), characterPosition.getZ());
-            fakePlayer.setXRot(characterPosition.getXRot());
-            fakePlayer.setYRot(characterPosition.getYRot());
-            fakePlayer.setYHeadRot(characterPosition.getYRot());
-            SynchedEntityData entityData = fakePlayer.getEntityData();
-            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
-            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
-            player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-            player.serverLevel().addFreshEntity(fakePlayer);
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-                storyHandler.getCurrentCharacters().add(characterPosition.getCharacter());
-            }
-        }
+        cameraAngleGroup.spawnCharacters(playbackType);
     }
 
     @Override
@@ -114,6 +73,7 @@ public class CameraAngleController extends KeyframeControllerBase {
                 characterPosition.getCharacter().getEntity().remove(Entity.RemovalReason.KILLED);
             }
         }
+        cameraAngleGroup.killCharacters();
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
         StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
@@ -155,15 +115,17 @@ public class CameraAngleController extends KeyframeControllerBase {
     }
 
     public void addCharacter() {
-        FakePlayer fakePlayer = new FakePlayer(player.serverLevel(), new GameProfile(UUID.randomUUID(), "fakeP"));
-        fakePlayer.teleportTo(player.position().x, player.position().y, player.position().z);
-        fakePlayer.setXRot(player.getXRot());
-        fakePlayer.setYRot(player.getYRot());
-        fakePlayer.setYHeadRot(player.getYRot());
-        player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-        player.serverLevel().addFreshEntity(fakePlayer);
+        LivingEntity livingEntity = new FakePlayer(player.serverLevel(), new GameProfile(UUID.randomUUID(), "fakeP"));
+        livingEntity.teleportTo(player.position().x, player.position().y, player.position().z);
+        livingEntity.setXRot(player.getXRot());
+        livingEntity.setYRot(player.getYRot());
+        livingEntity.setYHeadRot(player.getYRot());
+        if(livingEntity instanceof FakePlayer fakePlayer) {
+            player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+        }
+        player.serverLevel().addFreshEntity(livingEntity);
         CameraAngleCharacterPosition characterPosition = new CameraAngleCharacterPosition(
-                fakePlayer,
+                livingEntity,
                 new CharacterStory("default"),
                 player.position(),
                 player.getXRot(),

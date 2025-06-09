@@ -12,9 +12,9 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
-import fr.loudo.narrativecraft.utils.TpUtil;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -85,7 +85,9 @@ public class CutsceneController extends KeyframeControllerBase {
                 selectedKeyframeGroup = cutscene.getKeyframeGroupList().getFirst();
                 selectedKeyframeGroup.showGlow(player);
                 selectedKeyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, selectedKeyframeGroup.getId());
-                TpUtil.teleportPlayer(player, selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3());
+                KeyframeCoordinate keyframeCoordinate = selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate();
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                localPlayer.setPos(keyframeCoordinate.getVec3());
                 keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
             }
 
@@ -350,7 +352,7 @@ public class CutsceneController extends KeyframeControllerBase {
         this.selectedKeyframeGroup = selectedKeyframeGroup;
         updateSelectedGroupGlow();
         Vec3 pos = selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate().getVec3();
-        TpUtil.teleportPlayer(player, pos.x(), pos.y() - 1, pos.z());
+        Minecraft.getInstance().player.setPos(pos);
     }
 
     public AtomicInteger getKeyframeGroupCounter() {

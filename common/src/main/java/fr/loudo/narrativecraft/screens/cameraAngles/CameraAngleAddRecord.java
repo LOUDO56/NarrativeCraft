@@ -1,10 +1,16 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.screens.components.PickElementScreen;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.recordings.MovementData;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.screens.components.ListElementScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -37,85 +43,94 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
     @Override
     protected void addContents() {
 
-        List<Animation> selectedAnimations = cameraAngleGroup.getAnimations();
 
-        List<Animation> availableAnimations = cameraAngleGroup.getScene().getAnimationList().stream()
-                .filter(animation -> selectedAnimations.stream().noneMatch(a -> a.getName().equals(animation.getName())))
-                .toList();
+        Scene scene = cameraAngleGroup.getScene();
+        List<StoryElementList.StoryEntryData> animationEntries = new ArrayList<>();
+        for(Animation animation : scene.getAnimationList()) {
+            Button animationButton = Button.builder(Component.literal(animation.getName()), button -> {
+                MovementData movementData = animation.getActionsData().getMovementData().getLast();
+                cameraAngleGroup.addCharacter(
+                        animation.getCharacter(),
+                        animation.getSkinName(),
+                        movementData.getX(),
+                        movementData.getY(),
+                        movementData.getZ(),
+                        movementData.getXRot(),
+                        movementData.getYRot(),
+                        Playback.PlaybackType.DEVELOPMENT
+                );
+                this.minecraft.setScreen(this);
+            }).build();
+            animationEntries.add(new StoryElementList.StoryEntryData(animationButton));
+        }
+        ListElementScreen animationListScreen = new ListElementScreen(this, animationEntries);
 
-        PickElementScreen pickElementScreenAnimation = new PickElementScreen(
-                this,
-                Component.literal("Add animation to camera angle"),
-                Translation.message("global.animations"),
-                availableAnimations,
-                selectedAnimations,
-                entries -> {
-                    cameraAngleGroup.clearAnimations();
-                    List<Animation> selectedAnimation = new ArrayList<>();
-                    for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                        Animation animation = (Animation) entry.getNarrativeEntry();
-                        if(!cameraAngleGroup.animationExists(animation)) selectedAnimation.add(animation);
+        List<StoryElementList.StoryEntryData> cutsceneEntries = new ArrayList<>();
+        for(Cutscene cutscene : scene.getCutsceneList()) {
+            Button cutsceneButton = Button.builder(Component.literal(cutscene.getName()), button -> {
+                Keyframe lastKeyframe = cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast();
+                int lastLocIndex = (int) (lastKeyframe.getTick() + 2 + ((lastKeyframe.getTransitionDelay() / 1000) * 20));
+                for(Subscene subscene : cutscene.getSubsceneList()) {
+                    for(Animation animation : subscene.getAnimationList()) {
+                        MovementData movementData = animation.getActionsData().getMovementData().get(Math.min(lastLocIndex,animation.getActionsData().getMovementData().size() - 1 ));
+                        cameraAngleGroup.addCharacter(
+                                animation.getCharacter(),
+                                animation.getSkinName(),
+                                movementData.getX(),
+                                movementData.getY(),
+                                movementData.getZ(),
+                                movementData.getXRot(),
+                                movementData.getYRot(),
+                                Playback.PlaybackType.DEVELOPMENT
+                        );
                     }
-                    cameraAngleGroup.getTemplateRecord().addAll(selectedAnimation);
-                    this.minecraft.setScreen(new CameraAngleAddRecord(cameraAngleGroup));
-                    cameraAngleGroup.spawnCharactersTemp();
                 }
-        );
-
-        List<Cutscene> selectedCutscenes = cameraAngleGroup.getCutscenes();
-
-        List<Cutscene> availableCutscenes = cameraAngleGroup.getScene().getCutsceneList().stream()
-                .filter(cutscene -> selectedCutscenes.stream().noneMatch(c -> c.getName().equals(cutscene.getName())))
-                .toList();
-
-        PickElementScreen pickElementScreenCutscene = new PickElementScreen(
-                this,
-                Component.literal("Add cutscene to camera angle"),
-                Translation.message("global.cutscenes"),
-                availableCutscenes,
-                selectedCutscenes,
-                entries -> {
-                    cameraAngleGroup.clearCutscenes();
-                    List<Cutscene> selectedCutscene = new ArrayList<>();
-                    for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                        Cutscene cutscene = (Cutscene) entry.getNarrativeEntry();
-                        if(!cameraAngleGroup.cutsceneExists(cutscene)) selectedCutscene.add(cutscene);
-                    }
-                    cameraAngleGroup.getTemplateRecord().addAll(selectedCutscene);
-                    this.minecraft.setScreen(new CameraAngleAddRecord(cameraAngleGroup));
-                    cameraAngleGroup.spawnCharactersTemp();
+                for(Animation animation : cutscene.getAnimationList()) {
+                    MovementData movementData = animation.getActionsData().getMovementData().get(lastLocIndex);
+                    if(movementData == null) movementData = animation.getActionsData().getMovementData().getLast();
+                    cameraAngleGroup.addCharacter(
+                            animation.getCharacter(),
+                            animation.getSkinName(),
+                            movementData.getX(),
+                            movementData.getY(),
+                            movementData.getZ(),
+                            movementData.getXRot(),
+                            movementData.getYRot(),
+                            Playback.PlaybackType.DEVELOPMENT
+                    );
                 }
-        );
+                this.minecraft.setScreen(this);
+            }).build();
+            cutsceneEntries.add(new StoryElementList.StoryEntryData(cutsceneButton));
+        }
+        ListElementScreen cutsceneListScreen = new ListElementScreen(this, cutsceneEntries);
 
-        List<Subscene> selectedSubscene = cameraAngleGroup.getSubscenes();
-
-        List<Subscene> availableSubscene = cameraAngleGroup.getScene().getSubsceneList().stream()
-                .filter(subscene -> selectedSubscene.stream().noneMatch(s -> s.getName().equals(subscene.getName())))
-                .toList();
-
-        PickElementScreen pickElementScreenSubscene = new PickElementScreen(
-                this,
-                Component.literal("Add subscene to camera angle"),
-                Translation.message("global.subscenes"),
-                availableSubscene,
-                selectedSubscene,
-                entries -> {
-                    cameraAngleGroup.clearSubscenes();
-                    List<Subscene> selectedSubscenes = new ArrayList<>();
-                    for(PickElementScreen.TransferableStorySelectionList.Entry entry : entries) {
-                        Subscene subscene = (Subscene) entry.getNarrativeEntry();
-                        if(!cameraAngleGroup.subsceneExists(subscene)) selectedSubscenes.add(subscene);
-                    }
-                    cameraAngleGroup.getTemplateRecord().addAll(selectedSubscenes);
-                    this.minecraft.setScreen(new CameraAngleAddRecord(cameraAngleGroup));
-                    cameraAngleGroup.spawnCharactersTemp();
+        List<StoryElementList.StoryEntryData> subsceneEntries = new ArrayList<>();
+        for(Subscene subscene : scene.getSubsceneList()) {
+            Button subsceneButton = Button.builder(Component.literal(subscene.getName()), button -> {
+                for(Animation animation : subscene.getAnimationList()) {
+                    MovementData movementData = animation.getActionsData().getMovementData().getLast();
+                    cameraAngleGroup.addCharacter(
+                            animation.getCharacter(),
+                            animation.getSkinName(),
+                            movementData.getX(),
+                            movementData.getY(),
+                            movementData.getZ(),
+                            movementData.getXRot(),
+                            movementData.getYRot(),
+                            Playback.PlaybackType.DEVELOPMENT
+                    );
                 }
-        );
+                this.minecraft.setScreen(this);
+            }).build();
+            subsceneEntries.add(new StoryElementList.StoryEntryData(subsceneButton));
+        }
+        ListElementScreen subsceneListScreen = new ListElementScreen(this, subsceneEntries);
 
         List<StoryElementList.StoryEntryData> entries = List.of(
-                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.animations"), b -> minecraft.setScreen(pickElementScreenAnimation)).build()),
-                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.cutscenes"), b -> minecraft.setScreen(pickElementScreenCutscene)).build()),
-                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> minecraft.setScreen(pickElementScreenSubscene)).build())
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.animations"), b -> this.minecraft.setScreen(animationListScreen)).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.cutscenes"), b -> this.minecraft.setScreen(cutsceneListScreen)).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> this.minecraft.setScreen(subsceneListScreen)).build())
         );
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
 

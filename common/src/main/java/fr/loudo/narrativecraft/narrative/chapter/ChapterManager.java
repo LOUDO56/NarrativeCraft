@@ -11,9 +11,11 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
@@ -121,22 +123,27 @@ public class ChapterManager {
             }
         }
 
-        // Camera Angles
-        File cameraAnglesFile = new File(dataFolder, "camera_angles" + NarrativeCraftFile.EXTENSION_DATA_FILE);
-        if(cameraAnglesFile.exists()) {
+        // Subscenes
+        File subsceneFile = new File(dataFolder, "subscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+        if(subsceneFile.exists()) {
             try {
-                String content = Files.readString(cameraAnglesFile.toPath());
-                Type listType = new TypeToken<List<CameraAngleGroup>>() {}.getType();
-                List<CameraAngleGroup> cameraAngleGroupList = new Gson().fromJson(content, listType);
-                if(cameraAngleGroupList != null) {
-                    for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
-                        cameraAngleGroup.setTemplateRecord(new ArrayList<>());
-                        cameraAngleGroup.setScene(scene);
+                String content = Files.readString(subsceneFile.toPath());
+                Type listType = new TypeToken<List<Subscene>>() {}.getType();
+                List<Subscene> subscenes = new Gson().fromJson(content, listType);
+                if(subscenes != null) {
+                    for (Subscene subscene : subscenes) {
+                        subscene.setScene(scene);
+                        subscene.setAnimationList(new ArrayList<>());
+                        for(Animation animation : scene.getAnimationList()) {
+                            if(subscene.getAnimationNameList().contains(animation.getName())) {
+                                subscene.getAnimationList().add(animation);
+                            }
+                        }
                     }
-                    scene.setCameraAngleGroupList(cameraAngleGroupList);
+                    scene.setSubsceneList(subscenes);
                 }
             } catch (IOException e) {
-                NarrativeCraftMod.LOG.warn("Camera angles file does not exists, passing...");
+                NarrativeCraftMod.LOG.warn("Subscene file does not exists, passing...");
             }
         }
 
@@ -160,6 +167,12 @@ public class ChapterManager {
                             cutscene.getAnimationList().add(animation);
                         }
                         for(Subscene subscene : cutscene.getSubsceneList()) {
+                            subscene.setAnimationList(new ArrayList<>());
+                            for (String animationName : subscene.getAnimationNameList()) {
+                                Animation animation = scene.getAnimationByName(animationName);
+                                animation.setScene(scene);
+                                subscene.getAnimationList().add(animation);
+                            }
                             subscene.setScene(scene);
                         }
                     }
@@ -170,27 +183,24 @@ public class ChapterManager {
             }
         }
 
-        // Subscenes
-        File subsceneFile = new File(dataFolder, "subscenes" + NarrativeCraftFile.EXTENSION_DATA_FILE);
-        if(subsceneFile.exists()) {
+        // Camera Angles
+        File cameraAnglesFile = new File(dataFolder, "camera_angles" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+        if(cameraAnglesFile.exists()) {
             try {
-                String content = Files.readString(subsceneFile.toPath());
-                Type listType = new TypeToken<List<Subscene>>() {}.getType();
-                List<Subscene> subscenes = new Gson().fromJson(content, listType);
-                if(subscenes != null) {
-                    for (Subscene subscene : subscenes) {
-                        subscene.setScene(scene);
-                        subscene.setAnimationList(new ArrayList<>());
-                        for(Animation animation : scene.getAnimationList()) {
-                            if(subscene.getAnimationNameList().contains(animation.getName())) {
-                                subscene.getAnimationList().add(animation);
-                            }
+                String content = Files.readString(cameraAnglesFile.toPath());
+                Type listType = new TypeToken<List<CameraAngleGroup>>() {}.getType();
+                List<CameraAngleGroup> cameraAngleGroupList = new Gson().fromJson(content, listType);
+                if(cameraAngleGroupList != null) {
+                    for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
+                        cameraAngleGroup.setScene(scene);
+                        for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
+                            characterPosition.getCharacter().setCharacterSkinController(new CharacterSkinController(characterPosition.getCharacter()));
                         }
                     }
-                    scene.setSubsceneList(subscenes);
+                    scene.setCameraAngleGroupList(cameraAngleGroupList);
                 }
             } catch (IOException e) {
-                NarrativeCraftMod.LOG.warn("Subscene file does not exists, passing...");
+                NarrativeCraftMod.LOG.warn("Camera angles file does not exists, passing...");
             }
         }
 

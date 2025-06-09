@@ -30,13 +30,12 @@ public class PlayerInfoMixin {
 
     @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
     public void getSkin(CallbackInfoReturnable<PlayerSkin> cir) {
-        UUID playerUUID = this.profile.getId();
         List<CharacterStory> characters = getRelevantCharacters();
 
         for (CharacterStory character : characters) {
             if (character.getEntity() == null || character.getCharacterSkinController().getCurrentSkin() == null) continue;
             if (!(character.getEntity() instanceof Player)) continue;
-            if (!playerUUID.equals(character.getEntity().getUUID())) continue;
+            if (!this.profile.getName().equals(character.getName())) continue;
 
             PlayerSkin.Model model = character.getModel();
             ResourceLocation skinLocation = ResourceLocation.fromNamespaceAndPath(

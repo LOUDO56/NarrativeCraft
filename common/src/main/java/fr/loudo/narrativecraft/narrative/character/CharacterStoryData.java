@@ -40,6 +40,7 @@ public class CharacterStoryData {
 
     private void init() {
         LivingEntity livingEntity = characterStory.getEntity();
+        if(livingEntity == null) return;
         x = livingEntity.getX();
         y = livingEntity.getY();
         z = livingEntity.getZ();

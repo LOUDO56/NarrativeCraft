@@ -235,6 +235,7 @@ public class NarrativeCraftFile {
         File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
         File skinsFolder = createDirectory(characterFolder, "skins");
         PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
+        characterStory.setModel(defaultPlayerSkin.model());
         File mainSkinFile = createFile(skinsFolder, "main.png");
         try(InputStream inputStream = Minecraft.getInstance().getResourceManager().open(defaultPlayerSkin.texture())) {
             mainSkinFile.createNewFile();

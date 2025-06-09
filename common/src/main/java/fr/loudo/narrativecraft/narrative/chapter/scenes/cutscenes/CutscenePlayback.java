@@ -8,7 +8,6 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
-import fr.loudo.narrativecraft.utils.TpUtil;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
@@ -85,7 +84,7 @@ public class CutscenePlayback  {
 
     public void stop() {
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
-        TpUtil.teleportPlayer(player, lastPos.getX(), lastPos.getY(), lastPos.getZ());
+        Minecraft.getInstance().player.setPos(lastPos.getVec3());
         cutsceneController.pause();
         if(cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
             cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
