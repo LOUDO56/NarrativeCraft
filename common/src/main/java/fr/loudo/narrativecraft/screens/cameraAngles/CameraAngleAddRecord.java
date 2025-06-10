@@ -9,6 +9,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.screens.components.ListElementScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
@@ -20,9 +23,11 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.Pose;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class CameraAngleAddRecord extends OptionsSubScreen {
 
@@ -48,22 +53,12 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         List<StoryElementList.StoryEntryData> animationEntries = new ArrayList<>();
         for(Animation animation : scene.getAnimationList()) {
             Button animationButton = Button.builder(Component.literal(animation.getName()), button -> {
-                MovementData movementData = animation.getActionsData().getMovementData().getLast();
-                cameraAngleGroup.addCharacter(
-                        animation.getCharacter(),
-                        animation.getSkinName(),
-                        movementData.getX(),
-                        movementData.getY(),
-                        movementData.getZ(),
-                        movementData.getXRot(),
-                        movementData.getYRot(),
-                        Playback.PlaybackType.DEVELOPMENT
-                );
+                spawnEntity(animation, animation.getActionsData().getMovementData().size() - 1);
                 this.minecraft.setScreen(this);
             }).build();
             animationEntries.add(new StoryElementList.StoryEntryData(animationButton));
         }
-        ListElementScreen animationListScreen = new ListElementScreen(this, animationEntries);
+        ListElementScreen animationListScreen = new ListElementScreen(this, animationEntries, Translation.message("global.animations"));
 
         List<StoryElementList.StoryEntryData> cutsceneEntries = new ArrayList<>();
         for(Cutscene cutscene : scene.getCutsceneList()) {
@@ -72,60 +67,29 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
                 int lastLocIndex = (int) (lastKeyframe.getTick() + 2 + ((lastKeyframe.getTransitionDelay() / 1000) * 20));
                 for(Subscene subscene : cutscene.getSubsceneList()) {
                     for(Animation animation : subscene.getAnimationList()) {
-                        MovementData movementData = animation.getActionsData().getMovementData().get(Math.min(lastLocIndex,animation.getActionsData().getMovementData().size() - 1 ));
-                        cameraAngleGroup.addCharacter(
-                                animation.getCharacter(),
-                                animation.getSkinName(),
-                                movementData.getX(),
-                                movementData.getY(),
-                                movementData.getZ(),
-                                movementData.getXRot(),
-                                movementData.getYRot(),
-                                Playback.PlaybackType.DEVELOPMENT
-                        );
+                        spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getMovementData().size() - 1));
                     }
                 }
                 for(Animation animation : cutscene.getAnimationList()) {
-                    MovementData movementData = animation.getActionsData().getMovementData().get(lastLocIndex);
-                    if(movementData == null) movementData = animation.getActionsData().getMovementData().getLast();
-                    cameraAngleGroup.addCharacter(
-                            animation.getCharacter(),
-                            animation.getSkinName(),
-                            movementData.getX(),
-                            movementData.getY(),
-                            movementData.getZ(),
-                            movementData.getXRot(),
-                            movementData.getYRot(),
-                            Playback.PlaybackType.DEVELOPMENT
-                    );
+                    spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getMovementData().size() - 1));
                 }
                 this.minecraft.setScreen(this);
             }).build();
             cutsceneEntries.add(new StoryElementList.StoryEntryData(cutsceneButton));
         }
-        ListElementScreen cutsceneListScreen = new ListElementScreen(this, cutsceneEntries);
+        ListElementScreen cutsceneListScreen = new ListElementScreen(this, cutsceneEntries, Translation.message("global.cutscenes"));
 
         List<StoryElementList.StoryEntryData> subsceneEntries = new ArrayList<>();
         for(Subscene subscene : scene.getSubsceneList()) {
             Button subsceneButton = Button.builder(Component.literal(subscene.getName()), button -> {
                 for(Animation animation : subscene.getAnimationList()) {
-                    MovementData movementData = animation.getActionsData().getMovementData().getLast();
-                    cameraAngleGroup.addCharacter(
-                            animation.getCharacter(),
-                            animation.getSkinName(),
-                            movementData.getX(),
-                            movementData.getY(),
-                            movementData.getZ(),
-                            movementData.getXRot(),
-                            movementData.getYRot(),
-                            Playback.PlaybackType.DEVELOPMENT
-                    );
+                    spawnEntity(animation, animation.getActionsData().getMovementData().size() - 1);
                 }
                 this.minecraft.setScreen(this);
             }).build();
             subsceneEntries.add(new StoryElementList.StoryEntryData(subsceneButton));
         }
-        ListElementScreen subsceneListScreen = new ListElementScreen(this, subsceneEntries);
+        ListElementScreen subsceneListScreen = new ListElementScreen(this, subsceneEntries, Translation.message("global.subscenes"));
 
         List<StoryElementList.StoryEntryData> entries = List.of(
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.animations"), b -> this.minecraft.setScreen(animationListScreen)).build()),
@@ -134,6 +98,31 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         );
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
 
+    }
+
+    private void spawnEntity(Animation animation, int index) {
+        MovementData movementData = animation.getActionsData().getMovementData().get(index);
+        List<Action> actions;
+        if(index >= animation.getActionsData().getActions().getLast().getTick()) {
+            actions = animation.getActionsData().getActions().stream()
+                    .filter(action -> animation.getActionsData().getActions().getLast().getTick() == action.getTick())
+                    .toList();
+        } else {
+            actions = animation.getActionsData().getActions().stream()
+                    .filter(action -> index >= action.getTick())
+                    .toList();
+        }
+        cameraAngleGroup.addCharacter(
+                animation.getCharacter(),
+                animation.getSkinName(),
+                movementData.getX(),
+                movementData.getY(),
+                movementData.getZ(),
+                movementData.getXRot(),
+                movementData.getYRot(),
+                actions,
+                Playback.PlaybackType.DEVELOPMENT
+        );
     }
 
     @Override

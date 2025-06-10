@@ -6,8 +6,8 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
-import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
@@ -52,6 +52,7 @@ public class CameraAngleGroup extends NarrativeEntry {
                     characterPosition.getZ(),
                     characterPosition.getXRot(),
                     characterPosition.getYRot(),
+                    characterPosition.getActions(),
                     playbackType
             );
             if(livingEntity != null) {
@@ -73,8 +74,8 @@ public class CameraAngleGroup extends NarrativeEntry {
         }
     }
 
-    public void addCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, Playback.PlaybackType playbackType) {
-        LivingEntity livingEntity = spawnCharacter(characterStory, skinName, x, y, z, XRot, YRot, playbackType);
+    public void addCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, List<Action> actions, Playback.PlaybackType playbackType) {
+        LivingEntity livingEntity = spawnCharacter(characterStory, skinName, x, y, z, XRot, YRot, actions, playbackType);
         CameraAngleCharacterPosition characterPosition = new CameraAngleCharacterPosition(
                 livingEntity,
                 characterStory,
@@ -82,14 +83,15 @@ public class CameraAngleGroup extends NarrativeEntry {
                 y,
                 z,
                 XRot,
-                YRot
+                YRot,
+                actions
         );
         characterPosition.getCharacter().setEntity(livingEntity);
         characterPosition.setEntity(livingEntity);
         characterPositions.add(characterPosition);
     }
 
-    public LivingEntity spawnCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, Playback.PlaybackType playbackType) {
+    public LivingEntity spawnCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, List<Action> actions, Playback.PlaybackType playbackType) {
         if(playbackType == Playback.PlaybackType.PRODUCTION) {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             for(CameraAngleCharacterPosition characterPosition : characterPositions) {
@@ -100,7 +102,7 @@ public class CameraAngleGroup extends NarrativeEntry {
                 }
             }
         }
-        ServerLevel serverLevel = NarrativeCraftMod.server.overworld();
+        ServerLevel serverLevel = NarrativeCraftMod.server.getLevel(Minecraft.getInstance().level.dimension());
         LivingEntity livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
         if(livingEntity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
@@ -113,6 +115,9 @@ public class CameraAngleGroup extends NarrativeEntry {
         livingEntity.setYRot(YRot);
         livingEntity.setYHeadRot(YRot);
         serverLevel.addFreshEntity(livingEntity);
+        for(Action action : actions) {
+            Action.parseAndExecute(action, livingEntity);
+        }
         File skinFile = null;
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             skinFile = NarrativeCraftFile.getSkinFile(characterStory, skinName);

@@ -1,9 +1,12 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
+
+import java.util.List;
 
 public class CameraAngleCharacterPosition {
 
@@ -12,8 +15,9 @@ public class CameraAngleCharacterPosition {
     private String skinName = "main.png";
     private double x, y, z;
     private float XRot, YRot;
+    private List<Action> actions;
 
-    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, double x, double y, double z, float XRot, float YRot) {
+    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, double x, double y, double z, float XRot, float YRot, List<Action> actions) {
         this.entity = entity;
         this.character = character;
         this.x = x;
@@ -21,9 +25,10 @@ public class CameraAngleCharacterPosition {
         this.z = z;
         this.XRot = XRot;
         this.YRot = YRot;
+        this.actions = actions;
     }
 
-    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, Vec3 vec3, float XRot, float YRot) {
+    public CameraAngleCharacterPosition(LivingEntity entity, CharacterStory character, Vec3 vec3, float XRot, float YRot, List<Action> actions) {
         this.entity = entity;
         this.character = character;
         this.x = vec3.x;
@@ -31,6 +36,7 @@ public class CameraAngleCharacterPosition {
         this.z = vec3.z;
         this.XRot = XRot;
         this.YRot = YRot;
+        this.actions = actions;
     }
 
     public Entity getEntity() {
@@ -97,4 +103,7 @@ public class CameraAngleCharacterPosition {
         this.YRot = YRot;
     }
 
+    public List<Action> getActions() {
+        return actions;
+    }
 }

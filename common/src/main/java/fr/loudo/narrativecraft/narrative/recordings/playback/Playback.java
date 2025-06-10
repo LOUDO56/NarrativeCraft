@@ -161,17 +161,7 @@ public class Playback {
     public void actionListener() {
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            if(action instanceof PlaceBlockAction placeBlockAction) {
-                placeBlockAction.execute(entity, serverLevel);
-            } else if(action instanceof BreakBlockAction breakBlockAction) {
-                breakBlockAction.execute(serverLevel);
-            } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
-                destroyBlockStageAction.execute(serverLevel);
-            } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
-                rightClickBlockAction.execute(entity);
-            } else {
-                action.execute(entity);
-            }
+            Action.parseAndExecute(action, entity);
         }
     }
 

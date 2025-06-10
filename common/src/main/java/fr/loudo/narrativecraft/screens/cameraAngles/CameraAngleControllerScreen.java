@@ -36,7 +36,7 @@ public class CameraAngleControllerScreen extends Screen {
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 1, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addCharacter);
 
-        Button recordMenu = Button.builder(Component.literal("R"), button -> {
+        Button recordMenu = Button.builder(ImageFontConstants.SETTINGS, button -> {
             CameraAngleAddRecord cameraAngleAddRecord = new CameraAngleAddRecord(cameraAngleController.getCameraAngleGroup());
             minecraft.setScreen(cameraAngleAddRecord);
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();

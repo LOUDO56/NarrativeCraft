@@ -12,8 +12,8 @@ public class ListElementScreen extends OptionsSubScreen {
     private final List<StoryElementList.StoryEntryData> entries;
     private StoryElementList storyElementList;
 
-    public ListElementScreen(Screen lastScreen, List<StoryElementList.StoryEntryData> entries) {
-        super(lastScreen, Minecraft.getInstance().options, Component.literal("List Element Screen"));
+    public ListElementScreen(Screen lastScreen, List<StoryElementList.StoryEntryData> entries, Component title) {
+        super(lastScreen, Minecraft.getInstance().options, title);
         this.entries = entries;
     }
 

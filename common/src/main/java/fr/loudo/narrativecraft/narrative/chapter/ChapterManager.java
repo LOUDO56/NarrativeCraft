@@ -187,9 +187,10 @@ public class ChapterManager {
         File cameraAnglesFile = new File(dataFolder, "camera_angles" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(cameraAnglesFile.exists()) {
             try {
+                Gson gson1 = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
                 String content = Files.readString(cameraAnglesFile.toPath());
                 Type listType = new TypeToken<List<CameraAngleGroup>>() {}.getType();
-                List<CameraAngleGroup> cameraAngleGroupList = new Gson().fromJson(content, listType);
+                List<CameraAngleGroup> cameraAngleGroupList = gson1.fromJson(content, listType);
                 if(cameraAngleGroupList != null) {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
                         cameraAngleGroup.setScene(scene);

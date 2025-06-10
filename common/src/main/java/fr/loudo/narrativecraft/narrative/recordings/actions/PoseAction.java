@@ -29,4 +29,8 @@ public class PoseAction extends Action {
     public Pose getPreviousPose() {
         return previousPose;
     }
+
+    public Pose getPose() {
+        return pose;
+    }
 }

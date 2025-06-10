@@ -21,8 +21,10 @@ import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.GameType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -38,6 +40,7 @@ public class CameraAngleController extends KeyframeControllerBase {
 
     public void startSession() {
 
+        cameraAngleGroup.spawnCharacters(playbackType);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
             if(!cameraAngleGroup.getCameraAngleList().isEmpty()) {
@@ -53,9 +56,16 @@ public class CameraAngleController extends KeyframeControllerBase {
             player.setGameMode(GameType.SPECTATOR);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CameraAngleControllerScreen(this)));
             updateKeyframeEntityName();
+            if(!cameraAngleGroup.getCharacterPositions().isEmpty()) {
+                CameraAngleCharacterPosition characterPosition = cameraAngleGroup.getCharacterPositions().getFirst();
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                localPlayer.setPos(characterPosition.getX(), characterPosition.getY(), characterPosition.getZ());
+                localPlayer.setXRot(characterPosition.getXRot());
+                localPlayer.setYRot(characterPosition.getYRot());
+                localPlayer.setYHeadRot(characterPosition.getYRot());
+            }
         }
 
-        cameraAngleGroup.spawnCharacters(playbackType);
     }
 
     @Override
@@ -129,7 +139,8 @@ public class CameraAngleController extends KeyframeControllerBase {
                 new CharacterStory("default"),
                 player.position(),
                 player.getXRot(),
-                player.getYRot()
+                player.getYRot(),
+                new ArrayList<>()
         );
         cameraAngleGroup.getCharacterPositions().add(characterPosition);
     }
