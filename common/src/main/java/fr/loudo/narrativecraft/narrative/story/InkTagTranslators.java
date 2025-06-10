@@ -21,7 +21,7 @@ public class InkTagTranslators {
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
                 if(!executeTag(tag)) {
-                    tagsToExecuteLater.addAll(tags.subList(i + 1, tags.size()));
+                    tagsToExecuteLater = tags.subList(i + 1, tags.size());
                     return false;
                 }
             }
@@ -93,4 +93,5 @@ public class InkTagTranslators {
     public List<String> getTagsToExecuteLater() {
         return tagsToExecuteLater;
     }
+
 }

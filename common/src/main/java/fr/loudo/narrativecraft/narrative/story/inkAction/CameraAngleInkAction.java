@@ -2,14 +2,12 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 
 public class CameraAngleInkAction extends InkAction {
 
@@ -31,7 +29,6 @@ public class CameraAngleInkAction extends InkAction {
         if(cameraAngle != null) {
             executeCameraAngle(cameraAngleGroup, cameraAngle);
             sendDebugDetails();
-            return false;
         }
         return true;
     }
@@ -44,7 +41,6 @@ public class CameraAngleInkAction extends InkAction {
             storyHandler.getPlayerSession().setKeyframeControllerBase(cameraAngleController);
         }
         cameraAngleController.setCurrentPreviewKeyframe(cameraAngle);
-        storyHandler.showDialog();
     }
 
     @Override

@@ -90,11 +90,11 @@ public class CutscenePlayback  {
             cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
         } else {
             cutsceneController.stopSession();
-            playerSession.setCutscenePlayback(null);
             if(onCutsceneEnd != null) {
                 onCutsceneEnd.run();
             }
         }
+        playerSession.setCutscenePlayback(null);
     }
 
     private void initValues() {

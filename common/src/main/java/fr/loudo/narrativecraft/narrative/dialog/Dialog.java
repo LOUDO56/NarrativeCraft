@@ -86,10 +86,10 @@ public class Dialog {
 
         if (!dialogAppearAnimation.isAnimating() && endDialog && !dialogEnded) {
             dialogEnded = true;
-            if(!unSkippable) {
-                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-                if(storyHandler != null) {
-                    storyHandler.setCurrentDialogBox(null);
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null) {
+                storyHandler.setCurrentDialogBox(null);
+                if(!unSkippable) {
                     storyHandler.showDialog();
                 }
             }
@@ -150,6 +150,8 @@ public class Dialog {
     }
 
     public void reset() {
+        dialogEnded = false;
+        endDialog = false;
         dialogAnimationScrollText.reset();
         dialogAnimationArrowSkip.reset();
         startTime = System.currentTimeMillis();
@@ -280,7 +282,7 @@ public class Dialog {
     }
 
     public void endDialogAndDontSkip() {
-        endDialog();
         unSkippable = true;
+        endDialog();
     }
 }
