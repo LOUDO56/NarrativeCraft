@@ -150,7 +150,7 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     public CameraAngle getCameraAngleByName(String name) {
         for(CameraAngle cameraAngle : cameraAngleList) {
-            if(cameraAngle.getName().equals(name)) {
+            if(cameraAngle.getName().equalsIgnoreCase(name)) {
                 return cameraAngle;
             }
         }

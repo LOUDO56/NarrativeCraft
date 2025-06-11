@@ -6,9 +6,14 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
@@ -136,7 +141,7 @@ public class NarrativeCraftFile {
         File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
         try {
             File newSceneFolder = new File(scenesFolder, getSnakeCaseName(name));
-            if(!scene.getName().equals(name)) {
+            if(!scene.getName().equalsIgnoreCase(name)) {
                 Files.move(sceneFolder.toPath(), newSceneFolder.toPath());
                 sceneFolder = newSceneFolder;
             }
@@ -180,6 +185,12 @@ public class NarrativeCraftFile {
         File dataFolder = getDataFolderOfScene(scene);
         File cutsceneFile = new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE);
         Gson gson = new GsonBuilder().create();
+        for(Cutscene cutscene : scene.getCutsceneList()) {
+            cutscene.getAnimationListString().clear();
+            for (Animation animation : cutscene.getAnimationList()) {
+                cutscene.getAnimationListString().add(animation.getName());
+            }
+        }
         try(Writer writer = new BufferedWriter(new FileWriter(cutsceneFile))) {
             gson.toJson(scene.getCutsceneList(), writer);
             return true;
@@ -193,6 +204,13 @@ public class NarrativeCraftFile {
         File dataFolder = getDataFolderOfScene(scene);
         File subscenesFile = new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE);
         Gson gson = new GsonBuilder().create();
+        for(Subscene subscene : scene.getSubsceneList()) {
+            subscene.getAnimationNameList().clear();
+            for (Animation animation : subscene.getAnimationList()) {
+                subscene.getAnimationNameList().add(animation.getName());
+            }
+        }
+        updateCutsceneFile(scene);
         try(Writer writer = new BufferedWriter(new FileWriter(subscenesFile))) {
             gson.toJson(scene.getSubsceneList(), writer);
             return true;
@@ -223,6 +241,7 @@ public class NarrativeCraftFile {
         Gson gson = new GsonBuilder().create();
         try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
             gson.toJson(animation, writer);
+            updateSubsceneFile(animation.getScene());
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update animation {} file of scene {} of chapter {} ! {}", animation.getName(), animation.getScene().getName(), animation.getScene().getChapter().getIndex(), e.getMessage());
@@ -258,9 +277,33 @@ public class NarrativeCraftFile {
     }
 
     public static boolean updateCharacterFolder(String oldName, String newName) {
-        File characterFolder = new File(characterDirectory, getSnakeCaseName(oldName));
+        CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(newName);
+        File characterFolder = new File(characterDirectory, Utils.getSnakeCase(oldName));
+        File characterFile = new File(characterFolder, "data" + EXTENSION_DATA_FILE);
         try {
+            try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+                new Gson().toJson(characterStory, writer);
+            }
             Files.move(characterFolder.toPath(), new File(characterDirectory, getSnakeCaseName(newName)).toPath());
+            List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
+            for(Chapter chapter : chapters) {
+                for(Scene scene : chapter.getSceneList()) {
+                    for(Animation animation : scene.getAnimationList()) {
+                        if(animation.getCharacter().getName().equalsIgnoreCase(oldName) || animation.getCharacter().getName().equalsIgnoreCase(newName)) {
+                            animation.setCharacter(characterStory);
+                            updateAnimationFile(animation);
+                        }
+                    }
+                    for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
+                        for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
+                            if(characterPosition.getCharacter().getName().equalsIgnoreCase(oldName) || characterPosition.getCharacter().getName().equalsIgnoreCase(newName)) {
+                                characterPosition.setCharacter(characterStory);
+                                updateCameraAnglesFile(scene);
+                            }
+                        }
+                    }
+                }
+            }
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update character {} file! {}", oldName, e.getMessage());

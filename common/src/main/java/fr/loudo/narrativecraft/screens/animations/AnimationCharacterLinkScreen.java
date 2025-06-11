@@ -66,7 +66,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
             NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories().forEach(characterStory1 -> {
                 Entry entry = new Entry(characterStory1);
                 this.addEntry(entry);
-                if(selectedCharacter.equals(characterStory1.getName())) {
+                if(selectedCharacter.equalsIgnoreCase(characterStory1.getName())) {
                     this.setSelected(entry);
                 }
             });

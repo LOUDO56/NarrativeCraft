@@ -112,8 +112,7 @@ public class ChapterManager {
                     try {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = gson.fromJson(content, Animation.class);
-                        CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
-                        animation.setCharacter(characterStory);
+                        animation.getCharacter().setCharacterSkinController(new CharacterSkinController(animation.getCharacter()));
                         animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
