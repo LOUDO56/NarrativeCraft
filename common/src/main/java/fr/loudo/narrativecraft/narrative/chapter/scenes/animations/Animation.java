@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.animations;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
@@ -49,7 +50,7 @@ public class Animation extends NarrativeEntry {
     }
 
     public CharacterStory getCharacter() {
-        return character;
+        return NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(character.getName());
     }
 
     public void setCharacter(CharacterStory character) {

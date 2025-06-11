@@ -2,8 +2,8 @@ package fr.loudo.narrativecraft.narrative.story;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
@@ -21,7 +21,6 @@ public class StorySave {
 
     private final int chapterIndex;
     private final String sceneName;
-    private final KeyframeControllerBase keyframeControllerBase;
     private final KeyframeCoordinate soloCam;
     private final String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
@@ -31,11 +30,14 @@ public class StorySave {
         characterStoryDataList = new ArrayList<>();
         PlayerSession playerSession = storyHandler.getPlayerSession();
         try {
-            soloCam = playerSession.getSoloCam();
+            if(playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
+                soloCam = cameraAngleController.getCurrentPreviewKeyframe().getKeyframeCoordinate();
+            } else {
+                soloCam = playerSession.getSoloCam();
+            }
             inkSave = storyHandler.getStory().getState().toJson();
             chapterIndex = playerSession.getChapter().getIndex();
             sceneName = playerSession.getScene().getName();
-            keyframeControllerBase = playerSession.getKeyframeControllerBase();
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
                 characterStoryDataList.add(new CharacterStoryData(characterStory));
             }
@@ -100,7 +102,6 @@ public class StorySave {
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
         Scene scene = chapter.getSceneByName(sceneName);
         PlayerSession playerSession = new PlayerSession(chapter, scene);
-        playerSession.setKeyframeControllerBase(keyframeControllerBase);
         playerSession.setSoloCam(soloCam);
         return playerSession;
     }

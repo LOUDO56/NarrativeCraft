@@ -44,8 +44,9 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     public void spawnCharacters(Playback.PlaybackType playbackType) {
         for(CameraAngleCharacterPosition characterPosition : characterPositions) {
+            CharacterStory characterStory = characterPosition.getCharacter();
             LivingEntity livingEntity = spawnCharacter(
-                    characterPosition.getCharacter(),
+                    characterStory,
                     characterPosition.getSkinName(),
                     characterPosition.getX(),
                     characterPosition.getY(),
@@ -56,12 +57,15 @@ public class CameraAngleGroup extends NarrativeEntry {
                     playbackType
             );
             if(livingEntity != null) {
-                characterPosition.getCharacter().setEntity(livingEntity);
+                characterStory.setEntity(livingEntity);
                 characterPosition.setEntity(livingEntity);
             }
             if(playbackType == Playback.PlaybackType.PRODUCTION) {
                 StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-                storyHandler.getCurrentCharacters().add(characterPosition.getCharacter());
+                boolean notInWorld = storyHandler.getCurrentCharacters().stream().noneMatch(characterStory1 -> characterStory1.getName().equalsIgnoreCase(characterStory.getName()));
+                if(notInWorld) {
+                    storyHandler.getCurrentCharacters().add(characterStory);
+                }
             }
         }
     }

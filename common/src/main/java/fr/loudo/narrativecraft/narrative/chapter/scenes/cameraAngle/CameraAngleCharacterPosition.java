@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import net.minecraft.world.entity.Entity;
@@ -48,7 +49,7 @@ public class CameraAngleCharacterPosition {
     }
 
     public CharacterStory getCharacter() {
-        return character;
+        return NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(character.getName());
     }
 
     public void setCharacter(CharacterStory character) {

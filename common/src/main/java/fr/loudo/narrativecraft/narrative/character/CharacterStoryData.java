@@ -25,8 +25,9 @@ import java.util.UUID;
 
 public class CharacterStoryData {
 
-    private final CharacterStory characterStory;
+    private CharacterStory characterStory;
     private final List<ItemSlotData> itemSlotDataList;
+    private final String skinName;
     private double x, y, z;
     private float pitch, yaw;
     private float yBodyRot;
@@ -34,6 +35,7 @@ public class CharacterStoryData {
 
     public CharacterStoryData(CharacterStory characterStory) {
         this.characterStory = characterStory;
+        skinName = characterStory.getCharacterSkinController().getCurrentSkin().getName();
         itemSlotDataList = new ArrayList<>();
         init();
     }
@@ -89,9 +91,15 @@ public class CharacterStoryData {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         }
         serverLevel.addFreshEntity(livingEntity);
+        characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
+        characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(skinName));
         characterStory.setEntity(livingEntity);
 
 
+    }
+
+    public String getSkinName() {
+        return skinName;
     }
 
     private record ItemSlotData(int id, String data, String equipmentSlot) {

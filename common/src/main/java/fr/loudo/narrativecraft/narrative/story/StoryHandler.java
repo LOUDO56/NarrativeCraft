@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
@@ -138,7 +139,7 @@ public class StoryHandler {
 
     public boolean next() {
         try {
-            if(!story.canContinue() && currentChoices.isEmpty()) {
+            if(!story.canContinue() && currentChoices.isEmpty() && save == null) {
                 stop();
                 return false;
             }
@@ -170,8 +171,12 @@ public class StoryHandler {
                         currentCharacters.add(characterStoryData.getCharacterStory());
                     }
                 }
-                if(!currentCharacters.isEmpty()) {
-                    showDialog();
+                if(!currentChoices.isEmpty()) {
+                    showChoices();
+                } else {
+                    if(!currentCharacters.isEmpty()) {
+                        showDialog();
+                    }
                 }
             }
             save = null;
