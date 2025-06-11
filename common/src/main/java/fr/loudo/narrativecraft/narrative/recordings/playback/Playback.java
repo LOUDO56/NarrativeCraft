@@ -59,6 +59,7 @@ public class Playback {
         if(playbackType == PlaybackType.DEVELOPMENT) {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(character);
         }
+        actionListener();
         return true;
     }
 
@@ -231,6 +232,10 @@ public class Playback {
                 }
             }
             this.tick = newTick;
+            List<Action> actions = animation.getActionsData().getActions().stream().filter(action -> tick >= action.getTick()).toList();
+            for(Action action : actions) {
+                Action.parseAndExecute(action, entity);
+            }
             hasEnded = false;
         } else {
             hasEnded = true;
