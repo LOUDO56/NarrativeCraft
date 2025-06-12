@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleG
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -317,6 +318,7 @@ public class NarrativeCraftFile {
         File characterFolderNew = new File(characterDirectory, Utils.getSnakeCase(newName));
         File characterFolderOld = new File(characterDirectory, Utils.getSnakeCase(oldName));
         File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
+        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
         try {
             Files.move(characterFolderOld.toPath(), characterFolderNew.toPath());
             List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
@@ -336,6 +338,17 @@ public class NarrativeCraftFile {
                             }
                         }
                     }
+                }
+            }
+            StorySave save = getSave();
+            if(save != null) {
+                for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(oldName)) {
+                        characterStoryData.getCharacterStory().setName(newName);
+                    }
+                }
+                try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
+                    new Gson().toJson(save, writer);
                 }
             }
             try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {

@@ -22,6 +22,7 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -182,6 +183,13 @@ public class StoryHandler {
                 }
             }
             save = null;
+            if(currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
+                stop();
+                Minecraft.getInstance().player.displayClientMessage(
+                        Component.literal("§c" + Translation.message("story.load.scene.fail").getString()),
+                        false
+                );
+            }
         } catch (StoryException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

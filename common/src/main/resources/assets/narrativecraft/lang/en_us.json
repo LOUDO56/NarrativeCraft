@@ -26,6 +26,10 @@
   "narrativecraft.session.cleared": "Session cleared.",
   "narrativecraft.session.cleared.fail": "You don't have a session set.",
 
+  "narrativecraft.story.load.scene.fail": "It's impossible to start this scene on its own, as neither the characters nor the cameras have been initialized from the start. Please refer to the documentation.",
+  "narrativecraft.story.load.no_story_playing": "No story is playing.",
+
+
   "narrativecraft.toast.description.updated": "Updated Successfully!",
 
   "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
@@ -89,7 +93,7 @@
   "narrativecraft.screen.selector.subscene.title": "%s selector for subscene %s",
   "narrativecraft.screen.characters_manager.add.already_exists": "This characters already exists.",
   "narrativecraft.screen.characters_manager.add.failed": "Couldn't add characters %s. Please check characters directory exists",
-  "narrativecraft.screen.characters_manager.update.failed": "Couldn't update characters %s. Please check your characters json file exists",
+  "narrativecraft.screen.characters_manager.update.failed": "Couldn't update characters %s. Please your character file isn't in use",
   "narrativecraft.screen.characters_manager.title": "Characters list",
   "narrativecraft.screen.characters_manager.add.title": "Add a character",
   "narrativecraft.screen.characters_manager.edit.title": "Edit character",

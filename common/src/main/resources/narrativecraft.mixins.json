@@ -18,6 +18,7 @@
     "GameRendererMixin",
     "GuiMixin",
     "PlayerInfoMixin",
+    "Utf8StringMixin",
     "fields.FontFields",
     "fields.GameRendererFields"
   ],

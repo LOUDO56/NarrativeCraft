@@ -113,7 +113,7 @@ public class StoryCommand {
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) {
-            context.getSource().sendFailure(Component.literal("No story is playing."));
+            context.getSource().sendFailure(Translation.message("story.load.no_story_playing"));
             return 0;
         }
 
