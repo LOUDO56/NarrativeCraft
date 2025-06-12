@@ -49,6 +49,8 @@ public abstract class InkAction {
             return InkTagType.FADE;
         } else if (tag.contains("wait")) {
             return InkTagType.WAIT;
+        } else if (tag.equalsIgnoreCase("save")) {
+            return InkTagType.SAVE;
         } else {
             return null;
         }
@@ -62,7 +64,8 @@ public abstract class InkAction {
         SONG_SFX_START,
         SONG_SFX_STOP,
         SOUND_STOP_ALL,
-        WAIT
+        WAIT,
+        SAVE
     }
 
     public static class ErrorLine {

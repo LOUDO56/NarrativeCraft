@@ -85,6 +85,7 @@ public class InkTagTranslators {
             case SOUND_STOP_ALL -> storyHandler.stopAllSound();
             case FADE -> inkAction = new FadeScreenInkAction(storyHandler);
             case WAIT -> inkAction = new WaitInkAction(storyHandler);
+            case SAVE -> inkAction = new SaveInkAction(storyHandler);
             case null -> {}
         }
         if(inkAction == null) return true; // If there's no action, then continue story

@@ -50,7 +50,7 @@ public class Animation extends NarrativeEntry {
     }
 
     public CharacterStory getCharacter() {
-        return NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(character.getName());
+        return character;
     }
 
     public void setCharacter(CharacterStory character) {

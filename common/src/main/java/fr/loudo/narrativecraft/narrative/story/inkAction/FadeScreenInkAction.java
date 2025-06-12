@@ -79,7 +79,7 @@ public class FadeScreenInkAction extends InkAction {
             pauseStartTime = now;
         } else if(!minecraft.isPaused() && isPaused) {
             isPaused = false;
-            endTime += now - pauseStartTime;
+            startTime += now - pauseStartTime;
         }
         int newColor = (opacityInterpolate << 24) | (color & 0xFFFFFF);
         guiGraphics.fill(0, 0, width, height, newColor);

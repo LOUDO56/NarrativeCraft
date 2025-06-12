@@ -8,7 +8,6 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
@@ -103,7 +102,7 @@ public class StoryHandler {
                 playerSession.setScene(playerSessionFromSave.getScene());
             }
             if(loadScene != null) {
-                story.choosePathString(NarrativeCraftFile.getChapterSceneCamelCase(loadScene));
+                story.choosePathString(NarrativeCraftFile.getChapterSceneSneakCase(loadScene));
                 playerSession.setChapter(loadChapter);
                 playerSession.setScene(loadScene);
                 save = null;
@@ -151,26 +150,29 @@ public class StoryHandler {
             onChoice = false;
             if(save != null) {
                 currentDialog = story.getCurrentText();
-                List<String> tagToRemove = new ArrayList<>();
+                boolean isNewScene = story.getCurrentTags().getFirst().equals("on enter");
+                int breakIndex = 0;
+                List<String> oldTags = List.copyOf(story.getCurrentTags());
                 for(String tag : story.getCurrentTags()) {
-                    tagToRemove.add(tag);
-                    if(tag.equals("on enter")) break;
+                    breakIndex++;
+                    if(isNewScene && tag.equals("on enter") || !isNewScene && tag.equals("save")) break;
                 }
-                story.getCurrentTags().removeAll(tagToRemove);
+                story.getCurrentTags().clear();
+                for (int i = breakIndex; i < oldTags.size(); i++) {
+                    story.getCurrentTags().add(oldTags.get(i));
+                }
+                PlayerSession playerSessionFromSave = save.getPlayerSession();
+                playerSession.setKeyframeControllerBase(playerSessionFromSave.getKeyframeControllerBase());
+                playerSession.setSoloCam(playerSessionFromSave.getSoloCam());
+                for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                    characterStoryData.spawn(playerSession.getPlayer().serverLevel());
+                    currentCharacters.add(characterStoryData.getCharacterStory());
+                }
             } else {
                 currentDialog = story.Continue();
             }
             currentChoices = story.getCurrentChoices();
             if(inkTagTranslators.executeCurrentTags()) {
-                if(currentCharacters.isEmpty() && save != null) {
-                    PlayerSession playerSessionFromSave = save.getPlayerSession();
-                    playerSession.setKeyframeControllerBase(playerSessionFromSave.getKeyframeControllerBase());
-                    playerSession.setSoloCam(playerSessionFromSave.getSoloCam());
-                    for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
-                        characterStoryData.spawn(playerSession.getPlayer().serverLevel());
-                        currentCharacters.add(characterStoryData.getCharacterStory());
-                    }
-                }
                 if(!currentChoices.isEmpty()) {
                     showChoices();
                 } else {
@@ -203,10 +205,10 @@ public class StoryHandler {
     }
 
     public void showDialog() {
-        String[] splittedDialog = currentDialog.split(":");
-        if(splittedDialog.length < 2 || onChoice) return;
-        String characterName = splittedDialog[0].trim();
-        String dialogContent = splittedDialog[1].trim();
+        String[] splitDialog = currentDialog.split(":");
+        if(splitDialog.length < 2 || onChoice) return;
+        String characterName = splitDialog[0].trim();
+        String dialogContent = splitDialog[1].trim();
 
         if (dialogContent.startsWith("\"") && dialogContent.endsWith("\"")) {
             dialogContent = dialogContent.substring(1, dialogContent.length() - 1);
@@ -488,6 +490,12 @@ public class StoryHandler {
 
     public void setSaving(boolean saving) {
         isSaving = saving;
+    }
+
+    public void save() {
+        NarrativeCraftFile.writeSave(this);
+        isSaving = true;
+        StorySave.startTimeSaveIcon = System.currentTimeMillis();
     }
 
     public enum FadeCurrentState {

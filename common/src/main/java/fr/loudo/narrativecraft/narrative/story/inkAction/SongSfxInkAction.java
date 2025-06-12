@@ -102,7 +102,7 @@ public class SongSfxInkAction extends InkAction {
             pauseStartTime = now;
         } else if(!minecraft.isPaused() && isPaused) {
             isPaused = false;
-            endTime += now - pauseStartTime;
+            startTime += now - pauseStartTime;
         }
         if(!isPaused) {
             t = Math.min((double) elapsedTime / endTime, 1.0);

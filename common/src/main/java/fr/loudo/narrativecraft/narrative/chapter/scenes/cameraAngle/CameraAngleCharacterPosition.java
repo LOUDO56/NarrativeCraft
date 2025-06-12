@@ -49,7 +49,7 @@ public class CameraAngleCharacterPosition {
     }
 
     public CharacterStory getCharacter() {
-        return NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(character.getName());
+        return character;
     }
 
     public void setCharacter(CharacterStory character) {

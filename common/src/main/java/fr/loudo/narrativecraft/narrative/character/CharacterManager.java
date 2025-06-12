@@ -82,16 +82,7 @@ public class CharacterManager {
 
     public void reloadSkins() {
         for(CharacterStory characterStory : characterStories) {
-            File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
-            File skins = new File(characterFolder, "skins");
-            File[] skinFiles = skins.listFiles();
-            if(skinFiles != null) {
-                characterStory.getCharacterSkinController().getSkins().clear();
-                for(File skin : skinFiles) {
-                    characterStory.getCharacterSkinController().getSkins().add(skin);
-                }
-                characterStory.getCharacterSkinController().cacheSkins();
-            }
+            reloadSkin(characterStory);
         }
     }
 

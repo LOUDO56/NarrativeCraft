@@ -24,7 +24,7 @@ public class OnEnterInkAction extends InkAction {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
         if(currentKnot == null) return true;
-        if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneCamelCase(storyHandler.getPlayerSession().getScene()))) {
+        if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
             String[] chapterSceneName = currentKnot.split("_");
             int chapterIndex = Integer.parseInt(chapterSceneName[1]);
             List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
@@ -33,9 +33,7 @@ public class OnEnterInkAction extends InkAction {
             Scene scene = chapter.getSceneByName(sceneName);
             storyHandler.getPlayerSession().setChapter(chapter);
             storyHandler.getPlayerSession().setScene(scene);
-            NarrativeCraftFile.writeSave(storyHandler);
-            storyHandler.setSaving(true);
-            StorySave.startTimeSaveIcon = System.currentTimeMillis();
+            storyHandler.save();
             sendDebugDetails();
         }
         return true;

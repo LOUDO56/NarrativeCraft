@@ -112,7 +112,10 @@ public class ChapterManager {
                     try {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = gson.fromJson(content, Animation.class);
-                        animation.getCharacter().setCharacterSkinController(new CharacterSkinController(animation.getCharacter()));
+                        CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
+                        characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
+                        characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(animation.getSkinName()));
+                        animation.setCharacter(characterStory);
                         animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
@@ -194,7 +197,10 @@ public class ChapterManager {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
                         cameraAngleGroup.setScene(scene);
                         for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
-                            characterPosition.getCharacter().setCharacterSkinController(new CharacterSkinController(characterPosition.getCharacter()));
+                            CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterPosition.getCharacter().getName());
+                            characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
+                            characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterPosition.getSkinName()));
+                            characterPosition.setCharacter(characterStory);
                         }
                     }
                     scene.setCameraAngleGroupList(cameraAngleGroupList);
