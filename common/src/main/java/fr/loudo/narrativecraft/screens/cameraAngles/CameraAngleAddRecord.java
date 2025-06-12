@@ -102,16 +102,9 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
 
     private void spawnEntity(Animation animation, int index) {
         MovementData movementData = animation.getActionsData().getMovementData().get(index);
-        List<Action> actions;
-        if(index >= animation.getActionsData().getActions().getLast().getTick()) {
-            actions = animation.getActionsData().getActions().stream()
-                    .filter(action -> animation.getActionsData().getActions().getLast().getTick() == action.getTick())
-                    .toList();
-        } else {
-            actions = animation.getActionsData().getActions().stream()
-                    .filter(action -> index >= action.getTick())
-                    .toList();
-        }
+        List<Action> actions = animation.getActionsData().getActions().stream()
+                .filter(action -> index >= action.getTick())
+                .toList();
         cameraAngleGroup.addCharacter(
                 animation.getCharacter(),
                 animation.getSkinName(),
