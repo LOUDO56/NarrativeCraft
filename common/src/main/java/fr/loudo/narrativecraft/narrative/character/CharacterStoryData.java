@@ -3,14 +3,21 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,6 +26,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +37,7 @@ public class CharacterStoryData {
     private final List<ItemSlotData> itemSlotDataList;
     private final String skinName;
     private double x, y, z;
+    private byte entityByte;
     private float pitch, yaw;
     private float yBodyRot;
     private String pose;
@@ -37,10 +46,6 @@ public class CharacterStoryData {
         this.characterStory = characterStory;
         skinName = characterStory.getCharacterSkinController().getCurrentSkin().getName();
         itemSlotDataList = new ArrayList<>();
-        init();
-    }
-
-    private void init() {
         LivingEntity livingEntity = characterStory.getEntity();
         if(livingEntity == null) return;
         x = livingEntity.getX();
@@ -50,10 +55,33 @@ public class CharacterStoryData {
         yaw = livingEntity.getYRot();
         yBodyRot = livingEntity.yBodyRot;
         pose = livingEntity.getPose().name();
+        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityByte = livingEntity.getEntityData().get(entityFlagByte);
+        initItem(livingEntity);
+    }
+
+    public CharacterStoryData(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot) {
+        this.characterStory = characterStory;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.pitch = XRot;
+        this.yaw = YRot;
+        this.skinName = skinName;
+        itemSlotDataList = new ArrayList<>();
+        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        pose = localPlayer.getPose().name();
+        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityByte = localPlayer.getEntityData().get(entityFlagByte);
+        initItem(localPlayer);
+    }
+
+    public void initItem(LivingEntity entity) {
+        itemSlotDataList.clear();
         for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            ItemStack itemStack = livingEntity.getItemBySlot(equipmentSlot);
+            ItemStack itemStack = entity.getItemBySlot(equipmentSlot);
             if(!itemStack.isEmpty()) {
-                Tag tag = itemStack.save(livingEntity.registryAccess());
+                Tag tag = itemStack.save(entity.registryAccess());
                 Tag componentsTag = ((CompoundTag)tag).get("components");
                 String itemData = componentsTag == null ? "" : componentsTag.toString();
                 itemSlotDataList.add(
@@ -65,10 +93,6 @@ public class CharacterStoryData {
                 );
             }
         }
-    }
-
-    public CharacterStory getCharacterStory() {
-        return characterStory;
     }
 
     public void spawn(ServerLevel serverLevel) {
@@ -87,22 +111,101 @@ public class CharacterStoryData {
             ));
         }
 
+        SynchedEntityData entityData = livingEntity.getEntityData();
         if(livingEntity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
+            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
         }
+        EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityData.set(LIVING_ENTITY_BYTE_MASK, entityByte);
         serverLevel.addFreshEntity(livingEntity);
         characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
         characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(skinName));
         characterStory.setEntity(livingEntity);
-
-
     }
 
     public String getSkinName() {
         return skinName;
     }
 
-    private record ItemSlotData(int id, String data, String equipmentSlot) {
+    public CharacterStory getCharacterStory() {
+        return characterStory;
+    }
+
+    public void setCharacterStory(CharacterStory characterStory) {
+        this.characterStory = characterStory;
+    }
+
+    public List<ItemSlotData> getItemSlotDataList() {
+        return itemSlotDataList;
+    }
+
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getZ() {
+        return z;
+    }
+
+    public byte getEntityByte() {
+        return entityByte;
+    }
+
+    public float getPitch() {
+        return pitch;
+    }
+
+    public float getYaw() {
+        return yaw;
+    }
+
+    public float getyBodyRot() {
+        return yBodyRot;
+    }
+
+    public Pose getPose() {
+        return Pose.valueOf(pose);
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void setZ(double z) {
+        this.z = z;
+    }
+
+    public void setEntityByte(byte entityByte) {
+        this.entityByte = entityByte;
+    }
+
+    public void setPitch(float pitch) {
+        this.pitch = pitch;
+    }
+
+    public void setYaw(float yaw) {
+        this.yaw = yaw;
+    }
+
+    public void setyBodyRot(float yBodyRot) {
+        this.yBodyRot = yBodyRot;
+    }
+
+    public void setPose(Pose pose) {
+        this.pose = pose.name();
+    }
+
+    public record ItemSlotData(int id, String data, String equipmentSlot) {
         public ItemStack getItem(RegistryAccess registryAccess) {
                 Item item = BuiltInRegistries.ITEM.byId(id);
                 ItemStack itemStack = new ItemStack(item);

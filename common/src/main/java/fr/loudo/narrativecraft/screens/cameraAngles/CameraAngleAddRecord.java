@@ -8,8 +8,10 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -23,6 +25,9 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 
 import java.util.ArrayList;
@@ -105,7 +110,7 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         List<Action> actions = animation.getActionsData().getActions().stream()
                 .filter(action -> index >= action.getTick())
                 .toList();
-        cameraAngleGroup.addCharacter(
+        CharacterStoryData characterStoryData = cameraAngleGroup.addCharacter(
                 animation.getCharacter(),
                 animation.getSkinName(),
                 movementData.getX(),
@@ -113,9 +118,18 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
                 movementData.getZ(),
                 movementData.getXRot(),
                 movementData.getYRot(),
-                actions,
                 Playback.PlaybackType.DEVELOPMENT
         );
+        characterStoryData.getItemSlotDataList().clear();
+        LivingEntity livingEntity = characterStoryData.getCharacterStory().getEntity();
+        for(Action action : actions) {
+            Action.parseAndExecute(action, livingEntity);
+        }
+        characterStoryData.initItem(livingEntity);
+        characterStoryData.setPose(livingEntity.getPose());
+        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        byte entityByte = livingEntity.getEntityData().get(entityFlagByte);
+        characterStoryData.setEntityByte(entityByte);
     }
 
     @Override

@@ -17,6 +17,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -196,11 +197,11 @@ public class ChapterManager {
                 if(cameraAngleGroupList != null) {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
                         cameraAngleGroup.setScene(scene);
-                        for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
-                            CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterPosition.getCharacter().getName());
+                        for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+                            CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
                             characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
-                            characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterPosition.getSkinName()));
-                            characterPosition.setCharacter(characterStory);
+                            characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
+                            characterStoryData.setCharacterStory(characterStory);
                         }
                     }
                     scene.setCameraAngleGroupList(cameraAngleGroupList);

@@ -331,9 +331,9 @@ public class NarrativeCraftFile {
                         }
                     }
                     for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
-                        for(CameraAngleCharacterPosition characterPosition : cameraAngleGroup.getCharacterPositions()) {
-                            if(characterPosition.getCharacter().getName().equalsIgnoreCase(oldName) || characterPosition.getCharacter().getName().equalsIgnoreCase(newName)) {
-                                characterPosition.setCharacter(characterStory);
+                        for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+                            if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(oldName) || characterStoryData.getCharacterStory().getName().equalsIgnoreCase(newName)) {
+                                characterStoryData.setCharacterStory(characterStory);
                                 updateCameraAnglesFile(scene);
                             }
                         }

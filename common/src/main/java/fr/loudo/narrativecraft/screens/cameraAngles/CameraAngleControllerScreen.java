@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
+import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
+import fr.loudo.narrativecraft.screens.components.AddCharacterListScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -32,7 +34,8 @@ public class CameraAngleControllerScreen extends Screen {
         this.addRenderableWidget(addKeyframe);
 
         Button addCharacter = Button.builder(ImageFontConstants.CHARACTER_ADD, button -> {
-            cameraAngleController.addCharacter();
+            AddCharacterListScreen addCharacterListScreen = new AddCharacterListScreen(cameraAngleController.getCameraAngleGroup());
+            minecraft.setScreen(addCharacterListScreen);
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 1, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(addCharacter);
 
