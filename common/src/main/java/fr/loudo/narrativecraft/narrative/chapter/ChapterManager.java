@@ -11,7 +11,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleCharacterPosition;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
@@ -114,7 +113,6 @@ public class ChapterManager {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = gson.fromJson(content, Animation.class);
                         CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
-                        characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
                         characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(animation.getSkinName()));
                         animation.setCharacter(characterStory);
                         animation.setScene(scene);
@@ -199,7 +197,6 @@ public class ChapterManager {
                         cameraAngleGroup.setScene(scene);
                         for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
                             CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
-                            characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
                             characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
                             characterStoryData.setCharacterStory(characterStory);
                         }

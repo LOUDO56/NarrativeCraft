@@ -1,8 +1,10 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.animations;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
+import fr.loudo.narrativecraft.screens.components.ChangeSkinLinkScreen;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
@@ -48,7 +50,14 @@ public class AnimationsScreen extends StoryElementScreen {
                     Button button = Button.builder(Component.literal(animation.getName()), b -> {
                         // TODO: preview animation
                     }).build();
-                    return new StoryElementList.StoryEntryData(button, animation, List.of(settingsButton));
+                    Button changeSkin = Button.builder(ImageFontConstants.CHARACTER, b -> {
+                        ChangeSkinLinkScreen changeSkinLinkScreen = new ChangeSkinLinkScreen(this, animation.getCharacter(), skin -> {
+                            animation.setSkinName(skin);
+                            NarrativeCraftFile.updateAnimationFile(animation);
+                        });
+                        minecraft.setScreen(changeSkinLinkScreen);
+                    }).build();
+                    return new StoryElementList.StoryEntryData(button, animation, List.of(settingsButton, changeSkin));
                 }).toList();
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }

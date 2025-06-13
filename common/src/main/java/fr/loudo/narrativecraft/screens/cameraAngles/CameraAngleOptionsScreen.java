@@ -73,7 +73,7 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
         }).bounds(INITIAL_POS_X, currentY, this.font.width(updateTitle) + 30, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         currentY += BUTTON_HEIGHT + 15;
-        Component removeTitle = Translation.message("screen.keyframe_option.remove");
+        Component removeTitle = Translation.message("global.remove");
         Button removeKeyframe = Button.builder(removeTitle, button -> {
             if(playerSession != null) {
                 cameraAngleController.clearCurrentPreviewKeyframe();

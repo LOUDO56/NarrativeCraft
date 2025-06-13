@@ -20,6 +20,8 @@
   "narrativecraft.global.color": "Color",
   "narrativecraft.global.volume": "Volume",
   "narrativecraft.global.pitch": "Pitch",
+  "narrativecraft.global.remove": "Remove",
+  "narrativecraft.global.close": "Close",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
   "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
@@ -47,7 +49,6 @@
   "narrativecraft.screen.keyframe_option.fov": "Zoom: %.2f",
   "narrativecraft.screen.keyframe_option.update": "Update",
   "narrativecraft.screen.keyframe_option.advanced": "Advanced",
-  "narrativecraft.screen.keyframe_option.remove": "Remove",
   "narrativecraft.screen.keyframe_option.play_from_here": "Play here",
   "narrativecraft.screen.keyframe_option.start_delay": "Start delay:",
   "narrativecraft.screen.keyframe_option.path_time": "Path time:",
@@ -99,6 +100,8 @@
   "narrativecraft.screen.characters_manager.edit.title": "Edit character",
   "narrativecraft.screen.characters_manager.age": "Age",
   "narrativecraft.screen.scene_record.title": "Scene %s record menu",
+  "narrativecraft.screen.camera_angle_character.change_skin": "Change Skin",
+  "narrativecraft.screen.change_skin_link.title": "Change skin of character %s",
 
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",

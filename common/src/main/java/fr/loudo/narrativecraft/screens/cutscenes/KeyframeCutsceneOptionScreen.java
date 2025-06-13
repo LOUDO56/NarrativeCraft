@@ -87,7 +87,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
             this.minecraft.setScreen(screen);
         }).bounds(INITIAL_POS_X, currentY, this.font.width(advancedTitle) + margin, BUTTON_HEIGHT).build();
         currentY += BUTTON_HEIGHT + gap;
-        Component removeTitle = Translation.message("screen.keyframe_option.remove");
+        Component removeTitle = Translation.message("global.remove");
         Button removeKeyframe = Button.builder(removeTitle, button -> {
             if(playerSession != null) {
                 cutsceneController.clearCurrentPreviewKeyframe();

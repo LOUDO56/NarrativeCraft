@@ -35,6 +35,7 @@ public class CharacterManager {
                 }
             }
         }
+        reloadSkins();
     }
 
     public List<CharacterStory> getCharacterStories() {

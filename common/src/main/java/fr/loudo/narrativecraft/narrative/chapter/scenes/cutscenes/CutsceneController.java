@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -377,5 +378,14 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public List<Playback> getPlaybackList() {
         return playbackList;
+    }
+
+    public Animation getAnimationFromEntity(Entity entity) {
+        for(Playback playback : playbackList) {
+            if(playback.getEntity().getUUID().equals(entity.getUUID())) {
+                return playback.getAnimation();
+            }
+        }
+        return null;
     }
 }

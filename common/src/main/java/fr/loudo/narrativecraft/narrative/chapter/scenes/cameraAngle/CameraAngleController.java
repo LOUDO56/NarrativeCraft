@@ -127,6 +127,15 @@ public class CameraAngleController extends KeyframeControllerBase {
         return false;
     }
 
+    public CharacterStoryData getCharacterDataByEntity(Entity entity) {
+        for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+            if(characterStoryData.getCharacterStory().getEntity().getUUID().equals(entity.getUUID())) {
+                return characterStoryData;
+            }
+        }
+        return null;
+    }
+
     public void removeCharacter(Entity entity) {
         CharacterStoryData characterStoryData = getCharacterPositionFromEntity(entity);
         cameraAngleGroup.getCharacterStoryDataList().remove(characterStoryData);

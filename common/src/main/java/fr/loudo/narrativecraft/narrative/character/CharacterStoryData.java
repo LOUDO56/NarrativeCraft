@@ -35,7 +35,7 @@ public class CharacterStoryData {
 
     private CharacterStory characterStory;
     private final List<ItemSlotData> itemSlotDataList;
-    private final String skinName;
+    private String skinName;
     private double x, y, z;
     private byte entityByte;
     private float pitch, yaw;
@@ -127,6 +127,10 @@ public class CharacterStoryData {
 
     public String getSkinName() {
         return skinName;
+    }
+
+    public void setSkinName(String skinName) {
+        this.skinName = skinName;
     }
 
     public CharacterStory getCharacterStory() {
