@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
+import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
@@ -7,17 +8,20 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,12 +81,36 @@ public class CameraAngleGroup extends NarrativeEntry {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             for(CharacterStory characterStory1 : storyHandler.getCurrentCharacters()) {
                 if(characterStoryData.getCharacterStory().getName().equals(characterStory1.getName())) {
+                    if(!characterStoryData.getSkinName().equals(characterStory1.getCharacterSkinController().getCurrentSkin().getName())) {
+                        characterStory1.getCharacterSkinController().setCurrentSkin(characterStory1.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
+                    }
+                    if(characterStory1.getEntity() instanceof FakePlayer fakePlayer) {
+                        fakePlayer.getInventory().clearContent();
+                        for(CharacterStoryData.ItemSlotData itemSlotData : characterStoryData.getItemSlotDataList()) {
+                            fakePlayer.getServer().getPlayerList().broadcastAll(new ClientboundSetEquipmentPacket(
+                                    fakePlayer.getId(),
+                                    List.of(new Pair<>(EquipmentSlot.valueOf(itemSlotData.equipmentSlot()), itemSlotData.getItem(characterStory1.getEntity().registryAccess())))
+                            ));
+                        }
+                        fakePlayer.setPose(characterStoryData.getPose());
+                        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+                        fakePlayer.getEntityData().set(entityFlagByte, characterStoryData.getEntityByte());
+                    }
                     return;
                 }
             }
         }
         ServerLevel serverLevel = NarrativeCraftMod.server.getLevel(Minecraft.getInstance().level.dimension());
         characterStoryData.spawn(serverLevel);
+    }
+
+    public CharacterStoryData getCharacterStoryData(String name) {
+        for(CharacterStoryData characterStoryData : characterStoryDataList) {
+            if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(name)) {
+                return characterStoryData;
+            }
+        }
+        return null;
     }
 
     public Scene getScene() {

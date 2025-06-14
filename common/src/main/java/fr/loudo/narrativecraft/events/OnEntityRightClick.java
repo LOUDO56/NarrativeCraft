@@ -18,7 +18,7 @@ public class OnEntityRightClick {
 
     public static void entityRightClick(ServerPlayer player, Entity entity) {
 
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
         if(playerSession == null) return;
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase == null) return;

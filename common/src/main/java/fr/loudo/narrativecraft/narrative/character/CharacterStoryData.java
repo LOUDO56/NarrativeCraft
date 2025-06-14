@@ -3,8 +3,6 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -19,14 +17,13 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -88,6 +85,14 @@ public class CharacterStoryData {
                         new ItemSlotData(
                                 BuiltInRegistries.ITEM.getId(itemStack.getItem()),
                                 itemData,
+                                equipmentSlot.name()
+                        )
+                );
+            } else {
+                itemSlotDataList.add(
+                        new ItemSlotData(
+                                BuiltInRegistries.ITEM.getId(Items.AIR),
+                                "",
                                 equipmentSlot.name()
                         )
                 );

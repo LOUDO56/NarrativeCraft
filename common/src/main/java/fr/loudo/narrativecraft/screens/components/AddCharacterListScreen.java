@@ -54,20 +54,15 @@ public class AddCharacterListScreen extends OptionsSubScreen {
 
     @Override
     public void onClose() {
+        minecraft.setScreen(null);
         CharacterList.Entry entry = this.characterList.getSelected();
+        if(entry == null) return;
         CharacterStory selectedCharacter = entry.characterStory;
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         Vec3 position = localPlayer.position();
-        List<Action> itemChangeActions = new ArrayList<>();
-        for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            ItemStack itemStack = localPlayer.getItemBySlot(equipmentSlot);
-            ItemChangeAction itemChangeAction = new ItemChangeAction(
-                    0,
-                    ActionType.ITEM_CHANGE,
-                    equipmentSlot.name(),
-                    BuiltInRegistries.ITEM.getId(itemStack.getItem())
-            );
-            itemChangeActions.add(itemChangeAction);
+        if(cameraAngleGroup.getCharacterStoryData(selectedCharacter.getName()) != null) {
+            minecraft.player.displayClientMessage(Component.literal("§c" + Translation.message("screen.camera_angle_character.add.fail").getString()), false);
+            return;
         }
         CharacterStoryData characterStoryData = cameraAngleGroup.addCharacter(
                 selectedCharacter,
@@ -89,7 +84,6 @@ public class AddCharacterListScreen extends OptionsSubScreen {
                 fakePlayer.setItemSlot(equipmentSlot, itemStack);
             }
         }
-        minecraft.setScreen(null);
     }
 
     class CharacterList extends ObjectSelectionList<CharacterList.Entry> {

@@ -1,19 +1,14 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.screens.components.ListElementScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
@@ -28,11 +23,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class CameraAngleAddRecord extends OptionsSubScreen {
 
@@ -110,6 +103,9 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         List<Action> actions = animation.getActionsData().getActions().stream()
                 .filter(action -> index >= action.getTick())
                 .toList();
+        if(cameraAngleGroup.getCharacterStoryData(animation.getCharacter().getName()) != null) {
+            return;
+        }
         CharacterStoryData characterStoryData = cameraAngleGroup.addCharacter(
                 animation.getCharacter(),
                 animation.getSkinName(),

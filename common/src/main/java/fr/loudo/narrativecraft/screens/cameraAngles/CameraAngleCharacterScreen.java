@@ -47,7 +47,7 @@ public class CameraAngleCharacterScreen extends Screen {
                 characterStoryData.setSkinName(skin);
                 NarrativeCraftFile.updateCameraAnglesFile(cameraAngleController.getCameraAngleGroup().getScene());
             });
-            totalWidth = BUTTON_WIDTH * 3 + 5;
+            totalWidth = BUTTON_WIDTH * 4 + 5;
         } else if(keyframeControllerBase instanceof CutsceneController) {
             screen = new ChangeSkinLinkScreen(animation.getCharacter(), skin -> {
                 animation.setSkinName(skin);
@@ -66,6 +66,11 @@ public class CameraAngleCharacterScreen extends Screen {
 
         int closeX = startX + BUTTON_WIDTH + 5;
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
+            Button changePose = Button.builder(Translation.message("screen.camera_angle_character.change_pose"), button -> {
+                CameraAngleChangePoseScreen screen1 = new CameraAngleChangePoseScreen(characterStoryData);
+                minecraft.setScreen(screen1);
+            }).bounds(startX + BUTTON_WIDTH + 5, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            closeX += BUTTON_WIDTH + 5;
             Button removeButton = Button.builder(Translation.message("global.remove"), button -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
                     if (b) {
@@ -75,7 +80,8 @@ public class CameraAngleCharacterScreen extends Screen {
                 }, Component.literal(""), Translation.message("global.confirm_delete"),
                         CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
                 minecraft.setScreen(confirm);
-            }).bounds(startX + BUTTON_WIDTH + 5, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            }).bounds(startX + BUTTON_WIDTH * 2 + 5 * 2, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(changePose);
             this.addRenderableWidget(removeButton);
             closeX += BUTTON_WIDTH + 5;
         }
