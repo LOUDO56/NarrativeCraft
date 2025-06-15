@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -87,6 +88,10 @@ public class CharacterStory extends NarrativeEntry {
                         animation.setCharacter(null);
                         NarrativeCraftFile.updateAnimationFile(animation);
                     }
+                }
+                for(CameraAngleGroup cameraAngleGroup : scene1.getCameraAngleGroupList()) {
+                    cameraAngleGroup.getCharacterStoryDataList().removeIf(characterStoryData -> characterStoryData.getCharacterStory().getName().equals(name));
+                    NarrativeCraftFile.updateCameraAnglesFile(scene1);
                 }
             }
         }

@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
-import fr.loudo.narrativecraft.screens.components.AddCharacterListScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -24,17 +23,20 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
     private CharacterList characterList;
     private final List<CharacterStory> characterStoryList;
     private final Animation animation;
+    private CharacterStory.CharacterType characterType;
 
-    public AnimationCharacterLinkScreen(Screen lastScreen, Animation animation, List<CharacterStory> characterStoryList) {
+    public AnimationCharacterLinkScreen(Screen lastScreen, Animation animation, List<CharacterStory> characterStoryList, CharacterStory.CharacterType characterType) {
         super(lastScreen, Minecraft.getInstance().options, Component.literal("Link animation to character"));
         this.animation = animation;
         this.characterStoryList = characterStoryList;
+        this.characterType = characterType;
     }
 
     public AnimationCharacterLinkScreen(Screen lastScreen, Animation animation) {
         super(lastScreen, Minecraft.getInstance().options, Component.literal("Link animation to character"));
         this.animation = animation;
         this.characterStoryList = NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories();
+        this.characterType = CharacterStory.CharacterType.MAIN;
     }
 
     @Override
@@ -42,18 +44,12 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
         LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
-        if(characterStoryList.isEmpty()) {
-            minecraft.setScreen(lastScreen);
-            return;
-        }
-        CharacterStory characterStory = characterStoryList.getFirst();
-        if(characterStory == null) return;
-        linearlayout.addChild(Button.builder(characterStory.getScene() == null ? Component.literal("NPC") : Component.literal("MAIN"), button -> {
-            Screen screen;
-            if(characterStory.getScene() == null) {
-                screen = new AnimationCharacterLinkScreen(lastScreen, animation, animation.getScene().getNpcs());
-            } else {
-                screen = new AnimationCharacterLinkScreen(lastScreen, animation, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories());
+        linearlayout.addChild(Button.builder(characterType == CharacterStory.CharacterType.NPC ? Component.literal("NPC") : Component.literal("MAIN"), button -> {
+            Screen screen = null;
+            if(characterType == CharacterStory.CharacterType.MAIN) {
+                screen = new AnimationCharacterLinkScreen(lastScreen, animation, animation.getScene().getNpcs(), CharacterStory.CharacterType.NPC);
+            } else if(characterType == CharacterStory.CharacterType.NPC) {
+                screen = new AnimationCharacterLinkScreen(lastScreen, animation, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories(), CharacterStory.CharacterType.MAIN);
             }
             minecraft.setScreen(screen);
         }).width(25).build());

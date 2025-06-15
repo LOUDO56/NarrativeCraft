@@ -1,8 +1,6 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
-import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
 import fr.loudo.narrativecraft.screens.components.AddCharacterListScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.gui.GuiGraphics;

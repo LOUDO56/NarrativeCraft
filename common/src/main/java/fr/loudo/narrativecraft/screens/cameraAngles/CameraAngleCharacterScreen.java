@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -15,7 +14,6 @@ import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Entity;
 
 public class CameraAngleCharacterScreen extends Screen {
 
@@ -57,8 +55,15 @@ public class CameraAngleCharacterScreen extends Screen {
         } else {
             screen = null;
         }
+        
+        CharacterStory characterStory = null;
+        if(keyframeControllerBase instanceof CameraAngleController) {
+            characterStory = characterStoryData.getCharacterStory();
+        } else if(keyframeControllerBase instanceof CutsceneController) {
+            characterStory = animation.getCharacter();
+        }
 
-        if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+        if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
             totalWidth += BUTTON_WIDTH + 5;
         } else {
             totalWidth += BUTTON_WIDTH * 2 + 5;
@@ -67,7 +72,7 @@ public class CameraAngleCharacterScreen extends Screen {
         int startX = (this.width - totalWidth) / 2;
         int y = this.height / 2 - 10;
 
-        if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+        if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
             Button changeSkinButton = Button.builder(Translation.message("screen.camera_angle_character.change_skin"), button -> {
                 minecraft.setScreen(screen);
             }).bounds(startX, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
