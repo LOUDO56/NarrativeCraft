@@ -32,6 +32,7 @@ public class PlayerInfoMixin {
         List<CharacterStory> characters = getRelevantCharacters();
 
         for (CharacterStory character : characters) {
+            if(character.getCharacterSkinController() == null) continue;
             if (character.getEntity() == null || character.getCharacterSkinController().getCurrentSkin() == null) continue;
             if (!(character.getEntity() instanceof FakePlayer)) continue;
             if (!this.profile.getName().equals(character.getName())) continue;

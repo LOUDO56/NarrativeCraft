@@ -82,6 +82,13 @@ public class StoryHandler {
     public void start() {
         try {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
+            for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
+                for(Scene scene : chapter.getSceneList()) {
+                    for(CharacterStory npc : scene.getNpcs()) {
+                        NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(npc);
+                    }
+                }
+            }
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop();
             }

@@ -13,8 +13,10 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
+import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -50,6 +52,13 @@ public class Playback {
     }
 
     public boolean start() {
+        if(character == null) {
+            Minecraft.getInstance().player.displayClientMessage(
+                    Component.literal("§c" + Translation.message("playback.start.fail", animation.getName()).getString()),
+                    false
+            );
+            return false;
+        }
         if(isPlaying) return false;
         tick = 0;
         isPlaying = true;
@@ -101,13 +110,15 @@ public class Playback {
     }
 
     private void loadSkin() {
-        File skinFile = null;
-        if(playbackType == PlaybackType.DEVELOPMENT) {
-            skinFile = NarrativeCraftFile.getSkinFile(character, animation.getSkinName());
-        } else if (playbackType == PlaybackType.PRODUCTION){
-            skinFile = character.getCharacterSkinController().getSkinFile(animation.getSkinName());
+        if(character.getCharacterType() == CharacterStory.CharacterType.MAIN) {
+            File skinFile = null;
+            if(playbackType == PlaybackType.DEVELOPMENT) {
+                skinFile = NarrativeCraftFile.getSkinFile(character, animation.getSkinName());
+            } else if (playbackType == PlaybackType.PRODUCTION){
+                skinFile = character.getCharacterSkinController().getSkinFile(animation.getSkinName());
+            }
+            character.getCharacterSkinController().setCurrentSkin(skinFile);
         }
-        character.getCharacterSkinController().setCurrentSkin(skinFile);
     }
 
     public void stop() {
@@ -123,11 +134,13 @@ public class Playback {
 
 
     private void killEntity() {
+        if(entity == null) return;
         entity.remove(Entity.RemovalReason.KILLED);
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
     }
 
     public void next() {
+        if(entity == null) return;
         if(!entity.isAlive()) return;
         List<MovementData> movementDataList = animation.getActionsData().getMovementData();
         PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
@@ -160,6 +173,7 @@ public class Playback {
     }
 
     public void actionListener() {
+        if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
             Action.parseAndExecute(action, entity);
@@ -167,6 +181,7 @@ public class Playback {
     }
 
     public void actionListenerRewind() {
+        if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
             if(action instanceof PlaceBlockAction placeBlockAction) {
@@ -189,11 +204,13 @@ public class Playback {
     }
 
     private void moveEntity(Entity entity, MovementData movementData, MovementData movementDataNext) {
+        if(entity == null) return;
         moveEntitySilent(entity, movementData);
         entity.move(MoverType.SELF, MovementUtils.getDeltaMovement(movementData, movementDataNext));
     }
 
     private void moveEntitySilent(Entity entity, MovementData movementData) {
+        if(entity == null) return;
         entity.setXRot(movementData.getXRot());
         entity.setYRot(movementData.getYRot());
         entity.setYHeadRot(movementData.getYHeadRot());
@@ -211,6 +228,7 @@ public class Playback {
     }
 
     public void changeLocationByTick(int newTick, boolean seamless) {
+        if(entity == null) return;
         if(newTick < animation.getActionsData().getMovementData().size() - 1) {
             MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
             if(seamless) {

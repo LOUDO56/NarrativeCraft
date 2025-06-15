@@ -88,13 +88,27 @@ public class CharacterManager {
     }
 
     public void reloadSkin(CharacterStory characterStory) {
-        File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
-        File skins = new File(characterFolder, "skins");
-        File[] skinFiles = skins.listFiles();
-        if(skinFiles != null) {
+        if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
+            File characterFolder = new File(NarrativeCraftFile.characterDirectory, Utils.getSnakeCase(characterStory.getName()));
+            File skins = new File(characterFolder, "skins");
+            File[] skinFiles = skins.listFiles();
+            if(skinFiles != null) {
+                characterStory.getCharacterSkinController().getSkins().clear();
+                for(File skin : skinFiles) {
+                    characterStory.getCharacterSkinController().getSkins().add(skin);
+                }
+                characterStory.getCharacterSkinController().cacheSkins();
+            }
+        } else if (characterStory.getCharacterType() == CharacterStory.CharacterType.NPC) {
+            if(characterStory.getScene() == null) return;
+            File sceneFolder = NarrativeCraftFile.getSceneFile(characterStory.getScene());
+            File dataFolder = new File(sceneFolder, "data");
+            File npcFolder = new File(dataFolder, "npc");
+            File characterFolder = new File(npcFolder, Utils.getSnakeCase(characterStory.getName()));
+            File mainSkinFile = new File(characterFolder, "main.png");
             characterStory.getCharacterSkinController().getSkins().clear();
-            for(File skin : skinFiles) {
-                characterStory.getCharacterSkinController().getSkins().add(skin);
+            if(mainSkinFile.exists()) {
+                characterStory.getCharacterSkinController().getSkins().add(mainSkinFile);
             }
             characterStory.getCharacterSkinController().cacheSkins();
         }

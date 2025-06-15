@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -19,6 +20,7 @@ import java.util.List;
 public class Scene extends NarrativeEntry {
 
     private Chapter chapter;
+    private transient List<CharacterStory> npcs;
     private List<Animation> animationList;
     private List<Cutscene> cutsceneList;
     private List<Subscene> subsceneList;
@@ -31,6 +33,7 @@ public class Scene extends NarrativeEntry {
         this.cutsceneList = new ArrayList<>();
         this.subsceneList = new ArrayList<>();
         this.cameraAngleGroupList = new ArrayList<>();
+        this.npcs = new ArrayList<>();
     }
 
     public Chapter getChapter() {
@@ -185,6 +188,40 @@ public class Scene extends NarrativeEntry {
 
     public String getSnakeCase() {
         return String.join("_", name.toLowerCase().split(" "));
+    }
+
+    public List<CharacterStory> getNpcs() {
+        return npcs;
+    }
+
+    public void setNpcs(List<CharacterStory> npcs) {
+        this.npcs = npcs;
+    }
+
+    public void addNpc(CharacterStory characterStory) {
+        npcs.add(characterStory);
+    }
+
+    public void removeNpc(CharacterStory characterStory) {
+        npcs.remove(characterStory);
+    }
+
+    public boolean npcExists(String name) {
+        for(CharacterStory characterStory : npcs) {
+            if(characterStory.getName().equalsIgnoreCase(name)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public CharacterStory getNpc(String name) {
+        for(CharacterStory characterStory : npcs) {
+            if(characterStory.getName().equalsIgnoreCase(name)) {
+                return characterStory;
+            }
+        }
+        return null;
     }
 
     @Override

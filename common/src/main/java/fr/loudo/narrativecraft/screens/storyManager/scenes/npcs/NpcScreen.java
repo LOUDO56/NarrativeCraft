@@ -1,11 +1,12 @@
-package fr.loudo.narrativecraft.screens.storyManager.characters;
+package fr.loudo.narrativecraft.screens.storyManager.scenes.npcs;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.narrative.character.CharacterManager;
-import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
-import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.components.EditCharacterInfoScreen;
+import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -17,10 +18,13 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class CharactersScreen extends StoryElementScreen {
+public class NpcScreen extends StoryElementScreen {
 
-    public CharactersScreen() {
-        super(null, Minecraft.getInstance().options, Translation.message("screen.characters_manager.title"));
+    private final Scene scene;
+
+    public NpcScreen(Scene scene) {
+        super(null, Minecraft.getInstance().options, Translation.message("screen.npc_manager.title", Component.literal(scene.getName()).withColor(StoryElementScreen.SCENE_NAME_COLOR)));
+        this.scene = scene;
     }
 
     @Override
@@ -36,23 +40,32 @@ public class CharactersScreen extends StoryElementScreen {
 
     @Override
     protected void addFooter() {
-        this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (p_345997_) -> this.onClose()).width(200).build());
+        this.layout.addToFooter(Button.builder(CommonComponents.GUI_BACK, (p_345997_) -> this.onClose()).width(200).build());
+    }
+
+    @Override
+    public void onClose() {
+        ScenesMenuScreen screen = new ScenesMenuScreen(scene);
+        this.minecraft.setScreen(screen);
     }
 
     @Override
     protected void addContents() {
-        CharacterManager characterManager = NarrativeCraftMod.getInstance().getCharacterManager();
-        List<StoryElementList.StoryEntryData> entries = characterManager.getCharacterStories().stream()
-                .map(characterStory -> {
-                    Button button = Button.builder(Component.literal(characterStory.getName()), b -> {
+        List<StoryElementList.StoryEntryData> entries = scene.getNpcs().stream()
+                .map(npc -> {
+                    Button button = Button.builder(Component.literal(npc.getName()), b -> {
 
                     }).build();
                     button.active = false;
 
-                    return new StoryElementList.StoryEntryData(button, characterStory);
+                    return new StoryElementList.StoryEntryData(button, npc);
                 })
                 .toList();
 
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+    }
+
+    public Scene getScene() {
+        return scene;
     }
 }

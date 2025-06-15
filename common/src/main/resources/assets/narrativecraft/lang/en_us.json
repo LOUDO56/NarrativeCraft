@@ -11,6 +11,7 @@
   "narrativecraft.global.animations": "Animations",
   "narrativecraft.global.cutscenes": "Cutscenes",
   "narrativecraft.global.subscenes": "Subscenes",
+  "narrativecraft.global.npc": "Npc",
   "narrativecraft.global.camera_angles": "Camera Angles",
   "narrativecraft.global.confirm_delete": "Are you sure? This can't be undone!",
   "narrativecraft.global.error": "Error",
@@ -31,8 +32,9 @@
   "narrativecraft.story.load.scene.fail": "It's impossible to start this scene on its own, as neither the characters nor the cameras have been initialized from the start. Please refer to the documentation.",
   "narrativecraft.story.load.no_story_playing": "No story is playing.",
 
-
   "narrativecraft.toast.description.updated": "Updated Successfully!",
+
+  "narrativecraft.playback.start.fail": "Can't start animation %s because no character is assigned.",
 
   "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
   "narrativecraft.screen.cutscenes_settings.time_skip": "Change Time Skip",
@@ -99,6 +101,7 @@
   "narrativecraft.screen.characters_manager.add.title": "Add a character",
   "narrativecraft.screen.characters_manager.edit.title": "Edit character",
   "narrativecraft.screen.characters_manager.age": "Age",
+  "narrativecraft.screen.npc_manager.title": "Scene %s Npc Menu",
   "narrativecraft.screen.scene_record.title": "Scene %s record menu",
   "narrativecraft.screen.camera_angle_character.change_skin": "Change Skin",
   "narrativecraft.screen.camera_angle_character.change_pose": "Change Pose",

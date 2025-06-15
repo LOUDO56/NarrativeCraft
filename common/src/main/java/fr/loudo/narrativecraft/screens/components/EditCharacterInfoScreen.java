@@ -2,8 +2,11 @@ package fr.loudo.narrativecraft.screens.components;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
@@ -12,6 +15,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.time.LocalDate;
 
 public class EditCharacterInfoScreen extends EditInfoScreen {
@@ -31,93 +35,119 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
     }
 
     @Override
+    public void onClose() {
+        if(lastScreen instanceof NpcScreen) {
+            NpcScreen npcScreen = new NpcScreen(((NpcScreen)lastScreen).getScene());
+            minecraft.setScreen(npcScreen);
+        } else {
+            super.onClose();
+        }
+    }
+
+    @Override
     protected void init() {
         super.init();
 
         int labelHeight = this.font.lineHeight + 5;
 
         int centerX = this.width / 2 - WIDGET_WIDTH / 2;
-        int centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + labelHeight + GAP + EDIT_BOX_BIRTHDATE_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
+        int centerY = 0;
+        if(lastScreen instanceof NpcScreen) {
+            centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT) / 2;
+        } else {
+            centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + labelHeight + GAP + EDIT_BOX_BIRTHDATE_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
+        }
         titleWidget.setPosition(titleWidget.getX(), centerY - labelHeight);
 
         nameBox.setPosition(centerX, centerY);
-
         centerY += labelHeight + EDIT_BOX_NAME_HEIGHT + GAP;
-        descriptionBox.setPosition(centerX, centerY);
 
-        centerY += labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + GAP;
+        if(lastScreen instanceof CharactersScreen) {
 
-        StringWidget birthDateString = ScreenUtils.text(
-                Component.literal("Birthdate"),
-                font,
-                centerX,
-                centerY
-        );
-        this.addRenderableWidget(birthDateString);
+            descriptionBox.setPosition(centerX, centerY);
 
-        centerY += birthDateString.getHeight() + GAP;
-        LocalDate localDate = LocalDate.now();
+            centerY += labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + GAP;
 
-        String defaultDay, defaultMonth, defaultYear;
-        if(defaultBirthdate == null) {
-            defaultDay = String.valueOf(localDate.getDayOfMonth());
-            defaultMonth = String.valueOf(localDate.getMonthValue());
-            defaultYear = "2000";
+            StringWidget birthDateString = ScreenUtils.text(
+                    Component.literal("Birthdate"),
+                    font,
+                    centerX,
+                    centerY
+            );
+            this.addRenderableWidget(birthDateString);
+
+            centerY += birthDateString.getHeight() + GAP;
+            LocalDate localDate = LocalDate.now();
+
+            String defaultDay, defaultMonth, defaultYear;
+            if(defaultBirthdate == null) {
+                defaultDay = String.valueOf(localDate.getDayOfMonth());
+                defaultMonth = String.valueOf(localDate.getMonthValue());
+                defaultYear = "2000";
+            } else {
+                String[] splitBirthdate = defaultBirthdate.split("/");
+                defaultDay = splitBirthdate[0];
+                defaultMonth = splitBirthdate[1];
+                defaultYear = splitBirthdate[2];
+            }
+
+            dayBox = new ScreenUtils.LabelBox(
+                    Component.literal("Day"),
+                    font,
+                    EDIT_BOX_BIRTHDATE_WIDTH,
+                    EDIT_BOX_BIRTHDATE_HEIGHT,
+                    centerX,
+                    centerY,
+                    ScreenUtils.Align.HORIZONTAL
+            );
+            dayBox.getEditBox().setValue(defaultDay);
+            this.addRenderableWidget(dayBox.getStringWidget());
+            this.addRenderableWidget(dayBox.getEditBox());
+
+            monthBox = new ScreenUtils.LabelBox(
+                    Component.literal("Month"),
+                    font,
+                    EDIT_BOX_BIRTHDATE_WIDTH,
+                    EDIT_BOX_BIRTHDATE_HEIGHT,
+                    dayBox.getEditBox().getX() + dayBox.getEditBox().getWidth() + 10,
+                    centerY,
+                    ScreenUtils.Align.HORIZONTAL
+            );
+            monthBox.getEditBox().setValue(defaultMonth);
+            this.addRenderableWidget(monthBox.getStringWidget());
+            this.addRenderableWidget(monthBox.getEditBox());
+
+            yearBox = new ScreenUtils.LabelBox(
+                    Component.literal("Year"),
+                    font,
+                    EDIT_BOX_BIRTHDATE_WIDTH + 12,
+                    EDIT_BOX_BIRTHDATE_HEIGHT,
+                    monthBox.getEditBox().getX() + monthBox.getEditBox().getWidth() + 10,
+                    centerY,
+                    ScreenUtils.Align.HORIZONTAL
+            );
+            yearBox.getEditBox().setValue(defaultYear);
+            this.addRenderableWidget(yearBox.getStringWidget());
+            this.addRenderableWidget(yearBox.getEditBox());
+            centerY += EDIT_BOX_BIRTHDATE_HEIGHT + GAP;
         } else {
-            String[] splitBirthdate = defaultBirthdate.split("/");
-            defaultDay = splitBirthdate[0];
-            defaultMonth = splitBirthdate[1];
-            defaultYear = splitBirthdate[2];
+            descriptionBox.setPosition(-1000, -1000);
         }
 
-        dayBox = new ScreenUtils.LabelBox(
-                Component.literal("Day"),
-                font,
-                EDIT_BOX_BIRTHDATE_WIDTH,
-                EDIT_BOX_BIRTHDATE_HEIGHT,
-                centerX,
-                centerY,
-                ScreenUtils.Align.HORIZONTAL
-        );
-        dayBox.getEditBox().setValue(defaultDay);
-        this.addRenderableWidget(dayBox.getStringWidget());
-        this.addRenderableWidget(dayBox.getEditBox());
-
-        monthBox = new ScreenUtils.LabelBox(
-                Component.literal("Month"),
-                font,
-                EDIT_BOX_BIRTHDATE_WIDTH,
-                EDIT_BOX_BIRTHDATE_HEIGHT,
-                dayBox.getEditBox().getX() + dayBox.getEditBox().getWidth() + 10,
-                centerY,
-                ScreenUtils.Align.HORIZONTAL
-        );
-        monthBox.getEditBox().setValue(defaultMonth);
-        this.addRenderableWidget(monthBox.getStringWidget());
-        this.addRenderableWidget(monthBox.getEditBox());
-
-        yearBox = new ScreenUtils.LabelBox(
-                Component.literal("Year"),
-                font,
-                EDIT_BOX_BIRTHDATE_WIDTH + 12,
-                EDIT_BOX_BIRTHDATE_HEIGHT,
-                monthBox.getEditBox().getX() + monthBox.getEditBox().getWidth() + 10,
-                centerY,
-                ScreenUtils.Align.HORIZONTAL
-        );
-        yearBox.getEditBox().setValue(defaultYear);
-        this.addRenderableWidget(yearBox.getStringWidget());
-        this.addRenderableWidget(yearBox.getEditBox());
-
-        centerY += EDIT_BOX_BIRTHDATE_HEIGHT + GAP;
         Component buttonActionMessage = narrativeEntry == null ? Translation.message("screen.add.text") : Translation.message("screen.update.text");
         this.removeWidget(actionButton);
         actionButton = Button.builder(buttonActionMessage, button -> {
             String name = nameBox.getEditBox().getValue();
-            String desc = descriptionBox.getMultiLineEditBox().getValue();
-            String day = dayBox.getEditBox().getValue();
-            String month = monthBox.getEditBox().getValue();
-            String year = yearBox.getEditBox().getValue();
+            String desc = "";
+            String day = "";
+            String month = "";
+            String year = "";
+            if(lastScreen instanceof CharactersScreen) {
+                desc = descriptionBox.getMultiLineEditBox().getValue();
+                day = dayBox.getEditBox().getValue();
+                month = monthBox.getEditBox().getValue();
+                year = yearBox.getEditBox().getValue();
+            }
             if(name.isEmpty()) {
                 ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.story.name.required"));
                 return;
@@ -136,24 +166,48 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
     }
 
     private void addCharacter(String name, String desc, String day, String month, String year) {
-        if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(name)) {
-            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.already_exists"));
-            return;
+        CharacterStory.CharacterType characterType = null;
+        if(lastScreen instanceof CharactersScreen) {
+            if(NarrativeCraftMod.getInstance().getCharacterManager().characterExists(name)) {
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.already_exists"));
+                return;
+            }
+            characterType = CharacterStory.CharacterType.MAIN;
+        } else if(lastScreen instanceof NpcScreen) {
+            Scene scene = ((NpcScreen)lastScreen).getScene();
+            if(scene.npcExists(name)) {
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.already_exists"));
+                return;
+            }
+            characterType = CharacterStory.CharacterType.NPC;
         }
         CharacterStory characterStory = new CharacterStory(
                 name,
                 desc,
                 PlayerSkin.Model.WIDE,
+                characterType,
                 day,
                 month,
                 year
         );
-        if(!NarrativeCraftFile.createCharacterFile(characterStory)) {
-            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.failed", name));
-            return;
+        StoryElementScreen screen = null;
+        if(lastScreen instanceof CharactersScreen) {
+            if(!NarrativeCraftFile.createCharacterFile(characterStory)) {
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.failed", name));
+                return;
+            }
+            NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(characterStory);
+            screen = new CharactersScreen();
+        } else if(lastScreen instanceof NpcScreen) {
+            Scene scene = ((NpcScreen)lastScreen).getScene();
+            characterStory.setScene(scene);
+            if(!NarrativeCraftFile.createCharacterFileScene(characterStory, scene)) {
+                ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.add.failed", name));
+                return;
+            }
+            scene.addNpc(characterStory);
+            screen = new NpcScreen(scene);
         }
-        NarrativeCraftMod.getInstance().getCharacterManager().addCharacter(characterStory);
-        CharactersScreen screen = new CharactersScreen();
         this.minecraft.setScreen(screen);
     }
 }

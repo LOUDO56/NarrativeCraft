@@ -4,29 +4,63 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
-import fr.loudo.narrativecraft.utils.Easing;
+import fr.loudo.narrativecraft.screens.components.AddCharacterListScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.navigation.CommonInputs;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
 
+import java.util.List;
+
 public class AnimationCharacterLinkScreen extends OptionsSubScreen {
-    private CutsceneEasingsList cutsceneEasingsList;
+    private CharacterList characterList;
+    private final List<CharacterStory> characterStoryList;
     private final Animation animation;
+
+    public AnimationCharacterLinkScreen(Screen lastScreen, Animation animation, List<CharacterStory> characterStoryList) {
+        super(lastScreen, Minecraft.getInstance().options, Component.literal("Link animation to character"));
+        this.animation = animation;
+        this.characterStoryList = characterStoryList;
+    }
 
     public AnimationCharacterLinkScreen(Screen lastScreen, Animation animation) {
         super(lastScreen, Minecraft.getInstance().options, Component.literal("Link animation to character"));
         this.animation = animation;
+        this.characterStoryList = NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories();
+    }
+
+    @Override
+    protected void addTitle() {
+        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout.defaultCellSetting().alignVerticallyMiddle();
+        linearlayout.addChild(new StringWidget(this.title, this.font));
+        if(characterStoryList.isEmpty()) {
+            minecraft.setScreen(lastScreen);
+            return;
+        }
+        CharacterStory characterStory = characterStoryList.getFirst();
+        if(characterStory == null) return;
+        linearlayout.addChild(Button.builder(characterStory.getScene() == null ? Component.literal("NPC") : Component.literal("MAIN"), button -> {
+            Screen screen;
+            if(characterStory.getScene() == null) {
+                screen = new AnimationCharacterLinkScreen(lastScreen, animation, animation.getScene().getNpcs());
+            } else {
+                screen = new AnimationCharacterLinkScreen(lastScreen, animation, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories());
+            }
+            minecraft.setScreen(screen);
+        }).width(25).build());
     }
 
     protected void addContents() {
-        this.cutsceneEasingsList = this.layout.addToContents(new CutsceneEasingsList(this.minecraft));
+        this.characterList = this.layout.addToContents(new CharacterList(this.minecraft));
     }
 
     protected void addOptions() {
@@ -34,19 +68,23 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
 
     protected void repositionElements() {
         super.repositionElements();
-        this.cutsceneEasingsList.updateSize(this.width, this.layout);
+        this.characterList.updateSize(this.width, this.layout);
     }
 
     @Override
     public void onClose() {
-        CutsceneEasingsList.Entry entry = this.cutsceneEasingsList.getSelected();
+        CharacterList.Entry entry = this.characterList.getSelected();
+        if(entry == null) {
+            minecraft.setScreen(null);
+            return;
+        }
         CharacterStory selectedCharacter = entry.characterStory;
         CharacterStory oldCharacter = animation.getCharacter();
         animation.setCharacter(selectedCharacter);
         if(lastScreen != null) {
-            this.minecraft.setScreen(animation.reloadScreen());
+            minecraft.setScreen(animation.reloadScreen());
         } else {
-            this.minecraft.setScreen(null);
+            minecraft.setScreen(null);
         }
         if(!NarrativeCraftFile.updateAnimationFile(animation)) {
             animation.setCharacter(oldCharacter);
@@ -54,8 +92,8 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
         }
     }
 
-    class CutsceneEasingsList extends ObjectSelectionList<CutsceneEasingsList.Entry> {
-        public CutsceneEasingsList(Minecraft minecraft) {
+    class CharacterList extends ObjectSelectionList<CharacterList.Entry> {
+        public CharacterList(Minecraft minecraft) {
             super(minecraft, AnimationCharacterLinkScreen.this.width, AnimationCharacterLinkScreen.this.height - 33 - 53, 33, 18);
             String selectedCharacter;
             if(animation.getCharacter() != null) {
@@ -63,7 +101,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
             } else {
                 selectedCharacter = "";
             }
-            NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories().forEach(characterStory1 -> {
+            characterStoryList.forEach(characterStory1 -> {
                 Entry entry = new Entry(characterStory1);
                 this.addEntry(entry);
                 if(selectedCharacter.equalsIgnoreCase(characterStory1.getName())) {
@@ -88,7 +126,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
             }
 
             public void render(GuiGraphics p_345300_, int p_345469_, int p_345328_, int p_345700_, int p_345311_, int p_345185_, int p_344805_, int p_345963_, boolean p_345912_, float p_346091_) {
-                p_345300_.drawCenteredString(AnimationCharacterLinkScreen.this.font, this.characterStory.getName(), CutsceneEasingsList.this.width / 2, p_345328_ + p_345185_ / 2 - 4, -1);
+                p_345300_.drawCenteredString(AnimationCharacterLinkScreen.this.font, this.characterStory.getName(), CharacterList.this.width / 2, p_345328_ + p_345185_ / 2 - 4, -1);
             }
 
             public boolean keyPressed(int p_346403_, int p_345881_, int p_345858_) {
@@ -107,7 +145,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
             }
 
             private void select() {
-                CutsceneEasingsList.this.setSelected(this);
+                CharacterList.this.setSelected(this);
             }
 
             @Override

@@ -11,12 +11,17 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.FakePlayer;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.navigation.CommonInputs;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,12 +37,45 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 public class AddCharacterListScreen extends OptionsSubScreen {
+
     private CharacterList characterList;
+    private final List<CharacterStory> characterStoryList;
     private final CameraAngleGroup cameraAngleGroup;
+    private String currentList = "MAIN";
+
+    public AddCharacterListScreen(CameraAngleGroup cameraAngleGroup, List<CharacterStory> characterStoryList) {
+        super(null, Minecraft.getInstance().options, Component.literal("Spawn character"));
+        this.cameraAngleGroup = cameraAngleGroup;
+        this.characterStoryList = characterStoryList;
+    }
 
     public AddCharacterListScreen(CameraAngleGroup cameraAngleGroup) {
         super(null, Minecraft.getInstance().options, Component.literal("Spawn character"));
         this.cameraAngleGroup = cameraAngleGroup;
+        this.characterStoryList = NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories();
+    }
+
+    @Override
+    protected void addTitle() {
+        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout.defaultCellSetting().alignVerticallyMiddle();
+        linearlayout.addChild(new StringWidget(this.title, this.font));
+        if(characterStoryList.isEmpty()) {
+            minecraft.setScreen(lastScreen);
+            return;
+        }
+        CharacterStory characterStory = characterStoryList.getFirst();
+        if(characterStory == null) return;
+        linearlayout.addChild(Button.builder(characterStory.getScene() == null ? Component.literal("NPC") : Component.literal("MAIN"), button -> {
+            Screen screen;
+            if(currentList.equals("MAIN")) {
+                screen = new AddCharacterListScreen(cameraAngleGroup, cameraAngleGroup.getScene().getNpcs());
+                currentList = "NPC";
+            } else {
+                screen = new AddCharacterListScreen(cameraAngleGroup, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories());
+            }
+            minecraft.setScreen(screen);
+        }).width(25).build());
     }
 
     protected void addContents() {
@@ -90,7 +128,7 @@ public class AddCharacterListScreen extends OptionsSubScreen {
         public CharacterList(Minecraft minecraft) {
             super(minecraft, AddCharacterListScreen.this.width, AddCharacterListScreen.this.height - 33 - 53, 33, 18);
             String selectedCharacter = "";
-            NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories().forEach(characterStory1 -> {
+            characterStoryList.forEach(characterStory1 -> {
                 Entry entry = new Entry(characterStory1);
                 this.addEntry(entry);
                 if(selectedCharacter.equalsIgnoreCase(characterStory1.getName())) {

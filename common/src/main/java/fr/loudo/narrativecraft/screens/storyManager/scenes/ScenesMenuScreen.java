@@ -5,8 +5,9 @@ import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -52,7 +53,8 @@ public class ScenesMenuScreen extends OptionsSubScreen {
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.animations"), b -> minecraft.setScreen(new AnimationsScreen(scene))).build()),
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.camera_angles"), b -> minecraft.setScreen(new CameraAnglesScreen(scene))).build()),
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.cutscenes"), b -> minecraft.setScreen(new CutscenesScreen(scene))).build()),
-                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> minecraft.setScreen(new SubscenesScreen(scene))).build())
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> minecraft.setScreen(new SubscenesScreen(scene))).build()),
+                new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.npc"), b -> minecraft.setScreen(new NpcScreen(scene))).build())
         );
         this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
     }

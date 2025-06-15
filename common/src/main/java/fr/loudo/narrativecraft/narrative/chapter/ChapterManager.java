@@ -78,6 +78,7 @@ public class ChapterManager {
                     String desc = "";
                     Scene scene = new Scene(name, desc, chapter);
                     scene.setChapter(chapter);
+                    scene.setNpcs(new ArrayList<>());
                     if(dataFolder.exists()) {
                         File detailsFile = NarrativeCraftFile.getDetailsFile(dataFolder);
                         if(detailsFile.exists()) {
@@ -101,8 +102,33 @@ public class ChapterManager {
     }
 
     private void initSceneData(File sceneFolder, Scene scene) {
-        // Animations
         File dataFolder = new File(sceneFolder, "data");
+
+        // Npcs
+        File npcFolder = new File(dataFolder, "npc");
+        if(npcFolder.exists()) {
+            File[] characterList = npcFolder.listFiles();
+            if(characterList != null) {
+                for(File characterFolder : characterList) {
+                    try {
+                        File dataFile = new File(characterFolder, "data" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+                        String dataContent = Files.readString(dataFile.toPath());
+                        CharacterStory characterStory = new Gson().fromJson(dataContent, CharacterStory.class);
+                        characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
+                        File skin = new File(characterFolder, "main.png");
+                        characterStory.getCharacterSkinController().getSkins().add(skin);
+                        characterStory.getCharacterSkinController().setCurrentSkin(skin);
+                        characterStory.getCharacterSkinController().cacheSkins();
+                        characterStory.setScene(scene);
+                        scene.addNpc(characterStory);
+                    } catch (IOException e) {
+                        NarrativeCraftMod.LOG.warn("Npc folder does not exists, passing...");
+                    }
+                }
+            }
+        }
+
+        // Animations
         File animationsFolder = new File(dataFolder, "animations");
         Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
         if(animationsFolder.exists()) {
@@ -112,9 +138,18 @@ public class ChapterManager {
                     try {
                         String content = Files.readString(animationFile.toPath());
                         Animation animation = gson.fromJson(content, Animation.class);
-                        CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
-                        characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(animation.getSkinName()));
-                        animation.setCharacter(characterStory);
+                        CharacterStory characterStory = null;
+                        if(animation.getCharacter() != null) {
+                            if(animation.getCharacter().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+                                characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(animation.getCharacter().getName());
+                                characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(animation.getSkinName()));
+                            } else if(animation.getCharacter().getCharacterType() == CharacterStory.CharacterType.NPC) {
+                                characterStory = scene.getNpc(animation.getCharacter().getName());
+                            }
+                            if(characterStory != null) {
+                                animation.setCharacter(characterStory);
+                            }
+                        }
                         animation.setScene(scene);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
@@ -196,9 +231,16 @@ public class ChapterManager {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
                         cameraAngleGroup.setScene(scene);
                         for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
-                            CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
-                            characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
-                            characterStoryData.setCharacterStory(characterStory);
+                            CharacterStory characterStory = null;
+                            if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+                                characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
+                                characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
+                            } else if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.NPC) {
+                                characterStory = scene.getNpc(scene.getName());
+                            }
+                            if(characterStory != null) {
+                                characterStoryData.setCharacterStory(characterStory);
+                            }
                         }
                     }
                     scene.setCameraAngleGroupList(cameraAngleGroupList);
@@ -207,7 +249,6 @@ public class ChapterManager {
                 NarrativeCraftMod.LOG.warn("Camera angles file does not exists, passing...");
             }
         }
-
 
     }
 
@@ -264,7 +305,11 @@ public class ChapterManager {
             Chapter chapter = getChapterByIndex(chapterIndex);
             if(chapter == null) return builder.buildFuture();
             for (Scene scene : chapter.getSceneList()) {
-                builder.suggest(scene.getName());
+                if(scene.getName().split(" ").length > 1) {
+                    builder.suggest("\"" + scene.getName() + "\"");
+                } else {
+                    builder.suggest(scene.getName());
+                }
             }
             return builder.buildFuture();
         };
@@ -275,7 +320,11 @@ public class ChapterManager {
             PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
             if(playerSession == null) return builder.buildFuture();
             for (Subscene subscene : playerSession.getScene().getSubsceneList()) {
-                builder.suggest(subscene.getName());
+                if(subscene.getName().split(" ").length > 1) {
+                    builder.suggest("\"" + subscene.getName() + "\"");
+                } else {
+                    builder.suggest(subscene.getName());
+                }
             }
             return builder.buildFuture();
         };

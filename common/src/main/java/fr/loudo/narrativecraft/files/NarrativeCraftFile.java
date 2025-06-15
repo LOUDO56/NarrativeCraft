@@ -17,11 +17,13 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -118,6 +120,7 @@ public class NarrativeCraftFile {
             detailsFile.createNewFile();
             File sceneScriptFile = new File(sceneFolder.getAbsoluteFile(), getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
             sceneScriptFile.createNewFile();
+            createDirectory(dataFolder, "npc");
             new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
             new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
             new File(dataFolder.getAbsoluteFile(), "subscenes" + EXTENSION_DATA_FILE).createNewFile();
@@ -285,33 +288,6 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static boolean createCharacterFile(CharacterStory characterStory) {
-        File characterFolder = createDirectory(characterDirectory, getSnakeCaseName(characterStory.getName()));
-        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
-        File skinsFolder = createDirectory(characterFolder, "skins");
-        PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
-        characterStory.setModel(defaultPlayerSkin.model());
-        File mainSkinFile = createFile(skinsFolder, "main.png");
-        try(InputStream inputStream = Minecraft.getInstance().getResourceManager().open(defaultPlayerSkin.texture())) {
-            mainSkinFile.createNewFile();
-            OutputStream out = new FileOutputStream(mainSkinFile);
-            byte[] buffer = new byte[8192];
-            int bytesRead;
-            while ((bytesRead = inputStream.read(buffer)) != -1) {
-                out.write(buffer, 0, bytesRead);
-            }
-        } catch (IOException ignored) {} // Don't really need to handle
-
-        Gson gson = new GsonBuilder().create();
-        try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
-            gson.toJson(characterStory, writer);
-            return true;
-        } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create character {} file! {}", characterStory.getName(), e.getStackTrace());
-            return false;
-        }
-    }
-
     public static boolean updateCharacterFolder(String oldName, String newName) {
         CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(newName);
         File characterFolderNew = new File(characterDirectory, Utils.getSnakeCase(newName));
@@ -361,8 +337,106 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static boolean updateNpcSceneFolder(String oldName, String newName, Scene scene) {
+        File sceneFolder = getSceneFile(scene);
+        File dataFile = new File(sceneFolder, "data");
+        File npcFolder = new File(dataFile, "npc");
+        CharacterStory characterStory = scene.getNpc(newName);
+        File characterFolderNew = new File(npcFolder, Utils.getSnakeCase(newName));
+        File characterFolderOld = new File(npcFolder, Utils.getSnakeCase(oldName));
+        File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
+        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        try {
+            Files.move(characterFolderOld.toPath(), characterFolderNew.toPath());
+            for(Animation animation : scene.getAnimationList()) {
+                if(animation.getCharacter().getName().equalsIgnoreCase(oldName) || animation.getCharacter().getName().equalsIgnoreCase(newName)) {
+                    animation.setCharacter(characterStory);
+                    updateAnimationFile(animation);
+                }
+            }
+            for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
+                for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(oldName) || characterStoryData.getCharacterStory().getName().equalsIgnoreCase(newName)) {
+                        characterStoryData.setCharacterStory(characterStory);
+                        updateCameraAnglesFile(scene);
+                    }
+                }
+            }
+            StorySave save = getSave();
+            if(save != null) {
+                for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(oldName)) {
+                        characterStoryData.getCharacterStory().setName(newName);
+                    }
+                }
+                try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
+                    new Gson().toJson(save, writer);
+                }
+            }
+            try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+                new Gson().toJson(characterStory, writer);
+            }
+            updateCharacterSceneInkFile(oldName, newName);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update npc {} folder! {}", oldName, e.getStackTrace());
+            return false;
+        }
+    }
+
+    public static boolean createCharacterFile(CharacterStory characterStory) {
+        File characterFolder = createDirectory(characterDirectory, getSnakeCaseName(characterStory.getName()));
+        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
+        File skinsFolder = createDirectory(characterFolder, "skins");
+        PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
+        characterStory.setModel(defaultPlayerSkin.model());
+        File mainSkinFile = createFile(skinsFolder, "main.png");
+        try(InputStream inputStream = Minecraft.getInstance().getResourceManager().open(defaultPlayerSkin.texture())) {
+            Files.copy(inputStream, mainSkinFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ignored) {} // Don't really need to handle
+
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+            gson.toJson(characterStory, writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't create character {} file! {}", characterStory.getName(), e.getStackTrace());
+            return false;
+        }
+    }
+
+    public static boolean createCharacterFileScene(CharacterStory characterStory, Scene scene) {
+        File sceneFile = getSceneFile(scene);
+        File sceneDataFolder = new File(sceneFile, "data");
+        File npcFolder = new File(sceneDataFolder, "npc");
+        File characterFolder = createDirectory(npcFolder, Utils.getSnakeCase(characterStory.getName()));
+        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
+        PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
+        characterStory.setModel(defaultPlayerSkin.model());
+        File mainSkinFile = createFile(characterFolder, "main.png");
+        try(InputStream inputStream = Minecraft.getInstance().getResourceManager().open(defaultPlayerSkin.texture())) {
+            Files.copy(inputStream, mainSkinFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException ignored) {} // Don't really need to handle
+        characterStory.getCharacterSkinController().setCurrentSkin(new File(npcFolder, "main.png"));
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+            gson.toJson(characterStory, writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't create npc {} folder! {}", characterStory.getName(), e.getStackTrace());
+            return false;
+        }
+    }
+
     public static void removeCharacterFolder(CharacterStory characterStory) {
-        deleteDirectory(new File(characterDirectory, getSnakeCaseName(characterStory.getName())));
+        deleteDirectory(new File(characterDirectory, Utils.getSnakeCase(characterStory.getName())));
+    }
+
+    public static void removeNpcFolder(CharacterStory characterStory) {
+        File sceneFolder = getSceneFile(characterStory.getScene());
+        File dataFolder = new File(sceneFolder, "data");
+        File npcFolder = new File(dataFolder, "npc");
+        deleteDirectory(new File(npcFolder, Utils.getSnakeCase(characterStory.getName())));
     }
 
     public static void removeChapterFolder(Chapter chapter) {
@@ -414,7 +488,7 @@ public class NarrativeCraftFile {
     }
 
     public static List<String> readSceneLines(Scene scene) {
-        File sceneScript = getSceneFile(scene);
+        File sceneScript = getSceneInkFile(scene);
         try {
             return Arrays.stream(Files.readString(sceneScript.toPath()).split("\n")).toList();
         } catch (IOException e) {
@@ -422,11 +496,17 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static File getSceneFile(Scene scene) {
+    public static File getSceneInkFile(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, scene.getSnakeCase());
         return new File(sceneFolder, scene.getSnakeCase() + EXTENSION_SCRIPT_FILE);
+    }
+
+    public static File getSceneFile(Scene scene) {
+        File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
+        File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
+        return new File(scenesFolder, scene.getSnakeCase());
     }
 
     public static void updateMainInkFile() {

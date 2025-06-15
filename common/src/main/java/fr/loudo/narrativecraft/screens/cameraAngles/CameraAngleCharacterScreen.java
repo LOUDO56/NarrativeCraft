@@ -47,29 +47,39 @@ public class CameraAngleCharacterScreen extends Screen {
                 characterStoryData.setSkinName(skin);
                 NarrativeCraftFile.updateCameraAnglesFile(cameraAngleController.getCameraAngleGroup().getScene());
             });
-            totalWidth = BUTTON_WIDTH * 4 + 5;
+            totalWidth = BUTTON_WIDTH * 3 + 5;
         } else if(keyframeControllerBase instanceof CutsceneController) {
             screen = new ChangeSkinLinkScreen(animation.getCharacter(), skin -> {
                 animation.setSkinName(skin);
                 NarrativeCraftFile.updateAnimationFile(animation);
             });
-            totalWidth = BUTTON_WIDTH * 2 + 5;
+            totalWidth = BUTTON_WIDTH + 5;
         } else {
             screen = null;
         }
 
-        int startX = (this.width - totalWidth) / 2;
+        if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+            totalWidth += BUTTON_WIDTH + 5;
+        } else {
+            totalWidth += BUTTON_WIDTH * 2 + 5;
+        }
 
-        Button changeSkinButton = Button.builder(Translation.message("screen.camera_angle_character.change_skin"), button -> {
-            minecraft.setScreen(screen);
-        }).bounds(startX, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        int startX = (this.width - totalWidth) / 2;
+        int y = this.height / 2 - 10;
+
+        if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+            Button changeSkinButton = Button.builder(Translation.message("screen.camera_angle_character.change_skin"), button -> {
+                minecraft.setScreen(screen);
+            }).bounds(startX, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(changeSkinButton);
+        }
 
         int closeX = startX + BUTTON_WIDTH + 5;
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             Button changePose = Button.builder(Translation.message("screen.camera_angle_character.change_pose"), button -> {
                 CameraAngleChangePoseScreen screen1 = new CameraAngleChangePoseScreen(characterStoryData);
                 minecraft.setScreen(screen1);
-            }).bounds(startX + BUTTON_WIDTH + 5, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            }).bounds(startX + BUTTON_WIDTH + 5, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
             closeX += BUTTON_WIDTH + 5;
             Button removeButton = Button.builder(Translation.message("global.remove"), button -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
@@ -80,7 +90,7 @@ public class CameraAngleCharacterScreen extends Screen {
                 }, Component.literal(""), Translation.message("global.confirm_delete"),
                         CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
                 minecraft.setScreen(confirm);
-            }).bounds(startX + BUTTON_WIDTH * 2 + 5 * 2, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+            }).bounds(startX + BUTTON_WIDTH * 2 + 5 * 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
             this.addRenderableWidget(changePose);
             this.addRenderableWidget(removeButton);
             closeX += BUTTON_WIDTH + 5;
@@ -88,8 +98,7 @@ public class CameraAngleCharacterScreen extends Screen {
 
         Button closeButton = Button.builder(Translation.message("global.close"), button -> {
             this.onClose();
-        }).bounds(closeX, this.height / 2, BUTTON_WIDTH, BUTTON_HEIGHT).build();
-        this.addRenderableWidget(changeSkinButton);
+        }).bounds(closeX, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(closeButton);
     }
 

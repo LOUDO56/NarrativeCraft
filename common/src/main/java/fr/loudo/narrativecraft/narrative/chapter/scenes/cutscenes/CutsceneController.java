@@ -305,13 +305,13 @@ public class CutsceneController extends KeyframeControllerBase {
     private void checkEndedPlayback() {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             for(Playback playback : subscene.getPlaybackList()) {
-                if(playback.hasEnded()) {
+                if(playback.hasEnded() && playback.getEntity() != null) {
                     player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
                 }
             }
         }
         for(Playback playback : playbackList) {
-            if(playback.hasEnded()) {
+            if(playback.hasEnded() && playback.getEntity() != null) {
                 player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
             }
         }

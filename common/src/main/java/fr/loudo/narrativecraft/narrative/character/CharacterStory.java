@@ -1,33 +1,30 @@
 package fr.loudo.narrativecraft.narrative.character;
 
-import com.google.common.io.Files;
-import com.mojang.blaze3d.platform.NativeImage;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
     private transient CharacterSkinController characterSkinController;
+    private transient Scene scene;
     private PlayerSkin.Model model;
     private String birthdate;
     private CharacterType characterType;
@@ -41,13 +38,13 @@ public class CharacterStory extends NarrativeEntry {
         characterSkinController = new CharacterSkinController(this);
     }
 
-    public CharacterStory(String name, String description, PlayerSkin.Model model, String day, String month, String year) {
+    public CharacterStory(String name, String description, PlayerSkin.Model model, CharacterType characterType, String day, String month, String year) {
         super(name, description);
         this.name = name;
         this.description = description;
         this.birthdate = day + "/" + month + "/" + year;
         this.model = model;
-        characterType = CharacterType.MAIN;
+        this.characterType = characterType;
         characterSkinController = new CharacterSkinController(this);
     }
 
@@ -58,13 +55,15 @@ public class CharacterStory extends NarrativeEntry {
         this.name = name;
         this.description = description;
         this.birthdate = day + "/" + month + "/" + year;
-        if(!NarrativeCraftFile.updateCharacterFolder(oldName, name)) {
+        boolean result = characterType == CharacterType.MAIN ? NarrativeCraftFile.updateCharacterFolder(oldName, name) : NarrativeCraftFile.updateNpcSceneFolder(oldName, name, scene);
+        if(!result) {
             this.name = oldName;
             this.description = oldDescription;
             this.birthdate = oldBirthdate;
             ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.update.failed", name));
             return;
         }
+        characterSkinController.unCacheSkins();
         ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated"));
         Minecraft.getInstance().setScreen(reloadScreen());
     }
@@ -74,13 +73,34 @@ public class CharacterStory extends NarrativeEntry {
 
     @Override
     public void remove() {
-        NarrativeCraftMod.getInstance().getCharacterManager().removeCharacter(this);
-        NarrativeCraftFile.removeCharacterFolder(this);
+        if(characterType == CharacterType.MAIN) {
+            NarrativeCraftMod.getInstance().getCharacterManager().removeCharacter(this);
+            NarrativeCraftFile.removeCharacterFolder(this);
+        } else if (characterType == CharacterType.NPC) {
+            NarrativeCraftFile.removeNpcFolder(this);
+            scene.removeNpc(this);
+        }
+        for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
+            for(Scene scene1 : chapter.getSceneList()) {
+                for(Animation animation : scene1.getAnimationList()) {
+                    if(animation.getCharacter().getName().equalsIgnoreCase(name)) {
+                        animation.setCharacter(null);
+                        NarrativeCraftFile.updateAnimationFile(animation);
+                    }
+                }
+            }
+        }
     }
 
     @Override
     public Screen reloadScreen() {
-        return new CharactersScreen();
+        if(characterType == CharacterType.MAIN) {
+            return new CharactersScreen();
+        } else if(characterType == CharacterType.NPC) {
+            return new NpcScreen(scene);
+        } else {
+            return null;
+        }
     }
 
     public void kill() {
@@ -126,6 +146,14 @@ public class CharacterStory extends NarrativeEntry {
 
     public void setCharacterSkinController(CharacterSkinController characterSkinController) {
         this.characterSkinController = characterSkinController;
+    }
+
+    public Scene getScene() {
+        return scene;
+    }
+
+    public void setScene(Scene scene) {
+        this.scene = scene;
     }
 
     public enum CharacterType {

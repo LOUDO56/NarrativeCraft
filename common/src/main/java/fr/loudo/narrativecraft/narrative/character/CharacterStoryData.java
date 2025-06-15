@@ -125,7 +125,9 @@ public class CharacterStoryData {
         EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
         entityData.set(LIVING_ENTITY_BYTE_MASK, entityByte);
         serverLevel.addFreshEntity(livingEntity);
-        characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
+        if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
+            characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
+        }
         characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(skinName));
         characterStory.setEntity(livingEntity);
     }
