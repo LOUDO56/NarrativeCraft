@@ -11,6 +11,10 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 public class OnServerTick {
 
     private static final RecordingHandler RECORDING_HANDLER = NarrativeCraftMod.getInstance().getRecordingHandler();
@@ -25,11 +29,14 @@ public class OnServerTick {
                 recording.getActionDifference().listenDifference();
             }
         }
-        for(Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
-            if(playback.isPlaying()) {
+        Iterator<Playback> iterator = PLAYBACK_HANDLER.getPlaybacks().iterator();
+        while (iterator.hasNext()) {
+            Playback playback = iterator.next();
+            if (playback.isPlaying()) {
                 playback.next();
             }
         }
+
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
             KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
             if(keyframeControllerBase instanceof CutsceneController cutsceneController) {

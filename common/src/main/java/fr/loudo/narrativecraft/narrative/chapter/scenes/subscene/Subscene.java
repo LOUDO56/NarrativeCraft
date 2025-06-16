@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.subscene;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
@@ -22,7 +23,6 @@ public class Subscene extends NarrativeEntry {
     private transient Scene scene;
     private transient List<Animation> animationList;
     private transient List<Playback> playbackList;
-    private transient boolean isLooping;
     private List<String> animationNameList;
 
     public Subscene(Scene scene, String name, String description) {
@@ -34,13 +34,12 @@ public class Subscene extends NarrativeEntry {
     }
 
     public void start(ServerLevel level, Playback.PlaybackType playbackType, boolean isLooping) {
-        this.isLooping = isLooping;
         if(playbackList == null) {
             playbackList = new ArrayList<>();
         }
         for(String animationName : animationNameList) {
             Animation animation = scene.getAnimationByName(animationName);
-            Playback playback = new Playback(animation, level, animation.getCharacter(), playbackType);
+            Playback playback = new Playback(animation, level, animation.getCharacter(), playbackType, isLooping);
             playback.start();
             playbackList.add(playback);
         }
@@ -50,6 +49,7 @@ public class Subscene extends NarrativeEntry {
         for(Playback playback : playbackList) {
             playback.stopAndKill();
         }
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
         playbackList.clear();
     }
 
@@ -57,6 +57,15 @@ public class Subscene extends NarrativeEntry {
         for(Playback playback : playbackList) {
             playback.stop();
         }
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
+        playbackList.clear();
+    }
+
+    public void stopForce() {
+        for(Playback playback : playbackList) {
+            playback.forceStop();
+        }
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
         playbackList.clear();
     }
 

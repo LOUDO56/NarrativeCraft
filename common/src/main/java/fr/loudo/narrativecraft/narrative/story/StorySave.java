@@ -49,7 +49,6 @@ public class StorySave {
 
     public static void showSaveIcon(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
 
-
         long fadeInDuration = 200;
         long stayDuration = 900;
         long fadeOutDuration = 200;
@@ -112,5 +111,13 @@ public class StorySave {
 
     public List<CharacterStoryData> getCharacterStoryDataList() {
         return characterStoryDataList;
+    }
+
+    public int getChapterIndex() {
+        return chapterIndex;
+    }
+
+    public String getSceneName() {
+        return sceneName;
     }
 }

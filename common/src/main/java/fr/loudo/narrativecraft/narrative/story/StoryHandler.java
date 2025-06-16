@@ -130,7 +130,7 @@ public class StoryHandler {
             characterStory.kill();
         }
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
-            playback.stopAndKill();
+            playback.forceStop();
         }
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().clear();
         StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, false);
@@ -305,6 +305,8 @@ public class StoryHandler {
             case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
             case FADE -> inkAction = new FadeScreenInkAction();
             case WAIT -> inkAction = new WaitInkAction();
+            case SUBSCENE -> inkAction = new SubscenePlayInkAction();
+            case ANIMATION -> inkAction = new AnimationPlayInkAction();
         }
         return inkAction;
     }

@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -33,6 +34,8 @@ import java.util.UUID;
 
 public class Playback {
 
+    private int id;
+    private boolean isLooping;
     private Animation animation;
     private CharacterStory character;
     private LivingEntity entity;
@@ -42,13 +45,14 @@ public class Playback {
 
     private int tick;
 
-    public Playback(Animation animation, ServerLevel serverLevel, CharacterStory character, PlaybackType playbackType) {
+    public Playback(Animation animation, ServerLevel serverLevel, CharacterStory character, PlaybackType playbackType, boolean isLooping) {
         this.animation = animation;
         this.serverLevel = serverLevel;
         this.playbackType = playbackType;
         this.character = character;
         this.isPlaying = false;
         this.hasEnded = false;
+        this.isLooping = isLooping;
     }
 
     public boolean start() {
@@ -64,7 +68,7 @@ public class Playback {
         isPlaying = true;
         MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
         spawnEntity(firstLoc);
-        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().add(this);
+        NarrativeCraftMod.getInstance().getPlaybackHandler().addPlayback(this);
         if(playbackType == PlaybackType.DEVELOPMENT) {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(character);
         }
@@ -124,9 +128,17 @@ public class Playback {
     public void stop() {
         isPlaying = false;
         hasEnded = true;
+        if(isLooping) {
+            start();
+        }
     }
 
     public void stopAndKill() {
+        killEntity();
+        stop();
+    }
+
+    public void forceStop() {
         isPlaying = false;
         hasEnded = true;
         killEntity();
@@ -136,7 +148,6 @@ public class Playback {
     private void killEntity() {
         if(entity == null) return;
         entity.remove(Entity.RemovalReason.KILLED);
-        serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
     }
 
     public void next() {
@@ -149,10 +160,14 @@ public class Playback {
             if(playbackType == PlaybackType.DEVELOPMENT && !(keyframeControllerBase instanceof CutsceneController)) {
                 stopAndKill();
             } else {
-                stop();
+                if(character.getCharacterType() == CharacterStory.CharacterType.NPC) {
+                    stopAndKill();
+                } else {
+                    stop();
+                }
             }
+            return;
         }
-
 
         MovementData movementData = movementDataList.get(tick);
         MovementData movementDataNext = movementDataList.get(tick);
@@ -281,6 +296,14 @@ public class Playback {
 
     public CharacterStory getCharacter() {
         return character;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public enum PlaybackType {

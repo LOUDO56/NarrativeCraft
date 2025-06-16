@@ -147,6 +147,8 @@
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
 
   "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
+  "narrativecraft.debug.animation": "Animation %s now playing.",
+  "narrativecraft.debug.subscene": "Subscene %s now playing.",
   "narrativecraft.debug.camera_angle": "Set to camera angle parent=%s child=%s",
   "narrativecraft.debug.song/sfx.start": "%s %s playing now volume=%d pitch=%d isLooping=%s fadeEffect=%s fadeTime=%d",
   "narrativecraft.debug.song/sfx.stop": "%s %s stop playing fadeEffect=%s fadeTime=%d",
@@ -156,6 +158,8 @@
 
   "narrativecraft.validation.missing_name": "Missing name.",
   "narrativecraft.validation.cutscene": "Cutscene %s doesn't exists.",
+  "narrativecraft.validation.animation": "Animation %s doesn't exists.",
+  "narrativecraft.validation.subscene": "Subscene %s doesn't exists.",
   "narrativecraft.validation.camera_angle_missing_parent": "Missing parent name.",
   "narrativecraft.validation.camera_angle_missing_child": "Missing child name.",
   "narrativecraft.validation.camera_angle_parent": "Camera angle parent %s doesn't exists.",

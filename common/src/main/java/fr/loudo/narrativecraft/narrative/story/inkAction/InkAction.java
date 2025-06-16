@@ -48,6 +48,10 @@ public abstract class InkAction {
             return InkTagType.WAIT;
         } else if (tag.equalsIgnoreCase("save")) {
             return InkTagType.SAVE;
+        } else if (tag.contains("subscene start") || tag.contains("subscene stop")) {
+            return InkTagType.SUBSCENE;
+        } else if (tag.contains("animation start") || tag.contains("animation stop")) {
+            return InkTagType.ANIMATION;
         } else {
             return null;
         }
@@ -62,7 +66,9 @@ public abstract class InkAction {
         SONG_SFX_STOP,
         SOUND_STOP_ALL,
         WAIT,
-        SAVE
+        SAVE,
+        SUBSCENE,
+        ANIMATION
     }
 
     public enum InkResult {

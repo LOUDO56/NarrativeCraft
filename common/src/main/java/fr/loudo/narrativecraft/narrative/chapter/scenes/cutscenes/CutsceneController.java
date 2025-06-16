@@ -68,7 +68,7 @@ public class CutsceneController extends KeyframeControllerBase {
         }
 
         for(Animation animation : cutscene.getAnimationList()) {
-            Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType);
+            Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
             playback.start();
             playbackList.add(playback);
         }
@@ -117,9 +117,7 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
 
-        for(Playback playback : playbackList) {
-            NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
-        }
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {

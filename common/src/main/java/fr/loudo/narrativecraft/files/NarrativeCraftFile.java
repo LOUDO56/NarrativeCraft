@@ -563,7 +563,19 @@ public class NarrativeCraftFile {
         if(!saveFile.exists()) return null;
         try {
             String saveContent = Files.readString(saveFile.toPath());
-            return new Gson().fromJson(saveContent, StorySave.class);
+            StorySave save = new Gson().fromJson(saveContent, StorySave.class);
+            for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
+                    CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
+                    characterStoryData.setCharacterStory(characterStory);
+                } else if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.NPC) {
+                    Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
+                    Scene scene = chapter.getSceneByName(save.getSceneName());
+                    CharacterStory characterStory = scene.getNpc(characterStoryData.getCharacterStory().getName());
+                    characterStoryData.setCharacterStory(characterStory);
+                }
+            }
+            return save;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

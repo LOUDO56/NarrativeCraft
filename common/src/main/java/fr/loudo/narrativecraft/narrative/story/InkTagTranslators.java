@@ -86,6 +86,8 @@ public class InkTagTranslators {
             case FADE -> inkAction = new FadeScreenInkAction(storyHandler);
             case WAIT -> inkAction = new WaitInkAction(storyHandler);
             case SAVE -> inkAction = new SaveInkAction(storyHandler);
+            case SUBSCENE -> inkAction = new SubscenePlayInkAction(storyHandler);
+            case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkResult.PASS; // If there's no action, then continue story
