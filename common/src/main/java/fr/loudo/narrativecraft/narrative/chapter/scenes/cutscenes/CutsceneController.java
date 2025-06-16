@@ -56,7 +56,7 @@ public class CutsceneController extends KeyframeControllerBase {
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            subscene.start(player, playbackType);
+            subscene.start(player.serverLevel(), playbackType, false);
             for(Playback playback : subscene.getPlaybackList()) {
                 LivingEntity entity = playback.getEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {

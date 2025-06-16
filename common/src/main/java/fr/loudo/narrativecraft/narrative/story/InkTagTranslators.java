@@ -20,7 +20,7 @@ public class InkTagTranslators {
             List<String> tags = storyHandler.getStory().getCurrentTags();
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
-                if(!executeTag(tag)) {
+                if(executeTag(tag) == InkAction.InkResult.BLOCK) {
                     tagsToExecuteLater = tags.subList(i + 1, tags.size());
                     return false;
                 }
@@ -37,7 +37,7 @@ public class InkTagTranslators {
     public void executeLaterTags() {
         for (int i = 0; i < tagsToExecuteLater.size(); i++) {
             String tag = tagsToExecuteLater.get(i);
-            if(!executeTag(tag)) {
+            if(executeTag(tag) == InkAction.InkResult.BLOCK) {
                 tagsToExecuteLater = tagsToExecuteLater.subList(i + 1, tagsToExecuteLater.size());
                 return;
             }
@@ -50,7 +50,7 @@ public class InkTagTranslators {
 
     }
 
-    public boolean executeTag(String tag) {
+    public InkAction.InkResult executeTag(String tag) {
         String[] tagSplit = tag.split(" ");
         InkAction inkAction = null;
         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
@@ -88,7 +88,7 @@ public class InkTagTranslators {
             case SAVE -> inkAction = new SaveInkAction(storyHandler);
             case null -> {}
         }
-        if(inkAction == null) return true; // If there's no action, then continue story
+        if(inkAction == null) return InkAction.InkResult.PASS; // If there's no action, then continue story
         return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
     }
     public List<String> getTagsToExecuteLater() {

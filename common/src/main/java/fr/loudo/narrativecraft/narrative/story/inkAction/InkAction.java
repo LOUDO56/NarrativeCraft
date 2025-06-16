@@ -21,7 +21,7 @@ public abstract class InkAction {
         this.name = "";
     }
 
-    public abstract boolean execute(String[] command);
+    public abstract InkResult execute(String[] command);
     abstract void sendDebugDetails();
     public abstract ErrorLine validate(String[] command, int line, String lineText, Scene scene);
 
@@ -63,6 +63,11 @@ public abstract class InkAction {
         SOUND_STOP_ALL,
         WAIT,
         SAVE
+    }
+
+    public enum InkResult {
+        PASS,
+        BLOCK
     }
 
     public static class ErrorLine {

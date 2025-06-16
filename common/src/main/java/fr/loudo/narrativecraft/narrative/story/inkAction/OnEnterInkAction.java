@@ -20,10 +20,10 @@ public class OnEnterInkAction extends InkAction {
     }
 
     @Override
-    public boolean execute(String[] command) {
+    public InkResult execute(String[] command) {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
-        if(currentKnot == null) return true;
+        if(currentKnot == null) return InkResult.PASS;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
             String[] chapterSceneName = currentKnot.split("_");
             int chapterIndex = Integer.parseInt(chapterSceneName[1]);
@@ -36,7 +36,7 @@ public class OnEnterInkAction extends InkAction {
             storyHandler.save();
             sendDebugDetails();
         }
-        return true;
+        return InkResult.PASS;
     }
 
     @Override

@@ -20,7 +20,7 @@ public class CameraAngleInkAction extends InkAction {
     }
 
     @Override
-    public boolean execute(String[] command) {
+    public InkResult execute(String[] command) {
         storyHandler.getPlayerSession().setSoloCam(null);
         name = command[2];
         child = command[3];
@@ -30,7 +30,7 @@ public class CameraAngleInkAction extends InkAction {
             executeCameraAngle(cameraAngleGroup, cameraAngle);
             sendDebugDetails();
         }
-        return true;
+        return InkResult.PASS;
     }
 
     private void executeCameraAngle(CameraAngleGroup cameraAngleGroup, CameraAngle cameraAngle) {

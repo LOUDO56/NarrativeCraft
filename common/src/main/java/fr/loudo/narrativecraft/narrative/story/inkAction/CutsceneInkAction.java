@@ -22,15 +22,15 @@ public class CutsceneInkAction extends InkAction {
     }
 
     @Override
-    public boolean execute(String[] command) {
+    public InkResult execute(String[] command) {
         storyHandler.getPlayerSession().setSoloCam(null);
         name = command[2];
         Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(name);
         if(cutscene != null) {
             executeCutscene(cutscene);
-            return false;
+            return InkResult.BLOCK;
         }
-        return true;
+        return InkResult.PASS;
     }
 
     private void executeCutscene(Cutscene cutscene) {

@@ -31,7 +31,7 @@ public class SongSfxInkAction extends InkAction {
     }
 
     @Override
-    public boolean execute(String[] command) {
+    public InkResult execute(String[] command) {
         if(command[1].equals("start")) {
             name = command[2];
             loop = false;
@@ -89,7 +89,7 @@ public class SongSfxInkAction extends InkAction {
         }
         sendDebugDetails();
         storyHandler.getInkActionList().add(this);
-        return true;
+        return InkResult.PASS;
     }
 
     public void applyFade() {

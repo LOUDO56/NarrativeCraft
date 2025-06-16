@@ -19,7 +19,7 @@ public class WaitInkAction extends InkAction {
     }
 
     @Override
-    public boolean execute(String[] command) {
+    public InkResult execute(String[] command) {
         double timeValue = Double.parseDouble(command[1]);
         unitTime = command[2];
         if(unitTime.contains("second")) {
@@ -35,7 +35,7 @@ public class WaitInkAction extends InkAction {
             storyHandler.getCurrentDialogBox().endDialogAndDontSkip();
         }
         sendDebugDetails();
-        return false;
+        return InkResult.BLOCK;
     }
 
     public void checkForPause() {
