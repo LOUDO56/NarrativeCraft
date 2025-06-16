@@ -24,10 +24,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -564,16 +561,17 @@ public class NarrativeCraftFile {
         try {
             String saveContent = Files.readString(saveFile.toPath());
             StorySave save = new Gson().fromJson(saveContent, StorySave.class);
+            Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
+            Scene scene = chapter.getSceneByName(save.getSceneName());
             for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                CharacterStory characterStory = null;
                 if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {
-                    CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
+                    characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
                     characterStoryData.setCharacterStory(characterStory);
                 } else if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.NPC) {
-                    Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
-                    Scene scene = chapter.getSceneByName(save.getSceneName());
-                    CharacterStory characterStory = scene.getNpc(characterStoryData.getCharacterStory().getName());
-                    characterStoryData.setCharacterStory(characterStory);
+                    characterStory = scene.getNpc(characterStoryData.getCharacterStory().getName());
                 }
+                characterStoryData.setCharacterStory(characterStory);
             }
             return save;
         } catch (IOException e) {

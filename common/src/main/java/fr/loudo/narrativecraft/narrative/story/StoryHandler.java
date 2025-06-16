@@ -7,7 +7,9 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
@@ -158,7 +160,7 @@ public class StoryHandler {
             onChoice = false;
             if(save != null) {
                 currentDialog = story.getCurrentText();
-                boolean isNewScene = story.getCurrentTags().getFirst().equals("on enter");
+                boolean isNewScene = story.getCurrentTags().getFirst().equals("on enter") && !story.getCurrentTags().contains("save");
                 int breakIndex = 0;
                 List<String> oldTags = List.copyOf(story.getCurrentTags());
                 for(String tag : story.getCurrentTags()) {
@@ -175,6 +177,27 @@ public class StoryHandler {
                 for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
                     characterStoryData.spawn(playerSession.getPlayer().serverLevel());
                     currentCharacters.add(characterStoryData.getCharacterStory());
+                }
+                for(StorySave.AnimationInfo animationInfo : save.getAnimationInfoList()) {
+                    Animation animation = playerSessionFromSave.getScene().getAnimationByName(animationInfo.getName());
+                    Playback playback = new Playback(
+                            animation,
+                            playerSession.getPlayer().serverLevel(),
+                            animation.getCharacter(),
+                            Playback.PlaybackType.PRODUCTION,
+                            animationInfo.wasLooping()
+                    );
+                    playback.start();
+                    currentCharacters.add(playback.getCharacter());
+                    inkActionList.add(new AnimationPlayInkAction(this, animation));
+                }
+                for(StorySave.SubsceneInfo subsceneInfo : save.getSubsceneInfoList()) {
+                    Subscene subscene = playerSessionFromSave.getScene().getSubsceneByName(subsceneInfo.getName());
+                    subscene.start(playerSession.getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, subsceneInfo.wasLooping());
+                    for(Playback playback : subscene.getPlaybackList()) {
+                        currentCharacters.add(playback.getCharacter());
+                    }
+                    inkActionList.add(new SubscenePlayInkAction(this, subscene));
                 }
             } else {
                 currentDialog = story.Continue();

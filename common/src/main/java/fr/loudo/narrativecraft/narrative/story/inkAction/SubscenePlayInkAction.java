@@ -1,7 +1,5 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
@@ -16,13 +14,17 @@ import java.util.List;
 public class SubscenePlayInkAction extends InkAction {
 
     private Subscene subscene;
-    private String name;
     private boolean isLooping;
 
     public SubscenePlayInkAction() {}
 
     public SubscenePlayInkAction(StoryHandler storyHandler) {
         super(storyHandler);
+    }
+
+    public SubscenePlayInkAction(StoryHandler storyHandler, Subscene subscene) {
+        super(storyHandler);
+        this.subscene = subscene;
     }
 
     @Override
@@ -92,5 +94,9 @@ public class SubscenePlayInkAction extends InkAction {
             );
         }
         return null;
+    }
+
+    public boolean isLooping() {
+        return isLooping;
     }
 }

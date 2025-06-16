@@ -3,8 +3,6 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -18,13 +16,17 @@ public class AnimationPlayInkAction extends InkAction {
 
     private Animation animation;
     private Playback playback;
-    private String name;
     private boolean isLooping;
 
     public AnimationPlayInkAction() {}
 
     public AnimationPlayInkAction(StoryHandler storyHandler) {
         super(storyHandler);
+    }
+
+    public AnimationPlayInkAction(StoryHandler storyHandler, Animation animation) {
+        super(storyHandler);
+        this.animation = animation;
     }
 
     @Override
@@ -99,5 +101,9 @@ public class AnimationPlayInkAction extends InkAction {
             );
         }
         return null;
+    }
+
+    public boolean isLooping() {
+        return isLooping;
     }
 }

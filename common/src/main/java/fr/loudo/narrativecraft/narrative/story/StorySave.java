@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.story;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
@@ -8,6 +9,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.SubscenePlayInkAction;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -19,6 +23,8 @@ import java.util.List;
 
 public class StorySave {
 
+    private final List<AnimationInfo> animationInfoList;
+    private final List<SubsceneInfo> subsceneInfoList;
     private final int chapterIndex;
     private final String sceneName;
     private final KeyframeCoordinate soloCam;
@@ -28,6 +34,8 @@ public class StorySave {
 
     public StorySave(StoryHandler storyHandler) {
         characterStoryDataList = new ArrayList<>();
+        animationInfoList = new ArrayList<>();
+        subsceneInfoList = new ArrayList<>();
         PlayerSession playerSession = storyHandler.getPlayerSession();
         try {
             if(playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
@@ -38,8 +46,29 @@ public class StorySave {
             inkSave = storyHandler.getStory().getState().toJson();
             chapterIndex = playerSession.getChapter().getIndex();
             sceneName = playerSession.getScene().getName();
+
+            for(InkAction inkAction : storyHandler.getInkActionList()) {
+                if(inkAction instanceof SubscenePlayInkAction action) {
+                    subsceneInfoList.add(
+                            new SubsceneInfo(
+                                    action.getName(),
+                                    action.isLooping()
+                            )
+                    );
+                } else if(inkAction instanceof AnimationPlayInkAction action) {
+                    animationInfoList.add(
+                            new AnimationInfo(
+                                    action.getName(),
+                                    action.isLooping()
+                            )
+                    );
+                }
+            }
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-                characterStoryDataList.add(new CharacterStoryData(characterStory));
+                // If character spawned by playback or camera angle
+                if(NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().stream().noneMatch(playback -> playback.getCharacter().getName().equals(characterStory.getName()))) {
+                    characterStoryDataList.add(new CharacterStoryData(characterStory));
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -93,8 +122,6 @@ public class StorySave {
         if (elapsed >= totalDuration) {
             NarrativeCraftMod.getInstance().getStoryHandler().setSaving(false);
         }
-
-
     }
 
     public PlayerSession getPlayerSession() {
@@ -103,6 +130,14 @@ public class StorySave {
         PlayerSession playerSession = new PlayerSession(chapter, scene);
         playerSession.setSoloCam(soloCam);
         return playerSession;
+    }
+
+    public List<AnimationInfo> getAnimationInfoList() {
+        return animationInfoList;
+    }
+
+    public List<SubsceneInfo> getSubsceneInfoList() {
+        return subsceneInfoList;
     }
 
     public String getInkSave() {
@@ -119,5 +154,41 @@ public class StorySave {
 
     public String getSceneName() {
         return sceneName;
+    }
+
+    public static class AnimationInfo {
+        private String name;
+        private boolean wasLooping;
+
+        public AnimationInfo(String name, boolean wasLooping) {
+            this.name = name;
+            this.wasLooping = wasLooping;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean wasLooping() {
+            return wasLooping;
+        }
+    }
+
+    public static class SubsceneInfo {
+        private String name;
+        private boolean wasLooping;
+
+        public SubsceneInfo(String name, boolean wasLooping) {
+            this.name = name;
+            this.wasLooping = wasLooping;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public boolean wasLooping() {
+            return wasLooping;
+        }
     }
 }
