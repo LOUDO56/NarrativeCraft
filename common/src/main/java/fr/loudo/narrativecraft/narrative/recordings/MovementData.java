@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings;
 
+import net.minecraft.world.phys.Vec3;
+
 public class MovementData {
 
     private double x, y, z;
@@ -44,5 +46,9 @@ public class MovementData {
 
     public boolean isOnGround() {
         return isOnGround;
+    }
+
+    public Vec3 getVec3() {
+        return new Vec3(x, y, z);
     }
 }

@@ -44,7 +44,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
         LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
-        linearlayout.addChild(Button.builder(characterType == CharacterStory.CharacterType.NPC ? Component.literal("NPC") : Component.literal("MAIN"), button -> {
+        linearlayout.addChild(Button.builder(characterType == CharacterStory.CharacterType.NPC ? Component.literal("MAIN") : Component.literal("NPC"), button -> {
             Screen screen = null;
             if(characterType == CharacterStory.CharacterType.MAIN) {
                 screen = new AnimationCharacterLinkScreen(lastScreen, animation, animation.getScene().getNpcs(), CharacterStory.CharacterType.NPC);
@@ -52,7 +52,7 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
                 screen = new AnimationCharacterLinkScreen(lastScreen, animation, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories(), CharacterStory.CharacterType.MAIN);
             }
             minecraft.setScreen(screen);
-        }).width(25).build());
+        }).width(40).build());
     }
 
     protected void addContents() {

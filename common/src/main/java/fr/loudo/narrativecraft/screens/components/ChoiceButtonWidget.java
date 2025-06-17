@@ -68,6 +68,7 @@ public class ChoiceButtonWidget extends AbstractButton {
         if(!canPress) return;
         Minecraft.getInstance().setScreen(null);
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
         try {
             storyHandler.getStory().chooseChoiceIndex(index);
             storyHandler.getCurrentChoices().clear();

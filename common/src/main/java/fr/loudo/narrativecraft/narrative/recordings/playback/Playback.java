@@ -77,6 +77,10 @@ public class Playback {
     }
 
     private void spawnEntity(MovementData loc) {
+        if(entity != null && entity.isAlive()) {
+            moveEntitySilent(entity, loc);
+            return;
+        }
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
         entity = new FakePlayer(serverLevel, gameProfile);
@@ -94,6 +98,10 @@ public class Playback {
     }
 
     private void spawnEntity(MovementData loc, Entity oldEntity) {
+        if(entity != null && entity.isAlive()) {
+            moveEntitySilent(entity, loc);
+            return;
+        }
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
         entity = new FakePlayer(serverLevel, gameProfile);
@@ -134,7 +142,11 @@ public class Playback {
     }
 
     public void stopAndKill() {
-        killEntity();
+        MovementData firstLoc = animation.getActionsData().getMovementData().getFirst();
+        MovementData lastLoc = animation.getActionsData().getMovementData().getLast();
+        if(firstLoc.getVec3().distanceTo(lastLoc.getVec3()) >= 2) {
+            killEntity();
+        }
         stop();
     }
 

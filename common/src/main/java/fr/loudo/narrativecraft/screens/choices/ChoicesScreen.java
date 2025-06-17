@@ -19,6 +19,7 @@ public class ChoicesScreen extends Screen {
 
     private final List<Choice> choiceList;
     private final List<AnimatedChoice> animatedChoices;
+    private boolean initiated;
     private int baseY;
     private int spacing;
     private long startTime;
@@ -28,13 +29,27 @@ public class ChoicesScreen extends Screen {
         super(Component.literal("Choice screen"));
         this.choiceList = choiceList;
         this.animatedChoices = new ArrayList<>();
+        initiated = false;
+    }
+
+    public static ChoicesScreen fromStrings(List<String> stringChoiceList) {
+        List<Choice> choices = new ArrayList<>();
+        for (String choiceString : stringChoiceList) {
+            Choice choice = new Choice();
+            choice.setIndex(0);
+            choice.setText(choiceString);
+            choices.add(choice);
+        }
+        return new ChoicesScreen(choices);
     }
 
     @Override
     protected void init() {
-        ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.choice_appear");
-        SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-        this.minecraft.player.playSound(sound, 1.0F, 1.0F);
+        if(!initiated) {
+            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.choice_appear");
+            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
+            this.minecraft.player.playSound(sound, 1.0F, 1.0F);
+        }
         List<ChoiceButtonWidget> choiceButtonWidgetList = new ArrayList<>();
         for(Choice choice : choiceList) {
             choiceButtonWidgetList.add(new ChoiceButtonWidget(
@@ -62,7 +77,9 @@ public class ChoicesScreen extends Screen {
             if(choiceButtonWidgetList.size() == 4) currentY -= choiceButtonWidget.getHeight();
             switch (i) {
                 case 0:
-                    if(choiceButtonWidgetList.size() > 2) {
+                    if(choiceButtonWidgetList.size() == 1) {
+                        currentX = this.width / 2 - choiceButtonWidget.getWidth() / 2;
+                    } else if(choiceButtonWidgetList.size() > 2) {
                         currentX = this.width / 2 - choiceButtonWidget.getWidth() - maxWidthUpDown / 2;
                     } else {
                         currentX = this.width / 2 - choiceButtonWidget.getWidth() - spacing;
@@ -92,10 +109,13 @@ public class ChoicesScreen extends Screen {
             choiceButtonWidget.setX(currentX);
             choiceButtonWidget.setY(currentY);
             this.addRenderableWidget(choiceButtonWidget);
-            t = 0;
-            startTime = System.currentTimeMillis();
             animatedChoices.add(new AnimatedChoice(choiceButtonWidget, offsetX, offsetY));
         }
+        if(!initiated) {
+            t = 0;
+            startTime = System.currentTimeMillis();
+        }
+        initiated = true;
     }
 
 
@@ -106,11 +126,13 @@ public class ChoicesScreen extends Screen {
         for (AnimatedChoice ac : animatedChoices) {
             int newOpacity = (int) MathUtils.lerp(5, 255, t);
             guiGraphics.pose().pushPose();
-            guiGraphics.pose().translate(
-                    MathUtils.lerp(ac.offsetX, 0, t),
-                    MathUtils.lerp(ac.offsetY, 0, t),
-                    0
-            );
+            if(choiceList.size() > 1) {
+                guiGraphics.pose().translate(
+                        MathUtils.lerp(ac.offsetX, 0, t),
+                        MathUtils.lerp(ac.offsetY, 0, t),
+                        0
+                );
+            }
             ac.widget.setOpacity(newOpacity);
             ac.widget.render(guiGraphics, mouseX, mouseY, partialTick);
             guiGraphics.pose().popPose();
@@ -122,6 +144,11 @@ public class ChoicesScreen extends Screen {
 
     }
 
+    @Override
+    protected void repositionElements() {
+        animatedChoices.clear();
+        super.repositionElements();
+    }
 
     @Override
     public void onClose() {}
