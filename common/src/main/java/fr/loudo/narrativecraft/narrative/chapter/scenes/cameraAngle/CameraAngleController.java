@@ -113,7 +113,7 @@ public class CameraAngleController extends KeyframeControllerBase {
     @Override
     public boolean removeKeyframe(Keyframe keyframe) {
         keyframeGroups.getFirst().getKeyframeList().remove(keyframe);
-        cameraAngleGroup.getCameraAngleList().add((CameraAngle) keyframe);
+        cameraAngleGroup.getCameraAngleList().remove((CameraAngle) keyframe);
         keyframe.removeKeyframeFromClient(player);
         return true;
     }
