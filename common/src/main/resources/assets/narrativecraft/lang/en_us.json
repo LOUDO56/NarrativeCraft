@@ -169,6 +169,7 @@
   "narrativecraft.validation.camera_angle_parent": "Camera angle parent %s doesn't exists.",
   "narrativecraft.validation.camera_angle_child": "Camera angle child %s of parent %s doesn't exists.",
   "narrativecraft.validation.number": "%s value is not a valid number.",
+  "narrativecraft.validation.easing": "%s value is not a valid easing name. available easing are: %s",
   "narrativecraft.validation.missing_sound_name": "Missing sound name.",
   "narrativecraft.validation.sound_loop": "Invalid value for the loop. True corresponds to enable looping, false corresponds to not loop the sound.",
   "narrativecraft.validation.sound_start_fade_in": "This effect does not apply for starting a song, only \"fadein\" is available ",

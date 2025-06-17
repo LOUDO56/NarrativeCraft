@@ -168,6 +168,18 @@ public class ChangeDayTimeInkAction extends InkAction {
                         lineText
                 );
             }
+            if(command.length == 9) {
+                try {
+                    Easing.valueOf(command[8]);
+                } catch (IllegalArgumentException e) {
+                    return new ErrorLine(
+                            line,
+                            scene,
+                            Translation.message("validation.easing", command[8], Easing.getEasingsString()).getString(),
+                            lineText
+                    );
+                }
+            }
         }
         return null;
     }

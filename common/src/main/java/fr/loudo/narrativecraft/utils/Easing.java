@@ -34,4 +34,19 @@ public enum Easing {
         return List.of(SMOOTH, LINEAR, EASE_IN, EASE_OUT, EASE_IN_OUT);
     }
 
+    public static String getEasingsString() {
+        StringBuilder s = new StringBuilder();
+        List<Easing> easings = getEasings();
+        for (int i = 0; i < easings.size(); i++) {
+            Easing easing = easings.get(i);
+            if(i == easings.size() - 2) {
+                s.append(easing.name().toLowerCase()).append(" and ").append(easings.getLast().name().toLowerCase());
+                break;
+            } else {
+                s.append(easing.name().toLowerCase()).append(", ");
+            }
+        }
+        return s.toString();
+    }
+
 }
