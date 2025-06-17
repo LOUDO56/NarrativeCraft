@@ -11,6 +11,7 @@ e.g.
 
 ### Note
 You need to spawn it in the world BEFORE making it talk with starting an animation, subscene, cutscene or camera angle where that character is linked.
+Otherwise, your story will crash and will throw an error at runtime.
 
 ## Text effect
 ```
@@ -22,7 +23,6 @@ ex: [shaking time=0.02, force=0.2]I'm angry![/effect]
 ## Cutscene
 
 Blocking command: Means that it will continue the story after this command ended.
-
 
 ``cutscene start <cutscene_name>``
 
@@ -36,17 +36,17 @@ Name is resource location from minecraft e.g. custom.piano
 
 ### Song
 
-``song start <category.name> [volume] [pitch] [loop=true/false] [fadein fadeTime]``
+``song start %category.name% [%volume% %pitch% [loop=true/false] [%fadein% fadeTime]]``
 
 ### Sfx
 
-``sfx start start <category.name> [volume] [pitch] [loop=true/false] [fadein fadeTime]``
+``sfx start start %category.name% [%volume% %pitch% [loop=true/false] [%fadein% fadeTime]]``
 
 ## Stop sound
 
-``song stop <category.name> [fadeout fadeTime]``
+``song stop %category.name% [<fadeout> %fadeTime%]``
 
-``sfx stop <category.name> [fadeout fadeTime]``
+``sfx stop %category.name% [<fadeout> %fadeTime%]``
 
 ``song stop all``
 
@@ -56,15 +56,38 @@ Name is resource location from minecraft e.g. custom.piano
 
 ## Fade effect
 
-```fade [fadeInValue] [stayValue] [fadeOutValue] [hexColor]```
+``fade [%fadeInValue%] [%stayValue%] [%fadeOutValue%] [%hexColor%]``
 Shows a color screen
 
 ## Cooldown
 
-```wait [value] [seconds, minutes, hours]```
+``wait %time% <second(s), minute(s), hour(s)>``
 Blocking command. Wait before moving on to the next tag or dialog.
 
 ## Change chapter or scene
 
-```#on enter```
+``on enter``
 Important and to not remove!! It's used to change between scene and chapter when playing the story.
+
+## Save
+
+``save``
+Save on that point
+
+## Start, stop animation or subscene on a scene
+
+Play animation or subscene on the scene linked to it.
+
+``animation start %animation_name%``
+
+``subscene start %subscene_name%``
+
+``animation stop %animation_name%``
+
+``subscene stop %subscene_name%``
+
+## Change day time
+
+Change current day time on the world, you can interpolate between 2 ticks to have a great animation.
+
+``time <set,add> <day,midnight,night,noon,%tick%> [to <day,midnight,night,noon,%tick%> for %time% <second(s), minute(s), hour(s)> [%easing%]]``
