@@ -30,7 +30,7 @@ public class AnimationPlayInkAction extends InkAction {
     }
 
     @Override
-    public InkResult execute(String[] command) {
+    public InkActionResult execute(String[] command) {
         if(command.length >= 3) {
             name = command[2];
             isLooping = false;
@@ -41,36 +41,35 @@ public class AnimationPlayInkAction extends InkAction {
             }
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);
             PlayerSession playerSession = storyHandler.getPlayerSession();
-            if(animation != null) {
-                if(command[1].equals("start")) {
-                    playback = new Playback(
-                            animation,
-                            playerSession.getPlayer().serverLevel(),
-                            animation.getCharacter(),
-                            Playback.PlaybackType.PRODUCTION,
-                            isLooping
-                    );
-                    playback.start();
-                    storyHandler.getCurrentCharacters().add(animation.getCharacter());
-                    storyHandler.getInkActionList().add(this);
-                    sendDebugDetails();
-                } else if(command[1].equals("stop")) {
-                    List<InkAction> toRemove = new ArrayList<>();
-                    for(InkAction inkAction : storyHandler.getInkActionList()) {
-                        if(inkAction instanceof AnimationPlayInkAction action) {
-                            if(animation.getName().equals(action.animation.getName())) {
-                                storyHandler.getCurrentCharacters().remove(animation.getCharacter());
-                                action.playback.forceStop();
-                                NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(action.playback);
-                                toRemove.add(action);
-                            }
+            if(animation == null) return InkActionResult.ERROR;
+            if(command[1].equals("start")) {
+                playback = new Playback(
+                        animation,
+                        playerSession.getPlayer().serverLevel(),
+                        animation.getCharacter(),
+                        Playback.PlaybackType.PRODUCTION,
+                        isLooping
+                );
+                playback.start();
+                storyHandler.getCurrentCharacters().add(animation.getCharacter());
+                storyHandler.getInkActionList().add(this);
+                sendDebugDetails();
+            } else if(command[1].equals("stop")) {
+                List<InkAction> toRemove = new ArrayList<>();
+                for(InkAction inkAction : storyHandler.getInkActionList()) {
+                    if(inkAction instanceof AnimationPlayInkAction action) {
+                        if(animation.getName().equals(action.animation.getName())) {
+                            storyHandler.getCurrentCharacters().remove(animation.getCharacter());
+                            action.playback.forceStop();
+                            NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(action.playback);
+                            toRemove.add(action);
                         }
                     }
-                    storyHandler.getInkActionList().removeAll(toRemove);
                 }
+                storyHandler.getInkActionList().removeAll(toRemove);
             }
         }
-        return InkResult.PASS;
+        return InkActionResult.PASS;
     }
 
     @Override

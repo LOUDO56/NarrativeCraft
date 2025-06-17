@@ -6,7 +6,6 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 
@@ -20,10 +19,10 @@ public class OnEnterInkAction extends InkAction {
     }
 
     @Override
-    public InkResult execute(String[] command) {
+    public InkActionResult execute(String[] command) {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
-        if(currentKnot == null) return InkResult.PASS;
+        if(currentKnot == null) return InkActionResult.PASS;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
             String[] chapterSceneName = currentKnot.split("_");
             int chapterIndex = Integer.parseInt(chapterSceneName[1]);
@@ -36,7 +35,7 @@ public class OnEnterInkAction extends InkAction {
             storyHandler.save();
             sendDebugDetails();
         }
-        return InkResult.PASS;
+        return InkActionResult.PASS;
     }
 
     @Override

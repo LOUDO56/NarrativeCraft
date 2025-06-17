@@ -155,6 +155,10 @@
   "narrativecraft.debug.fade": "Start fade=%s seconds=%d",
   "narrativecraft.debug.wait": "Wait %d %s",
   "narrativecraft.debug.switch_chapter_scene": "Switched to chapter %d scene %s",
+  "narrativecraft.debug.change_time.one_set": "Set time to %s",
+  "narrativecraft.debug.change_time.one_add": "Added %s to time",
+  "narrativecraft.debug.change_time.interpolate": "Changing time from %s to %s for %d seconds",
+
 
   "narrativecraft.validation.missing_name": "Missing name.",
   "narrativecraft.validation.cutscene": "Cutscene %s doesn't exists.",
@@ -175,5 +179,6 @@
   "narrativecraft.validation.on_enter": "Line 2 of a scene MUST BE \"#on enter\" in order to make the story working correctly.",
   "narrativecraft.validation.found_errors": "Found %d errors while validating full story",
   "narrativecraft.validation.no_errors": "The story successfully passed validation! :p",
-  "narrativecraft.validation.quick_edit": "Click to quick edit"
+  "narrativecraft.validation.quick_edit": "Click to quick edit",
+  "narrativecraft.validation.change_time.missing_time": "You want to interpolate but you forgot to put a duration e.g. for 3 seconds"
 }

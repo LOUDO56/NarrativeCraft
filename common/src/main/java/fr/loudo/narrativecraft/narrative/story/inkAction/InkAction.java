@@ -21,7 +21,7 @@ public abstract class InkAction {
         this.name = "";
     }
 
-    public abstract InkResult execute(String[] command);
+    public abstract InkActionResult execute(String[] command);
     abstract void sendDebugDetails();
     public abstract ErrorLine validate(String[] command, int line, String lineText, Scene scene);
 
@@ -52,6 +52,8 @@ public abstract class InkAction {
             return InkTagType.SUBSCENE;
         } else if (tag.contains("animation start") || tag.contains("animation stop")) {
             return InkTagType.ANIMATION;
+        } else if (tag.contains("time add") || tag.contains("time set")) {
+            return InkTagType.DAYTIME;
         } else {
             return null;
         }
@@ -68,12 +70,14 @@ public abstract class InkAction {
         WAIT,
         SAVE,
         SUBSCENE,
-        ANIMATION
+        ANIMATION,
+        DAYTIME
     }
 
-    public enum InkResult {
+    public enum InkActionResult {
         PASS,
-        BLOCK
+        BLOCK,
+        ERROR
     }
 
     public static class ErrorLine {

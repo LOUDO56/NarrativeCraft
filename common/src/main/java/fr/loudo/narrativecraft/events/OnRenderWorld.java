@@ -9,6 +9,11 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.ChangeDayTimeInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class OnRenderWorld {
 
@@ -20,8 +25,18 @@ public class OnRenderWorld {
         }
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler != null && storyHandler.getCurrentDialogBox() != null) {
-            storyHandler.getCurrentDialogBox().render(poseStack);
+        if(storyHandler != null) {
+            if(storyHandler.getCurrentDialogBox() != null) {
+                storyHandler.getCurrentDialogBox().render(poseStack);
+            }
+            List<InkAction> toRemove = new ArrayList<>();
+            for(InkAction inkAction : storyHandler.getInkActionList()) {
+                if(inkAction instanceof ChangeDayTimeInkAction action) {
+                    action.interpolateTime();
+                    if(action.isFinished()) toRemove.add(inkAction);
+                }
+            }
+            storyHandler.getInkActionList().removeAll(toRemove);
         }
 
         for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {

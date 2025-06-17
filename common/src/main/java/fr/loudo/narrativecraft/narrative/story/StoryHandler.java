@@ -213,7 +213,7 @@ public class StoryHandler {
                 }
             }
             save = null;
-            if(currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
+            if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
                 stop();
                 Minecraft.getInstance().player.displayClientMessage(
                         Component.literal("§c" + Translation.message("story.load.scene.fail").getString()),
@@ -330,6 +330,7 @@ public class StoryHandler {
             case WAIT -> inkAction = new WaitInkAction();
             case SUBSCENE -> inkAction = new SubscenePlayInkAction();
             case ANIMATION -> inkAction = new AnimationPlayInkAction();
+            case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
         }
         return inkAction;
     }

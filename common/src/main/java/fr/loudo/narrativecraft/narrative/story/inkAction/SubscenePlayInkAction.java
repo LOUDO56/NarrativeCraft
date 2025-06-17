@@ -28,7 +28,7 @@ public class SubscenePlayInkAction extends InkAction {
     }
 
     @Override
-    public InkResult execute(String[] command) {
+    public InkActionResult execute(String[] command) {
         if(command.length >= 3) {
             name = command[2];
             isLooping = false;
@@ -38,32 +38,31 @@ public class SubscenePlayInkAction extends InkAction {
                 }
             }
             subscene = storyHandler.getPlayerSession().getScene().getSubsceneByName(name);
-            if(subscene != null) {
-                if(command[1].equals("start")) {
-                    subscene.start(storyHandler.getPlayerSession().getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
-                    for(Animation animation : subscene.getAnimationList()) {
-                        storyHandler.getCurrentCharacters().add(animation.getCharacter());
-                    }
-                    storyHandler.getInkActionList().add(this);
-                    sendDebugDetails();
-                } else if(command[1].equals("stop")) {
-                    List<InkAction> toRemove = new ArrayList<>();
-                    for (InkAction inkAction : storyHandler.getInkActionList()) {
-                        if (inkAction instanceof SubscenePlayInkAction action) {
-                            if(action.subscene.getPlaybackList().equals(subscene.getPlaybackList())) {
-                                for(Animation animation : subscene.getAnimationList()) {
-                                    storyHandler.getCurrentCharacters().remove(animation.getCharacter());
-                                }
-                                subscene.stopForce();
-                                toRemove.add(action);
+            if(subscene == null) return InkActionResult.ERROR;
+            if(command[1].equals("start")) {
+                subscene.start(storyHandler.getPlayerSession().getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
+                for(Animation animation : subscene.getAnimationList()) {
+                    storyHandler.getCurrentCharacters().add(animation.getCharacter());
+                }
+                storyHandler.getInkActionList().add(this);
+                sendDebugDetails();
+            } else if(command[1].equals("stop")) {
+                List<InkAction> toRemove = new ArrayList<>();
+                for (InkAction inkAction : storyHandler.getInkActionList()) {
+                    if (inkAction instanceof SubscenePlayInkAction action) {
+                        if(action.subscene.getPlaybackList().equals(subscene.getPlaybackList())) {
+                            for(Animation animation : subscene.getAnimationList()) {
+                                storyHandler.getCurrentCharacters().remove(animation.getCharacter());
                             }
+                            subscene.stopForce();
+                            toRemove.add(action);
                         }
                     }
-                    storyHandler.getInkActionList().removeAll(toRemove);
                 }
+                storyHandler.getInkActionList().removeAll(toRemove);
             }
         }
-        return InkResult.PASS;
+        return InkActionResult.PASS;
     }
 
     @Override

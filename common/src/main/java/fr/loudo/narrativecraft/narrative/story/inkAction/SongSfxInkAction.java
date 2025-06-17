@@ -7,9 +7,7 @@ import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundEventRegistration;
 import net.minecraft.client.sounds.WeighedSoundEvents;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 
@@ -31,7 +29,7 @@ public class SongSfxInkAction extends InkAction {
     }
 
     @Override
-    public InkResult execute(String[] command) {
+    public InkActionResult execute(String[] command) {
         if(command[1].equals("start")) {
             name = command[2];
             loop = false;
@@ -89,7 +87,7 @@ public class SongSfxInkAction extends InkAction {
         }
         sendDebugDetails();
         storyHandler.getInkActionList().add(this);
-        return InkResult.PASS;
+        return InkActionResult.PASS;
     }
 
     public void applyFade() {

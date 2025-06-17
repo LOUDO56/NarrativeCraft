@@ -24,7 +24,7 @@ public class FadeScreenInkAction extends InkAction {
     }
 
     @Override
-    public InkResult execute(String[] command) {
+    public InkActionResult execute(String[] command) {
         fadeCurrentState = StoryHandler.FadeCurrentState.FADE_IN;
         startTime = System.currentTimeMillis();
         fadeIn = 2.0;
@@ -46,7 +46,7 @@ public class FadeScreenInkAction extends InkAction {
         }
         storyHandler.getInkActionList().add(this);
         sendDebugDetails();
-        return InkResult.PASS;
+        return InkActionResult.PASS;
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
