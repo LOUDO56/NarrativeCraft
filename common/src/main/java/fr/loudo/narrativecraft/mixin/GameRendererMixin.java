@@ -11,12 +11,15 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
+import org.joml.Matrix4f;
+import org.joml.Quaternionfc;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(GameRenderer.class)
+@Mixin(value = GameRenderer.class, priority = 2000)
 public class GameRendererMixin {
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
     public void getZoomLevel(CallbackInfoReturnable<Float> callbackInfo) {

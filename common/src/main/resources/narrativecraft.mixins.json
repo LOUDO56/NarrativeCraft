@@ -17,6 +17,7 @@
     "CameraMixin",
     "GameRendererMixin",
     "GuiMixin",
+    "LevelRendererMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",
     "fields.FontFields",

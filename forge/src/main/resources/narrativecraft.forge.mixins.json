@@ -5,8 +5,7 @@
   "compatibilityLevel": "JAVA_18",
   "mixins": [],
   "client": [
-    "GuiMixinForge",
-    "LevelRendererMixin"
+    "GuiMixinForge"
   ],
   "server": [],
   "injectors": {

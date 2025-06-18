@@ -21,10 +21,14 @@ public abstract class Utf8StringMixin {
     }
 
     private static int getMaxTagNameLength(int maxLength) {
-        if(Minecraft.getInstance().isSingleplayer()) {
-            return maxLength == 16 ? 64 : maxLength;
-        } else {
-            return maxLength;
+        Minecraft minecraft = Minecraft.getInstance();
+        if(minecraft != null) {
+            if(minecraft.isSingleplayer()) {
+                return maxLength == 16 ? 64 : maxLength;
+            } else {
+                return maxLength;
+            }
         }
+        return maxLength;
     }
 }

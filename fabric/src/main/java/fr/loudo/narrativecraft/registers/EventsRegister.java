@@ -24,7 +24,6 @@ public class EventsRegister {
         ClientTickEvents.END_CLIENT_TICK.register(OnClientTick::clientTick);
         HudLayerRegistrationCallback.EVENT.register(HudRender::onHudRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
-        WorldRenderEvents.END.register(RenderWorldEvent::onRenderWorld);
     }
 
 }
