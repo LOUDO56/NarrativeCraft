@@ -331,6 +331,7 @@ public class StoryHandler {
             case SUBSCENE -> inkAction = new SubscenePlayInkAction();
             case ANIMATION -> inkAction = new AnimationPlayInkAction();
             case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
+            case WEATHER -> inkAction = new WeatherChangeInkAction();
         }
         return inkAction;
     }

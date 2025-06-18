@@ -54,6 +54,8 @@ public abstract class InkAction {
             return InkTagType.ANIMATION;
         } else if (tag.contains("time add") || tag.contains("time set")) {
             return InkTagType.DAYTIME;
+        } else if (tag.contains("weather")) {
+            return InkTagType.WEATHER;
         } else {
             return null;
         }
@@ -71,7 +73,8 @@ public abstract class InkAction {
         SAVE,
         SUBSCENE,
         ANIMATION,
-        DAYTIME
+        DAYTIME,
+        WEATHER
     }
 
     public enum InkActionResult {

@@ -89,6 +89,7 @@ public class InkTagTranslators {
             case SUBSCENE -> inkAction = new SubscenePlayInkAction(storyHandler);
             case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler);
             case DAYTIME -> inkAction = new ChangeDayTimeInkAction(storyHandler);
+            case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story

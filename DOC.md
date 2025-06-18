@@ -91,3 +91,9 @@ Play animation or subscene on the scene linked to it.
 Change current day time on the world, you can interpolate between 2 ticks to have a great animation.
 
 ``time <set,add> <day,midnight,night,noon,%tick%> [to <day,midnight,night,noon,%tick%> for %time% <second(s), minute(s), hour(s)> [%easing%]]``
+
+## Change weather
+
+Change current weather
+
+``weather set <clear, rain, thunder>``
