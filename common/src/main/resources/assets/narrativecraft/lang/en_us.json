@@ -159,6 +159,8 @@
   "narrativecraft.debug.change_time.one_add": "Added %s to time",
   "narrativecraft.debug.change_time.interpolate": "Changing time from %s to %s for %d seconds",
   "narrativecraft.debug.weather_change": "Weather set to %s",
+  "narrativecraft.debug.minecraft_command_executed": "Minecraft command \"%s\" executed",
+
 
 
 
@@ -184,5 +186,7 @@
   "narrativecraft.validation.no_errors": "The story successfully passed validation! :p",
   "narrativecraft.validation.quick_edit": "Click to quick edit",
   "narrativecraft.validation.change_time.missing_time": "You want to interpolate but you forgot to put a duration e.g. for 3 seconds",
-  "narrativecraft.validation.weather.value": "%s value is not a weather name, only 'clear', 'rain' and 'thunder' are supported."
+  "narrativecraft.validation.weather.value": "%s value is not a weather name, only 'clear', 'rain' and 'thunder' are supported.",
+  "narrativecraft.validation.missing_minecraft_command": "Missing minecraft command."
+
 }

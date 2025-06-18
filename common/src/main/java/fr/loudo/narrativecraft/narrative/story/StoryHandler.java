@@ -332,6 +332,7 @@ public class StoryHandler {
             case ANIMATION -> inkAction = new AnimationPlayInkAction();
             case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
             case WEATHER -> inkAction = new WeatherChangeInkAction();
+            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
         }
         return inkAction;
     }

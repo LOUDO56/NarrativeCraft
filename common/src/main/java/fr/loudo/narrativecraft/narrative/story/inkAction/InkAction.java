@@ -56,6 +56,8 @@ public abstract class InkAction {
             return InkTagType.DAYTIME;
         } else if (tag.contains("weather")) {
             return InkTagType.WEATHER;
+        } else if (tag.contains("command")) {
+            return InkTagType.MINECRAFT_COMMAND;
         } else {
             return null;
         }
@@ -74,7 +76,8 @@ public abstract class InkAction {
         SUBSCENE,
         ANIMATION,
         DAYTIME,
-        WEATHER
+        WEATHER,
+        MINECRAFT_COMMAND
     }
 
     public enum InkActionResult {

@@ -90,6 +90,7 @@ public class InkTagTranslators {
             case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler);
             case DAYTIME -> inkAction = new ChangeDayTimeInkAction(storyHandler);
             case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler);
+            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction(storyHandler);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story
