@@ -118,7 +118,6 @@ public class StoryHandler {
                 save = null;
             }
             isRunning = true;
-            StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, true);
             NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
         } catch (Exception e) {
@@ -220,6 +219,7 @@ public class StoryHandler {
                         false
                 );
             }
+            StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, playerSession.getSoloCam() != null || playerSession.getKeyframeControllerBase() != null);
         } catch (StoryException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {

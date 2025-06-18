@@ -97,3 +97,15 @@ Change current day time on the world, you can interpolate between 2 ticks to hav
 Change current weather
 
 ``weather set <clear, rain, thunder>``
+
+## Execute minecraft command
+
+Execute a minecraft command, custom or vanilla one.
+
+``command %command_value%``
+
+**IMPORTANT**: Let's say you want to execute that command ``text_display ~ ~ ~ {billboard:"center",text:"hello",background:-65536}``
+
+Ink will throw an error because brackets is used to detect variables, to fix this, you need to put ``\`` before a bracket.
+
+Fixed command: ``text_display ~ ~ ~ \{billboard:"center",text:"hello",background:-65536\}``
