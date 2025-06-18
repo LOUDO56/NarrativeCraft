@@ -15,6 +15,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
@@ -24,7 +25,8 @@ public class Dialog {
 
     private final long DIALOG_TRANSITION_TIME = 500L;
     private final Easing easing = Easing.SMOOTH;
-    private final Entity entity;
+    private final Entity entityServer;
+    private Entity entityClient;
 
     private DialogAnimationScrollText dialogAnimationScrollText;
     private DialogAppearAnimation dialogAppearAnimation;
@@ -39,11 +41,11 @@ public class Dialog {
     private Vec3 dialogOffset;
     private double t;
 
-    public Dialog(Entity entity, String text, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
+    public Dialog(Entity entityServer, String text, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
         this.paddingX = paddingX;
         this.paddingY = paddingY;
         this.scale = scale * 0.025f;
-        this.entity = entity;
+        this.entityServer = entityServer;
         dialogBackgroundColor = backgroundColor;
         textDialogColor = textColor;
         dialogOffset = new Vec3(0, 0.8, 0);
@@ -64,6 +66,8 @@ public class Dialog {
     }
 
     public void render(PoseStack poseStack) {
+        this.entityClient = Minecraft.getInstance().level.getEntity(entityServer.getId());
+        if(entityClient == null) return;
         Minecraft minecraft = Minecraft.getInstance();
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
 
@@ -73,7 +77,7 @@ public class Dialog {
             dialogAppearAnimation.play(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation.AppearType.DISAPPEAR : DialogAppearAnimation.AppearType.APPEAR);
         } else {
             acceptNewDialog = true;
-            Vec3 dialogPos = getDialogPosition();
+            Vec3 dialogPos = getDialogInterpolatedPosition();
             poseStack.translate(dialogPos.x, dialogPos.y, dialogPos.z);
             poseStack.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
             float targetScale = scale;
@@ -161,8 +165,8 @@ public class Dialog {
         }
     }
 
-    public Entity getEntity() {
-        return entity;
+    public Entity getEntityServer() {
+        return entityServer;
     }
 
     public float getPaddingX() {
@@ -180,18 +184,30 @@ public class Dialog {
     public Vec3 getEntityPosition() {
         Vec3 camPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         return new Vec3(
-                entity.getX() - camPos.x,
-                entity.getY() + entity.getEyeHeight() - camPos.y,
-                entity.getZ() - camPos.z
+                entityClient.getX() - camPos.x,
+                entityClient.getY() + entityClient.getEyeHeight() - camPos.y,
+                entityClient.getZ() - camPos.z
         );
     }
 
     public Vec3 getDialogPosition() {
         Vec3 camPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         return new Vec3(
-                entity.getX() + dialogOffset.x - camPos.x,
-                entity.getY() + entity.getEyeHeight() + dialogOffset.y - camPos.y,
-                entity.getZ() + dialogOffset.z - camPos.z
+                entityClient.getX() + dialogOffset.x - camPos.x,
+                entityClient.getY() + entityClient.getEyeHeight() + dialogOffset.y - camPos.y,
+                entityClient.getZ() + dialogOffset.z - camPos.z
+        );
+    }
+
+    public Vec3 getDialogInterpolatedPosition() {
+        Vec3 camPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        Vec3 lastPos = new Vec3(entityClient.xOld, entityClient.yOld, entityClient.zOld);
+        Vec3 newPos = entityClient.position();
+        Vec3 interpolatedPos = Mth.lerp(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true), lastPos, newPos);
+        return new Vec3(
+                interpolatedPos.x + dialogOffset.x - camPos.x,
+                interpolatedPos.y + entityClient.getEyeHeight() + dialogOffset.y - camPos.y,
+                interpolatedPos.z + dialogOffset.z - camPos.z
         );
     }
 

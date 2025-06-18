@@ -6,6 +6,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+// Bypass Minecraft 16 characters name limit
 @Mixin(Utf8String.class)
 public abstract class Utf8StringMixin {
 

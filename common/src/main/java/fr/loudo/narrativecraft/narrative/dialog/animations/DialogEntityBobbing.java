@@ -11,7 +11,7 @@ public class DialogEntityBobbing {
     public DialogEntityBobbing(Dialog dialog) {
         this.dialog = dialog;
         this.startTime = System.currentTimeMillis();
-        baseYaw = dialog.getEntity().getYRot();
+        baseYaw = dialog.getEntityServer().getYRot();
     }
 
     public void updateLookDirection() {
@@ -25,9 +25,9 @@ public class DialogEntityBobbing {
         float pitch = (float)(Math.sin(time * speed) * pitchAmplitude);
         float yaw = (float)(Math.cos(time * speed) * yawAmplitude);
 
-        dialog.getEntity().setXRot(pitch);
-        dialog.getEntity().setYHeadRot(baseYaw + yaw);
-        dialog.getEntity().setYRot(baseYaw + yaw);
+        dialog.getEntityServer().setXRot(pitch);
+        dialog.getEntityServer().setYHeadRot(baseYaw + yaw);
+        dialog.getEntityServer().setYRot(baseYaw + yaw);
     }
 
 }

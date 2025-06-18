@@ -208,7 +208,7 @@ public class TestCommand {
         Dialog dialog = NarrativeCraftMod.getInstance().getTestDialog();
         if(dialog != null) {
             if(newDialog) {
-                dialog.getEntity().remove(Entity.RemovalReason.KILLED);
+                dialog.getEntityServer().remove(Entity.RemovalReason.KILLED);
             } else {
                 dialog.setTextDialogColor(textColor);
                 dialog.setDialogBackgroundColor(bcColor);
