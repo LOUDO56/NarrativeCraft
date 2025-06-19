@@ -35,6 +35,7 @@ public class CharacterStoryData {
     private String skinName;
     private double x, y, z;
     private byte entityByte;
+    private byte livingEntityByte;
     private float pitch, yaw;
     private float yBodyRot;
     private String pose;
@@ -53,7 +54,9 @@ public class CharacterStoryData {
         yBodyRot = livingEntity.yBodyRot;
         pose = livingEntity.getPose().name();
         EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityByte = livingEntity.getEntityData().get(entityFlagByte);
+        livingEntityByte = livingEntity.getEntityData().get(livingEntityFlagByte);
         initItem(livingEntity);
     }
 
@@ -69,7 +72,9 @@ public class CharacterStoryData {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         pose = localPlayer.getPose().name();
         EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityByte = localPlayer.getEntityData().get(entityFlagByte);
+        livingEntityByte = localPlayer.getEntityData().get(livingEntityFlagByte);
         initItem(localPlayer);
     }
 
@@ -122,8 +127,10 @@ public class CharacterStoryData {
             EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
             entityData.set(ENTITY_LAYER, (byte) 0b01111111);
         }
-        EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        entityData.set(LIVING_ENTITY_BYTE_MASK, entityByte);
+        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityData.set(ENTITY_BYTE_MASK, entityByte);
+        EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
+        entityData.set(LIVING_ENTITY_BYTE_MASK, livingEntityByte);
         serverLevel.addFreshEntity(livingEntity);
         if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
             characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
@@ -198,6 +205,14 @@ public class CharacterStoryData {
 
     public void setEntityByte(byte entityByte) {
         this.entityByte = entityByte;
+    }
+
+    public byte getLivingEntityByte() {
+        return livingEntityByte;
+    }
+
+    public void setLivingEntityByte(byte livingEntityByte) {
+        this.livingEntityByte = livingEntityByte;
     }
 
     public void setPitch(float pitch) {

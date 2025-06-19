@@ -236,7 +236,7 @@ public class ChapterManager {
                                 characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStoryData.getCharacterStory().getName());
                                 characterStory.getCharacterSkinController().setCurrentSkin(characterStory.getCharacterSkinController().getSkinFile(characterStoryData.getSkinName()));
                             } else if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.NPC) {
-                                characterStory = scene.getNpc(scene.getName());
+                                characterStory = scene.getNpc(characterStoryData.getCharacterStory().getName());
                             }
                             if(characterStory != null) {
                                 characterStoryData.setCharacterStory(characterStory);

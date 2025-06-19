@@ -105,8 +105,8 @@
   "narrativecraft.screen.characters_manager.age": "Age",
   "narrativecraft.screen.npc_manager.title": "Scene %s Npc Menu",
   "narrativecraft.screen.scene_record.title": "Scene %s record menu",
-  "narrativecraft.screen.camera_angle_character.change_skin": "Change Skin",
-  "narrativecraft.screen.camera_angle_character.change_pose": "Change Pose",
+  "narrativecraft.screen.camera_angle_character.change_skin": "Skin",
+  "narrativecraft.screen.camera_angle_character.change_pose": "Pose",
   "narrativecraft.screen.camera_angle_character.add.fail": "You cannot add two instances of the same character.",
   "narrativecraft.screen.change_skin_link.title": "Change skin of character %s",
 
