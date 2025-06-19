@@ -92,6 +92,8 @@
   "narrativecraft.screen.camera_angles_manager.update.failed": "Couldn't update camera angles %s. Please check camera_angles.json of your scene exists.",
   "narrativecraft.screen.camera_angles_manager.add.title": "Add a camera angle group to scene %s",
   "narrativecraft.screen.camera_angles_manager.edit.title": "Edit camera angle group %s from scene %s",
+  "narrativecraft.screen.camera_angle.add": "Add a camera",
+  "narrativecraft.screen.camera_angle.edit": "Edit %s camera name",
   "narrativecraft.screen.selector.cutscene.title": "%s selector for cutscene %s",
   "narrativecraft.screen.selector.subscene.title": "%s selector for subscene %s",
   "narrativecraft.screen.characters_manager.add.already_exists": "This characters already exists.",

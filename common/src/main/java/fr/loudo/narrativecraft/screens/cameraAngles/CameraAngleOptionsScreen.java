@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
@@ -56,6 +57,12 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
             this.addRenderableWidget(leftKeyframeButton);
         }
         this.addRenderableWidget(closeButton);
+        currentX -= INITIAL_POS_X + gap;
+        Button editButton = Button.builder(ImageFontConstants.EDIT, button -> {
+            CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController, (CameraAngle) keyframe);
+            minecraft.setScreen(screen);
+        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(editButton);
     }
 
     @Override
