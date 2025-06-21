@@ -12,6 +12,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+//TODO: fix interpolation tail being out of box
 public class DialogueTail {
 
     private final Dialog dialog;

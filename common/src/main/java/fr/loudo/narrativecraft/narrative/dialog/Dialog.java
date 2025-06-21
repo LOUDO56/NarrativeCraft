@@ -15,8 +15,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
@@ -38,7 +40,7 @@ public class Dialog {
     private long startTime, pauseStartTime;
     private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused;
     private int dialogBackgroundColor, textDialogColor;
-    private Vec3 dialogOffset;
+    private Vec2 dialogOffset;
     private double t;
 
     public Dialog(Entity entityServer, String text, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
@@ -48,7 +50,7 @@ public class Dialog {
         this.entityServer = entityServer;
         dialogBackgroundColor = backgroundColor;
         textDialogColor = textColor;
-        dialogOffset = new Vec3(0, 0.8, 0);
+        dialogOffset = new Vec2(1f, -0.5f);
         dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth, this);
         dialogAppearAnimation = new DialogAppearAnimation(this);
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
@@ -97,8 +99,16 @@ public class Dialog {
                 }
             }
         }
+        DialogOffsetSide dialogOffsetSide = getDialogOffsetSide();
 
-        drawDialogBackground(poseStack, bufferSource);
+        drawDialogBackground(poseStack, bufferSource, dialogOffsetSide);
+
+        switch (dialogOffsetSide) {
+            case RIGHT -> poseStack.translate(getInterpolatedWidth(), 0, 0);
+            case LEFT -> poseStack.translate(-getInterpolatedWidth(), 0, 0);
+            case DOWN -> poseStack.translate(0, getHeight(), 0);
+        }
+
         dialogueTail.draw(poseStack, bufferSource, minecraft.gameRenderer.getMainCamera());
 
 
@@ -115,7 +125,7 @@ public class Dialog {
         poseStack.popPose();
     }
 
-    private void drawDialogBackground(PoseStack poseStack, MultiBufferSource bufferSource) {
+    private void drawDialogBackground(PoseStack poseStack, MultiBufferSource bufferSource, DialogOffsetSide dialogOffsetSide) {
 
         Minecraft minecraft = Minecraft.getInstance();
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());
@@ -145,11 +155,64 @@ public class Dialog {
             }
         }
 
-        vertexConsumer.addVertex(matrix4f, -width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, width, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, -width, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+        switch (dialogOffsetSide) {
+            case UP -> {
+                vertexConsumer.addVertex(matrix4f, -width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, -width, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+            }
+            case RIGHT -> {
+                vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+            }
+            case LEFT -> {
+                vertexConsumer.addVertex(matrix4f, -width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, -width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+            }
+            case DOWN -> {
+                vertexConsumer.addVertex(matrix4f, -width, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                vertexConsumer.addVertex(matrix4f, -width, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+            }
+        }
+    }
 
+    public DialogOffsetSide getDialogOffsetSide() {
+        Vec3 entityPos = getEntityPosition();
+        Vec3 dialogPos = getDialogPosition();
+
+        double offsetX = 0;
+        double offsetY = dialogPos.y - entityPos.y;
+
+        Direction direction = Minecraft.getInstance().player.getDirection();
+
+        if (direction == Direction.EAST) {
+            offsetX = dialogPos.z - entityPos.z;
+        } else if (direction == Direction.WEST) {
+            offsetX = entityPos.z - dialogPos.z;
+        } else if (direction == Direction.NORTH) {
+            offsetX = dialogPos.x - entityPos.x;
+        } else if (direction == Direction.SOUTH) {
+            offsetX = entityPos.x - dialogPos.x;
+        }
+
+
+        if(offsetY >= 0 && offsetX >= -0.2 && offsetX <= 0.2) {
+            return DialogOffsetSide.UP;
+        } else if (offsetY <= 0 && offsetX >= -0.2 && offsetX <= 0.2) {
+            return DialogOffsetSide.DOWN;
+        } else if (offsetX <= 0.2) {
+            return DialogOffsetSide.LEFT;
+        } else if (offsetX >= 0.2) {
+            return DialogOffsetSide.RIGHT;
+        }
+        return null;
     }
 
     public void reset() {
@@ -177,7 +240,7 @@ public class Dialog {
         return paddingY;
     }
 
-    public Vec3 getDialogOffset() {
+    public Vec2 getDialogOffset() {
         return dialogOffset;
     }
 
@@ -192,10 +255,19 @@ public class Dialog {
 
     public Vec3 getDialogPosition() {
         Vec3 camPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        double offsetX = 0;
+        double offsetZ = 0;
+
+        switch (Minecraft.getInstance().player.getDirection()) {
+            case EAST -> offsetZ = dialogOffset.x;
+            case WEST -> offsetZ = -dialogOffset.x;
+            case SOUTH -> offsetX = -dialogOffset.x;
+            case NORTH -> offsetX = dialogOffset.x;
+        }
         return new Vec3(
-                entityClient.getX() + dialogOffset.x - camPos.x,
+                entityClient.getX() + offsetX - camPos.x,
                 entityClient.getY() + entityClient.getEyeHeight() + dialogOffset.y - camPos.y,
-                entityClient.getZ() + dialogOffset.z - camPos.z
+                entityClient.getZ() + offsetZ - camPos.z
         );
     }
 
@@ -204,10 +276,19 @@ public class Dialog {
         Vec3 lastPos = new Vec3(entityClient.xOld, entityClient.yOld, entityClient.zOld);
         Vec3 newPos = entityClient.position();
         Vec3 interpolatedPos = Mth.lerp(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true), lastPos, newPos);
+        double offsetX = 0;
+        double offsetZ = 0;
+
+        switch (Minecraft.getInstance().player.getDirection()) {
+            case EAST -> offsetZ = dialogOffset.x;
+            case WEST -> offsetZ = -dialogOffset.x;
+            case SOUTH -> offsetX = -dialogOffset.x;
+            case NORTH -> offsetX = dialogOffset.x;
+        }
         return new Vec3(
-                interpolatedPos.x + dialogOffset.x - camPos.x,
+                interpolatedPos.x + offsetX - camPos.x,
                 interpolatedPos.y + entityClient.getEyeHeight() + dialogOffset.y - camPos.y,
-                interpolatedPos.z + dialogOffset.z - camPos.z
+                interpolatedPos.z + offsetZ - camPos.z
         );
     }
 
@@ -299,5 +380,12 @@ public class Dialog {
     public void endDialogAndDontSkip() {
         unSkippable = true;
         endDialog();
+    }
+
+    public enum DialogOffsetSide {
+        UP,
+        LEFT,
+        RIGHT,
+        DOWN
     }
 }
