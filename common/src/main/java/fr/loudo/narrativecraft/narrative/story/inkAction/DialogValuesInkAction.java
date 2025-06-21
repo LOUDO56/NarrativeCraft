@@ -102,6 +102,32 @@ public class DialogValuesInkAction extends InkAction {
                     return InkActionResult.ERROR;
                 }
             }
+            case "gap" -> {
+                try {
+                    float gap = Integer.parseInt(command[2]);
+                    dialog.setGap(gap);
+                    value = String.valueOf(gap);
+                } catch (RuntimeException e) {
+                    return InkActionResult.ERROR;
+                }
+            }
+            case "letterSpacing" -> {
+                try {
+                    float letterSpacing = Integer.parseInt(command[2]);
+                    dialog.setLetterSpacing(letterSpacing);
+                    value = String.valueOf(letterSpacing);
+                } catch (RuntimeException e) {
+                    return InkActionResult.ERROR;
+                }
+            }
+            case "unSkippable" -> {
+                try {
+                    dialog.setUnSkippable(true);
+                    value = "true";
+                } catch (RuntimeException e) {
+                    return InkActionResult.ERROR;
+                }
+            }
         }
         sendDebugDetails();
         return InkActionResult.PASS;
@@ -120,7 +146,7 @@ public class DialogValuesInkAction extends InkAction {
     @Override
     public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
         if(command.length == 1) return new ErrorLine(line, scene, Translation.message("validation.missing_values").getString(), lineText);
-        List<String> parameters = List.of("offset", "scale", "padding", "width", "textColor", "backgroundColor");
+        List<String> parameters = List.of("offset", "scale", "padding", "width", "textColor", "backgroundColor", "gap", "letterSpacing", "unSkippable");
         if(!parameters.contains(command[1])) {
             return new ErrorLine(
                     line,

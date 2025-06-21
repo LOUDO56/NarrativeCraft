@@ -126,7 +126,7 @@ public class Dialog {
         }
 
         bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
-        if(dialogAnimationScrollText.isFinished() && !endDialog) {
+        if(dialogAnimationScrollText.isFinished() && !endDialog && !unSkippable) {
             dialogAnimationArrowSkip.render(poseStack, minecraft, bufferSource);
         }
 
@@ -425,6 +425,10 @@ public class Dialog {
 
     public boolean isUnSkippable() {
         return unSkippable;
+    }
+
+    public void setUnSkippable(boolean unSkippable) {
+        this.unSkippable = unSkippable;
     }
 
     public float getInterpolatedWidth() {
