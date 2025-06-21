@@ -282,14 +282,21 @@ public class StoryHandler {
 
     public static List<InkAction.ErrorLine> validateStory() {
         List<InkAction.ErrorLine> errorLineList = new ArrayList<>();
-        for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
-            for(Scene scene : chapter.getSceneList()) {
+        Pattern inlineTagPattern = Pattern.compile("#[^#]*?(?=\\s*#|$)");
+        Pattern commentPattern = Pattern.compile("^\\s*//");
+
+        for (Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
+            for (Scene scene : chapter.getSceneList()) {
                 List<String> lines = NarrativeCraftFile.readSceneLines(scene);
                 for (int i = 0; i < lines.size(); i++) {
                     String line = lines.get(i);
-                    line = line.replaceFirst("^\\s+", "");
                     String rawLine = line;
-                    if(i + 1 == 2 && !line.equals("# on enter")) {
+
+                    if (commentPattern.matcher(line).find()) continue;
+
+                    line = line.replaceFirst("^\\s+", "");
+
+                    if (i + 1 == 2 && !line.equals("# on enter")) {
                         errorLineList.add(
                                 new InkAction.ErrorLine(
                                         i + 1,
@@ -300,15 +307,21 @@ public class StoryHandler {
                         );
                         break;
                     }
-                    if(!line.isEmpty() && line.charAt(0) == '#') {
-                        line = line.substring(2);
-                        String[] command = line.split(" ");
-                        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(line);
-                        if(tagType != null) {
+
+                    Matcher matcher = inlineTagPattern.matcher(line);
+                    while (matcher.find()) {
+                        String tag = matcher.group().trim();
+                        if (tag.startsWith("#")) {
+                            tag = tag.substring(1).trim();
+                        }
+
+                        String[] command = tag.split(" ");
+                        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
+                        if (tagType != null) {
                             InkAction inkAction = getInkAction(tagType);
-                            if(inkAction != null) {
-                                InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, rawLine, scene);
-                                if(errorLine != null) {
+                            if (inkAction != null) {
+                                InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, matcher.group(), scene);
+                                if (errorLine != null) {
                                     errorLineList.add(errorLine);
                                 }
                             }
@@ -319,6 +332,9 @@ public class StoryHandler {
         }
         return errorLineList;
     }
+
+
+
 
     private static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
         InkAction inkAction = null;
@@ -333,6 +349,7 @@ public class StoryHandler {
             case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
             case WEATHER -> inkAction = new WeatherChangeInkAction();
             case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
+            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
         }
         return inkAction;
     }
