@@ -162,11 +162,11 @@
   "narrativecraft.debug.change_time.interpolate": "Changing time from %s to %s for %d seconds",
   "narrativecraft.debug.weather_change": "Weather set to %s",
   "narrativecraft.debug.minecraft_command_executed": "Minecraft command \"%s\" executed",
-
-
+  "narrativecraft.debug.dialog_values": "Dialog parameter %s new value set to %s",
 
 
   "narrativecraft.validation.missing_name": "Missing name.",
+  "narrativecraft.validation.missing_values": "Missing values.",
   "narrativecraft.validation.cutscene": "Cutscene %s doesn't exists.",
   "narrativecraft.validation.animation": "Animation %s doesn't exists.",
   "narrativecraft.validation.subscene": "Subscene %s doesn't exists.",
@@ -176,6 +176,7 @@
   "narrativecraft.validation.camera_angle_child": "Camera angle child %s of parent %s doesn't exists.",
   "narrativecraft.validation.number": "%s value is not a valid number.",
   "narrativecraft.validation.easing": "%s value is not a valid easing name. available easing are: %s",
+  "narrativecraft.validation.dialog": "%s value is not a valid dialog parameter name. available dialog parameters are: %s",
   "narrativecraft.validation.missing_sound_name": "Missing sound name.",
   "narrativecraft.validation.sound_loop": "Invalid value for the loop. True corresponds to enable looping, false corresponds to not loop the sound.",
   "narrativecraft.validation.sound_start_fade_in": "This effect does not apply for starting a song, only \"fadein\" is available ",

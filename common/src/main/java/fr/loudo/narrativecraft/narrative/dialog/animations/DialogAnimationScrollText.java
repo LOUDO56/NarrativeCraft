@@ -75,7 +75,7 @@ public class DialogAnimationScrollText {
         }
     }
 
-    public void show(PoseStack poseStack, MultiBufferSource bufferSource) {
+    public void render(PoseStack poseStack, MultiBufferSource bufferSource) {
         Minecraft client = Minecraft.getInstance();
         long now = System.currentTimeMillis();
         int totalLetters = lines.stream().mapToInt(String::length).sum();

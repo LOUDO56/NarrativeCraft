@@ -24,7 +24,7 @@ public class DialogAppearAnimation {
         isPaused = false;
     }
 
-    public void play(PoseStack poseStack, Minecraft minecraft, AppearType appearType) {
+    public void render(PoseStack poseStack, Minecraft minecraft, AppearType appearType) {
         long currentTime = System.currentTimeMillis();
 
         if(minecraft.isPaused() && !isPaused) {

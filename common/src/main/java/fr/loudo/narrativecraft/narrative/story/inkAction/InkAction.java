@@ -58,6 +58,8 @@ public abstract class InkAction {
             return InkTagType.WEATHER;
         } else if (tag.contains("command")) {
             return InkTagType.MINECRAFT_COMMAND;
+        } else if (tag.contains("dialog")) {
+            return InkTagType.DIALOG_VALUES;
         } else {
             return null;
         }
@@ -77,7 +79,8 @@ public abstract class InkAction {
         ANIMATION,
         DAYTIME,
         WEATHER,
-        MINECRAFT_COMMAND
+        MINECRAFT_COMMAND,
+        DIALOG_VALUES
     }
 
     public enum InkActionResult {

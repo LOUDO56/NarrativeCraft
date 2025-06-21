@@ -30,11 +30,11 @@ public class Dialog {
     private final Entity entityServer;
     private Entity entityClient;
 
-    private DialogAnimationScrollText dialogAnimationScrollText;
-    private DialogAppearAnimation dialogAppearAnimation;
-    private DialogAnimationArrowSkip dialogAnimationArrowSkip;
-    private DialogueTail dialogueTail;
-    private DialogEntityBobbing dialogEntityBobbing;
+    private final DialogAnimationScrollText dialogAnimationScrollText;
+    private final DialogAppearAnimation dialogAppearAnimation;
+    private final DialogAnimationArrowSkip dialogAnimationArrowSkip;
+    private final DialogueTail dialogueTail;
+    private final DialogEntityBobbing dialogEntityBobbing;
 
     private float paddingX, paddingY, scale, interpolatedWidth, interpolatedHeight, oldWidth, oldHeight, oldScale;
     private long startTime, pauseStartTime;
@@ -76,17 +76,17 @@ public class Dialog {
         poseStack.pushPose();
 
         if(dialogAppearAnimation.isAnimating()) {
-            dialogAppearAnimation.play(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation.AppearType.DISAPPEAR : DialogAppearAnimation.AppearType.APPEAR);
+            dialogAppearAnimation.render(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation.AppearType.DISAPPEAR : DialogAppearAnimation.AppearType.APPEAR);
         } else {
-            acceptNewDialog = true;
             Vec3 dialogPos = getDialogInterpolatedPosition();
             poseStack.translate(dialogPos.x, dialogPos.y, dialogPos.z);
             poseStack.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
             float targetScale = scale;
-            if(acceptNewDialog && t < 1.0) {
+            if(acceptNewDialog && oldScale != scale) {
                 targetScale = (float) MathUtils.lerp(oldScale, targetScale, t);
             }
             poseStack.scale(targetScale, -targetScale, targetScale);
+            acceptNewDialog = true;
         }
 
         if (!dialogAppearAnimation.isAnimating() && endDialog && !dialogEnded) {
@@ -103,17 +103,24 @@ public class Dialog {
 
         drawDialogBackground(poseStack, bufferSource, dialogOffsetSide);
 
+        double diffY = getDialogPosition().y - getEntityPosition().y;
+
         switch (dialogOffsetSide) {
-            case RIGHT -> poseStack.translate(getInterpolatedWidth(), 0, 0);
-            case LEFT -> poseStack.translate(-getInterpolatedWidth(), 0, 0);
+            case RIGHT -> poseStack.translate(getInterpolatedWidth(), diffY < 0 ? getHeight() : 0, 0);
+            case LEFT -> poseStack.translate(-getInterpolatedWidth(), diffY < 0 ? getHeight() : 0, 0);
             case DOWN -> poseStack.translate(0, getHeight(), 0);
         }
 
         dialogueTail.draw(poseStack, bufferSource, minecraft.gameRenderer.getMainCamera());
 
+        if(diffY == 0) {
+            switch (dialogOffsetSide) {
+                case RIGHT, LEFT -> poseStack.translate(0, getHeight() / 2, 0);
+            }
+        }
 
         if(!dialogAppearAnimation.isAnimating() && t >= 1.0) {
-            dialogAnimationScrollText.show(poseStack, bufferSource);
+            dialogAnimationScrollText.render(poseStack, bufferSource);
         }
 
         bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
@@ -146,14 +153,20 @@ public class Dialog {
             oldHeight = height;
             oldScale = scale;
         } else {
+            if(!isPaused) {
+                if(oldHeight != height || oldWidth != width) {
+                    t = Easing.getInterpolation(easing, Math.min(1, (double) (System.currentTimeMillis() - startTime) / DIALOG_TRANSITION_TIME));
+                } else {
+                    t = 1.0;
+                }
+            }
             interpolatedWidth = (float) MathUtils.lerp(oldWidth, width, t);
             interpolatedHeight = (float) MathUtils.lerp(oldHeight, height, t);
             width = interpolatedWidth;
             height = interpolatedHeight;
-            if(!isPaused) {
-                t = Easing.getInterpolation(easing, Math.min(1, (double) (System.currentTimeMillis() - startTime) / DIALOG_TRANSITION_TIME));
-            }
         }
+
+        double diffY = getDialogPosition().y - getEntityPosition().y;
 
         switch (dialogOffsetSide) {
             case UP -> {
@@ -163,16 +176,40 @@ public class Dialog {
                 vertexConsumer.addVertex(matrix4f, -width, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
             }
             case RIGHT -> {
-                vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                if(diffY < 0) {
+                    vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                } else if(diffY > 0) {
+                    vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                } else {
+                    vertexConsumer.addVertex(matrix4f, 0, -height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, width * 2, -height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                }
             }
             case LEFT -> {
-                vertexConsumer.addVertex(matrix4f, -width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
-                vertexConsumer.addVertex(matrix4f, -width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                if(diffY < 0) {
+                    vertexConsumer.addVertex(matrix4f, -width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, -width * 2, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                } else if(diffY > 0) {
+                    vertexConsumer.addVertex(matrix4f, 0, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, -width * 2, -height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, -width * 2, 0, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                } else {
+                    vertexConsumer.addVertex(matrix4f, 0, height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, 0, -height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, -width * 2, -height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                    vertexConsumer.addVertex(matrix4f, -width * 2, height / 2, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
+                }
             }
             case DOWN -> {
                 vertexConsumer.addVertex(matrix4f, -width, height, 0).setColor(dialogBackgroundColor).setLight(LightTexture.FULL_BRIGHT);
@@ -320,6 +357,10 @@ public class Dialog {
         return scale;
     }
 
+    public void setOldScale(float oldScale) {
+        this.oldScale = oldScale * 0.025f;
+    }
+
     public int getDialogBackgroundColor() {
         return dialogBackgroundColor;
     }
@@ -334,6 +375,10 @@ public class Dialog {
 
     public int getTextDialogColor() {
         return textDialogColor;
+    }
+
+    public boolean isAcceptNewDialog() {
+        return acceptNewDialog;
     }
 
     public void setTextDialogColor(int textDialogColor) {
@@ -380,6 +425,10 @@ public class Dialog {
     public void endDialogAndDontSkip() {
         unSkippable = true;
         endDialog();
+    }
+
+    public void setDialogOffset(Vec2 dialogOffset) {
+        this.dialogOffset = dialogOffset;
     }
 
     public enum DialogOffsetSide {
