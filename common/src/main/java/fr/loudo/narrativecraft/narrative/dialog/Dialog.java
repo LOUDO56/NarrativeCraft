@@ -27,8 +27,9 @@ public class Dialog {
 
     private final long DIALOG_TRANSITION_TIME = 500L;
     private final Easing easing = Easing.SMOOTH;
-    private final Entity entityServer;
-    private Entity entityClient;
+    private transient Entity entityServer;
+    private transient Entity entityClient;
+    private String characterName;
 
     private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
@@ -38,7 +39,7 @@ public class Dialog {
 
     private float paddingX, paddingY, scale, interpolatedWidth, interpolatedHeight, oldWidth, oldHeight, oldScale;
     private long startTime, pauseStartTime;
-    private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused;
+    private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused, instantSpawn;
     private int dialogBackgroundColor, textDialogColor;
     private Vec2 dialogOffset;
     private double t;
@@ -65,6 +66,7 @@ public class Dialog {
         unSkippable = false;
         endDialog = false;
         dialogEnded = false;
+        instantSpawn = false;
     }
 
     public void render(PoseStack poseStack) {
@@ -75,14 +77,14 @@ public class Dialog {
 
         poseStack.pushPose();
 
-        if(dialogAppearAnimation.isAnimating()) {
+        if(dialogAppearAnimation.isAnimating() && !instantSpawn) {
             dialogAppearAnimation.render(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation.AppearType.DISAPPEAR : DialogAppearAnimation.AppearType.APPEAR);
         } else {
             Vec3 dialogPos = getDialogInterpolatedPosition();
             poseStack.translate(dialogPos.x, dialogPos.y, dialogPos.z);
             poseStack.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
             float targetScale = scale;
-            if(acceptNewDialog && oldScale != scale) {
+            if(!instantSpawn && acceptNewDialog && oldScale != scale) {
                 targetScale = (float) MathUtils.lerp(oldScale, targetScale, t);
             }
             poseStack.scale(targetScale, -targetScale, targetScale);
@@ -154,7 +156,7 @@ public class Dialog {
             oldScale = scale;
         } else {
             if(!isPaused) {
-                if(oldHeight != height || oldWidth != width) {
+                if(!instantSpawn && (oldHeight != height || oldWidth != width)) {
                     t = Easing.getInterpolation(easing, Math.min(1, (double) (System.currentTimeMillis() - startTime) / DIALOG_TRANSITION_TIME));
                 } else {
                     t = 1.0;
@@ -269,6 +271,18 @@ public class Dialog {
         return entityServer;
     }
 
+    public void setEntityServer(Entity entityServer) {
+        this.entityServer = entityServer;
+    }
+
+    public void setCharacterName(String characterName) {
+        this.characterName = characterName;
+    }
+
+    public String getCharacterName() {
+        return characterName;
+    }
+
     public float getPaddingX() {
         return paddingX;
     }
@@ -329,6 +343,10 @@ public class Dialog {
         );
     }
 
+    public DialogAppearAnimation getDialogAppearAnimation() {
+        return dialogAppearAnimation;
+    }
+
     public void setPaddingX(float paddingX) {
         this.paddingX = paddingX;
     }
@@ -381,6 +399,10 @@ public class Dialog {
         return acceptNewDialog;
     }
 
+    public void setAcceptNewDialog(boolean acceptNewDialog) {
+        this.acceptNewDialog = acceptNewDialog;
+    }
+
     public void setTextDialogColor(int textDialogColor) {
         this.textDialogColor = textDialogColor;
     }
@@ -427,9 +449,22 @@ public class Dialog {
         endDialog();
     }
 
+    public boolean isInstantSpawn() {
+        return instantSpawn;
+    }
+
+    public void setInstantSpawn(boolean instantSpawn) {
+        if(instantSpawn) {
+            dialogAppearAnimation.setT(1);
+            t = 1.0;
+        }
+        this.instantSpawn = instantSpawn;
+    }
+
     public void setDialogOffset(Vec2 dialogOffset) {
         this.dialogOffset = dialogOffset;
     }
+
 
     public enum DialogOffsetSide {
         UP,

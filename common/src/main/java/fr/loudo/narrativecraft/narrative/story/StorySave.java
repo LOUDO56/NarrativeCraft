@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
@@ -16,6 +17,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.phys.Vec2;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class StorySave {
     private final KeyframeCoordinate soloCam;
     private final String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
+    private DialogSaveData dialogSaveData;
     public static long startTimeSaveIcon;
 
     public StorySave(StoryHandler storyHandler) {
@@ -45,6 +48,23 @@ public class StorySave {
             inkSave = storyHandler.getStory().getState().toJson();
             chapterIndex = playerSession.getChapter().getIndex();
             sceneName = playerSession.getScene().getName();
+            Dialog dialog = storyHandler.getCurrentDialogBox();
+            if(dialog != null) {
+                dialogSaveData = new DialogSaveData(
+                        dialog.getCharacterName(),
+                        storyHandler.getCurrentDialog(),
+                        dialog.getDialogOffset(),
+                        dialog.getTextDialogColor(),
+                        dialog.getDialogBackgroundColor(),
+                        dialog.getPaddingX(),
+                        dialog.getPaddingY(),
+                        dialog.getScale(),
+                        dialog.getDialogAnimationScrollText().getLetterSpacing(),
+                        dialog.getDialogAnimationScrollText().getGap(),
+                        (int) dialog.getWidth()
+                );
+            }
+
 
             for(InkAction inkAction : storyHandler.getInkActionList()) {
                 if(inkAction instanceof SubscenePlayInkAction action) {
@@ -155,6 +175,10 @@ public class StorySave {
         return sceneName;
     }
 
+    public DialogSaveData getDialogSaveData() {
+        return dialogSaveData;
+    }
+
     public static class AnimationInfo {
         private String name;
         private boolean wasLooping;
@@ -188,6 +212,78 @@ public class StorySave {
 
         public boolean wasLooping() {
             return wasLooping;
+        }
+    }
+
+    public static class DialogSaveData {
+        private final String characterName;
+        private final String text;
+        private final Vec2 offset;
+        private final int textColor;
+        private final int backgroundColor;
+        private final float paddingX;
+        private final float paddingY;
+        private final float scale ;
+        private final float letterSpacing;
+        private final float gap;
+        private final int maxWidth;
+
+        public DialogSaveData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
+            this.characterName = characterName;
+            this.text = text;
+            this.offset = offset;
+            this.textColor = textColor;
+            this.backgroundColor = backgroundColor;
+            this.paddingX = paddingX;
+            this.paddingY = paddingY;
+            this.scale = scale;
+            this.letterSpacing = letterSpacing;
+            this.gap = gap;
+            this.maxWidth = maxWidth;
+        }
+
+        public Vec2 getOffset() {
+            return offset;
+        }
+
+        public String getCharacterName() {
+            return characterName;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public int getTextColor() {
+            return textColor;
+        }
+
+        public int getBackgroundColor() {
+            return backgroundColor;
+        }
+
+        public float getPaddingX() {
+            return paddingX;
+        }
+
+        public float getPaddingY() {
+            return paddingY;
+        }
+
+        public float getScale() {
+            return scale / 0.025f;
+        }
+
+        public float getLetterSpacing() {
+            return letterSpacing;
+        }
+
+        public float getGap() {
+            return gap;
+        }
+
+        public int getMaxWidth() {
+            return maxWidth;
         }
     }
 }

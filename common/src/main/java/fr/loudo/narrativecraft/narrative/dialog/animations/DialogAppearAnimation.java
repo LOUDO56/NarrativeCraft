@@ -11,7 +11,7 @@ public class DialogAppearAnimation {
 
     private final long APPEAR_TIME = 200L;
 
-    private Dialog dialog;
+    private final Dialog dialog;
     private long startTime, pauseStartTime;
     private boolean isPaused;
     private double t;
@@ -75,6 +75,10 @@ public class DialogAppearAnimation {
     public void reset() {
         startTime = System.currentTimeMillis();
         t = 0;
+    }
+
+    public void setT(int t) {
+        this.t = t;
     }
 
     public enum AppearType {

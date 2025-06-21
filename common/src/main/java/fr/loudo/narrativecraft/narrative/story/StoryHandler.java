@@ -28,6 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
 import org.jetbrains.annotations.Nullable;
 
@@ -198,6 +199,33 @@ public class StoryHandler {
                     }
                     inkActionList.add(new SubscenePlayInkAction(this, subscene));
                 }
+                if(save.getDialogSaveData() != null) {
+                    StorySave.DialogSaveData dialogSaveData = save.getDialogSaveData();
+                    Entity entity = null;
+                    for(CharacterStory characterStory : currentCharacters) {
+                        if(characterStory.getName().equals(dialogSaveData.getCharacterName())) {
+                            entity = characterStory.getEntity();
+                        }
+                    }
+                    currentCharacterTalking = dialogSaveData.getCharacterName();
+                    currentDialog = dialogSaveData.getText();
+                    currentDialogBox = new Dialog(
+                            entity,
+                            dialogSaveData.getText(),
+                            dialogSaveData.getTextColor(),
+                            dialogSaveData.getBackgroundColor(),
+                            dialogSaveData.getPaddingX(),
+                            dialogSaveData.getPaddingY(),
+                            dialogSaveData.getScale(),
+                            dialogSaveData.getLetterSpacing(),
+                            dialogSaveData.getGap(),
+                            dialogSaveData.getMaxWidth()
+                    );
+                    currentDialogBox.setInstantSpawn(true);
+                    currentDialogBox.setDialogOffset(dialogSaveData.getOffset());
+                    currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
+                    showDialog();
+                }
             } else {
                 currentDialog = story.Continue();
             }
@@ -266,7 +294,6 @@ public class StoryHandler {
                         .filter(characterStory -> characterStory.getName().equalsIgnoreCase(characterName))
                         .findFirst()
                         .orElseThrow(() -> new RuntimeException("Character not found: " + characterName));
-
                 currentDialogBox = new Dialog(
                         currentCharacter.getEntity(),
                         parsed.cleanedText,
@@ -274,6 +301,7 @@ public class StoryHandler {
                         4, 0.8F, 0.1F, 10,
                         90
                 );
+                currentDialogBox.setCharacterName(currentCharacter.getName());
             }
             currentCharacterTalking = characterName;
         }
@@ -506,6 +534,10 @@ public class StoryHandler {
 
     public Dialog getCurrentDialogBox() {
         return currentDialogBox;
+    }
+
+    public String getCurrentDialog() {
+        return currentDialog;
     }
 
     public void setCurrentDialogBox(Dialog currentDialogBox) {
