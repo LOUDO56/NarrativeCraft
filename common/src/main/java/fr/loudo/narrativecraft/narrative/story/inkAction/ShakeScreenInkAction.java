@@ -34,7 +34,7 @@ public class ShakeScreenInkAction extends InkAction {
 
 
     public void tick() {
-        if (!shaking) return;
+        if (!shaking || Minecraft.getInstance().isPaused()) return;
 
         noiseI += (1.0f / 20.0f) * noiseShakeSpeed;
 
