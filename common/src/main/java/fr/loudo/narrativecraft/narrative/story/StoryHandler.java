@@ -372,6 +372,7 @@ public class StoryHandler {
             case WEATHER -> inkAction = new WeatherChangeInkAction();
             case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
             case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
+            case SHAKE -> inkAction = new ShakeScreenInkAction();
         }
         return inkAction;
     }

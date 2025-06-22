@@ -110,7 +110,7 @@ Ink will throw an error because brackets is used to detect variables, to fix thi
 
 Fixed command: ``text_display ~ ~ ~ \{billboard:"center",text:"hello",background:-65536\}``
 
-# Dialog parameters
+## Dialog parameters
 
 Change current parameter of the dialog
 
@@ -129,3 +129,24 @@ dialog unSkippable // Impossible for the user to skip the dialog.
 dialog autoSkip 2 // After the dialog ends, it will autoskip 2 seconds later.
 // You can create a cool highlight to a specific dialog that the user must read.
 ```
+
+## Screen shake
+
+Shake the player screen to emulate an explosion or add more immersion
+
+``shake %strength% %decay_rate% %speed%``
+
+- ``strength`` Shake offset
+- ``decay_rate`` Decay rate over time
+- ``speed`` Noise frequency
+
+Examples:
+
+```shake 60 5 30```
+Will shake fast, like an explosion happened.
+
+```shake 4 0 0.1```
+Infinite shake, smooth and slow to add immersion.
+
+```shake 0 0 0```
+Reset shake effect

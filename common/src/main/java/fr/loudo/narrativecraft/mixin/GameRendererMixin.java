@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.mixin;
 
+import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
@@ -7,20 +8,24 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.ShakeScreenInkAction;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import org.joml.Matrix4f;
-import org.joml.Quaternionfc;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = GameRenderer.class, priority = 2000)
+@Mixin(GameRenderer.class)
 public class GameRendererMixin {
+    @Shadow @Final private Minecraft minecraft;
+
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
     public void getZoomLevel(CallbackInfoReturnable<Float> callbackInfo) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
@@ -35,16 +40,17 @@ public class GameRendererMixin {
 
     }
 
-//    @Inject(method = "bobView", at = @At("TAIL"))
-//    private void applyCameraShake(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
-//        double time = System.currentTimeMillis() / 1000.0;
-//
-//        float intensity = 0.2f;
-//        float offsetX = (float) Math.sin(time * 0.4) * intensity;
-//        float offsetY = (float) Math.sin(time * 0.5 + 30) * intensity;
-//
-//        poseStack.translate(offsetX, offsetY, 0);
-//    }
+    @Inject(method = "bobHurt", at = @At(value = "HEAD"))
+    private void applyCameraShake(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null) {
+            for(InkAction inkAction : storyHandler.getInkActionList()) {
+                if(inkAction instanceof ShakeScreenInkAction shakeScreenInkAction) {
+                    shakeScreenInkAction.shake(poseStack, partialTicks);
+                }
+            }
+        }
+    }
 
     private void keyframeControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();

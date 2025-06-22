@@ -60,6 +60,8 @@ public abstract class InkAction {
             return InkTagType.MINECRAFT_COMMAND;
         } else if (tag.contains("dialog")) {
             return InkTagType.DIALOG_VALUES;
+        } else if (tag.contains("shake")) {
+            return InkTagType.SHAKE;
         } else {
             return null;
         }
@@ -80,7 +82,8 @@ public abstract class InkAction {
         DAYTIME,
         WEATHER,
         MINECRAFT_COMMAND,
-        DIALOG_VALUES
+        DIALOG_VALUES,
+        SHAKE
     }
 
     public enum InkActionResult {

@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.ShakeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.WaitInkAction;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
@@ -58,6 +59,10 @@ public class OnClientTick {
                             toRemove.add(inkAction);
                         }
                     }
+                }
+                if(inkAction instanceof ShakeScreenInkAction shakeScreenInkAction) {
+                    shakeScreenInkAction.tick();
+                    if(!shakeScreenInkAction.isShaking()) toRemove.add(shakeScreenInkAction);
                 }
             }
             storyHandler.getInkActionList().removeAll(toRemove);

@@ -92,6 +92,7 @@ public class InkTagTranslators {
             case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler);
             case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction(storyHandler);
             case DIALOG_VALUES -> inkAction = new DialogValuesInkAction(storyHandler);
+            case SHAKE -> inkAction = new ShakeScreenInkAction(storyHandler);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story

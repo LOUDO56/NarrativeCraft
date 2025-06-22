@@ -163,6 +163,7 @@
   "narrativecraft.debug.weather_change": "Weather set to %s",
   "narrativecraft.debug.minecraft_command_executed": "Minecraft command \"%s\" executed",
   "narrativecraft.debug.dialog_values": "Dialog parameter %s new value set to %s",
+  "narrativecraft.debug.shake": "Shake strength=%s, rate=%s, speed=%s",
 
 
   "narrativecraft.validation.missing_name": "Missing name.",
