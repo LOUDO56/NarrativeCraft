@@ -29,7 +29,7 @@ public class Dialog {
     private final Easing easing = Easing.SMOOTH;
     private transient Entity entityServer;
     private transient Entity entityClient;
-    private String characterName;
+    private String characterName, text;
 
     private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
@@ -38,7 +38,7 @@ public class Dialog {
     private final DialogEntityBobbing dialogEntityBobbing;
 
     private float paddingX, paddingY, scale, interpolatedWidth, interpolatedHeight, oldWidth, oldHeight, oldScale;
-    private long startTime, pauseStartTime;
+    private long startTime, pauseStartTime, startTimeEnded, forcedEndTime;
     private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused, instantSpawn;
     private int dialogBackgroundColor, textDialogColor;
     private Vec2 dialogOffset;
@@ -49,6 +49,7 @@ public class Dialog {
         this.paddingY = paddingY;
         this.scale = scale * 0.025f;
         this.entityServer = entityServer;
+        this.text = text;
         dialogBackgroundColor = backgroundColor;
         textDialogColor = textColor;
         dialogOffset = new Vec2(1f, -0.5f);
@@ -60,13 +61,15 @@ public class Dialog {
         acceptNewDialog = false;
         oldWidth = getWidth();
         oldHeight = getHeight();
-        oldScale = scale;
+        oldScale = scale * 0.025f;
         t = 1.0;
         isPaused = false;
         unSkippable = false;
         endDialog = false;
         dialogEnded = false;
         instantSpawn = false;
+        startTimeEnded = 0;
+        forcedEndTime = 0;
     }
 
     public void render(PoseStack poseStack) {
@@ -128,6 +131,13 @@ public class Dialog {
         bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
         if(dialogAnimationScrollText.isFinished() && !endDialog && !unSkippable) {
             dialogAnimationArrowSkip.render(poseStack, minecraft, bufferSource);
+        }
+
+        if(dialogAnimationScrollText.isFinished() && forcedEndTime > 0) {
+            if(startTimeEnded == 0) startTimeEnded = System.currentTimeMillis();
+            if(System.currentTimeMillis() - startTimeEnded >= forcedEndTime) {
+                NarrativeCraftMod.getInstance().getStoryHandler().next();
+            }
         }
 
         bufferSource.endBatch();
@@ -257,9 +267,13 @@ public class Dialog {
     public void reset() {
         dialogEnded = false;
         endDialog = false;
-        dialogAnimationScrollText.reset();
         dialogAnimationArrowSkip.reset();
         startTime = System.currentTimeMillis();
+        if(acceptNewDialog) {
+            dialogAnimationScrollText.reset();
+            forcedEndTime = 0;
+            unSkippable = false;
+        }
         if(oldWidth == getWidth() && oldHeight == getHeight() && oldScale == scale) {
             t = 1;
         } else {
@@ -357,14 +371,19 @@ public class Dialog {
 
     public void setScale(float scale) {
         this.scale = scale * 0.025f;
+        oldScale = scale * 0.025f;
     }
 
     public void setGap(float gap) {
         dialogAnimationScrollText.setGap(gap);
+        oldWidth = getWidth();
+        oldHeight = getHeight();
     }
 
     public void setLetterSpacing(float letterSpacing) {
         dialogAnimationScrollText.setLetterSpacing(letterSpacing);
+        oldWidth = getWidth();
+        oldHeight = getHeight();
     }
 
     public void setText(String text) {
@@ -416,7 +435,17 @@ public class Dialog {
     }
 
     public void setMaxWidth(int maxWidth) {
-        dialogAnimationScrollText.setMaxWidth(maxWidth);
+        dialogAnimationScrollText.setMaxLineWidth(maxWidth);
+        oldWidth = getWidth();
+        oldHeight = getHeight();
+    }
+
+    public void setOldWidth(float oldWidth) {
+        this.oldWidth = oldWidth;
+    }
+
+    public void setOldHeight(float oldHeight) {
+        this.oldHeight = oldHeight;
     }
 
     public float getInterpolatedHeight() {
@@ -437,6 +466,10 @@ public class Dialog {
 
     public DialogEntityBobbing getDialogEntityBobbing() {
         return dialogEntityBobbing;
+    }
+
+    public String getText() {
+        return text;
     }
 
     public boolean isAnimating() {
@@ -469,6 +502,13 @@ public class Dialog {
         this.dialogOffset = dialogOffset;
     }
 
+    public long getForcedEndTime() {
+        return forcedEndTime;
+    }
+
+    public void setForcedEndTime(long forcedEndTime) {
+        this.forcedEndTime = forcedEndTime;
+    }
 
     public enum DialogOffsetSide {
         UP,

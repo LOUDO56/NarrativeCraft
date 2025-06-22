@@ -203,28 +203,28 @@ public class StoryHandler {
                     StorySave.DialogSaveData dialogSaveData = save.getDialogSaveData();
                     Entity entity = null;
                     for(CharacterStory characterStory : currentCharacters) {
-                        if(characterStory.getName().equals(dialogSaveData.getCharacterName())) {
+                        if(characterStory.getName().equals(dialogSaveData.characterName())) {
                             entity = characterStory.getEntity();
                         }
                     }
-                    currentCharacterTalking = dialogSaveData.getCharacterName();
-                    currentDialog = dialogSaveData.getText();
+                    currentCharacterTalking = dialogSaveData.characterName();
+                    currentDialog = dialogSaveData.text();
                     currentDialogBox = new Dialog(
                             entity,
-                            dialogSaveData.getText(),
-                            dialogSaveData.getTextColor(),
-                            dialogSaveData.getBackgroundColor(),
-                            dialogSaveData.getPaddingX(),
-                            dialogSaveData.getPaddingY(),
-                            dialogSaveData.getScale(),
-                            dialogSaveData.getLetterSpacing(),
-                            dialogSaveData.getGap(),
-                            dialogSaveData.getMaxWidth()
+                            parseDialogContent(dialogSaveData.text()).cleanedText,
+                            dialogSaveData.textColor(),
+                            dialogSaveData.backgroundColor(),
+                            dialogSaveData.paddingX(),
+                            dialogSaveData.paddingY(),
+                            dialogSaveData.scale() / 0.025F,
+                            dialogSaveData.letterSpacing(),
+                            dialogSaveData.gap(),
+                            dialogSaveData.maxWidth()
                     );
-                    currentDialogBox.setInstantSpawn(true);
-                    currentDialogBox.setDialogOffset(dialogSaveData.getOffset());
-                    currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
-                    showDialog();
+                    currentDialogBox.setUnSkippable(dialogSaveData.unSkippable());
+                    currentDialogBox.setForcedEndTime(dialogSaveData.endForceEndTime());
+                    currentDialogBox.setDialogOffset(dialogSaveData.offset());
+                    currentDialogBox.setCharacterName(dialogSaveData.characterName());
                 }
             } else {
                 currentDialog = story.Continue();
@@ -273,16 +273,10 @@ public class StoryHandler {
     public void showDialog() {
         String[] splitDialog = currentDialog.split(":");
         if(splitDialog.length < 2 || onChoice) return;
-        String characterName = splitDialog[0].trim();
-        String dialogContent = splitDialog[1].trim();
 
-        if (dialogContent.startsWith("\"") && dialogContent.endsWith("\"")) {
-            dialogContent = dialogContent.substring(1, dialogContent.length() - 1);
-        }
+        ParsedDialog parsed = parseDialogContent(currentDialog);
 
-        ParsedDialog parsed = parseDialogContent(dialogContent);
-
-        if (characterName.equalsIgnoreCase(currentCharacterTalking) && currentDialogBox != null) {
+        if (parsed.characterName.equalsIgnoreCase(currentCharacterTalking) && currentDialogBox != null) {
             currentDialogBox.getDialogAnimationScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
@@ -291,9 +285,9 @@ public class StoryHandler {
                 return;
             } else {
                 CharacterStory currentCharacter = currentCharacters.stream()
-                        .filter(characterStory -> characterStory.getName().equalsIgnoreCase(characterName))
+                        .filter(characterStory -> characterStory.getName().equalsIgnoreCase(parsed.characterName))
                         .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Character not found: " + characterName));
+                        .orElseThrow(() -> new RuntimeException("Character not found: " + parsed.characterName));
                 currentDialogBox = new Dialog(
                         currentCharacter.getEntity(),
                         parsed.cleanedText,
@@ -303,7 +297,7 @@ public class StoryHandler {
                 );
                 currentDialogBox.setCharacterName(currentCharacter.getName());
             }
-            currentCharacterTalking = characterName;
+            currentCharacterTalking = parsed.characterName;
         }
         applyTextEffects(parsed.effects);
     }
@@ -388,16 +382,25 @@ public class StoryHandler {
      * @return A ParsedDialog instance
      */
     private ParsedDialog parseDialogContent(String rawText) {
+
+        String[] splitText = rawText.split(":");
+        String characterName = splitText[0].trim();
+        String dialogContent = splitText[1].trim();
+
+        if (dialogContent.startsWith("\"") && dialogContent.endsWith("\"")) {
+            dialogContent = dialogContent.substring(1, dialogContent.length() - 1);
+        }
+
         List<TextEffect> effects = new ArrayList<>();
         StringBuilder cleanText = new StringBuilder();
 
         Pattern pattern = Pattern.compile("\\[(\\w+)((?:\\s+\\w+=\\S+)*?)\\](.*?)\\[/\\1\\]");
-        Matcher matcher = pattern.matcher(rawText);
+        Matcher matcher = pattern.matcher(dialogContent);
 
         int currentIndex = 0;
 
         while (matcher.find()) {
-            cleanText.append(rawText, currentIndex, matcher.start());
+            cleanText.append(dialogContent, currentIndex, matcher.start());
 
             String effectName = matcher.group(1);
             String paramString = matcher.group(2).trim();
@@ -429,9 +432,9 @@ public class StoryHandler {
             currentIndex = matcher.end();
         }
 
-        cleanText.append(rawText.substring(currentIndex));
+        cleanText.append(dialogContent.substring(currentIndex));
 
-        return new ParsedDialog(cleanText.toString(), effects);
+        return new ParsedDialog(cleanText.toString(), effects, characterName);
     }
 
     private void applyTextEffects(List<TextEffect> effects) {
@@ -613,10 +616,12 @@ public class StoryHandler {
     private static class ParsedDialog {
         public String cleanedText;
         public List<TextEffect> effects;
+        public String characterName;
 
-        public ParsedDialog(String cleanedText, List<TextEffect> effects) {
+        public ParsedDialog(String cleanedText, List<TextEffect> effects, String characterName) {
             this.cleanedText = cleanedText;
             this.effects = effects;
+            this.characterName = characterName;
         }
     }
 

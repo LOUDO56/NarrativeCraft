@@ -61,7 +61,9 @@ public class StorySave {
                         dialog.getScale(),
                         dialog.getDialogAnimationScrollText().getLetterSpacing(),
                         dialog.getDialogAnimationScrollText().getGap(),
-                        (int) dialog.getWidth()
+                        dialog.getDialogAnimationScrollText().getMaxWidth(),
+                        dialog.isUnSkippable(),
+                        dialog.getForcedEndTime()
                 );
             }
 
@@ -215,75 +217,8 @@ public class StorySave {
         }
     }
 
-    public static class DialogSaveData {
-        private final String characterName;
-        private final String text;
-        private final Vec2 offset;
-        private final int textColor;
-        private final int backgroundColor;
-        private final float paddingX;
-        private final float paddingY;
-        private final float scale ;
-        private final float letterSpacing;
-        private final float gap;
-        private final int maxWidth;
-
-        public DialogSaveData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
-            this.characterName = characterName;
-            this.text = text;
-            this.offset = offset;
-            this.textColor = textColor;
-            this.backgroundColor = backgroundColor;
-            this.paddingX = paddingX;
-            this.paddingY = paddingY;
-            this.scale = scale;
-            this.letterSpacing = letterSpacing;
-            this.gap = gap;
-            this.maxWidth = maxWidth;
-        }
-
-        public Vec2 getOffset() {
-            return offset;
-        }
-
-        public String getCharacterName() {
-            return characterName;
-        }
-
-        public String getText() {
-            return text;
-        }
-
-        public int getTextColor() {
-            return textColor;
-        }
-
-        public int getBackgroundColor() {
-            return backgroundColor;
-        }
-
-        public float getPaddingX() {
-            return paddingX;
-        }
-
-        public float getPaddingY() {
-            return paddingY;
-        }
-
-        public float getScale() {
-            return scale / 0.025f;
-        }
-
-        public float getLetterSpacing() {
-            return letterSpacing;
-        }
-
-        public float getGap() {
-            return gap;
-        }
-
-        public int getMaxWidth() {
-            return maxWidth;
-        }
+    public record DialogSaveData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor,
+                                 float paddingX, float paddingY, float scale, float letterSpacing, float gap,
+                                 int maxWidth, boolean unSkippable, long endForceEndTime) {
     }
 }

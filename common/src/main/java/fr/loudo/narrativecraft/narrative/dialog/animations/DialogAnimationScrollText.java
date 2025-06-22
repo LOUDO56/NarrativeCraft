@@ -33,6 +33,7 @@ public class DialogAnimationScrollText {
     private boolean isPaused;
     private List<String> lines;
     private int currentLetter;
+    private String currentLetterString;
     private float letterSpacing;
     private float gap, totalHeight, maxLineWidth;
     private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
@@ -52,6 +53,7 @@ public class DialogAnimationScrollText {
             letterStartTime.put(i, now + i * 50L);
         }
         this.dialog = dialog;
+        this.currentLetterString = "";
         init();
     }
 
@@ -80,16 +82,6 @@ public class DialogAnimationScrollText {
         long now = System.currentTimeMillis();
         int totalLetters = lines.stream().mapToInt(String::length).sum();
         int shownLetters = 0;
-
-        if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !client.isPaused()) {
-            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
-            SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-            float pitch = 0.8F + new Random().nextFloat() * 0.4F;
-            client.player.playSound(sound, 1.0F, pitch);
-
-            currentLetter++;
-            lastTimeChar = now;
-        }
 
         float currentY = -getTotalHeight() + dialog.getPaddingY() * 2 + 0.7f;
 
@@ -128,6 +120,7 @@ public class DialogAnimationScrollText {
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
+                currentLetterString = character;
                 drawString(character, poseStack, bufferSource, startX + offset.x, currentY + offset.y);
 
                 Style style = Style.EMPTY;
@@ -142,6 +135,17 @@ public class DialogAnimationScrollText {
             }
 
             currentY += lines.size() > 1 ? gap : client.font.lineHeight;
+        }
+
+        if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !client.isPaused()) {
+            if(!currentLetterString.equals(" ") && !currentLetterString.isEmpty()) {
+                ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
+                SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
+                float pitch = 0.8F + new Random().nextFloat() * 0.4F;
+                client.player.playSound(sound, 1.0F, pitch);
+            }
+            currentLetter++;
+            lastTimeChar = now;
         }
 
         dialog.getDialogEntityBobbing().updateLookDirection();
@@ -196,6 +200,11 @@ public class DialogAnimationScrollText {
         return maxLineWidth;
     }
 
+    public void setMaxLineWidth(float maxLineWidth) {
+        this.maxLineWidth = maxLineWidth;
+        dialog.setOldWidth(maxLineWidth);
+    }
+
     public void reset() {
         currentLetter = 0;
         init();
@@ -215,6 +224,7 @@ public class DialogAnimationScrollText {
 
     public void setLetterSpacing(float letterSpacing) {
         this.letterSpacing = letterSpacing;
+        init();
     }
 
     public float getGap() {
@@ -223,6 +233,7 @@ public class DialogAnimationScrollText {
 
     public void setGap(float gap) {
         this.gap = gap;
+        init();
     }
 
     public int getMaxWidth() {
@@ -231,6 +242,11 @@ public class DialogAnimationScrollText {
 
     public float getTotalHeight() {
         return totalHeight + 4 * dialog.getPaddingY();
+    }
+
+    public void setTotalHeight(float totalHeight) {
+        this.totalHeight = totalHeight;
+        dialog.setOldHeight(totalHeight);
     }
 
     public void setMaxWidth(int maxWidth) {

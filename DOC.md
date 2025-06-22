@@ -109,3 +109,23 @@ Execute a minecraft command, custom or vanilla one.
 Ink will throw an error because brackets is used to detect variables, to fix this, you need to put ``\`` before a bracket.
 
 Fixed command: ``text_display ~ ~ ~ \{billboard:"center",text:"hello",background:-65536\}``
+
+# Dialog parameters
+
+Change current parameter of the dialog
+
+``dialog <offset, scale, padding, width, textColor, backgroundColor, gap, letterSpacing, unSkippable, autoSkip> [%value1%] [%value2%]``
+
+Examples:
+
+``dialog offset -1 0.7``
+
+``dialog scale 1.3``
+
+``dialog backgroundColor K862J5``
+
+```
+dialog unSkippable // Impossible for the user to skip the dialog.
+dialog autoSkip 2 // After the dialog ends, it will autoskip 2 seconds later.
+// You can create a cool highlight to a specific dialog that the user must read.
+```
