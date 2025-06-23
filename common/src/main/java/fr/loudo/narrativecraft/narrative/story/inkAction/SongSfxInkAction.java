@@ -30,6 +30,7 @@ public class SongSfxInkAction extends InkAction {
 
     @Override
     public InkActionResult execute(String[] command) {
+        fadeTime = 0;
         if(command[1].equals("start")) {
             name = command[2];
             loop = false;
@@ -126,9 +127,9 @@ public class SongSfxInkAction extends InkAction {
     void sendDebugDetails() {
         if(storyHandler.isDebugMode()) {
             if(isStart) {
-                Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx.start", soundInstance.getSoundType().name(), name, volume, pitch, loop, fadeCurrentState.name(), fadeTime), false);
+                Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx.start", soundInstance.getSoundType().name(), name, volume, pitch, loop, fadeCurrentState == null ? "null" : fadeCurrentState.name(), fadeTime), false);
             } else {
-                Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx.stop", soundInstance.getSoundType().name(), name, fadeCurrentState.name(), fadeTime), false);
+                Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.song/sfx.stop", soundInstance.getSoundType().name(), name, fadeCurrentState == null ? "null" : fadeCurrentState.name(), fadeTime), false);
             }
         }
     }
