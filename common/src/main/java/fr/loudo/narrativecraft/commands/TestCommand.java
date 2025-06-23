@@ -39,6 +39,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.phys.Vec2;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -229,7 +230,7 @@ public class TestCommand {
         fakePlayer.snapTo(context.getSource().getPosition());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
-        NarrativeCraftMod.getInstance().setTestDialog(new Dialog(fakePlayer, text, textColor, bcColor, paddingX, paddingY, scale, letterSpacing, gap, maxWidth));
+        NarrativeCraftMod.getInstance().setTestDialog(new Dialog(fakePlayer, text, textColor, bcColor, paddingX, paddingY, scale, letterSpacing, gap, maxWidth, new Vec2(0, -0.8f)));
 
         return Command.SINGLE_SUCCESS;
     }

@@ -30,6 +30,7 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.phys.Vec2;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
@@ -49,6 +50,7 @@ public class StoryHandler {
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning, isDebugMode, OnCutscene, onChoice, isSaving;
+    private StorySave.DialogSaveData globalDialogValue;
     private final List<InkAction> inkActionList;
 
 
@@ -64,6 +66,21 @@ public class StoryHandler {
         onChoice = false;
         save = NarrativeCraftFile.getSave();
         isSaving = false;
+        globalDialogValue = new StorySave.DialogSaveData(
+                "",
+                "",
+                new Vec2(0, 0.8f),
+                -1,
+                0,
+                3,
+                4,
+                0.8f,
+                0.1f,
+                10,
+                90,
+                false,
+                0
+        );
     }
 
     public StoryHandler(Chapter chapter, Scene scene) {
@@ -201,30 +218,35 @@ public class StoryHandler {
                 }
                 if(save.getDialogSaveData() != null) {
                     StorySave.DialogSaveData dialogSaveData = save.getDialogSaveData();
-                    Entity entity = null;
-                    for(CharacterStory characterStory : currentCharacters) {
-                        if(characterStory.getName().equals(dialogSaveData.characterName())) {
-                            entity = characterStory.getEntity();
+                    globalDialogValue = dialogSaveData;
+                    if(dialogSaveData.getCharacterName() == null && dialogSaveData.getText() == null) { // If dialog save data is only global parameters and not last dialog saved
+                        showDialog();
+                    } else {
+                        Entity entity = null;
+                        for(CharacterStory characterStory : currentCharacters) {
+                            if(characterStory.getName().equals(dialogSaveData.getCharacterName())) {
+                                entity = characterStory.getEntity();
+                            }
                         }
+                        currentCharacterTalking = dialogSaveData.getCharacterName();
+                        currentDialog = dialogSaveData.getText();
+                        currentDialogBox = new Dialog(
+                                entity,
+                                parseDialogContent(dialogSaveData.getText()).cleanedText,
+                                dialogSaveData.getTextColor(),
+                                dialogSaveData.getBackgroundColor(),
+                                dialogSaveData.getPaddingX(),
+                                dialogSaveData.getPaddingY(),
+                                dialogSaveData.getScale(),
+                                dialogSaveData.getLetterSpacing(),
+                                dialogSaveData.getGap(),
+                                dialogSaveData.getMaxWidth(),
+                                dialogSaveData.getOffset()
+                        );
+                        currentDialogBox.setUnSkippable(dialogSaveData.isUnSkippable());
+                        currentDialogBox.setForcedEndTime(dialogSaveData.getEndForceEndTime());
+                        currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
                     }
-                    currentCharacterTalking = dialogSaveData.characterName();
-                    currentDialog = dialogSaveData.text();
-                    currentDialogBox = new Dialog(
-                            entity,
-                            parseDialogContent(dialogSaveData.text()).cleanedText,
-                            dialogSaveData.textColor(),
-                            dialogSaveData.backgroundColor(),
-                            dialogSaveData.paddingX(),
-                            dialogSaveData.paddingY(),
-                            dialogSaveData.scale() / 0.025F,
-                            dialogSaveData.letterSpacing(),
-                            dialogSaveData.gap(),
-                            dialogSaveData.maxWidth()
-                    );
-                    currentDialogBox.setUnSkippable(dialogSaveData.unSkippable());
-                    currentDialogBox.setForcedEndTime(dialogSaveData.endForceEndTime());
-                    currentDialogBox.setDialogOffset(dialogSaveData.offset());
-                    currentDialogBox.setCharacterName(dialogSaveData.characterName());
                 }
             } else {
                 currentDialog = story.Continue();
@@ -291,9 +313,9 @@ public class StoryHandler {
                 currentDialogBox = new Dialog(
                         currentCharacter.getEntity(),
                         parsed.cleanedText,
-                        -1, 1, 3,
-                        4, 0.8F, 0.1F, 10,
-                        90
+                        globalDialogValue.getTextColor(), globalDialogValue.getBackgroundColor(), globalDialogValue.getPaddingX(),
+                        globalDialogValue.getPaddingY(), globalDialogValue.getScale(), globalDialogValue.getLetterSpacing(), globalDialogValue.getGap(),
+                        globalDialogValue.getMaxWidth(), globalDialogValue.getOffset()
                 );
                 currentDialogBox.setCharacterName(currentCharacter.getName());
             }
@@ -586,6 +608,14 @@ public class StoryHandler {
 
     public void setSaving(boolean saving) {
         isSaving = saving;
+    }
+
+    public StorySave.DialogSaveData getGlobalDialogValue() {
+        return globalDialogValue;
+    }
+
+    public String getCurrentCharacterTalking() {
+        return currentCharacterTalking;
     }
 
     public void save() {

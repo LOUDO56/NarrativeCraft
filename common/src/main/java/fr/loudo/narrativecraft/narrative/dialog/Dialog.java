@@ -44,7 +44,7 @@ public class Dialog {
     private Vec2 dialogOffset;
     private double t;
 
-    public Dialog(Entity entityServer, String text, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth) {
+    public Dialog(Entity entityServer, String text, int textColor, int backgroundColor, float paddingX, float paddingY, float scale, float letterSpacing, float gap, int maxWidth, Vec2 offset) {
         this.paddingX = paddingX;
         this.paddingY = paddingY;
         this.scale = scale * 0.025f;
@@ -52,7 +52,7 @@ public class Dialog {
         this.text = text;
         dialogBackgroundColor = backgroundColor;
         textDialogColor = textColor;
-        dialogOffset = new Vec2(1f, -0.5f);
+        dialogOffset = offset;
         dialogAnimationScrollText = new DialogAnimationScrollText(text, letterSpacing, gap, maxWidth, this);
         dialogAppearAnimation = new DialogAppearAnimation(this);
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);

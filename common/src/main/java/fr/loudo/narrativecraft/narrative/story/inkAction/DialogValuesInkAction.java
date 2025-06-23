@@ -44,6 +44,7 @@ public class DialogValuesInkAction extends InkAction {
                     }
                     value = offsetX + " " + offsetY;
                     dialog.setDialogOffset(new Vec2(offsetX, offsetY));
+                    storyHandler.getGlobalDialogValue().setOffset(new Vec2(offsetX, offsetY));
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -53,6 +54,7 @@ public class DialogValuesInkAction extends InkAction {
                     float scale = Float.parseFloat(command[2]);
                     value = String.valueOf(scale);
                     dialog.setScale(scale);
+                    storyHandler.getGlobalDialogValue().setScale(scale);
                 } catch (NumberFormatException e) {
                     return InkActionResult.ERROR;
                 }
@@ -68,6 +70,8 @@ public class DialogValuesInkAction extends InkAction {
                     value = paddingX + " " + paddingY;
                     dialog.setPaddingX(paddingX);
                     dialog.setPaddingY(paddingY);
+                    storyHandler.getGlobalDialogValue().setPaddingX(paddingX);
+                    storyHandler.getGlobalDialogValue().setPaddingY(paddingY);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -78,6 +82,7 @@ public class DialogValuesInkAction extends InkAction {
                     dialog.setMaxWidth(width);
                     dialog.setText(storyHandler.getCurrentDialog());
                     value = String.valueOf(width);
+                    storyHandler.getGlobalDialogValue().setMaxWidth(width);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -87,6 +92,7 @@ public class DialogValuesInkAction extends InkAction {
                     int textColor = Integer.parseInt(command[2], 16);
                     dialog.setTextDialogColor(textColor);
                     value = String.valueOf(textColor);
+                    storyHandler.getGlobalDialogValue().setTextColor(textColor);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -96,6 +102,7 @@ public class DialogValuesInkAction extends InkAction {
                     int bcColor = Integer.parseInt(command[2], 16);
                     dialog.setDialogBackgroundColor((255 << 24) | (bcColor & 0x00FFFFFF));
                     value = String.valueOf(bcColor);
+                    storyHandler.getGlobalDialogValue().setBackgroundColor((255 << 24) | (bcColor & 0x00FFFFFF));
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -105,6 +112,7 @@ public class DialogValuesInkAction extends InkAction {
                     float gap = Integer.parseInt(command[2]);
                     dialog.setGap(gap);
                     value = String.valueOf(gap);
+                    storyHandler.getGlobalDialogValue().setGap(gap);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -114,6 +122,7 @@ public class DialogValuesInkAction extends InkAction {
                     float letterSpacing = Integer.parseInt(command[2]);
                     dialog.setLetterSpacing(letterSpacing);
                     value = String.valueOf(letterSpacing);
+                    storyHandler.getGlobalDialogValue().setLetterSpacing(letterSpacing);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }

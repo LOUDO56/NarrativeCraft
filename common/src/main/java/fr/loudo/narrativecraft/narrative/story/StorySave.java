@@ -58,12 +58,29 @@ public class StorySave {
                         dialog.getDialogBackgroundColor(),
                         dialog.getPaddingX(),
                         dialog.getPaddingY(),
-                        dialog.getScale(),
+                        dialog.getScale() / 0.025f,
                         dialog.getDialogAnimationScrollText().getLetterSpacing(),
                         dialog.getDialogAnimationScrollText().getGap(),
                         dialog.getDialogAnimationScrollText().getMaxWidth(),
                         dialog.isUnSkippable(),
                         dialog.getForcedEndTime()
+                );
+            } else {
+                DialogSaveData globalDialogData = storyHandler.getGlobalDialogValue();
+                dialogSaveData = new DialogSaveData(
+                        null,
+                        null,
+                        globalDialogData.getOffset(),
+                        globalDialogData.getTextColor(),
+                        globalDialogData.getBackgroundColor(),
+                        globalDialogData.getPaddingX(),
+                        globalDialogData.getPaddingY(),
+                        globalDialogData.getScale(),
+                        globalDialogData.getLetterSpacing(),
+                        globalDialogData.getGap(),
+                        globalDialogData.getMaxWidth(),
+                        globalDialogData.isUnSkippable(),
+                        globalDialogData.getEndForceEndTime()
                 );
             }
 
@@ -217,8 +234,78 @@ public class StorySave {
         }
     }
 
-    public record DialogSaveData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor,
-                                 float paddingX, float paddingY, float scale, float letterSpacing, float gap,
-                                 int maxWidth, boolean unSkippable, long endForceEndTime) {
+    public static class DialogSaveData {
+        private String characterName;
+        private String text;
+        private Vec2 offset;
+        private int textColor;
+        private int backgroundColor;
+        private float paddingX;
+        private float paddingY;
+        private float scale;
+        private float letterSpacing;
+        private float gap;
+        private int maxWidth;
+        private boolean unSkippable;
+        private long endForceEndTime;
+
+        public DialogSaveData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor,
+                              float paddingX, float paddingY, float scale, float letterSpacing, float gap,
+                              int maxWidth, boolean unSkippable, long endForceEndTime) {
+            this.characterName = characterName;
+            this.text = text;
+            this.offset = offset;
+            this.textColor = textColor;
+            this.backgroundColor = backgroundColor;
+            this.paddingX = paddingX;
+            this.paddingY = paddingY;
+            this.scale = scale;
+            this.letterSpacing = letterSpacing;
+            this.gap = gap;
+            this.maxWidth = maxWidth;
+            this.unSkippable = unSkippable;
+            this.endForceEndTime = endForceEndTime;
+        }
+
+        public String getCharacterName() { return characterName; }
+        public void setCharacterName(String characterName) { this.characterName = characterName; }
+
+        public String getText() { return text; }
+        public void setText(String text) { this.text = text; }
+
+        public Vec2 getOffset() { return offset; }
+        public void setOffset(Vec2 offset) { this.offset = offset; }
+
+        public int getTextColor() { return textColor; }
+        public void setTextColor(int textColor) { this.textColor = textColor; }
+
+        public int getBackgroundColor() { return backgroundColor; }
+        public void setBackgroundColor(int backgroundColor) { this.backgroundColor = backgroundColor; }
+
+        public float getPaddingX() { return paddingX; }
+        public void setPaddingX(float paddingX) { this.paddingX = paddingX; }
+
+        public float getPaddingY() { return paddingY; }
+        public void setPaddingY(float paddingY) { this.paddingY = paddingY; }
+
+        public float getScale() { return scale; }
+        public void setScale(float scale) { this.scale = scale; }
+
+        public float getLetterSpacing() { return letterSpacing; }
+        public void setLetterSpacing(float letterSpacing) { this.letterSpacing = letterSpacing; }
+
+        public float getGap() { return gap; }
+        public void setGap(float gap) { this.gap = gap; }
+
+        public int getMaxWidth() { return maxWidth; }
+        public void setMaxWidth(int maxWidth) { this.maxWidth = maxWidth; }
+
+        public boolean isUnSkippable() { return unSkippable; }
+        public void setUnSkippable(boolean unSkippable) { this.unSkippable = unSkippable; }
+
+        public long getEndForceEndTime() { return endForceEndTime; }
+        public void setEndForceEndTime(long endForceEndTime) { this.endForceEndTime = endForceEndTime; }
     }
+
+
 }

@@ -96,7 +96,7 @@ public class DialogueTail {
         Vector3f upVec = camera.getUpVector();
         Vec3 camUp = new Vec3(upVec.x(), upVec.y(), upVec.z());
 
-        return new Vec2((float) (toDialog.dot(camRight) / dialog.getScale()), (float) (toDialog.dot(camUp) / dialog.getScale()));
+        return new Vec2((float) (toDialog.dot(camRight) / dialog.getScale() / 0.025f), (float) (toDialog.dot(camUp) / dialog.getScale() / 0.025f));
     }
 
     TailDirection getTailDirection(Camera camera) {
