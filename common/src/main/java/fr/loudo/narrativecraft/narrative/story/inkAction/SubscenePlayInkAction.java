@@ -54,7 +54,7 @@ public class SubscenePlayInkAction extends InkAction {
                             for(Animation animation : subscene.getAnimationList()) {
                                 storyHandler.getCurrentCharacters().remove(animation.getCharacter());
                             }
-                            subscene.stopForce();
+                            subscene.forceStop();
                             toRemove.add(action);
                         }
                     }
@@ -97,5 +97,9 @@ public class SubscenePlayInkAction extends InkAction {
 
     public boolean isLooping() {
         return isLooping;
+    }
+
+    public Subscene getSubscene() {
+        return subscene;
     }
 }

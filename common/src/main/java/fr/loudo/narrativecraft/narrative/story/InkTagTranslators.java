@@ -18,6 +18,14 @@ public class InkTagTranslators {
     public boolean executeCurrentTags() {
         try {
             List<String> tags = storyHandler.getStory().getCurrentTags();
+            return executeTags(tags);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean executeTags(List<String> tags) {
+        try {
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
                 if(executeTag(tag) == InkAction.InkActionResult.BLOCK) {
@@ -25,8 +33,10 @@ public class InkTagTranslators {
                     return false;
                 }
             }
-            if(storyHandler.isFinished()) {
-                storyHandler.stop();
+            if(storyHandler.getStory() != null) {
+                if(storyHandler.isFinished()) {
+                    storyHandler.stop();
+                }
             }
             return true;
         } catch (Exception e) {
@@ -43,9 +53,11 @@ public class InkTagTranslators {
             }
         }
         tagsToExecuteLater.clear();
-        storyHandler.showDialog();
-        if(storyHandler.isFinished()) {
-            storyHandler.stop();
+        if(storyHandler.getStory() != null) {
+            storyHandler.showDialog();
+            if(storyHandler.isFinished()) {
+                storyHandler.stop();
+            }
         }
 
     }

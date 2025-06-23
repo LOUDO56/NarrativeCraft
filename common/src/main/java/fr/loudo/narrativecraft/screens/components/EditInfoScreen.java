@@ -90,7 +90,8 @@ public class EditInfoScreen extends Screen {
                 WIDGET_WIDTH,
                 EDIT_BOX_DESCRIPTION_HEIGHT,
                 centerX,
-                centerY
+                centerY,
+                Component.literal("Once upon a time... In a wild... wild world... there were two wolf brothers, living in their home lair with their papa wolf...")
         );
         descriptionBox.getMultiLineEditBox().setValue(description);
 

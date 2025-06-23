@@ -145,6 +145,9 @@
   "narrativecraft.cutscene.keyframegroup.text_display": "Keyframe Group #%d",
   "narrativecraft.cutscene.keyframe.added": "Keyframe added to keyframe group ID #%d",
   "narrativecraft.cutscene.keyframe.added.fail": "§cYou need to select a keyframe group or create a new one.",
+  "narrativecraft.cutscene.keyframe-trigger.wait.unsupported": "§cWait tag not supported. Use Minecraft's tick system for cooldowns.",
+  "narrativecraft.cutscene.keyframe-trigger.save.unsupported": "§cSave tag not supported.",
+  "narrativecraft.cutscene.keyframe-trigger.on-enter.unsupported": "§cOn enter tag is only for script file.",
 
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
 

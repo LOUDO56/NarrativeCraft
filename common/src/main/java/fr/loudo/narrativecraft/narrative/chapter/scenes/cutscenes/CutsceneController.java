@@ -7,11 +7,14 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.SubscenePlayInkAction;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -40,6 +43,7 @@ public class CutsceneController extends KeyframeControllerBase {
     private int currentTick;
     private double currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
+    private StoryHandler storyHandler;
 
     public CutsceneController(Cutscene cutscene, ServerPlayer player, Playback.PlaybackType playbackType) {
         super(cutscene.getKeyframeGroupList(), player, playbackType);
@@ -75,11 +79,20 @@ public class CutsceneController extends KeyframeControllerBase {
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
 
+            this.storyHandler = new StoryHandler();
+            storyHandler.setDebugMode(true);
+            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+            storyHandler.setPlayerSession(playerSession);
+            NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
+
             for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
                 for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
                     keyframe.showKeyframeToClient(player);
-                    keyframesEntity.add(keyframe.getCameraEntity());
                 }
+            }
+
+            for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
+                keyframeTrigger.showKeyframeToClient(player);
             }
 
             if(!cutscene.getKeyframeGroupList().isEmpty()) {
@@ -95,6 +108,8 @@ public class CutsceneController extends KeyframeControllerBase {
             player.setGameMode(GameType.SPECTATOR);
             pause();
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
+        } else {
+            storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         }
 
     }
@@ -120,10 +135,15 @@ public class CutsceneController extends KeyframeControllerBase {
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            storyHandler.getInkActionList().clear();
+            NarrativeCraftMod.getInstance().setStoryHandler(null);
             for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
                 for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
                     keyframe.removeKeyframeFromClient(player);
                 }
+            }
+            for(KeyframeTrigger keyframe : cutscene.getKeyframeTriggerList()) {
+                keyframe.removeKeyframeFromClient(player);
             }
             player.setGameMode(GameType.CREATIVE);
         }
@@ -142,11 +162,26 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void pause() {
         isPlaying = false;
+        for(InkAction inkAction : storyHandler.getInkActionList()) {
+            if(inkAction instanceof SubscenePlayInkAction subscenePlayInkAction) {
+                subscenePlayInkAction.getSubscene().forceStop();
+            }
+            if(inkAction instanceof AnimationPlayInkAction animationPlayInkAction) {
+                animationPlayInkAction.getPlayback().forceStop();
+                NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(animationPlayInkAction.getPlayback());
+            }
+        }
+        storyHandler.getInkActionList().clear();
+        storyHandler.stopAllSound();
         changePlayingPlaybackState();
     }
 
     public void resume() {
         isPlaying = true;
+        List<KeyframeTrigger> keyframeTriggerList = cutscene.getKeyframeTriggerList().stream().filter(keyframeTrigger -> keyframeTrigger.getTick() < currentTick).toList();
+        for(KeyframeTrigger keyframeTrigger : keyframeTriggerList) {
+            storyHandler.getInkTagTranslators().executeTags(keyframeTrigger.getCommandsToList());
+        }
         changePlayingPlaybackState();
     }
 
@@ -192,10 +227,28 @@ public class CutsceneController extends KeyframeControllerBase {
         return true;
     }
 
+    public void addKeyframeTrigger(String commands, int tick) {
+        Vec3 playerPos = Minecraft.getInstance().player.position();
+        KeyframeCoordinate keyframeCoordinate = new KeyframeCoordinate(playerPos.x(), playerPos.y() + player.getEyeHeight(), playerPos.z(), player.getXRot(), player.getYRot(), Minecraft.getInstance().options.fov().get());
+        keyframeCoordinate.setXRot(0);
+        KeyframeTrigger keyframeTrigger = new KeyframeTrigger(keyframeCounter.incrementAndGet(), keyframeCoordinate, tick, commands);
+        keyframeTrigger.showKeyframeToClient(player);
+        cutscene.getKeyframeTriggerList().add(keyframeTrigger);
+    }
+
     private long getDifferenceSeconds(int tickFirstKeyframe, int tickSecondKeyframe)  {
         int difference = tickSecondKeyframe - tickFirstKeyframe;
         double seconds = difference / 20.0;
         return (long) (seconds * 1000.0);
+    }
+
+    public KeyframeTrigger getKeyframeTriggerByEntity(Entity entity) {
+        for(KeyframeTrigger keyframe : cutscene.getKeyframeTriggerList()) {
+            if(keyframe.getCameraEntity().getId() == entity.getId()) {
+                return keyframe;
+            }
+        }
+        return null;
     }
 
     public boolean removeKeyframe(Keyframe keyframe) {
@@ -227,6 +280,11 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
         return false;
+    }
+
+    public void removeKeyframeTrigger(KeyframeTrigger keyframeTrigger) {
+        cutscene.getKeyframeTriggerList().remove(keyframeTrigger);
+        keyframeTrigger.removeKeyframeFromClient(player);
     }
 
     public void setCurrentPreviewKeyframe(Keyframe currentPreviewKeyframe, boolean seamless) {
@@ -283,9 +341,17 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void next() {
-        if(isPlaying) currentTick++;
-        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-            checkEndedPlayback();
+        if(isPlaying) {
+            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+                checkEndedPlayback();
+            }
+            if(currentPreviewKeyframe != null || playbackType == Playback.PlaybackType.PRODUCTION) {
+                List<KeyframeTrigger> keyframeTriggerList = cutscene.getKeyframeTriggerList().stream().filter(keyframeTrigger -> keyframeTrigger.getTick() == currentTick).toList();
+                for(KeyframeTrigger keyframeTrigger : keyframeTriggerList) {
+                    storyHandler.getInkTagTranslators().executeTags(keyframeTrigger.getCommandsToList());
+                }
+            }
+            currentTick++;
         }
     }
 
@@ -331,6 +397,10 @@ public class CutsceneController extends KeyframeControllerBase {
         return totalTick / totalPlayback;
     }
 
+    public StoryHandler getStoryHandler() {
+        return storyHandler;
+    }
+
     public int getCurrentTick() {
         return currentTick;
     }
@@ -358,10 +428,6 @@ public class CutsceneController extends KeyframeControllerBase {
         return keyframeGroupCounter;
     }
 
-    public List<Entity> getKeyframesEntity() {
-        return keyframesEntity;
-    }
-
     public boolean isPlaying() {
         return isPlaying;
     }
@@ -386,4 +452,6 @@ public class CutsceneController extends KeyframeControllerBase {
         }
         return null;
     }
+
+
 }

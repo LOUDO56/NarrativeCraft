@@ -44,7 +44,6 @@ public class CameraAngleController extends KeyframeControllerBase {
             }
             for(Keyframe keyframe : cameraAngleGroup.getCameraAngleList()) {
                 keyframe.showKeyframeToClient(player);
-                keyframesEntity.add(keyframe.getCameraEntity());
             }
 
             player.setGameMode(GameType.SPECTATOR);

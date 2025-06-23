@@ -53,10 +53,7 @@ public class StoryHandler {
     private StorySave.DialogSaveData globalDialogValue;
     private final List<InkAction> inkActionList;
 
-
     public StoryHandler() {
-        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
-        playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, null, null);
         currentCharacters = new ArrayList<>();
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
@@ -101,6 +98,10 @@ public class StoryHandler {
 
     public void start() {
         try {
+            if(playerSession == null) {
+                ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
+                playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, null, null);
+            }
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
             for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
                 for(Scene scene : chapter.getSceneList()) {
@@ -362,7 +363,7 @@ public class StoryHandler {
                         String[] command = tag.split(" ");
                         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
                         if (tagType != null) {
-                            InkAction inkAction = getInkAction(tagType);
+                            InkAction inkAction = InkAction.getInkAction(tagType);
                             if (inkAction != null) {
                                 InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, matcher.group(), scene);
                                 if (errorLine != null) {
@@ -375,28 +376,6 @@ public class StoryHandler {
             }
         }
         return errorLineList;
-    }
-
-
-
-
-    private static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
-        InkAction inkAction = null;
-        switch (tagType) {
-            case CUTSCENE -> inkAction = new CutsceneInkAction();
-            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction();
-            case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
-            case FADE -> inkAction = new FadeScreenInkAction();
-            case WAIT -> inkAction = new WaitInkAction();
-            case SUBSCENE -> inkAction = new SubscenePlayInkAction();
-            case ANIMATION -> inkAction = new AnimationPlayInkAction();
-            case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
-            case WEATHER -> inkAction = new WeatherChangeInkAction();
-            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
-            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
-            case SHAKE -> inkAction = new ShakeScreenInkAction();
-        }
-        return inkAction;
     }
 
     /**
@@ -495,7 +474,7 @@ public class StoryHandler {
     }
 
     public TypedSoundInstance playSound(SoundEvent sound, float volume, float pitch, boolean loop, SongSfxInkAction.SoundType soundType) {
-        TypedSoundInstance soundInstance = new TypedSoundInstance(sound.location(), SoundSource.MASTER, volume, pitch, SoundInstance.createUnseededRandom(), loop, soundType);
+        TypedSoundInstance soundInstance = new TypedSoundInstance(sound.location(), SoundSource.MASTER, volume, pitch, loop, soundType);
         typedSoundInstanceList.add(soundInstance);
         Minecraft.getInstance().getSoundManager().play(soundInstance);
         return soundInstance;
@@ -612,6 +591,10 @@ public class StoryHandler {
 
     public StorySave.DialogSaveData getGlobalDialogValue() {
         return globalDialogValue;
+    }
+
+    public void setPlayerSession(PlayerSession playerSession) {
+        this.playerSession = playerSession;
     }
 
     public String getCurrentCharacterTalking() {

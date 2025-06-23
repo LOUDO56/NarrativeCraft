@@ -5,10 +5,12 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleCharacterScreen;
+import fr.loudo.narrativecraft.screens.keyframes.KeyframeTriggerScreen;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,6 +33,7 @@ public class OnEntityRightClick {
                 cameraAngleController.setCurrentPreviewKeyframe(keyframe);
             }
         }
+
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             if(cameraAngleController.isEntityInController(entity)) {
                 CharacterStoryData characterStoryData = cameraAngleController.getCharacterDataByEntity(entity);
@@ -44,6 +47,13 @@ public class OnEntityRightClick {
                 CameraAngleCharacterScreen screen = new CameraAngleCharacterScreen(animation, cutsceneController);
                 Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
             }
+
+            KeyframeTrigger keyframeTrigger = cutsceneController.getKeyframeTriggerByEntity(entity);
+            if(keyframeTrigger != null) {
+                KeyframeTriggerScreen screen = new KeyframeTriggerScreen(cutsceneController, keyframeTrigger);
+                Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
+            }
+
         }
 
     }

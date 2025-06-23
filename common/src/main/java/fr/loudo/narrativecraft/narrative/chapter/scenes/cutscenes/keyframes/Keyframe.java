@@ -14,6 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Rotations;
 import net.minecraft.network.protocol.game.*;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.PositionMoveRotation;
@@ -24,13 +25,13 @@ import java.util.List;
 
 public class Keyframe {
 
-    private transient ArmorStand cameraEntity;
-    private int id, tick;
-    private double speed;
-    private KeyframeCoordinate keyframeCoordinate;
-    private long startDelay, pathTime, transitionDelay;
-    private boolean isParentGroup, isFixed;
-    private Easing easing;
+    protected transient ArmorStand cameraEntity;
+    protected int id, tick;
+    protected double speed;
+    protected KeyframeCoordinate keyframeCoordinate;
+    protected long startDelay, pathTime, transitionDelay;
+    protected boolean isParentGroup, isFixed;
+    protected Easing easing;
 
     public Keyframe(int id, KeyframeCoordinate keyframeCoordinate, int tick, long startDelay, long pathTime) {
         this.id = id;

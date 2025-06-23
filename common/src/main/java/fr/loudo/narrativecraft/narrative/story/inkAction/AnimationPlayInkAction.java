@@ -102,6 +102,10 @@ public class AnimationPlayInkAction extends InkAction {
         return null;
     }
 
+    public Playback getPlayback() {
+        return playback;
+    }
+
     public boolean isLooping() {
         return isLooping;
     }

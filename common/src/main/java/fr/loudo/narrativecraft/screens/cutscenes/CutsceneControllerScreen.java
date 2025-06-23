@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.screens.cutscenes;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.screens.keyframes.KeyframeTriggerScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -96,7 +97,8 @@ public class CutsceneControllerScreen extends Screen {
         }).bounds(startX + btnWidth + gap, initialY, btnWidth, BUTTON_HEIGHT).build();
 
         Button addTriggerKeyframe = Button.builder(ImageFontConstants.ADD_KEYFRAME_TRIGGER, button -> {
-            // TODO: add keyframe trigger
+            KeyframeTriggerScreen screen = new KeyframeTriggerScreen(cutsceneController, cutsceneController.getCurrentTick());
+            minecraft.setScreen(screen);
         }).bounds(startX + (btnWidth + gap) * 2, initialY, btnWidth, BUTTON_HEIGHT).build();
 
         this.addRenderableWidget(createKeyframeGroup);

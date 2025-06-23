@@ -13,7 +13,6 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,7 +60,7 @@ public class Subscene extends NarrativeEntry {
         playbackList.clear();
     }
 
-    public void stopForce() {
+    public void forceStop() {
         for(Playback playback : playbackList) {
             playback.forceStop();
         }

@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class InkAction {
 
@@ -65,6 +66,25 @@ public abstract class InkAction {
         } else {
             return null;
         }
+    }
+
+    public static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
+        InkAction inkAction = null;
+        switch (tagType) {
+            case CUTSCENE -> inkAction = new CutsceneInkAction();
+            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction();
+            case SONG_SFX_START, SONG_SFX_STOP, SOUND_STOP_ALL -> inkAction = new SongSfxInkAction();
+            case FADE -> inkAction = new FadeScreenInkAction();
+            case WAIT -> inkAction = new WaitInkAction();
+            case SUBSCENE -> inkAction = new SubscenePlayInkAction();
+            case ANIMATION -> inkAction = new AnimationPlayInkAction();
+            case DAYTIME -> inkAction = new ChangeDayTimeInkAction();
+            case WEATHER -> inkAction = new WeatherChangeInkAction();
+            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
+            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
+            case SHAKE -> inkAction = new ShakeScreenInkAction();
+        }
+        return inkAction;
     }
 
     public enum InkTagType {
@@ -154,7 +174,25 @@ public abstract class InkAction {
                     .append("\n");
         }
 
+        public int getLine() {
+            return line;
+        }
 
+        public Scene getScene() {
+            return scene;
+        }
+
+        public String getFileName() {
+            return fileName;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public String getLineText() {
+            return lineText;
+        }
     }
 
 

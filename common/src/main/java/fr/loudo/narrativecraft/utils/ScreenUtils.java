@@ -90,7 +90,7 @@ public class ScreenUtils {
         private final StringWidget stringWidget;
         private final MultiLineEditBox multiLineEditBox;
 
-        public MultilineLabelBox(Component text, Font font, int width, int height, int x, int y) {
+        public MultilineLabelBox(Component text, Font font, int width, int height, int x, int y, Component placeholder) {
             stringWidget = ScreenUtils.text(text, font, x, y);
             multiLineEditBox = new MultiLineEditBox(
                     font,
@@ -98,7 +98,7 @@ public class ScreenUtils {
                     y + stringWidget.getHeight() + 5,
                     width,
                     height,
-                    Component.literal("Once upon a time... In a wild... wild world... there were two wolf brothers, living in their home lair with their papa wolf..."),
+                    placeholder,
                     Component.literal("")
             );
         }

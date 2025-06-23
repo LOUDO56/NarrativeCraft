@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -20,9 +21,9 @@ public class Cutscene extends NarrativeEntry {
     private transient Scene scene;
     private transient List<Animation> animationList;
     private List<KeyframeGroup> keyframeGroupList;
+    private List<KeyframeTrigger> keyframeTriggerList;
     private List<Subscene> subsceneList;
     private List<String> animationListString;
-    //private Subscene defaultSubcene;
 
     public Cutscene(Scene scene, String name, String description) {
         super(name, description);
@@ -31,6 +32,7 @@ public class Cutscene extends NarrativeEntry {
         this.subsceneList = new ArrayList<>();
         this.animationList = new ArrayList<>();
         this.animationListString = new ArrayList<>();
+        this.keyframeTriggerList = new ArrayList<>();
     }
 
     public List<KeyframeGroup> getKeyframeGroupList() {
@@ -71,6 +73,14 @@ public class Cutscene extends NarrativeEntry {
 
     public void setAnimationList(List<Animation> animationList) {
         this.animationList = animationList;
+    }
+
+    public List<KeyframeTrigger> getKeyframeTriggerList() {
+        return keyframeTriggerList;
+    }
+
+    public void setKeyframeTriggerList(List<KeyframeTrigger> keyframeTriggerList) {
+        this.keyframeTriggerList = keyframeTriggerList;
     }
 
     @Override

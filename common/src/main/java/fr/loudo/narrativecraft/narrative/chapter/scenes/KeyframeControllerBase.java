@@ -11,7 +11,6 @@ import java.util.List;
 
 public abstract class KeyframeControllerBase {
 
-    protected transient final List<Entity> keyframesEntity;
     protected transient final ServerPlayer player;
     protected List<KeyframeGroup> keyframeGroups;
     protected Keyframe currentPreviewKeyframe;
@@ -20,14 +19,12 @@ public abstract class KeyframeControllerBase {
     public KeyframeControllerBase(List<KeyframeGroup> keyframeGroups, ServerPlayer player, Playback.PlaybackType playbackType) {
         this.keyframeGroups = keyframeGroups;
         this.player = player;
-        this.keyframesEntity = new ArrayList<>();
         this.playbackType = playbackType;
     }
 
     public KeyframeControllerBase(KeyframeGroup keyframeGroup, ServerPlayer player, Playback.PlaybackType playbackType) {
         this.keyframeGroups = List.of(keyframeGroup);
         this.player = player;
-        this.keyframesEntity = new ArrayList<>();
         this.playbackType = playbackType;
     }
 

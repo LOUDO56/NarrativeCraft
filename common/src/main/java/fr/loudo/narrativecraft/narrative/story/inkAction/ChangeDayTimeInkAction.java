@@ -129,9 +129,7 @@ public class ChangeDayTimeInkAction extends InkAction {
 
     @Override
     public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
-        try {
-            Long.parseLong(command[2]);
-        } catch (NumberFormatException e) {
+        if(getTickFromString(command[2]) == -1) {
             return new ErrorLine(
                     line,
                     scene,
@@ -140,9 +138,7 @@ public class ChangeDayTimeInkAction extends InkAction {
             );
         }
         if(command.length > 3) {
-            try {
-                Long.parseLong(command[4]);
-            } catch (NumberFormatException e) {
+            if(getTickFromString(command[4]) == -1) {
                 return new ErrorLine(
                         line,
                         scene,
