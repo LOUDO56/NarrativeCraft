@@ -11,7 +11,7 @@ import net.minecraft.world.level.levelgen.synth.SimplexNoise;
 
 public class ShakeScreenInkAction extends InkAction {
 
-    private static float PIXEL = 0.025f;
+    private static final float PIXEL = 0.025f;
     private float noiseShakeSpeed;
     private float noiseShakeStrength;
     private float shakeDecayRate;
@@ -46,7 +46,7 @@ public class ShakeScreenInkAction extends InkAction {
         currentOffsetX = (float) noise.getValue(1, noiseI) * shakeStrength;
         currentOffsetY = (float) noise.getValue(100, noiseI) * shakeStrength;
 
-        if (Math.abs(shakeStrength) < 0.1f) {
+        if (Math.abs(shakeStrength) <= 0) {
             shaking = false;
             currentOffsetX = currentOffsetY = lastOffsetX = lastOffsetY = 0;
         }
@@ -84,7 +84,7 @@ public class ShakeScreenInkAction extends InkAction {
     void sendDebugDetails() {
         if(storyHandler.isDebugMode()) {
             Minecraft.getInstance().player.displayClientMessage(
-                    Translation.message("debug.shake", shakeStrength, shakeDecayRate, noiseShakeSpeed),
+                    Translation.message("debug.shake", noiseShakeStrength, shakeDecayRate, noiseShakeSpeed),
                     false
             );
         }
