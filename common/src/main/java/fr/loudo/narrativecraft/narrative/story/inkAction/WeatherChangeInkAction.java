@@ -16,8 +16,8 @@ public class WeatherChangeInkAction extends InkAction{
 
     @Override
     public InkActionResult execute(String[] command) {
-        if(command.length == 1) return InkActionResult.ERROR;
-        name = command[1];
+        if(command.length < 2) return InkActionResult.ERROR;
+        name = command[2];
         switch (name) {
             case "clear" -> NarrativeCraftMod.server.overworld().setWeatherParameters(999999, 0, false, false);
             case "rain" -> NarrativeCraftMod.server.overworld().setWeatherParameters(0, 999999, true, false);
@@ -42,7 +42,7 @@ public class WeatherChangeInkAction extends InkAction{
 
     @Override
     public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
-        if(command.length == 1) {
+        if(command.length < 2) {
             return new ErrorLine(
                     line,
                     scene,
@@ -50,7 +50,7 @@ public class WeatherChangeInkAction extends InkAction{
                     lineText
             );
         }
-        String name = command[1];
+        String name = command[2];
         if(!name.equals("clear") && !name.equals("rain") && !name.equals("thunder")) {
             return new ErrorLine(
                     line,
