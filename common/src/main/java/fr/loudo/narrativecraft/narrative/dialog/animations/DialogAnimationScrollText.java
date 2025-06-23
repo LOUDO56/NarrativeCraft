@@ -33,7 +33,7 @@ public class DialogAnimationScrollText {
     private boolean isPaused;
     private List<String> lines;
     private int currentLetter;
-    private String currentLetterString;
+    private String currentLetterString, text;
     private float letterSpacing;
     private float gap, totalHeight, maxLineWidth;
     private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
@@ -44,6 +44,7 @@ public class DialogAnimationScrollText {
     public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth, Dialog dialog) {
         this.maxWidth = maxWidth;
         this.lines = splitText(text);
+        this.text = text;
         this.letterSpacing = letterSpacing;
         this.gap = gap;
         this.currentLetter = 0;
@@ -207,6 +208,13 @@ public class DialogAnimationScrollText {
 
     public void reset() {
         currentLetter = 0;
+        this.dialogLetterEffect = new DialogLetterEffect(DialogAnimationType.NONE, 0, 0, 0, text.length() - 1);
+        letterStartTime.clear();
+        letterOffsets.clear();
+        long now = System.currentTimeMillis();
+        for (int i = 0; i < text.length(); i++) {
+            letterStartTime.put(i, now + i * 50L);
+        }
         init();
     }
 
@@ -215,6 +223,7 @@ public class DialogAnimationScrollText {
     }
 
     public void setText(String text) {
+        this.text = text;
         this.lines = splitText(text);
     }
 
