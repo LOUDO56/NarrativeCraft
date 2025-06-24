@@ -334,6 +334,51 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static boolean updateCharacterFolder(CharacterStory characterStory) {
+        File characterFolderNew = new File(characterDirectory, Utils.getSnakeCase(characterStory.getName()));
+        File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
+        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        try {
+            List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
+            for(Chapter chapter : chapters) {
+                for(Scene scene : chapter.getSceneList()) {
+                    for(Animation animation : scene.getAnimationList()) {
+                        if(animation.getCharacter().getName().equalsIgnoreCase(characterStory.getName())) {
+                            animation.setCharacter(characterStory);
+                            updateAnimationFile(animation);
+                        }
+                    }
+                    for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
+                        for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+                            if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(characterStory.getName())) {
+                                characterStoryData.setCharacterStory(characterStory);
+                                updateCameraAnglesFile(scene);
+                            }
+                        }
+                    }
+                }
+            }
+            StorySave save = getSave();
+            if(save != null) {
+                for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(characterStory.getName())) {
+                        characterStoryData.setCharacterStory(characterStory);
+                    }
+                }
+                try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
+                    new Gson().toJson(save, writer);
+                }
+            }
+            try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+                new Gson().toJson(characterStory, writer);
+            }
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update character {} file! {}", characterStory.getName(), e.getStackTrace());
+            return false;
+        }
+    }
+
     public static boolean updateNpcSceneFolder(String oldName, String newName, Scene scene) {
         File sceneFolder = getSceneFile(scene);
         File dataFile = new File(sceneFolder, "data");
@@ -377,6 +422,49 @@ public class NarrativeCraftFile {
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update npc {} folder! {}", oldName, e.getStackTrace());
+            return false;
+        }
+    }
+
+    public static boolean updateNpcSceneFolder(CharacterStory characterStory, Scene scene) {
+        File sceneFolder = getSceneFile(scene);
+        File dataFile = new File(sceneFolder, "data");
+        File npcFolder = new File(dataFile, "npc");
+        File characterFolder = new File(npcFolder, Utils.getSnakeCase(characterStory.getName()));
+        File characterFile = new File(characterFolder, "data" + EXTENSION_DATA_FILE);
+        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        try {
+            for(Animation animation : scene.getAnimationList()) {
+                if(animation.getCharacter().getName().equalsIgnoreCase(characterStory.getName())) {
+                    animation.setCharacter(characterStory);
+                    updateAnimationFile(animation);
+                }
+            }
+            for(CameraAngleGroup cameraAngleGroup : scene.getCameraAngleGroupList()) {
+                for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(characterStory.getName())) {
+                        characterStoryData.setCharacterStory(characterStory);
+                        updateCameraAnglesFile(scene);
+                    }
+                }
+            }
+            StorySave save = getSave();
+            if(save != null) {
+                for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
+                    if(characterStoryData.getCharacterStory().getName().equalsIgnoreCase(characterStory.getName())) {
+                        characterStoryData.setCharacterStory(characterStory);
+                    }
+                }
+                try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
+                    new Gson().toJson(save, writer);
+                }
+            }
+            try(Writer writer = new BufferedWriter(new FileWriter(characterFile))) {
+                new Gson().toJson(characterStory, writer);
+            }
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update npc {} folder! {}", characterStory.getName(), e.getStackTrace());
             return false;
         }
     }

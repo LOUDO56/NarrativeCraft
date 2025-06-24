@@ -16,15 +16,17 @@ import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MoverType;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
+import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
+import net.minecraft.world.level.dimension.end.EndDragonFight;
 
 import java.io.File;
 import java.util.List;
@@ -81,10 +83,18 @@ public class Playback {
         }
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
-        entity = new FakePlayer(serverLevel, gameProfile);
-        SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_LAYER, (byte) 0b01111111);
+        if(BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
+            entity = new FakePlayer(serverLevel, gameProfile);
+            SynchedEntityData entityData = entity.getEntityData();
+            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
+            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
+        } else {
+            entity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            if(entity instanceof Mob mob) {
+                mob.setNoAi(true);
+                mob.setSilent(true);
+            }
+        }
         moveEntitySilent(entity, loc);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
@@ -102,15 +112,23 @@ public class Playback {
         }
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
-        entity = new FakePlayer(serverLevel, gameProfile);
+        if(BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
+            entity = new FakePlayer(serverLevel, gameProfile);
+            SynchedEntityData entityData = entity.getEntityData();
+            EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
+            entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
+            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
+        } else {
+            entity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            if(entity instanceof Mob mob) {
+                mob.setNoAi(true);
+                mob.setSilent(true);
+            }
+        }
         character.setEntity(entity);
         moveEntitySilent(entity, loc);
         entity.setPose(oldEntity.getPose());
-        SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
-        entityData.set(ENTITY_LAYER, (byte) 0b01111111);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
             serverLevel.addNewPlayer(fakePlayer);

@@ -17,9 +17,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -106,7 +104,12 @@ public class CharacterStoryData {
     }
 
     public void spawn(ServerLevel serverLevel) {
-        LivingEntity livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
+        LivingEntity livingEntity;
+        if(BuiltInRegistries.ENTITY_TYPE.getId(characterStory.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
+            livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
+        } else {
+            livingEntity = (LivingEntity) characterStory.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+        }
         livingEntity.snapTo(x, y, z);
         livingEntity.setXRot(pitch);
         livingEntity.setYRot(yaw);

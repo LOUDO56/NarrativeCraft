@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.npcs;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.screens.characters.CharacterEntityTypeScreen;
 import fr.loudo.narrativecraft.screens.components.EditCharacterInfoScreen;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
@@ -58,7 +59,12 @@ public class NpcScreen extends StoryElementScreen {
                     }).build();
                     button.active = false;
 
-                    return new StoryElementList.StoryEntryData(button, npc);
+                    Button entityTypeButton = Button.builder(Component.literal("T"), button1 -> {
+                        CharacterEntityTypeScreen screen = new CharacterEntityTypeScreen(this, npc);
+                        minecraft.setScreen(screen);
+                    }).build();
+
+                    return new StoryElementList.StoryEntryData(button, npc, List.of(entityTypeButton));
                 })
                 .toList();
 

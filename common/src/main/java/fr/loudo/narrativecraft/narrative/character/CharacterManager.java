@@ -3,7 +3,10 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.google.gson.Gson;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,6 +32,8 @@ public class CharacterManager {
                     String content = Files.readString(new File(characterFolder, "data" + NarrativeCraftFile.EXTENSION_DATA_FILE).toPath());
                     CharacterStory characterStory = new Gson().fromJson(content, CharacterStory.class);
                     characterStory.setCharacterSkinController(new CharacterSkinController(characterStory));
+                    EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(characterStory.getEntityTypeId());
+                    characterStory.setEntityType(entityType);
                     characterStories.add(characterStory);
                 } catch (IOException e) {
                     throw new RuntimeException("Character " + characterFolder.getName()  + " couldn't be loaded!: " + e);
@@ -112,5 +117,16 @@ public class CharacterManager {
             }
             characterStory.getCharacterSkinController().cacheSkins();
         }
+    }
+
+    public List<EntityType<?>> getAvailableEntityTypes() {
+        List<EntityType<?>> finalList = new ArrayList<>();
+        for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE.stream().toList()) {
+            String key = BuiltInRegistries.ENTITY_TYPE.getKey(entityType).getPath();
+            if(entityType.getCategory() != MobCategory.MISC || key.equals("player") || key.equals("villager")) {
+                finalList.add(entityType);
+            }
+        }
+        return finalList;
     }
 }

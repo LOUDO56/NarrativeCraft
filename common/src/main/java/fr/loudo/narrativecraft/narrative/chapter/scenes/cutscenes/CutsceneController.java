@@ -178,10 +178,6 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void resume() {
         isPlaying = true;
-        List<KeyframeTrigger> keyframeTriggerList = cutscene.getKeyframeTriggerList().stream().filter(keyframeTrigger -> keyframeTrigger.getTick() < currentTick).toList();
-        for(KeyframeTrigger keyframeTrigger : keyframeTriggerList) {
-            storyHandler.getInkTagTranslators().executeTags(keyframeTrigger.getCommandsToList());
-        }
         changePlayingPlaybackState();
     }
 

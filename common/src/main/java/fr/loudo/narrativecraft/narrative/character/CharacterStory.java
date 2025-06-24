@@ -15,17 +15,22 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MobCategory;
 
 import java.util.List;
 
 public class CharacterStory extends NarrativeEntry {
 
     private transient LivingEntity entity;
+    private transient EntityType<?> entityType;
     private transient CharacterSkinController characterSkinController;
     private transient Scene scene;
+    private int entityTypeId;
     private PlayerSkin.Model model;
     private String birthdate;
     private CharacterType characterType;
@@ -37,6 +42,8 @@ public class CharacterStory extends NarrativeEntry {
         super(name, "");
         characterType = CharacterType.MAIN;
         characterSkinController = new CharacterSkinController(this);
+        entityType = EntityType.PLAYER;
+        entityTypeId = BuiltInRegistries.ENTITY_TYPE.getId(entityType);
     }
 
     public CharacterStory(String name, String description, PlayerSkin.Model model, CharacterType characterType, String day, String month, String year) {
@@ -47,6 +54,8 @@ public class CharacterStory extends NarrativeEntry {
         this.model = model;
         this.characterType = characterType;
         characterSkinController = new CharacterSkinController(this);
+        entityType = EntityType.PLAYER;
+        entityTypeId = BuiltInRegistries.ENTITY_TYPE.getId(entityType);
     }
 
     public void update(String name, String description, String day, String month, String year) {
@@ -65,6 +74,22 @@ public class CharacterStory extends NarrativeEntry {
             return;
         }
         characterSkinController.unCacheSkins();
+        ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated"));
+        Minecraft.getInstance().setScreen(reloadScreen());
+    }
+
+    public void updateEntityType(EntityType<?> entityType) {
+        int oldEntityId = entityTypeId;
+        EntityType<?> oldEntityType = this.entityType;
+        this.entityType = entityType;
+        entityTypeId = BuiltInRegistries.ENTITY_TYPE.getId(entityType);
+        boolean result = characterType == CharacterType.MAIN ? NarrativeCraftFile.updateCharacterFolder(this) : NarrativeCraftFile.updateNpcSceneFolder(this, scene);
+        if(!result) {
+            this.entityType = oldEntityType;
+            entityTypeId = oldEntityId;
+            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.characters_manager.update.failed", name));
+            return;
+        }
         ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated"));
         Minecraft.getInstance().setScreen(reloadScreen());
     }
@@ -159,6 +184,18 @@ public class CharacterStory extends NarrativeEntry {
 
     public void setScene(Scene scene) {
         this.scene = scene;
+    }
+
+    public int getEntityTypeId() {
+        return entityTypeId;
+    }
+
+    public EntityType<?> getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(EntityType<?> entityType) {
+        this.entityType = entityType;
     }
 
     public enum CharacterType {
