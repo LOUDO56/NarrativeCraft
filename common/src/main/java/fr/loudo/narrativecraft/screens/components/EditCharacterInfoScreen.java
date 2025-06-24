@@ -57,6 +57,9 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
         } else {
             centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + labelHeight + GAP + EDIT_BOX_BIRTHDATE_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
         }
+        if(narrativeEntry != null) {
+            centerY -= 10 + GAP;
+        }
         titleWidget.setPosition(titleWidget.getX(), centerY - labelHeight);
 
         nameBox.setPosition(centerX, centerY);
@@ -132,6 +135,24 @@ public class EditCharacterInfoScreen extends EditInfoScreen {
             centerY += EDIT_BOX_BIRTHDATE_HEIGHT + GAP;
         } else {
             descriptionBox.setPosition(-1000, -1000);
+        }
+
+        if(narrativeEntry != null) {
+            CharacterStory characterStory = (CharacterStory)narrativeEntry;
+            StringWidget modelText = ScreenUtils.text(Component.literal("Model"), minecraft.font, centerX, centerY + 6);
+            Button modelButton = Button.builder(Component.literal(characterStory.getModel().name()), button -> {
+                if(characterStory.getModel() == PlayerSkin.Model.WIDE) {
+                    characterStory.setModel(PlayerSkin.Model.SLIM);
+                    button.setMessage(Component.literal(PlayerSkin.Model.SLIM.name()));
+                } else {
+                    characterStory.setModel(PlayerSkin.Model.WIDE);
+                    button.setMessage(Component.literal(PlayerSkin.Model.WIDE.name()));
+                }
+            }).pos(centerX + modelText.getWidth() + 5, centerY).width(70).build();
+
+            this.addRenderableWidget(modelText);
+            this.addRenderableWidget(modelButton);
+            centerY += modelButton.getHeight() + GAP;
         }
 
         Component buttonActionMessage = narrativeEntry == null ? Translation.message("screen.add.text") : Translation.message("screen.update.text");
