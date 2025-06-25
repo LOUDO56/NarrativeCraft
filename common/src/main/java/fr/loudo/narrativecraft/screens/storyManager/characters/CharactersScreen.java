@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.screens.storyManager.characters;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
+import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
 import fr.loudo.narrativecraft.screens.characters.CharacterEntityTypeScreen;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
@@ -50,7 +51,7 @@ public class CharactersScreen extends StoryElementScreen {
                     }).build();
                     button.active = false;
 
-                    Button entityTypeButton = Button.builder(Component.literal("T"), button1 -> {
+                    Button entityTypeButton = Button.builder(ImageFontConstants.ENTITY, button1 -> {
                         CharacterEntityTypeScreen screen = new CharacterEntityTypeScreen(this, characterStory);
                         minecraft.setScreen(screen);
                     }).build();

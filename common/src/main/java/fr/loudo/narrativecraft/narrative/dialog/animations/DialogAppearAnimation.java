@@ -61,7 +61,7 @@ public class DialogAppearAnimation {
         int alpha = (int) (opacity * 255.0F);
 
         int dialogBcColor = dialog.getDialogBackgroundColor();
-        dialog.setDialogBackgroundColor((alpha << 24) | (dialogBcColor & 0x00FFFFFF));
+        dialog.setDialogBackgroundColor(dialogBcColor);
 
         if(!isPaused) {
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));

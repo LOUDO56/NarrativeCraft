@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -24,17 +25,10 @@ public class DialogValuesInkAction extends InkAction {
     public InkActionResult execute(String[] command) {
         if(command.length == 1) return InkActionResult.ERROR;
         name = command[1];
-        Dialog dialog = storyHandler.getCurrentDialogBox();
-        if(dialog == null) {
-            // Initializing dialog if not set to apply new values
-            storyHandler.showDialog();
-        }
-        dialog = storyHandler.getCurrentDialogBox();
-        // But if it's still null, then something is wrong.
-        if(dialog == null) return InkActionResult.ERROR;
+        DialogData dialogData = storyHandler.getGlobalDialogValue();
         switch (name) {
             case "offset" -> {
-                Vec2 currentOffset = dialog.getDialogOffset();
+                Vec2 currentOffset = dialogData.getOffset();
                 float offsetX;
                 float offsetY = currentOffset.y;
                 try {
@@ -43,7 +37,7 @@ public class DialogValuesInkAction extends InkAction {
                         offsetY = Float.parseFloat(command[3]);
                     }
                     value = offsetX + " " + offsetY;
-                    dialog.setDialogOffset(new Vec2(offsetX, offsetY));
+                    dialogData.setOffset(new Vec2(offsetX, offsetY));
                     storyHandler.getGlobalDialogValue().setOffset(new Vec2(offsetX, offsetY));
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
@@ -53,7 +47,7 @@ public class DialogValuesInkAction extends InkAction {
                 try {
                     float scale = Float.parseFloat(command[2]);
                     value = String.valueOf(scale);
-                    dialog.setScale(scale);
+                    dialogData.setScale(scale);
                     storyHandler.getGlobalDialogValue().setScale(scale);
                 } catch (NumberFormatException e) {
                     return InkActionResult.ERROR;
@@ -61,15 +55,15 @@ public class DialogValuesInkAction extends InkAction {
             }
             case "padding" -> {
                 float paddingX;
-                float paddingY = dialog.getPaddingY();
+                float paddingY = dialogData.getPaddingY();
                 try {
                     paddingX = Float.parseFloat(command[2]);
                     if(command.length > 3) {
                         paddingY = Float.parseFloat(command[3]);
                     }
                     value = paddingX + " " + paddingY;
-                    dialog.setPaddingX(paddingX);
-                    dialog.setPaddingY(paddingY);
+                    dialogData.setPaddingX(paddingX);
+                    dialogData.setPaddingY(paddingY);
                     storyHandler.getGlobalDialogValue().setPaddingX(paddingX);
                     storyHandler.getGlobalDialogValue().setPaddingY(paddingY);
                 } catch (RuntimeException e) {
@@ -79,8 +73,8 @@ public class DialogValuesInkAction extends InkAction {
             case "width" -> {
                 try {
                     int width = Integer.parseInt(command[2]);
-                    dialog.setMaxWidth(width);
-                    dialog.setText(storyHandler.getCurrentDialog());
+                    dialogData.setMaxWidth(width);
+                    dialogData.setText(storyHandler.getCurrentDialog());
                     value = String.valueOf(width);
                     storyHandler.getGlobalDialogValue().setMaxWidth(width);
                 } catch (RuntimeException e) {
@@ -90,7 +84,7 @@ public class DialogValuesInkAction extends InkAction {
             case "textColor" -> {
                 try {
                     int textColor = Integer.parseInt(command[2], 16);
-                    dialog.setTextDialogColor(textColor);
+                    dialogData.setTextColor(textColor);
                     value = String.valueOf(textColor);
                     storyHandler.getGlobalDialogValue().setTextColor(textColor);
                 } catch (RuntimeException e) {
@@ -100,9 +94,9 @@ public class DialogValuesInkAction extends InkAction {
             case "backgroundColor" -> {
                 try {
                     int bcColor = Integer.parseInt(command[2], 16);
-                    dialog.setDialogBackgroundColor((255 << 24) | (bcColor & 0x00FFFFFF));
+                    dialogData.setBackgroundColor(bcColor);
                     value = String.valueOf(bcColor);
-                    storyHandler.getGlobalDialogValue().setBackgroundColor((255 << 24) | (bcColor & 0x00FFFFFF));
+                    storyHandler.getGlobalDialogValue().setBackgroundColor((bcColor));
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -110,7 +104,7 @@ public class DialogValuesInkAction extends InkAction {
             case "gap" -> {
                 try {
                     float gap = Integer.parseInt(command[2]);
-                    dialog.setGap(gap);
+                    dialogData.setGap(gap);
                     value = String.valueOf(gap);
                     storyHandler.getGlobalDialogValue().setGap(gap);
                 } catch (RuntimeException e) {
@@ -120,7 +114,7 @@ public class DialogValuesInkAction extends InkAction {
             case "letterSpacing" -> {
                 try {
                     float letterSpacing = Integer.parseInt(command[2]);
-                    dialog.setLetterSpacing(letterSpacing);
+                    dialogData.setLetterSpacing(letterSpacing);
                     value = String.valueOf(letterSpacing);
                     storyHandler.getGlobalDialogValue().setLetterSpacing(letterSpacing);
                 } catch (RuntimeException e) {
@@ -129,7 +123,7 @@ public class DialogValuesInkAction extends InkAction {
             }
             case "unSkippable" -> {
                 try {
-                    dialog.setUnSkippable(true);
+                    dialogData.setUnSkippable(true);
                     value = "true";
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
@@ -138,12 +132,26 @@ public class DialogValuesInkAction extends InkAction {
             case "autoSkip" -> {
                 try {
                     double forceTimeEnd = Double.parseDouble(command[2]);
-                    dialog.setForcedEndTime((long) (forceTimeEnd * 1000L));
+                    dialogData.setEndForceEndTime((long) (forceTimeEnd * 1000L));
                     value = String.valueOf(forceTimeEnd);
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
             }
+        }
+        Dialog dialog = storyHandler.getCurrentDialogBox();
+        if(dialog != null) {
+            dialog.setPaddingX(dialogData.getPaddingX());
+            dialog.setPaddingY(dialogData.getPaddingY());
+            dialog.setScale(dialogData.getScale());
+            dialog.setLetterSpacing(dialogData.getLetterSpacing());
+            dialog.setGap(dialogData.getGap());
+            dialog.setMaxWidth(dialogData.getMaxWidth());
+            dialog.setDialogOffset(dialogData.getOffset());
+            dialog.setUnSkippable(dialogData.isUnSkippable());
+            dialog.setForcedEndTime(dialogData.getEndForceEndTime());
+            dialog.setTextDialogColor(dialogData.getTextColor());
+            dialog.setDialogBackgroundColor(dialogData.getBackgroundColor());
         }
         sendDebugDetails();
         return InkActionResult.PASS;

@@ -14,5 +14,7 @@ public class ImageFontConstants {
     public static final Component CHARACTER_ADD = Component.literal("\uE007");
     public static final Component SAVE = Component.literal("\uE008");
     public static final Component CHARACTER = Component.literal("\uE009");
+    public static final Component DIALOG = Component.literal("\uE010");
+    public static final Component ENTITY = Component.literal("\uE011");
 
 }

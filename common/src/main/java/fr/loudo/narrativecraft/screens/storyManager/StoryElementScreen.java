@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -40,6 +41,10 @@ public class StoryElementScreen extends OptionsSubScreen {
         linearlayout.addChild(new StringWidget(this.title, this.font));
         linearlayout.addChild(Button.builder(ImageFontConstants.ADD, button -> {
             EditInfoScreen screen = new EditInfoScreen(this);
+            this.minecraft.setScreen(screen);
+        }).width(25).build());
+        linearlayout.addChild(Button.builder(ImageFontConstants.DIALOG, button -> {
+            DialogCustomScreen screen = new DialogCustomScreen(this);
             this.minecraft.setScreen(screen);
         }).width(25).build());
     }

@@ -203,7 +203,6 @@ public class DialogAnimationScrollText {
 
     public void setMaxLineWidth(float maxLineWidth) {
         this.maxLineWidth = maxLineWidth;
-        dialog.setOldWidth(maxLineWidth);
     }
 
     public void reset() {
@@ -233,7 +232,6 @@ public class DialogAnimationScrollText {
 
     public void setLetterSpacing(float letterSpacing) {
         this.letterSpacing = letterSpacing;
-        init();
     }
 
     public float getGap() {
@@ -242,7 +240,6 @@ public class DialogAnimationScrollText {
 
     public void setGap(float gap) {
         this.gap = gap;
-        init();
     }
 
     public int getMaxWidth() {
@@ -255,7 +252,6 @@ public class DialogAnimationScrollText {
 
     public void setTotalHeight(float totalHeight) {
         this.totalHeight = totalHeight;
-        dialog.setOldHeight(totalHeight);
     }
 
     public void setMaxWidth(int maxWidth) {

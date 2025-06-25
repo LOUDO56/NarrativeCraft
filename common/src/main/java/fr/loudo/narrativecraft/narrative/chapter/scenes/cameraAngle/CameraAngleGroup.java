@@ -91,6 +91,7 @@ public class CameraAngleGroup extends NarrativeEntry {
                                     fakePlayer.getId(),
                                     List.of(new Pair<>(EquipmentSlot.valueOf(itemSlotData.equipmentSlot()), itemSlotData.getItem(characterStory1.getEntity().registryAccess())))
                             ));
+                            fakePlayer.setItemSlot(EquipmentSlot.valueOf(itemSlotData.equipmentSlot()), itemSlotData.getItem(characterStory1.getEntity().registryAccess()));
                         }
                         fakePlayer.setPose(characterStoryData.getPose());
                         EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);

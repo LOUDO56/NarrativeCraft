@@ -89,6 +89,24 @@
       "chars": [
         "\uE009"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/dialog.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE010"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/entity.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE011"
+      ]
     }
   ]
 }

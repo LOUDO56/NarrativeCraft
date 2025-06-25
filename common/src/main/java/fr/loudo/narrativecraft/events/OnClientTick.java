@@ -100,7 +100,6 @@ public class OnClientTick {
             for(InkAction inkAction : storyHandler.getInkActionList()) {
                 if(inkAction instanceof WaitInkAction) return;
             }
-            dialog.setInstantSpawn(false);
             storyHandler.next();
         });
 

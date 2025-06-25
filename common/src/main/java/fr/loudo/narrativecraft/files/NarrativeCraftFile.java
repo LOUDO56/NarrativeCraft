@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -20,6 +21,7 @@ import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
+import net.minecraft.world.phys.Vec2;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -40,6 +42,7 @@ public class NarrativeCraftFile {
     private static final String SCENES_DIRECTORY_NAME = "scenes";
     private static final String CHARACTERS_DIRECTORY_NAME = "characters";
     private static final String SAVES_DIRECTORY_NAME = "saves";
+    private static final String DATA_DIRECTORY_NAME = "data";
     private static final String MAIN_INK_NAME = "main" + EXTENSION_SCRIPT_FILE;
 
     public static File mainDirectory;
@@ -47,6 +50,7 @@ public class NarrativeCraftFile {
     public static File characterDirectory;
     public static File savesDirectory;
     public static File buildDirectory;
+    public static File dataDirectory;
     public static File mainInkFile;
 
     public static void init(MinecraftServer server) {
@@ -55,11 +59,63 @@ public class NarrativeCraftFile {
         characterDirectory = createDirectory(mainDirectory, CHARACTERS_DIRECTORY_NAME);
         savesDirectory = createDirectory(mainDirectory, SAVES_DIRECTORY_NAME);
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
+        dataDirectory = createDirectory(mainDirectory, DATA_DIRECTORY_NAME);
         mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
+        createGlobalDialogValues();
     }
 
     public static File getDetailsFile(File file) {
         return new File(file.getAbsoluteFile(), "details" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+    }
+
+    public static DialogData getGlobalDialogValues() {
+        createGlobalDialogValues();
+        File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+        try {
+            String dialogContent = Files.readString(dialogFile.toPath());
+            return new Gson().fromJson(dialogContent, DialogData.class);
+        } catch (IOException ignored) {}
+        return null;
+    }
+
+    public static void createGlobalDialogValues() {
+        if(!dataDirectory.exists()) createDirectory(mainDirectory, DATA_DIRECTORY_NAME);
+        File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+        if(!dialogFile.exists()) {
+            createFile(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+            DialogData dialogData = new DialogData(
+                    null,
+                    null,
+                    new Vec2(0, 0.8f),
+                    -1,
+                    0,
+                    3,
+                    4,
+                    0.8f,
+                    0.1f,
+                    10,
+                    90,
+                    false,
+                    0
+            );
+            try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
+                new Gson().toJson(dialogData, writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+    public static void updateGlobalDialogValues(DialogData dialogData) {
+        try {
+            createGlobalDialogValues();
+            File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+            try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
+                new Gson().toJson(dialogData, writer);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        } catch (Exception ignored) {}
     }
 
     public static boolean createChapterDirectory(Chapter chapter) {

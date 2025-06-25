@@ -14,6 +14,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -50,7 +51,7 @@ public class StoryHandler {
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning, isDebugMode, OnCutscene, onChoice, isSaving;
-    private StorySave.DialogSaveData globalDialogValue;
+    private DialogData globalDialogValue;
     private final List<InkAction> inkActionList;
 
     public StoryHandler() {
@@ -63,21 +64,6 @@ public class StoryHandler {
         onChoice = false;
         save = NarrativeCraftFile.getSave();
         isSaving = false;
-        globalDialogValue = new StorySave.DialogSaveData(
-                "",
-                "",
-                new Vec2(0, 0.8f),
-                -1,
-                0,
-                3,
-                4,
-                0.8f,
-                0.1f,
-                10,
-                90,
-                false,
-                0
-        );
     }
 
     public StoryHandler(Chapter chapter, Scene scene) {
@@ -98,6 +84,8 @@ public class StoryHandler {
 
     public void start() {
         try {
+            inkActionList.clear();
+            globalDialogValue = new DialogData(DialogData.globalDialogData);
             if(playerSession == null) {
                 ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
                 playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, null, null);
@@ -145,6 +133,7 @@ public class StoryHandler {
     }
 
     public void stop() {
+        inkActionList.clear();
         isRunning = false;
         for(CharacterStory characterStory : currentCharacters) {
             characterStory.kill();
@@ -157,7 +146,6 @@ public class StoryHandler {
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
-        inkActionList.clear();
         currentKeyframeCoordinate = null;
         playerSession.reset();
         currentCharacters.clear();
@@ -218,7 +206,7 @@ public class StoryHandler {
                     inkActionList.add(new SubscenePlayInkAction(this, subscene));
                 }
                 if(save.getDialogSaveData() != null) {
-                    StorySave.DialogSaveData dialogSaveData = save.getDialogSaveData();
+                    DialogData dialogSaveData = save.getDialogSaveData();
                     globalDialogValue = dialogSaveData;
                     if(dialogSaveData.getCharacterName() == null && dialogSaveData.getText() == null) { // If dialog save data is only global parameters and not last dialog saved
                         showDialog();
@@ -589,7 +577,7 @@ public class StoryHandler {
         isSaving = saving;
     }
 
-    public StorySave.DialogSaveData getGlobalDialogValue() {
+    public DialogData getGlobalDialogValue() {
         return globalDialogValue;
     }
 

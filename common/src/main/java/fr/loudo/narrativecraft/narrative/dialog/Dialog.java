@@ -39,7 +39,7 @@ public class Dialog {
 
     private float paddingX, paddingY, scale, interpolatedWidth, interpolatedHeight, oldWidth, oldHeight, oldScale;
     private long startTime, pauseStartTime, startTimeEnded, forcedEndTime;
-    private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused, instantSpawn;
+    private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused;
     private int dialogBackgroundColor, textDialogColor;
     private Vec2 dialogOffset;
     private double t;
@@ -67,7 +67,33 @@ public class Dialog {
         unSkippable = false;
         endDialog = false;
         dialogEnded = false;
-        instantSpawn = false;
+        startTimeEnded = 0;
+        forcedEndTime = 0;
+    }
+
+    public Dialog(Entity entityServer, String text, DialogData dialogData) {
+        this.entityServer = entityServer;
+        this.text = text;
+        paddingX = dialogData.getPaddingX();
+        paddingY = dialogData.getPaddingY();
+        scale = dialogData.getScale() * 0.025f;
+        dialogBackgroundColor = dialogData.getBackgroundColor();
+        textDialogColor = dialogData.getTextColor();
+        dialogOffset = dialogData.getOffset();
+        dialogAnimationScrollText = new DialogAnimationScrollText(text, dialogData.getLetterSpacing(), dialogData.getGap(), dialogData.getMaxWidth(), this);
+        dialogAppearAnimation = new DialogAppearAnimation(this);
+        dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
+        dialogueTail = new DialogueTail(this, 5f, 10f, 0);
+        dialogEntityBobbing = new DialogEntityBobbing(this);
+        acceptNewDialog = false;
+        oldWidth = getWidth();
+        oldHeight = getHeight();
+        oldScale = scale * 0.025f;
+        t = 1.0;
+        isPaused = false;
+        unSkippable = false;
+        endDialog = false;
+        dialogEnded = false;
         startTimeEnded = 0;
         forcedEndTime = 0;
     }
@@ -80,14 +106,14 @@ public class Dialog {
 
         poseStack.pushPose();
 
-        if(dialogAppearAnimation.isAnimating() && !instantSpawn) {
+        if(dialogAppearAnimation.isAnimating()) {
             dialogAppearAnimation.render(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation.AppearType.DISAPPEAR : DialogAppearAnimation.AppearType.APPEAR);
         } else {
             Vec3 dialogPos = getDialogInterpolatedPosition();
             poseStack.translate(dialogPos.x, dialogPos.y, dialogPos.z);
             poseStack.mulPose(minecraft.getEntityRenderDispatcher().cameraOrientation());
             float targetScale = scale;
-            if(!instantSpawn && acceptNewDialog && oldScale != scale) {
+            if(acceptNewDialog && oldScale != scale) {
                 targetScale = (float) MathUtils.lerp(oldScale, targetScale, t);
             }
             poseStack.scale(targetScale, -targetScale, targetScale);
@@ -166,7 +192,7 @@ public class Dialog {
             oldScale = scale;
         } else {
             if(!isPaused) {
-                if(!instantSpawn && (oldHeight != height || oldWidth != width)) {
+                if(oldHeight != height || oldWidth != width || oldScale != scale) {
                     t = Easing.getInterpolation(easing, Math.min(1, (double) (System.currentTimeMillis() - startTime) / DIALOG_TRANSITION_TIME));
                 } else {
                     t = 1.0;
@@ -371,19 +397,14 @@ public class Dialog {
 
     public void setScale(float scale) {
         this.scale = scale * 0.025f;
-        oldScale = scale * 0.025f;
     }
 
     public void setGap(float gap) {
         dialogAnimationScrollText.setGap(gap);
-        oldWidth = getWidth();
-        oldHeight = getHeight();
     }
 
     public void setLetterSpacing(float letterSpacing) {
         dialogAnimationScrollText.setLetterSpacing(letterSpacing);
-        oldWidth = getWidth();
-        oldHeight = getHeight();
     }
 
     public void setText(String text) {
@@ -394,16 +415,12 @@ public class Dialog {
         return scale;
     }
 
-    public void setOldScale(float oldScale) {
-        this.oldScale = oldScale * 0.025f;
-    }
-
     public int getDialogBackgroundColor() {
         return dialogBackgroundColor;
     }
 
     public void setDialogBackgroundColor(int dialogBackgroundColor) {
-        this.dialogBackgroundColor = dialogBackgroundColor;
+        this.dialogBackgroundColor = (0xFF << 24) | (dialogBackgroundColor & 0x00FFFFFF);
     }
 
     public DialogAnimationScrollText getDialogAnimationScrollText() {
@@ -435,9 +452,8 @@ public class Dialog {
     }
 
     public void setMaxWidth(int maxWidth) {
-        dialogAnimationScrollText.setMaxLineWidth(maxWidth);
-        oldWidth = getWidth();
-        oldHeight = getHeight();
+        dialogAnimationScrollText.setMaxWidth(maxWidth);
+        dialogAnimationScrollText.setText(text);
     }
 
     public void setOldWidth(float oldWidth) {
@@ -484,18 +500,6 @@ public class Dialog {
     public void endDialogAndDontSkip() {
         unSkippable = true;
         endDialog();
-    }
-
-    public boolean isInstantSpawn() {
-        return instantSpawn;
-    }
-
-    public void setInstantSpawn(boolean instantSpawn) {
-        if(instantSpawn) {
-            dialogAppearAnimation.setT(1);
-            t = 1.0;
-        }
-        this.instantSpawn = instantSpawn;
     }
 
     public void setDialogOffset(Vec2 dialogOffset) {

@@ -17,6 +17,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -39,6 +40,7 @@ public class ChapterManager {
 
     public void init() {
         chapters = new ArrayList<>();
+        DialogData.globalDialogData = NarrativeCraftFile.getGlobalDialogValues();
         File chapterDirectory = NarrativeCraftFile.chaptersDirectory;
         File[] chapterIndexFolder = chapterDirectory.listFiles();
         if(chapterIndexFolder != null) {
