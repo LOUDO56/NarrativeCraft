@@ -37,7 +37,7 @@ public class CameraAngleInfoKeyframeScreen extends Screen {
     public void onClose() {
         PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
         if(playerSession != null && cameraAngle != null) {
-            CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(cameraAngle, playerSession.getPlayer());
+            CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(cameraAngle, playerSession.getPlayer(), false);
             minecraft.setScreen(screen);
         } else {
             super.onClose();

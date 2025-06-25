@@ -8,3 +8,9 @@ Icons:
     Dialog:
         Author: Wolf Kit Rounded Line Icons
         Licence: https://creativecommons.org/licenses/by/4.0/
+    Eye Open:
+         Author: radix-ui
+         Licence: https://mit-license.org/
+    Eye Closed:
+         Author: Solar Icons
+         Licence: https://creativecommons.org/licenses/by/4.0/

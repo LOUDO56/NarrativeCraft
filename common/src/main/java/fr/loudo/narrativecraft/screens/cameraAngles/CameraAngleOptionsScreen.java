@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.screens.cutscenes.KeyframeCutsceneOptionScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -16,29 +17,42 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
 
     private final CameraAngleController cameraAngleController;
     
-    public CameraAngleOptionsScreen(Keyframe keyframe, ServerPlayer player) {
-        super(keyframe, player);
+    public CameraAngleOptionsScreen(Keyframe keyframe, ServerPlayer player, boolean hide) {
+        super(keyframe, player, hide);
         this.cameraAngleController = (CameraAngleController) playerSession.getKeyframeControllerBase();
     }
 
     @Override
     protected void init() {
-        initPositionLabelBox();
-        initButtons();
-        initSliders();
-        initTextSelectedKeyframe();
+        if(!hide) {
+            initPositionLabelBox();
+            initButtons();
+            initSliders();
+            initTextSelectedKeyframe();
+        }
         initLittleButtons();
         currentY = INITIAL_POS_Y;
     }
+
+    @Override
+    public void onClose() {}
 
     @Override
     protected void initLittleButtons() {
         int currentX = this.width - INITIAL_POS_X;
         int gap = 5;
         int width = 20;
+        if(hide) {
+            Button eyeClosed = Button.builder(ImageFontConstants.EYE_CLOSED, button -> {
+                KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, false);
+                minecraft.setScreen(screen);
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(eyeClosed);
+            return;
+        }
         Button closeButton = Button.builder(Component.literal("✖"), button -> {
             cameraAngleController.clearCurrentPreviewKeyframe();
-            this.onClose();
+            minecraft.setScreen(null);
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
         Keyframe nextKeyframe = cameraAngleController.getNextKeyframe(keyframe);
         if(nextKeyframe != null) {
@@ -63,6 +77,12 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
             minecraft.setScreen(screen);
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
         this.addRenderableWidget(editButton);
+        currentX -= INITIAL_POS_X + gap;
+        Button eyeOpen = Button.builder(ImageFontConstants.EYE_OPEN, button -> {
+            KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, true);
+            minecraft.setScreen(screen);
+        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(eyeOpen);
     }
 
     @Override

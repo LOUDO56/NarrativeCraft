@@ -3,10 +3,10 @@
   "key.categories.narrativecraft": "Narrative Craft Animation",
   "key.animation.record.start": "Start Animation Recording",
   "key.animation.record.stop": "Stop Animation Recording",
-  "key.cutscene.screen.keyframe_option": "Open Keyframe Option Screen",
   "key.cutscene.keyframes.create_group": "Create Keyframe Group",
   "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
   "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
+  "key.dialog.next": "Next Dialog",
 
   "narrativecraft.global.animations": "Animations",
   "narrativecraft.global.cutscenes": "Cutscenes",

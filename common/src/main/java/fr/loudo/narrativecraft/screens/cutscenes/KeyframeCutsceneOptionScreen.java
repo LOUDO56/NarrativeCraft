@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeAdvancedSettings;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -25,31 +26,36 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
     private final CutsceneController cutsceneController;
     private EditBox startDelayBox, pathTimeBox, transitionDelayBox, speedBox;
 
-    public KeyframeCutsceneOptionScreen(Keyframe keyframe, ServerPlayer player) {
-        super(keyframe, player);
+    public KeyframeCutsceneOptionScreen(Keyframe keyframe, ServerPlayer player, boolean hide) {
+        super(keyframe, player, hide);
         this.cutsceneController = (CutsceneController) playerSession.getKeyframeControllerBase();
     }
 
     @Override
     protected void init() {
-        updateCurrentTick();
-        if(!keyframe.isParentGroup()) {
-            pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getPathTime())));
-            speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
+        if(!hide) {
+            updateCurrentTick();
+            if(!keyframe.isParentGroup()) {
+                pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getPathTime())));
+                speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));
+            }
+            if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe)) {
+                transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getTransitionDelay())));
+            } else {
+                startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getStartDelay())));
+            }
+            initPositionLabelBox();
+            initSliders();
+            initButtons();
+            initTextSelectedKeyframe();
         }
-        if(cutsceneController.isLastKeyframe(cutsceneController.getKeyframeGroupByKeyframe(keyframe), keyframe)) {
-            transitionDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.transition_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getTransitionDelay())));
-        } else {
-            startDelayBox = addLabeledEditBox(Translation.message("screen.keyframe_option.start_delay"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getStartDelay())));
-        }
-        initPositionLabelBox();
-        initSliders();
-        initButtons();
-        initTextSelectedKeyframe();
         initLittleButtons();
         //Reset for responsive (changing windows size or going fullscreen)
         currentY = INITIAL_POS_Y;
     }
+
+    @Override
+    public void onClose() {}
 
     @Override
     public boolean isPauseScreen() {
@@ -127,9 +133,17 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
         int currentX = this.width - INITIAL_POS_X;
         int gap = 5;
         int width = 20;
+        if(hide) {
+            Button eyeClosed = Button.builder(ImageFontConstants.EYE_CLOSED, button -> {
+                KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, false);
+                minecraft.setScreen(screen);
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(eyeClosed);
+            return;
+        }
         Button closeButton = Button.builder(Component.literal("✖"), button -> {
             cutsceneController.clearCurrentPreviewKeyframe();
-            this.onClose();
+            minecraft.setScreen(null);
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
         Keyframe nextKeyframe = cutsceneController.getNextKeyframe(keyframe);
         if(nextKeyframe != null) {
@@ -150,6 +164,12 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
             this.addRenderableWidget(leftKeyframeButton);
         }
         this.addRenderableWidget(closeButton);
+        currentX -= INITIAL_POS_X + gap;
+        Button eyeOpen = Button.builder(ImageFontConstants.EYE_OPEN, button -> {
+            KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, true);
+            minecraft.setScreen(screen);
+        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(eyeOpen);
     }
 
     protected void updateValues() {

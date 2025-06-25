@@ -107,6 +107,24 @@
       "chars": [
         "\uE011"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/eye_open.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE012"
+      ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/eye_close.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE013"
+      ]
     }
   ]
 }

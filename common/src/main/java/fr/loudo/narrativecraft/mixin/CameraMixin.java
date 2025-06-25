@@ -72,10 +72,6 @@ public abstract class CameraMixin {
 
         client.options.setCameraType(CameraType.FIRST_PERSON);
 
-        if (ModKeys.SCREEN_KEYFRAME_OPTION.isDown()) {
-            keyframePreview.openScreenOption(playerSession.getPlayer());
-        }
-
     }
 
     private void cutscenePlaying(PlayerSession playerSession) {

@@ -37,8 +37,9 @@ public class KeyframeOptionScreen extends Screen {
     protected float upDownValue, leftRightValue, rotationValue, fovValue;
     protected int currentY = INITIAL_POS_Y;
 
+    protected boolean hide;
 
-    public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player) {
+    public KeyframeOptionScreen(Keyframe keyframe, ServerPlayer player, boolean hide) {
         super(Component.literal("Keyframe Option"));
         this.keyframe = keyframe;
         this.player = player;
@@ -48,6 +49,7 @@ public class KeyframeOptionScreen extends Screen {
         this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
         this.fovValue = keyframe.getKeyframeCoordinate().getFov();
         this.playerSession = Utils.getSessionOrNull(player);
+        this.hide = hide;
     }
 
     protected void init() {
@@ -281,4 +283,8 @@ public class KeyframeOptionScreen extends Screen {
     }
 
     protected void updateValues() {}
+
+    public boolean isHide() {
+        return hide;
+    }
 }

@@ -16,5 +16,7 @@ public class ImageFontConstants {
     public static final Component CHARACTER = Component.literal("\uE009");
     public static final Component DIALOG = Component.literal("\uE010");
     public static final Component ENTITY = Component.literal("\uE011");
+    public static final Component EYE_OPEN = Component.literal("\uE012");
+    public static final Component EYE_CLOSED = Component.literal("\uE013");
 
 }

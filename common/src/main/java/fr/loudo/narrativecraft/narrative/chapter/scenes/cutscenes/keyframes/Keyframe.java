@@ -150,9 +150,9 @@ public class Keyframe {
         Minecraft client = Minecraft.getInstance();
         KeyframeOptionScreen screen;
         if(isFixed) {
-            screen = new CameraAngleOptionsScreen(this, player);
+            screen = new CameraAngleOptionsScreen(this, player, false);
         } else {
-            screen = new KeyframeCutsceneOptionScreen(this, player);
+            screen = new KeyframeCutsceneOptionScreen(this, player, false);
         }
         client.execute(() -> client.setScreen(screen));
     }
