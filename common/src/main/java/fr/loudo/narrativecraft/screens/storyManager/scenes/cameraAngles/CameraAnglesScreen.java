@@ -37,8 +37,8 @@ public class CameraAnglesScreen extends StoryElementScreen {
                     Button button = Button.builder(Component.literal(group.getName()), b -> {
                         PlayerSession session = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(this.minecraft.player, scene.getChapter(), scene);
                         CameraAngleController controller = new CameraAngleController(group, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()), Playback.PlaybackType.DEVELOPMENT);
-                        session.setKeyframeControllerBase(controller);
                         controller.startSession();
+                        session.setKeyframeControllerBase(controller);
                     }).build();
                     return new StoryElementList.StoryEntryData(button, group);
                 }).toList();

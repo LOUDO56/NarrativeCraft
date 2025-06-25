@@ -77,11 +77,16 @@ public class CutsceneController extends KeyframeControllerBase {
             playbackList.add(playback);
         }
 
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if(keyframeControllerBase != null) {
+            keyframeControllerBase.stopSession();
+        }
+
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
 
             this.storyHandler = new StoryHandler();
             storyHandler.setDebugMode(true);
-            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
             storyHandler.setPlayerSession(playerSession);
             NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
 

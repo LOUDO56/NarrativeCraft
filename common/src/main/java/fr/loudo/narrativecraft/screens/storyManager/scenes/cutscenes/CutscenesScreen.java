@@ -50,8 +50,8 @@ public class CutscenesScreen extends StoryElementScreen {
 
             Button mainButton = Button.builder(Component.literal(cutscene.getName()), btn -> {
                 CutsceneController controller = new CutsceneController(cutscene, Utils.getServerPlayerByUUID(minecraft.player.getUUID()), Playback.PlaybackType.DEVELOPMENT);
-                NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(minecraft.player, scene.getChapter(), scene).setKeyframeControllerBase(controller);
                 controller.startSession();
+                NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(minecraft.player, scene.getChapter(), scene).setKeyframeControllerBase(controller);
             }).build();
 
             entries.add(new StoryElementList.StoryEntryData(mainButton, cutscene, extraButtons));

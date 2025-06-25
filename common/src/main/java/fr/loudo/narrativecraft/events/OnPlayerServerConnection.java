@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
@@ -22,12 +23,17 @@ public class OnPlayerServerConnection {
         PlayerSessionManager playerSessionManager = NarrativeCraftMod.getInstance().getPlayerSessionManager();
         PlayerSession playerSession = playerSessionManager.getPlayerSession(player);
         if(playerSession != null) {
+            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+            if(keyframeControllerBase != null) {
+                keyframeControllerBase.stopSession();
+            }
             playerSessionManager.getPlayerSessions().remove(playerSession);
         }
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
         if(recording != null) {
             recording.stop();
         }
+
 
     }
 
