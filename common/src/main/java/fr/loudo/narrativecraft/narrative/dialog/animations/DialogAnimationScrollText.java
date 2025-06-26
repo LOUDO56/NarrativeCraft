@@ -97,7 +97,7 @@ public class DialogAnimationScrollText {
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
             float startX = textWidth == maxLineWidth ? -textWidth / 2.0F : -maxLineWidth / 2.0F;
 
-            if (!isPaused) {
+            if (!client.isPaused()) {
                 if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
                     animationTime = now;
                     letterOffsets.clear();
@@ -149,7 +149,7 @@ public class DialogAnimationScrollText {
             lastTimeChar = now;
         }
 
-        dialog.getDialogEntityBobbing().updateLookDirection();
+        dialog.getDialogEntityBobbing().updateLookDirection(client.getDeltaTracker().getGameTimeDeltaPartialTick(true));
 
     }
 

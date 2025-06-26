@@ -67,6 +67,10 @@ public class OnClientTick {
                 }
             }
             storyHandler.getInkActionList().removeAll(toRemove);
+            Dialog dialog = storyHandler.getCurrentDialogBox();
+            if(dialog != null) {
+                dialog.getDialogEntityBobbing().tick();
+            }
 
         }
 
