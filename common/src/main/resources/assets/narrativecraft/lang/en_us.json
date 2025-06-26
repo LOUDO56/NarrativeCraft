@@ -160,6 +160,8 @@
 
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
 
+  "narrativecraft.character.spawn.fail": "§cImpossible to spawn an entity because no character is linked to animation §c§b%s.",
+
   "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
   "narrativecraft.debug.animation": "Animation %s now playing.",
   "narrativecraft.debug.subscene": "Subscene %s now playing.",

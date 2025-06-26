@@ -60,7 +60,12 @@ public class ChangeSkinLinkScreen extends OptionsSubScreen {
     class SkinList extends ObjectSelectionList<SkinList.Entry> {
         public SkinList(Minecraft minecraft, List<File> skins) {
             super(minecraft, ChangeSkinLinkScreen.this.width, ChangeSkinLinkScreen.this.height - 33 - 53, 33, 18);
-            String selectedSkin = characterStory.getCharacterSkinController().getCurrentSkin().getName();
+            String selectedSkin;
+            if(characterStory.getCharacterSkinController().getCurrentSkin() != null) {
+                selectedSkin = characterStory.getCharacterSkinController().getCurrentSkin().getName();
+            } else {
+                selectedSkin = "";
+            }
             skins.forEach(file -> {
                 Entry entry = new Entry(file);
                 this.addEntry(entry);

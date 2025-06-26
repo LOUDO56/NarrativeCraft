@@ -81,8 +81,8 @@ public class SubscenesScreen extends StoryElementScreen {
             }).width(20).build();
 
             Button mainButton = Button.builder(Component.literal(subscene.getName()), b -> {
-                //
             }).build();
+            mainButton.active = false;
 
             entries.add(new StoryElementList.StoryEntryData(mainButton, subscene, List.of(settingsButton)));
         }

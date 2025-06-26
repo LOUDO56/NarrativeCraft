@@ -99,6 +99,10 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
     }
 
     private void spawnEntity(Animation animation, int index) {
+        if(animation.getCharacter() == null) {
+            minecraft.player.displayClientMessage(Translation.message("character.spawn.fail", animation.getName()), false);
+            return;
+        }
         MovementData movementData = animation.getActionsData().getMovementData().get(index);
         List<Action> actions = animation.getActionsData().getActions().stream()
                 .filter(action -> index >= action.getTick())
