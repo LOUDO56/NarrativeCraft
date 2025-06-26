@@ -71,7 +71,11 @@ public class AnimationCharacterLinkScreen extends OptionsSubScreen {
     public void onClose() {
         CharacterList.Entry entry = this.characterList.getSelected();
         if(entry == null) {
-            minecraft.setScreen(null);
+            if(lastScreen != null) {
+                minecraft.setScreen(animation.reloadScreen());
+            } else {
+                minecraft.setScreen(null);
+            }
             return;
         }
         CharacterStory selectedCharacter = entry.characterStory;

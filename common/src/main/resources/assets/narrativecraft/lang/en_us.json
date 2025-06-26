@@ -87,6 +87,7 @@
   "narrativecraft.screen.cutscene_manager.add.failed": "Couldn't add cutscene %s. Please check cutscenes.json of your scene exists.",
   "narrativecraft.screen.cutscene_manager.update.failed": "Couldn't update cutscene %s. Please check cutscenes.json of your scene exists.",
   "narrativecraft.screen.animation_manager.title": "Animation list of scene %s",
+  "narrativecraft.screen.animation_manager.no_character_link": "No character is linked to that animation.",
   "narrativecraft.screen.subscene_manager.title": "Subscene list of scene %s",
   "narrativecraft.screen.subscene_manager.add.title": "Add a subscene to scene %s",
   "narrativecraft.screen.subscene_manager.edit.title": "Edit subscene %s from scene %s",

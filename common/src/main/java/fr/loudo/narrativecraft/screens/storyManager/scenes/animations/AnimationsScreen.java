@@ -5,10 +5,11 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.screens.animations.AnimationCharacterLinkScreen;
 import fr.loudo.narrativecraft.screens.components.ChangeSkinLinkScreen;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
+import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -17,7 +18,6 @@ import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.util.List;
 
 public class AnimationsScreen extends StoryElementScreen {
@@ -59,14 +59,18 @@ public class AnimationsScreen extends StoryElementScreen {
                     Button settingsButton = createSettingsButton(animation);
 
                     Button button = Button.builder(Component.literal(animation.getName()), b -> {
-                        // TODO: preview animation
                     }).build();
+                    button.active = false;
                     Button changeSkin = Button.builder(ImageFontConstants.CHARACTER, b -> {
-                        ChangeSkinLinkScreen changeSkinLinkScreen = new ChangeSkinLinkScreen(this, animation.getCharacter(), skin -> {
-                            animation.setSkinName(skin);
-                            NarrativeCraftFile.updateAnimationFile(animation);
-                        });
-                        minecraft.setScreen(changeSkinLinkScreen);
+                        if(animation.getCharacter() != null) {
+                            ChangeSkinLinkScreen changeSkinLinkScreen = new ChangeSkinLinkScreen(this, animation.getCharacter(), skin -> {
+                                animation.setSkinName(skin);
+                                NarrativeCraftFile.updateAnimationFile(animation);
+                            });
+                            minecraft.setScreen(changeSkinLinkScreen);
+                        } else {
+                            ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.animation_manager.no_character_link"));
+                        }
                     }).build();
                     return new StoryElementList.StoryEntryData(button, animation, List.of(settingsButton, changeSkin));
                 }).toList();
