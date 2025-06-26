@@ -89,7 +89,6 @@ public class Keyframe {
         cameraEntity.setXRot(keyframeCoordinate.getXRot());
         cameraEntity.setYRot(keyframeCoordinate.getYRot());
         cameraEntity.setYHeadRot(keyframeCoordinate.getYRot());
-        cameraEntity.setYBodyRot(player.yBodyRot);
         Vec3 playerCoordVec3 = new Vec3(keyframeCoordinate.getX(), keyframeCoordinate.getY() - 1, keyframeCoordinate.getZ());
         PositionMoveRotation pos = new PositionMoveRotation(
                 playerCoordVec3,

@@ -28,6 +28,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -44,6 +45,8 @@ public class CutsceneController extends KeyframeControllerBase {
     private double currentSkipCount;
     private KeyframeGroup selectedKeyframeGroup;
     private StoryHandler storyHandler;
+    private List<KeyframeGroup> oldKeyframeGroups;
+    private List<KeyframeTrigger> oldKeyframeTriggers;
 
     public CutsceneController(Cutscene cutscene, ServerPlayer player, Playback.PlaybackType playbackType) {
         super(cutscene.getKeyframeGroupList(), player, playbackType);
@@ -53,9 +56,64 @@ public class CutsceneController extends KeyframeControllerBase {
         this.currentSkipCount = 5 * 20;
         this.playbackList = new ArrayList<>();
         this.playbackType = playbackType;
+        initOldData();
+    }
+
+    public void initOldData() {
+        oldKeyframeGroups = new ArrayList<>();
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            List<Keyframe> oldKeyframes = new ArrayList<>();
+            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
+                KeyframeCoordinate keyframeCoordinate = keyframe.getKeyframeCoordinate();
+                KeyframeCoordinate oldKeyframeCoordinate = new KeyframeCoordinate(
+                        keyframeCoordinate.getX(),
+                        keyframeCoordinate.getY(),
+                        keyframeCoordinate.getZ(),
+                        keyframeCoordinate.getXRot(),
+                        keyframeCoordinate.getYRot(),
+                        keyframeCoordinate.getFov()
+                );
+                Keyframe oldKeyframe = new Keyframe(
+                        keyframe.getId(),
+                        oldKeyframeCoordinate,
+                        keyframe.getTick(),
+                        keyframe.getStartDelay(),
+                        keyframe.getPathTime()
+                );
+                oldKeyframes.add(oldKeyframe);
+            }
+            KeyframeGroup oldKeyframeGroup = new KeyframeGroup(keyframeGroup.getId());
+            oldKeyframeGroup.getKeyframeList().addAll(oldKeyframes);
+            oldKeyframeGroups.add(oldKeyframeGroup);
+        }
+        oldKeyframeTriggers = new ArrayList<>();
+        for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
+            KeyframeCoordinate keyframeCoordinate = keyframeTrigger.getKeyframeCoordinate();
+            KeyframeCoordinate oldKeyframeCoordinate = new KeyframeCoordinate(
+                    keyframeCoordinate.getX(),
+                    keyframeCoordinate.getY(),
+                    keyframeCoordinate.getZ(),
+                    keyframeCoordinate.getXRot(),
+                    keyframeCoordinate.getYRot(),
+                    keyframeCoordinate.getFov()
+            );
+            KeyframeTrigger oldKeyframeTrigger = new KeyframeTrigger(
+                    keyframeTrigger.getId(),
+                    oldKeyframeCoordinate,
+                    keyframeTrigger.getTick(),
+                    keyframeTrigger.getCommands()
+            );
+            oldKeyframeTriggers.add(oldKeyframeTrigger);
+        }
     }
 
     public void startSession() {
+
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if(keyframeControllerBase != null) {
+            keyframeControllerBase.stopSession(false);
+        }
 
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
@@ -75,12 +133,6 @@ public class CutsceneController extends KeyframeControllerBase {
             Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
             playback.start();
             playbackList.add(playback);
-        }
-
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
-        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
-        if(keyframeControllerBase != null) {
-            keyframeControllerBase.stopSession();
         }
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
@@ -119,7 +171,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
     }
 
-    public void stopSession() {
+    public void stopSession(boolean save) {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
@@ -156,7 +208,15 @@ public class CutsceneController extends KeyframeControllerBase {
         PlayerSession playerSession = Utils.getSessionOrNull(player);
         playerSession.setKeyframeControllerBase(null);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-            NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
+            if(save) {
+                NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
+            } else {
+                cutscene.getKeyframeGroupList().clear();
+                cutscene.getKeyframeGroupList().addAll(oldKeyframeGroups);
+
+                cutscene.getKeyframeTriggerList().clear();
+                cutscene.getKeyframeTriggerList().addAll(oldKeyframeTriggers);
+            }
         }
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
@@ -317,7 +377,7 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
-        currentTick = newTick;
+        currentTick = Math.min(newTick, getTotalTick());
         for(Subscene subscene : cutscene.getSubsceneList()) {
             for(Playback playback : subscene.getPlaybackList()) {
                 playback.changeLocationByTick(newTick, seamless);
@@ -353,6 +413,12 @@ public class CutsceneController extends KeyframeControllerBase {
                 }
             }
             currentTick++;
+            if(currentTick >= getTotalTick()) {
+                if(Minecraft.getInstance().screen instanceof CutsceneControllerScreen cutsceneControllerScreen) {
+                    cutsceneControllerScreen.getControllerButton().setMessage(cutsceneControllerScreen.getPlayText());
+                }
+                isPlaying = false;
+            }
         }
     }
 

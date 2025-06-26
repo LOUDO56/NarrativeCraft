@@ -28,8 +28,14 @@ public abstract class KeyframeControllerBase {
         this.playbackType = playbackType;
     }
 
+    public KeyframeControllerBase(ServerPlayer player, Playback.PlaybackType playbackType) {
+        this.player = player;
+        this.playbackType = playbackType;
+    }
+
+    protected abstract void initOldData();
     public abstract void startSession();
-    public abstract void stopSession();
+    public abstract void stopSession(boolean save);
     public abstract boolean addKeyframe();
     public abstract boolean removeKeyframe(Keyframe keyframe);
 

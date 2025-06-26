@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
@@ -25,12 +26,15 @@ public class OnEntityRightClick {
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase == null) return;
 
-        Keyframe keyframe = keyframeControllerBase.getKeyframeByEntity(entity);
-        if(keyframe != null) {
-            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+        if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+            Keyframe keyframe = keyframeControllerBase.getKeyframeByEntity(entity);
+            if(keyframe != null) {
                 cutsceneController.setCurrentPreviewKeyframe(keyframe ,false);
-            } else if (keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-                cameraAngleController.setCurrentPreviewKeyframe(keyframe);
+            }
+        } else if (keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
+            CameraAngle cameraAngle = cameraAngleController.getKeyframeByEntity(entity);
+            if(cameraAngle != null) {
+                cameraAngleController.setCurrentPreviewKeyframe(cameraAngle);
             }
         }
 

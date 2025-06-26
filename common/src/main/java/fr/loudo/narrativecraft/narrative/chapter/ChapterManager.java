@@ -23,6 +23,8 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeseri
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 
 import java.io.File;
 import java.io.IOException;
@@ -122,6 +124,8 @@ public class ChapterManager {
                         characterStory.getCharacterSkinController().setCurrentSkin(skin);
                         characterStory.getCharacterSkinController().cacheSkins();
                         characterStory.setScene(scene);
+                        EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(characterStory.getEntityTypeId());
+                        characterStory.setEntityType(entityType);
                         scene.addNpc(characterStory);
                     } catch (IOException e) {
                         NarrativeCraftMod.LOG.warn("Npc folder does not exists, passing...");

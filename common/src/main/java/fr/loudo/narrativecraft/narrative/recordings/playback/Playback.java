@@ -124,6 +124,7 @@ public class Playback {
             if(entity instanceof Mob mob) {
                 mob.setNoAi(true);
                 mob.setSilent(true);
+                mob.setInvulnerable(true);
             }
         }
         character.setEntity(entity);
@@ -185,8 +186,12 @@ public class Playback {
         PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(tick >= movementDataList.size() - 1) {
-            if(playbackType == PlaybackType.DEVELOPMENT && !(keyframeControllerBase instanceof CutsceneController)) {
-                stopAndKill();
+            if(playbackType == PlaybackType.DEVELOPMENT) {
+                if(!(keyframeControllerBase instanceof CutsceneController)) {
+                    stopAndKill();
+                } else {
+                    stop();
+                }
             } else {
                 if(character.getCharacterType() == CharacterStory.CharacterType.NPC) {
                     stopAndKill();
@@ -204,11 +209,6 @@ public class Playback {
         }
         moveEntity(entity, movementData, movementDataNext);
         actionListener();
-//
-//        PositionMoveRotation positionMoveRotation = new PositionMoveRotation(pos, new Vec3(0, 0, 0), fakePlayer.getYRot(), fakePlayer.getXRot());
-//        for(ServerPlayer serverPlayer : serverLevel.getServer().getPlayerList().getPlayers()) {
-//            serverPlayer.connection.send(new ClientboundEntityPositionSyncPacket(fakePlayer.getId(), positionMoveRotation, true));
-//        }
 
         if(tick < movementDataList.size() - 1) {
             tick++;
@@ -272,35 +272,32 @@ public class Playback {
 
     public void changeLocationByTick(int newTick, boolean seamless) {
         if(entity == null) return;
-        if(newTick < animation.getActionsData().getMovementData().size() - 1) {
-            MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
-            if(seamless) {
-                moveEntitySilent(entity, movementData);
-            } else {
-                killEntity();
-                spawnEntity(movementData, entity);
-            }
-            int tickDiff = newTick - tick;
-            if(tickDiff > 0) {
-                for (int i = tick; i < newTick; i++) {
-                    tick = i;
-                    actionListener();
-                }
-            } else {
-                for (int i = tick; i > newTick; i--) {
-                    tick = i;
-                    actionListenerRewind();
-                }
-            }
-            this.tick = newTick;
-            List<Action> actions = animation.getActionsData().getActions().stream().filter(action -> tick >= action.getTick()).toList();
-            for(Action action : actions) {
-                Action.parseAndExecute(action, entity);
-            }
-            hasEnded = false;
+        newTick = Math.min(newTick, animation.getActionsData().getMovementData().size() - 1);
+        MovementData movementData = animation.getActionsData().getMovementData().get(newTick);
+        if(seamless) {
+            moveEntitySilent(entity, movementData);
         } else {
-            hasEnded = true;
+            killEntity();
+            spawnEntity(movementData, entity);
         }
+        int tickDiff = newTick - tick;
+        if(tickDiff > 0) {
+            for (int i = tick; i < newTick; i++) {
+                tick = i;
+                actionListener();
+            }
+        } else {
+            for (int i = tick; i > newTick; i--) {
+                tick = i;
+                actionListenerRewind();
+            }
+        }
+        this.tick = newTick;
+        List<Action> actions = animation.getActionsData().getActions().stream().filter(action -> tick >= action.getTick()).toList();
+        for(Action action : actions) {
+            Action.parseAndExecute(action, entity);
+        }
+        hasEnded = newTick == animation.getActionsData().getMovementData().size() - 1;
     }
 
     public void setTick(int tick) {

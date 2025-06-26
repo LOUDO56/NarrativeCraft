@@ -126,14 +126,6 @@ public class CameraAngleGroup extends NarrativeEntry {
         return cameraAngleList;
     }
 
-    public KeyframeGroup getCameraAngleListAsKeyframeGroup() {
-        KeyframeGroup keyframeGroup = new KeyframeGroup(1);
-        for(CameraAngle cameraAngle : cameraAngleList) {
-            keyframeGroup.getKeyframeList().add(cameraAngle);
-        }
-        return keyframeGroup;
-    }
-
     public CameraAngle getCameraAngleByName(String name) {
         for(CameraAngle cameraAngle : cameraAngleList) {
             if(cameraAngle.getName().equalsIgnoreCase(name)) {

@@ -44,7 +44,7 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
         int width = 20;
         if(hide) {
             Button eyeClosed = Button.builder(ImageFontConstants.EYE_CLOSED, button -> {
-                KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, false);
+                CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(keyframe, player, false);
                 minecraft.setScreen(screen);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(eyeClosed);
@@ -54,15 +54,15 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
             cameraAngleController.clearCurrentPreviewKeyframe();
             minecraft.setScreen(null);
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
-        Keyframe nextKeyframe = cameraAngleController.getNextKeyframe(keyframe);
+        CameraAngle nextKeyframe = cameraAngleController.getNextKeyframe(keyframe);
         if(nextKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
             Button rightKeyframeButton = Button.builder(Component.literal("▶"), button -> {
-                cameraAngleController.setCurrentPreviewKeyframe(nextKeyframe);
+                cameraAngleController.setCurrentPreviewKeyframe((CameraAngle) nextKeyframe);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(rightKeyframeButton);
         }
-        Keyframe previousKeyframe = cameraAngleController.getPreviousKeyframe(keyframe);
+        CameraAngle previousKeyframe = cameraAngleController.getPreviousKeyframe(keyframe);
         if(previousKeyframe != null) {
             currentX -= INITIAL_POS_X + gap;
             Button leftKeyframeButton = Button.builder(Component.literal("◀"), button -> {
@@ -79,7 +79,7 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
         this.addRenderableWidget(editButton);
         currentX -= INITIAL_POS_X + gap;
         Button eyeOpen = Button.builder(ImageFontConstants.EYE_OPEN, button -> {
-            KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, true);
+            CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(keyframe, player, true);
             minecraft.setScreen(screen);
         }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
         this.addRenderableWidget(eyeOpen);

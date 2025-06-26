@@ -29,14 +29,14 @@ import java.util.UUID;
 public class CharacterStoryData {
 
     private CharacterStory characterStory;
-    private final List<ItemSlotData> itemSlotDataList;
-    private String skinName;
     private double x, y, z;
-    private byte entityByte;
-    private byte livingEntityByte;
     private float pitch, yaw;
     private float yBodyRot;
     private String pose;
+    private byte entityByte;
+    private byte livingEntityByte;
+    private String skinName;
+    private final List<ItemSlotData> itemSlotDataList;
 
     public CharacterStoryData(CharacterStory characterStory) {
         this.characterStory = characterStory;
@@ -76,6 +76,21 @@ public class CharacterStoryData {
         initItem(localPlayer);
     }
 
+    public CharacterStoryData(CharacterStory characterStory, double x, double y, double z, float pitch, float yaw, float yBodyRot, String pose, byte entityByte, byte livingEntityByte, String skinName, List<ItemSlotData> itemSlotDataList) {
+        this.characterStory = characterStory;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.pitch = pitch;
+        this.yaw = yaw;
+        this.yBodyRot = yBodyRot;
+        this.pose = pose;
+        this.entityByte = entityByte;
+        this.livingEntityByte = livingEntityByte;
+        this.skinName = skinName;
+        this.itemSlotDataList = itemSlotDataList;
+    }
+
     public void initItem(LivingEntity entity) {
         itemSlotDataList.clear();
         for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
@@ -109,6 +124,11 @@ public class CharacterStoryData {
             livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
         } else {
             livingEntity = (LivingEntity) characterStory.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            if(livingEntity instanceof Mob mob) {
+                mob.setNoAi(true);
+                mob.setSilent(true);
+                mob.setInvulnerable(true);
+            }
         }
         livingEntity.snapTo(x, y, z);
         livingEntity.setXRot(pitch);

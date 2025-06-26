@@ -25,7 +25,7 @@ public class OnPlayerServerConnection {
         if(playerSession != null) {
             KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
             if(keyframeControllerBase != null) {
-                keyframeControllerBase.stopSession();
+                keyframeControllerBase.stopSession(true);
             }
             playerSessionManager.getPlayerSessions().remove(playerSession);
         }

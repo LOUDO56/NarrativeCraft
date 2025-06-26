@@ -83,7 +83,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
                 CutscenePlayback cutscenePlayback = new CutscenePlayback(player, cutsceneController.getCutscene().getKeyframeGroupList(), keyframe, cutsceneController);
                 cutscenePlayback.start();
                 playerSession.setCutscenePlayback(cutscenePlayback);
-                this.onClose();
+                minecraft.setScreen(null);
             }
         }).bounds(updateButton.getWidth() + updateButton.getX() + 5, currentY, this.font.width(playTitle) + margin, BUTTON_HEIGHT).build();
         currentY += BUTTON_HEIGHT + gap - 10;
@@ -99,7 +99,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
                 cutsceneController.clearCurrentPreviewKeyframe();
                 cutsceneController.removeKeyframe(keyframe);
                 updateCurrentTick();
-                this.onClose();
+                minecraft.setScreen(null);
             }
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);

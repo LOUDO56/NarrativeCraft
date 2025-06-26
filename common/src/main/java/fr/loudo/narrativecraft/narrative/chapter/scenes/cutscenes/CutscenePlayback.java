@@ -89,7 +89,7 @@ public class CutscenePlayback  {
         if(cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
             cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
         } else {
-            cutsceneController.stopSession();
+            cutsceneController.stopSession(false);
             if(onCutsceneEnd != null) {
                 onCutsceneEnd.run();
             }

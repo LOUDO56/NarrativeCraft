@@ -43,7 +43,6 @@ public class CameraAngleCharacterScreen extends Screen {
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             screen = new ChangeSkinLinkScreen(characterStoryData.getCharacterStory(), skin ->  {
                 characterStoryData.setSkinName(skin);
-                NarrativeCraftFile.updateCameraAnglesFile(cameraAngleController.getCameraAngleGroup().getScene());
             });
             totalWidth = BUTTON_WIDTH * 3 + 5;
         } else if(keyframeControllerBase instanceof CutsceneController) {

@@ -22,7 +22,7 @@ public class CameraAngleControllerScreen extends Screen {
     @Override
     protected void init() {
         int spacing = 5;
-        int totalWidth = BUTTON_WIDTH * 4 + spacing * 3;
+        int totalWidth = BUTTON_WIDTH * 5 + spacing * 3;
         int startX = (this.width - totalWidth) / 2;
         int y = this.height - 50;
 
@@ -45,10 +45,16 @@ public class CameraAngleControllerScreen extends Screen {
         this.addRenderableWidget(recordMenu);
 
         Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
-            cameraAngleController.stopSession();
+            cameraAngleController.stopSession(true);
             this.onClose();
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 3, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(saveButton);
+
+        Button closeButton = Button.builder(Component.literal("✖"), button -> {
+            cameraAngleController.stopSession(false);
+            this.onClose();
+        }).bounds(startX + (BUTTON_WIDTH + spacing) * 4, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(closeButton);
 
     }
 

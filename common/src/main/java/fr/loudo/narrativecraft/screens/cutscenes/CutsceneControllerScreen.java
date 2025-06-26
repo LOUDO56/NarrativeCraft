@@ -119,10 +119,18 @@ public class CutsceneControllerScreen extends Screen {
         startX = settingsButton.getX() + settingsButton.getWidth() + 5;
 
         Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
-            cutsceneController.stopSession();
+            cutsceneController.stopSession(true);
             this.onClose();
         }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
         this.addRenderableWidget(saveButton);
+
+        startX = saveButton.getX() + saveButton.getWidth() + 5;
+
+        Button closeButton = Button.builder(Component.literal("✖"), button -> {
+            cutsceneController.stopSession(false);
+            this.onClose();
+        }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
+        this.addRenderableWidget(closeButton);
     }
 
 
@@ -145,5 +153,17 @@ public class CutsceneControllerScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    public Button getControllerButton() {
+        return controllerButton;
+    }
+
+    public Component getPauseText() {
+        return pauseText;
+    }
+
+    public Component getPlayText() {
+        return playText;
     }
 }

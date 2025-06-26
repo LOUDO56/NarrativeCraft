@@ -58,6 +58,18 @@ public class CharacterStory extends NarrativeEntry {
         entityTypeId = BuiltInRegistries.ENTITY_TYPE.getId(entityType);
     }
 
+    public CharacterStory(String name, String description, LivingEntity entity, EntityType<?> entityType, CharacterSkinController characterSkinController, Scene scene, int entityTypeId, PlayerSkin.Model model, String birthdate, CharacterType characterType) {
+        super(name, description);
+        this.entity = entity;
+        this.entityType = entityType;
+        this.characterSkinController = characterSkinController;
+        this.scene = scene;
+        this.entityTypeId = entityTypeId;
+        this.model = model;
+        this.birthdate = birthdate;
+        this.characterType = characterType;
+    }
+
     public void update(String name, String description, String day, String month, String year) {
         String oldName = this.name;
         String oldDescription = this.description;

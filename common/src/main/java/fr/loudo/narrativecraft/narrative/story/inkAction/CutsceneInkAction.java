@@ -39,7 +39,7 @@ public class CutsceneInkAction extends InkAction {
         }
         KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-            cameraAngleController.stopSession();
+            cameraAngleController.stopSession(false);
         }
         storyHandler.getCurrentCharacters().clear();
         storyHandler.setCurrentDialogBox(null);
