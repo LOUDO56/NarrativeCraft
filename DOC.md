@@ -36,11 +36,11 @@ Name is resource location from minecraft e.g. custom.piano
 
 ### Song
 
-``song start %category.name% [%volume% %pitch% [loop=true/false] [%fadein% fadeTime]]``
+``song start %category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
 
 ### Sfx
 
-``sfx start start %category.name% [%volume% %pitch% [loop=true/false] [%fadein% fadeTime]]``
+``sfx start start %category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
 
 ## Stop sound
 

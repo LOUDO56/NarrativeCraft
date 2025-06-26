@@ -41,7 +41,7 @@ public class OnClientTick {
             List<InkAction> inkActionToLoop = List.copyOf(storyHandler.getInkActionList());
             for (InkAction inkAction : inkActionToLoop) {
                 if (inkAction instanceof SongSfxInkAction songSfxInkAction) {
-                    if(!songSfxInkAction.isDoneFading()) {
+                    if(!songSfxInkAction.isDoneFading() && songSfxInkAction.getFadeCurrentState() != null) {
                         songSfxInkAction.applyFade();
                     }
                     boolean doneFadeAndHasFadedOut = songSfxInkAction.isDoneFading() && songSfxInkAction.getFadeCurrentState() == StoryHandler.FadeCurrentState.FADE_OUT;

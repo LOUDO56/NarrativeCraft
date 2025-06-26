@@ -83,8 +83,10 @@ public class SongSfxInkAction extends InkAction {
             if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_IN) {
                 Minecraft.getInstance().getSoundManager().setVolume(soundInstance, 0);
             }
-        } else if(!isStart && fadeCurrentState == null && fadeTime == 0) {
-            storyHandler.stopSound(sound);
+        } else {
+            if(fadeCurrentState == null && fadeTime == 0) {
+                storyHandler.stopSound(sound);
+            }
         }
         sendDebugDetails();
         storyHandler.getInkActionList().add(this);

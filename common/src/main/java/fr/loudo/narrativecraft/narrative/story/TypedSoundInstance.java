@@ -12,7 +12,7 @@ public class TypedSoundInstance extends SimpleSoundInstance {
     private final SongSfxInkAction.SoundType soundType;
 
     public TypedSoundInstance(ResourceLocation location, SoundSource source, float volume, float pitch, boolean looping, SongSfxInkAction.SoundType soundType) {
-        super(location, source, volume, pitch, SoundInstance.createUnseededRandom(), looping, 0, SoundInstance.Attenuation.NONE, 0, 0, 0, false);
+        super(location, source, volume, pitch, SoundInstance.createUnseededRandom(), looping, 0, SoundInstance.Attenuation.NONE, 0, 0, 0, true);
         this.soundType = soundType;
     }
 
