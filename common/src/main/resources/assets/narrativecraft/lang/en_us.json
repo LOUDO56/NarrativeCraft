@@ -42,6 +42,14 @@
   "narrativecraft.screen.cutscenes_settings.select_group_name": "Keyframe Group %d",
   "narrativecraft.screen.cutscenes_settings.select_group_name_selected": "Keyframe Group %d (selected)",
 
+  "narrativecraft.screen.cutscene_controller.tooltip.keyframe_group": "Add Keyframe Group",
+  "narrativecraft.screen.cutscene_controller.tooltip.keyframe": "Add Keyframe to current group",
+  "narrativecraft.screen.cutscene_controller.tooltip.keyframe_trigger": "Add Keyframe Trigger",
+
+  "narrativecraft.screen.camera_angle_controller.tooltip.keyframe_group": "Add Keyframe Angle",
+  "narrativecraft.screen.camera_angle_controller.tooltip.character": "Add Character",
+  "narrativecraft.screen.camera_angle_controller.tooltip.template": "Add Template",
+
   "narrativecraft.screen.keyframe_advanced.name": "Advanced Settings",
   "narrativecraft.screen.keyframe_advanced.easings": "Easings",
 

@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
@@ -81,6 +82,7 @@ public class CutsceneControllerScreen extends Screen {
             KeyframeGroup keyframeGroup = cutsceneController.createKeyframeGroup();
             client.player.displayClientMessage(Translation.message("cutscene.keyframegroup.created", keyframeGroup.getId()), false);
         }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
+        createKeyframeGroup.setTooltip(Tooltip.create(Translation.message("screen.cutscene_controller.tooltip.keyframe_group")));
 
         Button addKeyframe = Button.builder(ImageFontConstants.ADD_KEYFRAME, button -> {
             if (cutsceneController.addKeyframe()) {
@@ -95,11 +97,13 @@ public class CutsceneControllerScreen extends Screen {
                 );
             }
         }).bounds(startX + btnWidth + gap, initialY, btnWidth, BUTTON_HEIGHT).build();
+        addKeyframe.setTooltip(Tooltip.create(Translation.message("screen.cutscene_controller.tooltip.keyframe")));
 
         Button addTriggerKeyframe = Button.builder(ImageFontConstants.ADD_KEYFRAME_TRIGGER, button -> {
             KeyframeTriggerScreen screen = new KeyframeTriggerScreen(cutsceneController, cutsceneController.getCurrentTick());
             minecraft.setScreen(screen);
         }).bounds(startX + (btnWidth + gap) * 2, initialY, btnWidth, BUTTON_HEIGHT).build();
+        addTriggerKeyframe.setTooltip(Tooltip.create(Translation.message("screen.cutscene_controller.tooltip.keyframe_trigger")));
 
         this.addRenderableWidget(createKeyframeGroup);
         this.addRenderableWidget(addKeyframe);
