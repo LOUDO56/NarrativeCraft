@@ -10,12 +10,14 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.util.List;
 
 public class AnimationsScreen extends StoryElementScreen {
@@ -32,6 +34,15 @@ public class AnimationsScreen extends StoryElementScreen {
         LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
+        linearlayout.addChild(Button.builder(ImageFontConstants.FOLDER, button -> {
+            openFolder();
+        }).width(25).build());
+
+    }
+
+    @Override
+    protected void openFolder() {
+        Util.getPlatform().openPath(NarrativeCraftFile.animationFolder(scene).toPath());
     }
 
     @Override

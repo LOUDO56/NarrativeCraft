@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.components.PickElementScreen;
@@ -15,11 +16,15 @@ import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +41,17 @@ public class CutscenesScreen extends StoryElementScreen {
     public void onClose() {
         ScenesMenuScreen screen = new ScenesMenuScreen(scene);
         this.minecraft.setScreen(screen);
+    }
+
+    @Override
+    protected void addTitle() {
+        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout.defaultCellSetting().alignVerticallyMiddle();
+        linearlayout.addChild(new StringWidget(this.title, this.font));
+        linearlayout.addChild(Button.builder(ImageFontConstants.ADD, button -> {
+            EditInfoScreen screen = new EditInfoScreen(this);
+            this.minecraft.setScreen(screen);
+        }).width(25).build());
     }
 
     @Override
@@ -124,4 +140,6 @@ public class CutscenesScreen extends StoryElementScreen {
         return scene;
     }
 
+    @Override
+    protected void openFolder() {}
 }

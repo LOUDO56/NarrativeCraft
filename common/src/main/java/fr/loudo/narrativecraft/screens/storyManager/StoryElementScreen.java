@@ -17,7 +17,7 @@ import net.minecraft.network.chat.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StoryElementScreen extends OptionsSubScreen {
+public abstract class StoryElementScreen extends OptionsSubScreen {
 
     public static final int SCENE_NAME_COLOR = 0x5896ED; // BLUE
     public static final int ANIMATION_NAME_COLOR = 0xE0DE65; // YELLOW
@@ -28,6 +28,8 @@ public class StoryElementScreen extends OptionsSubScreen {
     protected List<Button> buttons;
     protected List<NarrativeEntry> narrativeEntries;
 
+    protected LinearLayout linearlayout;
+
     public StoryElementScreen(Screen lastScreen, Options options, Component title) {
         super(lastScreen, options, title);
         buttons = new ArrayList<>();
@@ -36,16 +38,15 @@ public class StoryElementScreen extends OptionsSubScreen {
 
     @Override
     protected void addTitle() {
-        LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
         linearlayout.addChild(Button.builder(ImageFontConstants.ADD, button -> {
             EditInfoScreen screen = new EditInfoScreen(this);
             this.minecraft.setScreen(screen);
         }).width(25).build());
-        linearlayout.addChild(Button.builder(ImageFontConstants.DIALOG, button -> {
-            DialogCustomScreen screen = new DialogCustomScreen(this);
-            this.minecraft.setScreen(screen);
+        linearlayout.addChild(Button.builder(ImageFontConstants.FOLDER, button -> {
+            openFolder();
         }).width(25).build());
     }
 
@@ -62,4 +63,6 @@ public class StoryElementScreen extends OptionsSubScreen {
 
     @Override
     protected void addOptions() {}
+
+    protected abstract void openFolder();
 }

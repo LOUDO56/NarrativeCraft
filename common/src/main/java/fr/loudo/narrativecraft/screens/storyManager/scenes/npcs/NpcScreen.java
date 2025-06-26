@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.npcs;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.characters.CharacterEntityTypeScreen;
 import fr.loudo.narrativecraft.screens.components.EditCharacterInfoScreen;
@@ -7,9 +8,9 @@ import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -17,6 +18,7 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.util.List;
 
 public class NpcScreen extends StoryElementScreen {
@@ -37,11 +39,21 @@ public class NpcScreen extends StoryElementScreen {
             EditInfoScreen screen = new EditCharacterInfoScreen(this);
             this.minecraft.setScreen(screen);
         }).width(25).build());
+        linearlayout.addChild(Button.builder(ImageFontConstants.FOLDER, button -> {
+            openFolder();
+        }).width(25).build());
     }
 
     @Override
     protected void addFooter() {
         this.layout.addToFooter(Button.builder(CommonComponents.GUI_BACK, (p_345997_) -> this.onClose()).width(200).build());
+    }
+
+    @Override
+    protected void openFolder() {
+        File sceneDataFolder = new File(NarrativeCraftFile.getSceneFolder(scene), "data");
+        File npcFolder = new File(sceneDataFolder, "npc");
+        Util.getPlatform().openPath(npcFolder.toPath());
     }
 
     @Override

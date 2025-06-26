@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
@@ -8,8 +9,10 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesSc
 import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
+import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -18,6 +21,7 @@ import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.util.List;
 
 public class ScenesMenuScreen extends OptionsSubScreen {
@@ -35,6 +39,9 @@ public class ScenesMenuScreen extends OptionsSubScreen {
         LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
+        linearlayout.addChild(Button.builder(ImageFontConstants.FOLDER, button -> {
+            Util.getPlatform().openPath(new File(NarrativeCraftFile.getSceneFolder(scene), "data").toPath());
+        }).width(25).build());
     }
 
     @Override

@@ -1,14 +1,17 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 
+import java.io.File;
 import java.util.List;
 
 public class ScenesScreen extends StoryElementScreen {
@@ -42,6 +45,12 @@ public class ScenesScreen extends StoryElementScreen {
     protected void repositionElements() {
         super.repositionElements();
         this.storyElementList.updateSize(this.width, this.layout);
+    }
+
+    @Override
+    protected void openFolder() {
+        File sceneFolder = new File(NarrativeCraftFile.chaptersDirectory, String.valueOf(chapter.getIndex()));
+        Util.getPlatform().openPath(new File(sceneFolder, "scenes").toPath());
     }
 
     public Chapter getChapter() {

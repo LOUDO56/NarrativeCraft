@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.screens.storyManager.characters;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
 import fr.loudo.narrativecraft.screens.characters.CharacterEntityTypeScreen;
@@ -10,6 +11,7 @@ import fr.loudo.narrativecraft.screens.components.EditCharacterInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -39,6 +41,11 @@ public class CharactersScreen extends StoryElementScreen {
     @Override
     protected void addFooter() {
         this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (p_345997_) -> this.onClose()).width(200).build());
+    }
+
+    @Override
+    protected void openFolder() {
+        Util.getPlatform().openPath(NarrativeCraftFile.characterDirectory.toPath());
     }
 
     @Override

@@ -106,7 +106,7 @@ public class CharacterManager {
             }
         } else if (characterStory.getCharacterType() == CharacterStory.CharacterType.NPC) {
             if(characterStory.getScene() == null) return;
-            File sceneFolder = NarrativeCraftFile.getSceneFile(characterStory.getScene());
+            File sceneFolder = NarrativeCraftFile.getSceneFolder(characterStory.getScene());
             File dataFolder = new File(sceneFolder, "data");
             File npcFolder = new File(dataFolder, "npc");
             File characterFolder = new File(npcFolder, Utils.getSnakeCase(characterStory.getName()));

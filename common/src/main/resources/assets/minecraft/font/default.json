@@ -125,6 +125,15 @@
       "chars": [
         "\uE013"
       ]
+    },
+    {
+      "type": "bitmap",
+      "file": "minecraft:font/folder.png",
+      "ascent": 10,
+      "height": 14,
+      "chars": [
+        "\uE014"
+      ]
     }
   ]
 }

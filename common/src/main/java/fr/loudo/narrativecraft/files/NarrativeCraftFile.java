@@ -18,7 +18,6 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec2;
@@ -436,7 +435,7 @@ public class NarrativeCraftFile {
     }
 
     public static boolean updateNpcSceneFolder(String oldName, String newName, Scene scene) {
-        File sceneFolder = getSceneFile(scene);
+        File sceneFolder = getSceneFolder(scene);
         File dataFile = new File(sceneFolder, "data");
         File npcFolder = new File(dataFile, "npc");
         CharacterStory characterStory = scene.getNpc(newName);
@@ -483,7 +482,7 @@ public class NarrativeCraftFile {
     }
 
     public static boolean updateNpcSceneFolder(CharacterStory characterStory, Scene scene) {
-        File sceneFolder = getSceneFile(scene);
+        File sceneFolder = getSceneFolder(scene);
         File dataFile = new File(sceneFolder, "data");
         File npcFolder = new File(dataFile, "npc");
         File characterFolder = new File(npcFolder, Utils.getSnakeCase(characterStory.getName()));
@@ -547,7 +546,7 @@ public class NarrativeCraftFile {
     }
 
     public static boolean createCharacterFileScene(CharacterStory characterStory, Scene scene) {
-        File sceneFile = getSceneFile(scene);
+        File sceneFile = getSceneFolder(scene);
         File sceneDataFolder = new File(sceneFile, "data");
         File npcFolder = new File(sceneDataFolder, "npc");
         File characterFolder = createDirectory(npcFolder, Utils.getSnakeCase(characterStory.getName()));
@@ -574,7 +573,7 @@ public class NarrativeCraftFile {
     }
 
     public static void removeNpcFolder(CharacterStory characterStory) {
-        File sceneFolder = getSceneFile(characterStory.getScene());
+        File sceneFolder = getSceneFolder(characterStory.getScene());
         File dataFolder = new File(sceneFolder, "data");
         File npcFolder = new File(dataFolder, "npc");
         deleteDirectory(new File(npcFolder, Utils.getSnakeCase(characterStory.getName())));
@@ -623,6 +622,11 @@ public class NarrativeCraftFile {
         return new File(animationsFolder, getSnakeCaseName(animationName) + EXTENSION_DATA_FILE).exists();
     }
 
+    public static File animationFolder(Scene scene) {
+        File dataFolder = getDataFolderOfScene(scene);
+        return new File(dataFolder, "animations");
+    }
+
     public static String getStoryFile() throws IOException {
         File buildFolder = new File(mainDirectory, "build");
         return Files.readString(new File(buildFolder, "story.json").toPath());
@@ -644,7 +648,7 @@ public class NarrativeCraftFile {
         return new File(sceneFolder, scene.getSnakeCase() + EXTENSION_SCRIPT_FILE);
     }
 
-    public static File getSceneFile(Scene scene) {
+    public static File getSceneFolder(Scene scene) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         return new File(scenesFolder, scene.getSnakeCase());
