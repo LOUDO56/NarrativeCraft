@@ -76,7 +76,15 @@ public class SongSfxInkAction extends InkAction {
                 fadeTime = 0;
             }
         }
-        ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(name);
+        ResourceLocation soundRes;
+        if(name.contains(":")) {
+            String[] soundNameSplit = name.split(":");
+            String namespace = soundNameSplit[0];
+            String path = soundNameSplit[1];
+            soundRes = ResourceLocation.fromNamespaceAndPath(namespace, path);
+        } else {
+            soundRes = ResourceLocation.withDefaultNamespace(name);
+        }
         SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
         if(isStart) {
             soundInstance = storyHandler.playSound(sound, volume, pitch, loop, soundType);

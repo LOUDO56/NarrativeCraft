@@ -36,23 +36,27 @@ Name is resource location from minecraft e.g. custom.piano
 
 ### Song
 
-``song start %category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
+``song start %namespace:category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
 
 ### Sfx
 
-``sfx start start %category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
+``sfx start start %namespace:category.name% [%volume% %pitch% [loop=true/false] [<fadein> %fadeTime%]]``
 
 ## Stop sound
 
-``song stop %category.name% [<fadeout> %fadeTime%]``
+``song stop %namespace:category.name% [<fadeout> %fadeTime%]``
 
-``sfx stop %category.name% [<fadeout> %fadeTime%]``
+``sfx stop %namespace:category.name% [<fadeout> %fadeTime%]``
 
 ``song stop all``
 
 ``sfx stop all``
 
 ``sound stop all`` Stop song and sfx at the same time
+
+### Note about sound
+
+If you don't provide the namespace, minecraft namespace will be used as default namespace.
 
 ## Fade effect
 
