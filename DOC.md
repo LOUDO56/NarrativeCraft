@@ -118,7 +118,7 @@ Fixed command: ``text_display ~ ~ ~ \{billboard:"center",text:"hello",background
 
 Change current parameter of the dialog
 
-``dialog <offset, scale, padding, width, textColor, backgroundColor, gap, letterSpacing, unSkippable, autoSkip> [%value1%] [%value2%]``
+``dialog <offset, scale, padding, width, textColor, backgroundColor, gap, letterSpacing, unSkippable, autoSkip, bobbing> [%value1%] [%value2%]``
 
 Examples:
 
@@ -127,6 +127,8 @@ Examples:
 ``dialog scale 1.3``
 
 ``dialog backgroundColor K862J5``
+
+``dialog bobbing 200 # speed 150 # strength``
 
 ```
 dialog unSkippable // Impossible for the user to skip the dialog.

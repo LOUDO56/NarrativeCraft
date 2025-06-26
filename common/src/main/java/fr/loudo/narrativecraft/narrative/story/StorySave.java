@@ -50,6 +50,7 @@ public class StorySave {
             chapterIndex = playerSession.getChapter().getIndex();
             sceneName = playerSession.getScene().getName();
             Dialog dialog = storyHandler.getCurrentDialogBox();
+            DialogData globalDialogData = storyHandler.getGlobalDialogValue();
             if(dialog != null) {
                 dialogSaveData = new DialogData(
                         dialog.getCharacterName(),
@@ -64,10 +65,11 @@ public class StorySave {
                         dialog.getDialogAnimationScrollText().getGap(),
                         dialog.getDialogAnimationScrollText().getMaxWidth(),
                         dialog.isUnSkippable(),
-                        dialog.getForcedEndTime()
+                        dialog.getForcedEndTime(),
+                        globalDialogData.getBobbingNoiseShakeSpeed(),
+                        globalDialogData.getBobbingNoiseShakeStrength()
                 );
             } else {
-                DialogData globalDialogData = storyHandler.getGlobalDialogValue();
                 dialogSaveData = new DialogData(
                         null,
                         null,
@@ -81,7 +83,9 @@ public class StorySave {
                         globalDialogData.getGap(),
                         globalDialogData.getMaxWidth(),
                         globalDialogData.isUnSkippable(),
-                        globalDialogData.getEndForceEndTime()
+                        globalDialogData.getEndForceEndTime(),
+                        globalDialogData.getBobbingNoiseShakeSpeed(),
+                        globalDialogData.getBobbingNoiseShakeStrength()
                 );
             }
 

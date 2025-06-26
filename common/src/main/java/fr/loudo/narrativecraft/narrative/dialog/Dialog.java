@@ -57,7 +57,7 @@ public class Dialog {
         dialogAppearAnimation = new DialogAppearAnimation(this);
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         dialogueTail = new DialogueTail(this, 5f, 10f, 0);
-        dialogEntityBobbing = new DialogEntityBobbing(this);
+        dialogEntityBobbing = new DialogEntityBobbing(this, 100, 250);
         acceptNewDialog = false;
         oldWidth = getWidth();
         oldHeight = getHeight();
@@ -84,7 +84,7 @@ public class Dialog {
         dialogAppearAnimation = new DialogAppearAnimation(this);
         dialogAnimationArrowSkip = new DialogAnimationArrowSkip(this, 2.5f, 2.5f, 8f, -3f, 400L, 0xFFFFFF, 80, Easing.SMOOTH);
         dialogueTail = new DialogueTail(this, 5f, 10f, 0);
-        dialogEntityBobbing = new DialogEntityBobbing(this);
+        dialogEntityBobbing = new DialogEntityBobbing(this, 100, 250);
         acceptNewDialog = false;
         oldWidth = getWidth();
         oldHeight = getHeight();
@@ -309,6 +309,10 @@ public class Dialog {
 
     public Entity getEntityServer() {
         return entityServer;
+    }
+
+    public Entity getEntityClient() {
+        return entityClient;
     }
 
     public void setEntityServer(Entity entityServer) {

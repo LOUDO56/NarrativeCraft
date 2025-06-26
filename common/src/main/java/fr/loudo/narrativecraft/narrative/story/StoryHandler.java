@@ -306,6 +306,8 @@ public class StoryHandler {
                         globalDialogValue.getPaddingY(), globalDialogValue.getScale(), globalDialogValue.getLetterSpacing(), globalDialogValue.getGap(),
                         globalDialogValue.getMaxWidth(), globalDialogValue.getOffset()
                 );
+                currentDialogBox.getDialogEntityBobbing().setNoiseShakeStrength(globalDialogValue.getBobbingNoiseShakeStrength());
+                currentDialogBox.getDialogEntityBobbing().setNoiseShakeSpeed(globalDialogValue.getBobbingNoiseShakeSpeed());
                 currentDialogBox.setCharacterName(currentCharacter.getName());
             }
             currentCharacterTalking = parsed.characterName;

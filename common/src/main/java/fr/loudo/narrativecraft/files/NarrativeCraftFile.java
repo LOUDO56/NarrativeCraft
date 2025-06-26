@@ -95,7 +95,9 @@ public class NarrativeCraftFile {
                     10,
                     90,
                     false,
-                    0
+                    0,
+                    100,
+                    250
             );
             try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
                 new Gson().toJson(dialogData, writer);

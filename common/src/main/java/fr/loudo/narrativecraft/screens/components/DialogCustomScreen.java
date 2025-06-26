@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.screens.components;
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -24,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
@@ -47,6 +47,8 @@ public class DialogCustomScreen extends Screen {
     private ScreenUtils.LabelBox maxWidthBox;
     private ScreenUtils.LabelBox bcColorBox;
     private ScreenUtils.LabelBox textColorBox;
+    private ScreenUtils.LabelBox bobbingSpeed;
+    private ScreenUtils.LabelBox bobbingStrength;
     private StringWidget errorWidget;
 
     public DialogCustomScreen(Screen lastScreen) {
@@ -59,6 +61,7 @@ public class DialogCustomScreen extends Screen {
         LocalPlayer player = minecraft.player;
         minecraft.options.hideGui = false;
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(minecraft.player.getUUID());
+        fakePlayer.remove(Entity.RemovalReason.KILLED);
         player.setPos(lastPos);
         player.setXRot(lastXRot);
         player.setYRot(lastYRot);
@@ -93,20 +96,9 @@ public class DialogCustomScreen extends Screen {
             fakePlayer.setXRot(0);
             fakePlayer.setYHeadRot(180);
             fakePlayer.setYRot(180);
+            fakePlayer.setPos(localPos.x, localPos.y + player.getEyeHeight() + 4.2, localPos.z + 2);
             serverPlayer.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-            serverPlayer.connection.send(new ClientboundAddEntityPacket(
-                    fakePlayer.getId(),
-                    fakePlayer.getUUID(),
-                    localPos.x,
-                    localPos.y + player.getEyeHeight() + 4.2,
-                    localPos.z + 2,
-                    fakePlayer.getXRot(),
-                    fakePlayer.getYRot(),
-                    EntityType.PLAYER,
-                    0,
-                    new Vec3(0, 0, 0),
-                    fakePlayer.getYHeadRot()
-            ));
+            serverLevel.addFreshEntity(fakePlayer);
             Dialog dialog = new Dialog(
                 fakePlayer,
                 "Lorem ipsum dolor sit amet consectetur adipiscing elit",
@@ -123,7 +115,7 @@ public class DialogCustomScreen extends Screen {
 
         errorWidget = ScreenUtils.text(Component.literal(""), minecraft.font, this.width / 2, 10);
         this.addRenderableWidget(errorWidget);
-        currentY = this.height / 2 - ((labelHeight + gap) * 10) / 2;
+        currentY = this.height / 2 - ((labelHeight + gap) * 12) / 2;
         paddingXBox = new ScreenUtils.LabelBox(
                 Component.literal("Padding X"),
                 minecraft.font,
@@ -236,6 +228,33 @@ public class DialogCustomScreen extends Screen {
         this.addRenderableWidget(textColorBox.getEditBox());
         currentY += textColorBox.getEditBox().getHeight() + gap;
 
+        bobbingSpeed = new ScreenUtils.LabelBox(
+                Component.literal("Bobbing Speed"),
+                minecraft.font,
+                labelWidth,
+                labelHeight,
+                startX,
+                currentY,
+                ScreenUtils.Align.HORIZONTAL
+        );
+        bobbingSpeed.getEditBox().setValue(String.valueOf(dialogData.getBobbingNoiseShakeSpeed()));
+        this.addRenderableWidget(bobbingSpeed.getStringWidget());
+        this.addRenderableWidget(bobbingSpeed.getEditBox());
+        currentY += bobbingSpeed.getEditBox().getHeight() + gap;
+
+        bobbingStrength = new ScreenUtils.LabelBox(
+                Component.literal("Bobbing Strength"),
+                minecraft.font,
+                labelWidth,
+                labelHeight,
+                startX,
+                currentY,
+                ScreenUtils.Align.HORIZONTAL
+        );
+        bobbingStrength.getEditBox().setValue(String.valueOf(dialogData.getBobbingNoiseShakeStrength()));
+        this.addRenderableWidget(bobbingStrength.getStringWidget());
+        this.addRenderableWidget(bobbingStrength.getEditBox());
+        currentY += bobbingStrength.getEditBox().getHeight() + gap;
 
         Button updateButton = Button.builder(Translation.message("screen.update.text"), button -> {
             updateValues();
@@ -263,6 +282,8 @@ public class DialogCustomScreen extends Screen {
             dialogData.setMaxWidth(Integer.parseInt(maxWidthBox.getEditBox().getValue()));
             dialogData.setBackgroundColor(Integer.parseInt(bcColorBox.getEditBox().getValue(), 16));
             dialogData.setTextColor(Integer.parseInt(textColorBox.getEditBox().getValue(), 16));
+            dialogData.setBobbingNoiseShakeSpeed(Float.parseFloat(bobbingSpeed.getEditBox().getValue()));
+            dialogData.setBobbingNoiseShakeStrength(Float.parseFloat(bobbingStrength.getEditBox().getValue()));
             Dialog dialog = NarrativeCraftMod.getInstance().getTestDialog();
             dialog.setText(dialog.getText());
             dialog.setPaddingX(dialogData.getPaddingX());
@@ -273,6 +294,8 @@ public class DialogCustomScreen extends Screen {
             dialog.setMaxWidth(dialogData.getMaxWidth());
             dialog.setDialogBackgroundColor(dialogData.getBackgroundColor());
             dialog.setTextDialogColor(dialogData.getTextColor());
+            dialog.getDialogEntityBobbing().setNoiseShakeSpeed(dialogData.getBobbingNoiseShakeSpeed());
+            dialog.getDialogEntityBobbing().setNoiseShakeStrength(dialogData.getBobbingNoiseShakeStrength());
             dialog.reset();
             dialog.setUnSkippable(true);
             errorWidget.setMessage(Component.empty());

@@ -138,6 +138,17 @@ public class DialogValuesInkAction extends InkAction {
                     return InkActionResult.ERROR;
                 }
             }
+            case "bobbing" -> {
+                if(command.length < 4) return InkActionResult.ERROR;
+                try {
+                    float noiseShakeSpeed = Float.parseFloat(command[2]);
+                    float noiseShakeStrength = Float.parseFloat(command[3]);
+                    dialogData.setBobbingNoiseShakeSpeed(noiseShakeSpeed);
+                    dialogData.setBobbingNoiseShakeStrength(noiseShakeStrength);
+                } catch (NumberFormatException e) {
+                    return InkActionResult.ERROR;
+                }
+            }
         }
         Dialog dialog = storyHandler.getCurrentDialogBox();
         if(dialog != null) {
@@ -152,6 +163,8 @@ public class DialogValuesInkAction extends InkAction {
             dialog.setForcedEndTime(dialogData.getEndForceEndTime());
             dialog.setTextDialogColor(dialogData.getTextColor());
             dialog.setDialogBackgroundColor(dialogData.getBackgroundColor());
+            dialog.getDialogEntityBobbing().setNoiseShakeStrength(dialogData.getBobbingNoiseShakeStrength());
+            dialog.getDialogEntityBobbing().setNoiseShakeSpeed(dialogData.getBobbingNoiseShakeSpeed());
         }
         sendDebugDetails();
         return InkActionResult.PASS;
@@ -170,7 +183,7 @@ public class DialogValuesInkAction extends InkAction {
     @Override
     public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
         if(command.length == 1) return new ErrorLine(line, scene, Translation.message("validation.missing_values").getString(), lineText);
-        List<String> parameters = List.of("offset", "scale", "padding", "width", "textColor", "backgroundColor", "gap", "letterSpacing", "unSkippable", "autoSkip");
+        List<String> parameters = List.of("offset", "scale", "padding", "width", "textColor", "backgroundColor", "gap", "letterSpacing", "unSkippable", "autoSkip", "bobbing");
         if(!parameters.contains(command[1])) {
             return new ErrorLine(
                     line,

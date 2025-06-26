@@ -34,6 +34,11 @@ public class OnClientTick {
 
         if(client.player == null) return;
 
+        Dialog testDialog = NarrativeCraftMod.getInstance().getTestDialog();
+        if(testDialog != null) {
+            testDialog.getDialogEntityBobbing().tick();
+        }
+
         // Handle ink action currently playing.
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null && storyHandler.isRunning()) {

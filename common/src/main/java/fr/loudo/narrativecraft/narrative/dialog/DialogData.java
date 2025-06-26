@@ -19,10 +19,12 @@ public class DialogData {
     private int maxWidth;
     private boolean unSkippable;
     private long endForceEndTime;
+    private float bobbingNoiseShakeSpeed;
+    private float bobbingNoiseShakeStrength;
 
     public DialogData(String characterName, String text, Vec2 offset, int textColor, int backgroundColor,
                           float paddingX, float paddingY, float scale, float letterSpacing, float gap,
-                          int maxWidth, boolean unSkippable, long endForceEndTime) {
+                          int maxWidth, boolean unSkippable, long endForceEndTime, float bobbingNoiseShakeSpeed, float bobbingNoiseShakeStrength) {
         this.characterName = characterName;
         this.text = text;
         this.offset = offset;
@@ -36,6 +38,8 @@ public class DialogData {
         this.maxWidth = maxWidth;
         this.unSkippable = unSkippable;
         this.endForceEndTime = endForceEndTime;
+        this.bobbingNoiseShakeSpeed = bobbingNoiseShakeSpeed;
+        this.bobbingNoiseShakeStrength = bobbingNoiseShakeStrength;
     }
 
     public DialogData(DialogData dialogData) {
@@ -52,6 +56,8 @@ public class DialogData {
         this.maxWidth = dialogData.maxWidth;
         this.unSkippable = dialogData.unSkippable;
         this.endForceEndTime = dialogData.endForceEndTime;
+        this.bobbingNoiseShakeSpeed = dialogData.bobbingNoiseShakeSpeed;
+        this.bobbingNoiseShakeStrength = dialogData.bobbingNoiseShakeStrength;
     }
 
     public String getCharacterName() { return characterName; }
@@ -93,6 +99,11 @@ public class DialogData {
     public long getEndForceEndTime() { return endForceEndTime; }
     public void setEndForceEndTime(long endForceEndTime) { this.endForceEndTime = endForceEndTime; }
 
+    public float getBobbingNoiseShakeSpeed() {return bobbingNoiseShakeSpeed;}
+    public void setBobbingNoiseShakeSpeed(float bobbingNoiseShakeSpeed) {this.bobbingNoiseShakeSpeed = bobbingNoiseShakeSpeed;}
+
+    public float getBobbingNoiseShakeStrength() {return bobbingNoiseShakeStrength;}
+    public void setBobbingNoiseShakeStrength(float bobbingNoiseShakeStrength) {this.bobbingNoiseShakeStrength = bobbingNoiseShakeStrength;}
 }
 
 
