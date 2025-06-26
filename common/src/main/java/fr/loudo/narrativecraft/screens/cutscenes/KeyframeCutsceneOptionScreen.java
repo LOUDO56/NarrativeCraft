@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
@@ -95,12 +97,21 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
         currentY += BUTTON_HEIGHT + gap;
         Component removeTitle = Translation.message("global.remove");
         Button removeKeyframe = Button.builder(removeTitle, button -> {
-            if(playerSession != null) {
-                cutsceneController.clearCurrentPreviewKeyframe();
-                cutsceneController.removeKeyframe(keyframe);
-                updateCurrentTick();
-                minecraft.setScreen(null);
-            }
+            ConfirmScreen confirmScreen = new ConfirmScreen(b -> {
+                if(b) {
+                    if(playerSession != null) {
+                        cutsceneController.clearCurrentPreviewKeyframe();
+                        cutsceneController.removeKeyframe(keyframe);
+                        updateCurrentTick();
+                        minecraft.setScreen(null);
+                    }
+                } else {
+                    KeyframeCutsceneOptionScreen screen = new KeyframeCutsceneOptionScreen(keyframe, player, false);
+                    minecraft.setScreen(screen);
+                }
+            }, Component.literal(""), Translation.message("global.confirm_delete"),
+                    CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
+            minecraft.setScreen(confirmScreen);
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + margin, BUTTON_HEIGHT).build();
         this.addRenderableWidget(updateButton);
         this.addRenderableWidget(advancedButton);

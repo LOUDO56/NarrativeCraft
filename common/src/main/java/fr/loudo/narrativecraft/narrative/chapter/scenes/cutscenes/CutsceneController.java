@@ -146,6 +146,7 @@ public class CutsceneController extends KeyframeControllerBase {
                 for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
                     keyframe.showKeyframeToClient(player);
                 }
+                keyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, keyframeGroup.getId());
             }
 
             for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
@@ -155,7 +156,6 @@ public class CutsceneController extends KeyframeControllerBase {
             if(!cutscene.getKeyframeGroupList().isEmpty()) {
                 selectedKeyframeGroup = cutscene.getKeyframeGroupList().getFirst();
                 selectedKeyframeGroup.showGlow(player);
-                selectedKeyframeGroup.getKeyframeList().getFirst().showStartGroupText(player, selectedKeyframeGroup.getId());
                 KeyframeCoordinate keyframeCoordinate = selectedKeyframeGroup.getKeyframeList().getFirst().getKeyframeCoordinate();
                 LocalPlayer localPlayer = Minecraft.getInstance().player;
                 localPlayer.setPos(keyframeCoordinate.getVec3());

@@ -10,6 +10,8 @@ import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.ConfirmScreen;
+import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -102,11 +104,20 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
         currentY += BUTTON_HEIGHT + 15;
         Component removeTitle = Translation.message("global.remove");
         Button removeKeyframe = Button.builder(removeTitle, button -> {
-            if(playerSession != null) {
-                cameraAngleController.clearCurrentPreviewKeyframe();
-                cameraAngleController.removeKeyframe(keyframe);
-                this.onClose();
-            }
+            ConfirmScreen confirmScreen = new ConfirmScreen(b -> {
+                if(b) {
+                    if(playerSession != null) {
+                        cameraAngleController.clearCurrentPreviewKeyframe();
+                        cameraAngleController.removeKeyframe(keyframe);
+                        minecraft.setScreen(null);
+                    }
+                } else {
+                    CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(keyframe, player, false);
+                    minecraft.setScreen(screen);
+                }
+            }, Component.literal(""), Translation.message("global.confirm_delete"),
+                    CommonComponents.GUI_YES, CommonComponents.GUI_CANCEL);
+            minecraft.setScreen(confirmScreen);
         }).bounds(INITIAL_POS_X, currentY, this.font.width(removeTitle) + 15, BUTTON_HEIGHT).build();
         this.addRenderableWidget(removeKeyframe);
     }
