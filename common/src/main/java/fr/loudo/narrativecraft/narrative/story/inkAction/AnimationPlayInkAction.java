@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class AnimationPlayInkAction extends InkAction {
@@ -32,7 +33,7 @@ public class AnimationPlayInkAction extends InkAction {
     @Override
     public InkActionResult execute(String[] command) {
         if(command.length >= 3) {
-            name = command[2];
+            name = InkAction.parseName(command, 2);
             isLooping = false;
             if(command.length >= 4) {
                 if(command[3].equals("true") || command[3].equals("false")) {
@@ -89,7 +90,7 @@ public class AnimationPlayInkAction extends InkAction {
                     lineText
             );
         }
-        name = command[2];
+        name = InkAction.parseName(command, 2);
         Animation animation1 = scene.getAnimationByName(name);
         if(animation1 == null) {
             return new ErrorLine(

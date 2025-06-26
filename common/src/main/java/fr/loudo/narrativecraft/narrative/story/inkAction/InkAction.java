@@ -68,6 +68,22 @@ public abstract class InkAction {
         }
     }
 
+    public static String parseName(String[] command, int index) {
+        String name = command[index];
+        if (name.startsWith("\"")) {
+            StringBuilder builder = new StringBuilder();
+            for (int i = 2; i < command.length; i++) {
+                builder.append(command[i]);
+                if (i < command.length - 1) builder.append(" ");
+            }
+            name = builder.toString();
+            if (name.startsWith("\"") && name.endsWith("\"") && name.length() >= 2) {
+                name = name.substring(1, name.length() - 1);
+            }
+        }
+        return name;
+    }
+
     public static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
         InkAction inkAction = null;
         switch (tagType) {

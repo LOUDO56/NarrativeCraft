@@ -24,7 +24,7 @@ public class CutsceneInkAction extends InkAction {
     @Override
     public InkActionResult execute(String[] command) {
         storyHandler.getPlayerSession().setSoloCam(null);
-        name = command[2];
+        name = InkAction.parseName(command, 2);
         Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(name);
         if(cutscene != null) {
             executeCutscene(cutscene);
@@ -85,7 +85,7 @@ public class CutsceneInkAction extends InkAction {
                     lineText
             );
         }
-        name = command[2];
+        name = InkAction.parseName(command, 2);
         Cutscene cutscene = scene.getCutsceneByName(name);
         if(cutscene == null) {
             return new ErrorLine(

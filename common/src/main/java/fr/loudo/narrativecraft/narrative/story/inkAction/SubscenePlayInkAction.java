@@ -30,7 +30,7 @@ public class SubscenePlayInkAction extends InkAction {
     @Override
     public InkActionResult execute(String[] command) {
         if(command.length >= 3) {
-            name = command[2];
+            name = InkAction.parseName(command, 2);
             isLooping = false;
             if(command.length >= 4) {
                 if(command[3].equals("true") || command[3].equals("false")) {
@@ -82,7 +82,7 @@ public class SubscenePlayInkAction extends InkAction {
                     lineText
             );
         }
-        name = command[2];
+        name = InkAction.parseName(command, 2);
         Subscene subscene1 = scene.getSubsceneByName(name);
         if(subscene1 == null) {
             return new ErrorLine(

@@ -22,8 +22,8 @@ public class CameraAngleInkAction extends InkAction {
     @Override
     public InkActionResult execute(String[] command) {
         storyHandler.getPlayerSession().setSoloCam(null);
-        name = command[2];
-        child = command[3];
+        name = InkAction.parseName(command, 2);
+        child = InkAction.parseName(command, 3);
         CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(name);
         CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(child);
         if(cameraAngle != null) {
@@ -68,8 +68,8 @@ public class CameraAngleInkAction extends InkAction {
                     lineText
             );
         }
-        String parent = command[2];
-        String child = command[3];
+        String parent = InkAction.parseName(command, 2);
+        String child = InkAction.parseName(command, 3);
         CameraAngleGroup cameraAngleGroup = scene.getCameraAnglesGroupByName(parent);
         if(cameraAngleGroup == null) {
             return new ErrorLine(
