@@ -297,8 +297,6 @@ public class Dialog {
         startTime = System.currentTimeMillis();
         if(acceptNewDialog) {
             dialogAnimationScrollText.reset();
-            forcedEndTime = 0;
-            unSkippable = false;
         }
         if(oldWidth == getWidth() && oldHeight == getHeight() && oldScale == scale) {
             t = 1;

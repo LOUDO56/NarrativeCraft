@@ -123,8 +123,9 @@ public class DialogValuesInkAction extends InkAction {
             }
             case "unSkippable" -> {
                 try {
-                    dialogData.setUnSkippable(true);
-                    value = "true";
+                    boolean unSkippable = Boolean.parseBoolean(command[2]);
+                    dialogData.setUnSkippable(unSkippable);
+                    value = command[2];
                 } catch (RuntimeException e) {
                     return InkActionResult.ERROR;
                 }
@@ -200,12 +201,16 @@ public class DialogValuesInkAction extends InkAction {
                 try {
                     Integer.parseInt(value, 16);
                 } catch (NumberFormatException ex) {
-                    return new ErrorLine(
-                            line,
-                            scene,
-                            Translation.message("validation.number", value).getString(),
-                            lineText
-                    );
+                    try {
+                        Boolean.parseBoolean(value);
+                    } catch (Exception exc) {
+                        return new ErrorLine(
+                                line,
+                                scene,
+                                Translation.message("validation.number", value).getString(),
+                                lineText
+                        );
+                    }
                 }
             }
         }

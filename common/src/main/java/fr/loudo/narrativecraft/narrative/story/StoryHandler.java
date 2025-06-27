@@ -308,6 +308,8 @@ public class StoryHandler {
                 );
                 currentDialogBox.getDialogEntityBobbing().setNoiseShakeStrength(globalDialogValue.getBobbingNoiseShakeStrength());
                 currentDialogBox.getDialogEntityBobbing().setNoiseShakeSpeed(globalDialogValue.getBobbingNoiseShakeSpeed());
+                currentDialogBox.setUnSkippable(globalDialogValue.isUnSkippable());
+                currentDialogBox.setForcedEndTime(globalDialogValue.getEndForceEndTime());
                 currentDialogBox.setCharacterName(currentCharacter.getName());
             }
             currentCharacterTalking = parsed.characterName;
@@ -472,7 +474,8 @@ public class StoryHandler {
 
     public void stopSound(SoundEvent sound) {
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
-            if(simpleSoundInstance.getSound().getLocation().getPath().equals(sound.location().getPath())) {
+            String soundInstancePath = simpleSoundInstance.getSound().getLocation().getPath().replace("/", ".");
+            if(soundInstancePath.equals(sound.location().getPath())) {
                 Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
             }
         }
