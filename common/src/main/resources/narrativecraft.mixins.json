@@ -11,6 +11,7 @@
     "fields.ArmorStandFields",
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
+    "fields.PlayerListFields",
     "fields.TextDisplayFields"
   ],
   "client": [

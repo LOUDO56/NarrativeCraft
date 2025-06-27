@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings.playback;
 import com.mojang.authlib.GameProfile;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
@@ -24,9 +25,6 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
-import net.minecraft.world.entity.boss.enderdragon.phases.EnderDragonPhase;
-import net.minecraft.world.level.dimension.end.EndDragonFight;
 
 import java.io.File;
 import java.util.List;
@@ -81,6 +79,7 @@ public class Playback {
             moveEntitySilent(entity, loc);
             return;
         }
+        moveEntitySilent(entity, loc);
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
         if(BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
@@ -95,10 +94,12 @@ public class Playback {
                 mob.setSilent(true);
             }
         }
-        moveEntitySilent(entity, loc);
         if(entity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
+            serverLevel.getServer().getPlayerList().getPlayers().add(fakePlayer);
+            ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
+            serverLevel.getServer().getPlayerList().broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(fakePlayer)));
             serverLevel.addNewPlayer(fakePlayer);
+
         } else {
             serverLevel.addFreshEntity(entity);
         }
@@ -106,36 +107,11 @@ public class Playback {
     }
 
     private void spawnEntity(MovementData loc, Entity oldEntity) {
-        if(entity != null && entity.isAlive()) {
-            moveEntitySilent(entity, loc);
-            return;
-        }
-        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
-        loadSkin();
-        if(BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
-            entity = new FakePlayer(serverLevel, gameProfile);
-            SynchedEntityData entityData = entity.getEntityData();
-            EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
-            entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
-            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
-        } else {
-            entity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
-            if(entity instanceof Mob mob) {
-                mob.setNoAi(true);
-                mob.setSilent(true);
-                mob.setInvulnerable(true);
-            }
-        }
-        character.setEntity(entity);
-        moveEntitySilent(entity, loc);
+        spawnEntity(loc);
+        SynchedEntityData entityData = entity.getEntityData();
+        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
+        entityData.set(ENTITY_BYTE_MASK, oldEntity.getEntityData().get(ENTITY_BYTE_MASK));
         entity.setPose(oldEntity.getPose());
-        if(entity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-            serverLevel.addNewPlayer(fakePlayer);
-        } else {
-            serverLevel.addFreshEntity(entity);
-        }
     }
 
     private void loadSkin() {
@@ -176,7 +152,13 @@ public class Playback {
 
     private void killEntity() {
         if(entity == null) return;
-        entity.remove(Entity.RemovalReason.KILLED);
+        if(entity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().getPlayers().remove(fakePlayer);
+            ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
+            serverLevel.removePlayerImmediately(fakePlayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
+        } else {
+            entity.remove(Entity.RemovalReason.KILLED);
+        }
     }
 
     public void next() {
