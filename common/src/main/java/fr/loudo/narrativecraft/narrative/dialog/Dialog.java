@@ -425,6 +425,10 @@ public class Dialog {
         this.dialogBackgroundColor = (0xFF << 24) | (dialogBackgroundColor & 0x00FFFFFF);
     }
 
+    public void setDialogBackgroundColorCustomAlpha(int dialogBackgroundColor) {
+        this.dialogBackgroundColor = dialogBackgroundColor;
+    }
+
     public DialogAnimationScrollText getDialogAnimationScrollText() {
         return dialogAnimationScrollText;
     }
