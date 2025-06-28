@@ -178,6 +178,7 @@
   "narrativecraft.debug.minecraft_command_executed": "Minecraft command \"%s\" executed",
   "narrativecraft.debug.dialog_values": "Dialog parameter %s new value set to %s",
   "narrativecraft.debug.shake": "Shake strength=%s, rate=%s, speed=%s",
+  "narrativecraft.debug.emote": "emote %s %s %s isForced=%s",
 
 
   "narrativecraft.validation.missing_name": "Missing name.",
@@ -190,6 +191,7 @@
   "narrativecraft.validation.camera_angle_parent": "Camera angle parent %s doesn't exists.",
   "narrativecraft.validation.camera_angle_child": "Camera angle child %s of parent %s doesn't exists.",
   "narrativecraft.validation.number": "%s value is not a valid number.",
+  "narrativecraft.validation.boolean": "%s value is not a valid boolean.",
   "narrativecraft.validation.easing": "%s value is not a valid easing name. available easing are: %s",
   "narrativecraft.validation.dialog": "%s value is not a valid dialog parameter name. available dialog parameters are: %s",
   "narrativecraft.validation.missing_sound_name": "Missing sound name.",
@@ -206,7 +208,12 @@
   "narrativecraft.validation.change_time.missing_time": "You want to interpolate but you forgot to put a duration e.g. for 3 seconds",
   "narrativecraft.validation.weather.value": "%s value is not a weather name, only 'clear', 'rain' and 'thunder' are supported.",
   "narrativecraft.validation.missing_minecraft_command": "Missing minecraft command.",
-  "narrativecraft.validation.invalid_command": "This minecraft command can't be executed: %s"
+  "narrativecraft.validation.invalid_command": "This minecraft command can't be executed: %s",
+  "narrativecraft.validation.character": "%s character does not exist.",
+  "narrativecraft.validation.emote": "%s emote does not exists.",
+  "narrativecraft.validation.emotecraft": "EmoteCraft mod isn't loaded, you can't use that ink action, please either remove this line or download it."
+
+
 
 
 }

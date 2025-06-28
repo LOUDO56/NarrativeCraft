@@ -19,6 +19,7 @@ import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
+import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -358,7 +359,19 @@ public class StoryHandler {
                         String[] command = tag.split(" ");
                         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
                         if (tagType != null) {
-                            InkAction inkAction = InkAction.getInkAction(tagType);
+                            InkAction inkAction = null;
+                            if(tagType == InkAction.InkTagType.EMOTE) {
+                                if(!Services.PLATFORM.isModLoaded("emotecraft")) {
+                                    errorLineList.add(new InkAction.ErrorLine(
+                                            i + 1,
+                                            scene,
+                                            Translation.message("validation.emotecraft").getString(),
+                                            matcher.group()
+                                    ));
+                                }
+                            } else {
+                                inkAction = InkAction.getInkAction(tagType);
+                            }
                             if (inkAction != null) {
                                 InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, matcher.group(), scene);
                                 if (errorLine != null) {

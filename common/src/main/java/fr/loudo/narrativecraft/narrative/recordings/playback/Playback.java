@@ -79,7 +79,6 @@ public class Playback {
             moveEntitySilent(entity, loc);
             return;
         }
-        moveEntitySilent(entity, loc);
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
         if(BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
@@ -103,6 +102,7 @@ public class Playback {
         } else {
             serverLevel.addFreshEntity(entity);
         }
+        moveEntitySilent(entity, loc);
         character.setEntity(entity);
     }
 

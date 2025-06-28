@@ -63,6 +63,8 @@ public abstract class InkAction {
             return InkTagType.DIALOG_VALUES;
         } else if (tag.contains("shake")) {
             return InkTagType.SHAKE;
+        } else if (tag.contains("emote play") || tag.contains("emote stop")) {
+            return InkTagType.EMOTE;
         } else {
             return null;
         }
@@ -72,8 +74,9 @@ public abstract class InkAction {
         String name = command[index];
         if (name.startsWith("\"")) {
             StringBuilder builder = new StringBuilder();
-            for (int i = 2; i < command.length; i++) {
+            for (int i = index; i < command.length; i++) {
                 builder.append(command[i]);
+                if(command[i].endsWith("\"")) break;
                 if (i < command.length - 1) builder.append(" ");
             }
             name = builder.toString();
@@ -99,6 +102,7 @@ public abstract class InkAction {
             case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction();
             case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
             case SHAKE -> inkAction = new ShakeScreenInkAction();
+            case EMOTE -> inkAction = new EmoteCraftInkAction();
         }
         return inkAction;
     }
@@ -119,7 +123,8 @@ public abstract class InkAction {
         WEATHER,
         MINECRAFT_COMMAND,
         DIALOG_VALUES,
-        SHAKE
+        SHAKE,
+        EMOTE
     }
 
     public enum InkActionResult {
