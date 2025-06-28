@@ -52,6 +52,11 @@ public class SubscenePlayInkAction extends InkAction {
                     if (inkAction instanceof SubscenePlayInkAction action) {
                         if(action.subscene.getPlaybackList().equals(subscene.getPlaybackList())) {
                             for(Animation animation : subscene.getAnimationList()) {
+                                if(storyHandler.getCurrentDialogBox() != null) {
+                                    if(storyHandler.getCurrentDialogBox().getEntityClient().getUUID().equals(animation.getCharacter().getEntity().getUUID())) {
+                                        storyHandler.setCurrentDialogBox(null);
+                                    }
+                                }
                                 storyHandler.getCurrentCharacters().remove(animation.getCharacter());
                             }
                             subscene.forceStop();

@@ -60,6 +60,11 @@ public class AnimationPlayInkAction extends InkAction {
                 for(InkAction inkAction : storyHandler.getInkActionList()) {
                     if(inkAction instanceof AnimationPlayInkAction action) {
                         if(animation.getName().equals(action.animation.getName())) {
+                            if(storyHandler.getCurrentDialogBox() != null) {
+                                if(storyHandler.getCurrentDialogBox().getEntityClient().getUUID().equals(action.playback.getEntity().getUUID())) {
+                                    storyHandler.setCurrentDialogBox(null);
+                                }
+                            }
                             storyHandler.getCurrentCharacters().remove(animation.getCharacter());
                             action.playback.forceStop();
                             NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(action.playback);

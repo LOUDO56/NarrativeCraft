@@ -90,6 +90,10 @@ public class StoryHandler {
                 ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
                 playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, null, null);
             }
+
+            Chapter loadChapter = playerSession.getChapter();
+            Scene loadScene = playerSession.getScene();
+
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
             for(Chapter chapter : NarrativeCraftMod.getInstance().getChapterManager().getChapters()) {
                 for(Scene scene : chapter.getSceneList()) {
@@ -103,9 +107,6 @@ public class StoryHandler {
             }
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
-
-            Chapter loadChapter = playerSession.getChapter();
-            Scene loadScene = playerSession.getScene();
 
             Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
             Scene firstScene = firstChapter.getSceneList().getFirst();
@@ -166,7 +167,7 @@ public class StoryHandler {
             onChoice = false;
             if(save != null) {
                 currentDialog = story.getCurrentText();
-                boolean isNewScene = story.getCurrentTags().getFirst().equals("on enter") && !story.getCurrentTags().contains("save");
+                boolean isNewScene = story.getCurrentTags().contains("on enter") && !story.getCurrentTags().contains("save");
                 int breakIndex = 0;
                 List<String> oldTags = List.copyOf(story.getCurrentTags());
                 for(String tag : story.getCurrentTags()) {
@@ -208,33 +209,35 @@ public class StoryHandler {
                 if(save.getDialogSaveData() != null) {
                     DialogData dialogSaveData = save.getDialogSaveData();
                     globalDialogValue = dialogSaveData;
-                    if(dialogSaveData.getCharacterName() == null && dialogSaveData.getText() == null) { // If dialog save data is only global parameters and not last dialog saved
-                        showDialog();
-                    } else {
-                        Entity entity = null;
-                        for(CharacterStory characterStory : currentCharacters) {
-                            if(characterStory.getName().equals(dialogSaveData.getCharacterName())) {
-                                entity = characterStory.getEntity();
+                    if(!currentCharacters.isEmpty()) {
+                        if(dialogSaveData.getCharacterName() == null && dialogSaveData.getText() == null) { // If dialog save data is only global parameters and not last dialog saved
+                            showDialog();
+                        } else {
+                            Entity entity = null;
+                            for(CharacterStory characterStory : currentCharacters) {
+                                if(characterStory.getName().equals(dialogSaveData.getCharacterName())) {
+                                    entity = characterStory.getEntity();
+                                }
                             }
+                            currentCharacterTalking = dialogSaveData.getCharacterName();
+                            currentDialog = dialogSaveData.getText();
+                            currentDialogBox = new Dialog(
+                                    entity,
+                                    parseDialogContent(dialogSaveData.getText()).cleanedText,
+                                    dialogSaveData.getTextColor(),
+                                    dialogSaveData.getBackgroundColor(),
+                                    dialogSaveData.getPaddingX(),
+                                    dialogSaveData.getPaddingY(),
+                                    dialogSaveData.getScale(),
+                                    dialogSaveData.getLetterSpacing(),
+                                    dialogSaveData.getGap(),
+                                    dialogSaveData.getMaxWidth(),
+                                    dialogSaveData.getOffset()
+                            );
+                            currentDialogBox.setUnSkippable(dialogSaveData.isUnSkippable());
+                            currentDialogBox.setForcedEndTime(dialogSaveData.getEndForceEndTime());
+                            currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
                         }
-                        currentCharacterTalking = dialogSaveData.getCharacterName();
-                        currentDialog = dialogSaveData.getText();
-                        currentDialogBox = new Dialog(
-                                entity,
-                                parseDialogContent(dialogSaveData.getText()).cleanedText,
-                                dialogSaveData.getTextColor(),
-                                dialogSaveData.getBackgroundColor(),
-                                dialogSaveData.getPaddingX(),
-                                dialogSaveData.getPaddingY(),
-                                dialogSaveData.getScale(),
-                                dialogSaveData.getLetterSpacing(),
-                                dialogSaveData.getGap(),
-                                dialogSaveData.getMaxWidth(),
-                                dialogSaveData.getOffset()
-                        );
-                        currentDialogBox.setUnSkippable(dialogSaveData.isUnSkippable());
-                        currentDialogBox.setForcedEndTime(dialogSaveData.getEndForceEndTime());
-                        currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
                     }
                 }
             } else {
@@ -513,6 +516,14 @@ public class StoryHandler {
         }
     }
 
+    public CharacterStory getCharacter(String name) {
+        for(CharacterStory characterStory : currentCharacters) {
+            if(characterStory.getName().equalsIgnoreCase(name)) {
+                return characterStory;
+            }
+        }
+        return null;
+    }
 
     public PlayerSession getPlayerSession() {
         return playerSession;
