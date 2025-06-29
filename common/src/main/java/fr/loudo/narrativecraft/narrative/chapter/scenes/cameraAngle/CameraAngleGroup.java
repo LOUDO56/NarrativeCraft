@@ -41,6 +41,7 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     public void spawnCharacters(Playback.PlaybackType playbackType) {
         for(CharacterStoryData characterStoryData : characterStoryDataList) {
+            if(characterStoryData.isOnlyTemplate() && playbackType == Playback.PlaybackType.PRODUCTION) continue;
             CharacterStory characterStory = characterStoryData.getCharacterStory();
             spawnCharacter(characterStoryData, playbackType);
             if(playbackType == Playback.PlaybackType.PRODUCTION) {
@@ -61,7 +62,7 @@ public class CameraAngleGroup extends NarrativeEntry {
         }
     }
 
-    public CharacterStoryData addCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, Playback.PlaybackType playbackType) {
+    public CharacterStoryData addCharacter(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, Playback.PlaybackType playbackType, boolean onlyTemplate) {
         CharacterStoryData characterStoryData = new CharacterStoryData(
                 characterStory,
                 skinName,
@@ -69,7 +70,8 @@ public class CameraAngleGroup extends NarrativeEntry {
                 y,
                 z,
                 XRot,
-                YRot
+                YRot,
+                onlyTemplate
         );
         spawnCharacter(characterStoryData, playbackType);
         characterStoryDataList.add(characterStoryData);

@@ -37,6 +37,7 @@ public class CharacterStoryData {
     private byte livingEntityByte;
     private String skinName;
     private final List<ItemSlotData> itemSlotDataList;
+    private boolean onlyTemplate;
 
     public CharacterStoryData(CharacterStory characterStory) {
         this.characterStory = characterStory;
@@ -55,10 +56,11 @@ public class CharacterStoryData {
         EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityByte = livingEntity.getEntityData().get(entityFlagByte);
         livingEntityByte = livingEntity.getEntityData().get(livingEntityFlagByte);
+        onlyTemplate = false;
         initItem(livingEntity);
     }
 
-    public CharacterStoryData(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot) {
+    public CharacterStoryData(CharacterStory characterStory, String skinName, double x, double y, double z, float XRot, float YRot, boolean onlyTemplate) {
         this.characterStory = characterStory;
         this.x = x;
         this.y = y;
@@ -73,10 +75,11 @@ public class CharacterStoryData {
         EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityByte = localPlayer.getEntityData().get(entityFlagByte);
         livingEntityByte = localPlayer.getEntityData().get(livingEntityFlagByte);
+        this.onlyTemplate = onlyTemplate;
         initItem(localPlayer);
     }
 
-    public CharacterStoryData(CharacterStory characterStory, double x, double y, double z, float pitch, float yaw, float yBodyRot, String pose, byte entityByte, byte livingEntityByte, String skinName, List<ItemSlotData> itemSlotDataList) {
+    public CharacterStoryData(CharacterStory characterStory, double x, double y, double z, float pitch, float yaw, float yBodyRot, String pose, byte entityByte, byte livingEntityByte, String skinName, List<ItemSlotData> itemSlotDataList, boolean onlyTemplate) {
         this.characterStory = characterStory;
         this.x = x;
         this.y = y;
@@ -89,6 +92,7 @@ public class CharacterStoryData {
         this.livingEntityByte = livingEntityByte;
         this.skinName = skinName;
         this.itemSlotDataList = itemSlotDataList;
+        this.onlyTemplate = onlyTemplate;
     }
 
     public void initItem(LivingEntity entity) {
@@ -252,6 +256,14 @@ public class CharacterStoryData {
 
     public void setPose(Pose pose) {
         this.pose = pose.name();
+    }
+
+    public boolean isOnlyTemplate() {
+        return onlyTemplate;
+    }
+
+    public void setOnlyTemplate(boolean onlyTemplate) {
+        this.onlyTemplate = onlyTemplate;
     }
 
     public record ItemSlotData(int id, String data, String equipmentSlot) {

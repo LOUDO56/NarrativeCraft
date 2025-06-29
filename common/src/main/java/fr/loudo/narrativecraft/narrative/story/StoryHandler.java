@@ -5,6 +5,7 @@ import com.bladecoder.ink.runtime.Story;
 import com.bladecoder.ink.runtime.StoryException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -21,6 +22,7 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -183,8 +185,10 @@ public class StoryHandler {
                 playerSession.setKeyframeControllerBase(playerSessionFromSave.getKeyframeControllerBase());
                 playerSession.setSoloCam(playerSessionFromSave.getSoloCam());
                 for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
-                    characterStoryData.spawn(playerSession.getPlayer().serverLevel());
-                    currentCharacters.add(characterStoryData.getCharacterStory());
+                    if(characterStoryData.isOnlyTemplate()) {
+                        characterStoryData.spawn(playerSession.getPlayer().serverLevel());
+                        currentCharacters.add(characterStoryData.getCharacterStory());
+                    }
                 }
                 for(StorySave.AnimationInfo animationInfo : save.getAnimationInfoList()) {
                     Animation animation = playerSessionFromSave.getScene().getAnimationByName(animationInfo.getName());
@@ -384,6 +388,23 @@ public class StoryHandler {
             }
         }
         return errorLineList;
+    }
+
+    public void addCharacter(CharacterStory characterStory) {
+        currentCharacters.add(characterStory);
+    }
+
+    public void removeCharacter(CharacterStory characterStory) {
+        for(CharacterStory characterStory1 : currentCharacters) {
+            if(characterStory.getName().equals(characterStory1.getName())) {
+                if(characterStory.getEntity() instanceof FakePlayer fakePlayer) {
+                    NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+                } else {
+                    characterStory.getEntity().remove(Entity.RemovalReason.KILLED);
+                }
+            }
+        }
+        currentCharacters.remove(characterStory);
     }
 
     /**

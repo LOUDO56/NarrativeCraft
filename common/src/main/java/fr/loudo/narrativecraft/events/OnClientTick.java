@@ -10,10 +10,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.ShakeScreenInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.WaitInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
@@ -69,6 +66,22 @@ public class OnClientTick {
                 if(inkAction instanceof ShakeScreenInkAction shakeScreenInkAction) {
                     shakeScreenInkAction.tick();
                     if(!shakeScreenInkAction.isShaking()) toRemove.add(shakeScreenInkAction);
+                }
+                if(inkAction instanceof SubscenePlayInkAction subscenePlayInkAction) {
+                    if(subscenePlayInkAction.getSubscene().allPlaybackDone()) {
+                        if(subscenePlayInkAction.isBlock()) {
+                            storyHandler.getInkTagTranslators().executeLaterTags();
+                        }
+                        toRemove.add(inkAction);
+                    }
+                }
+                if(inkAction instanceof AnimationPlayInkAction animationPlayInkAction) {
+                    if(animationPlayInkAction.getPlayback().hasEnded()) {
+                        if(animationPlayInkAction.isBlock()) {
+                            storyHandler.getInkTagTranslators().executeLaterTags();
+                        }
+                        toRemove.add(inkAction);
+                    }
                 }
             }
             storyHandler.getInkActionList().removeAll(toRemove);

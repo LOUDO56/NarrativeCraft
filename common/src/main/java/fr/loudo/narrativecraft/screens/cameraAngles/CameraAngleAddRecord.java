@@ -118,7 +118,8 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
                 movementData.getZ(),
                 movementData.getXRot(),
                 movementData.getYRot(),
-                Playback.PlaybackType.DEVELOPMENT
+                Playback.PlaybackType.DEVELOPMENT,
+                true
         );
         characterStoryData.getItemSlotDataList().clear();
         LivingEntity livingEntity = characterStoryData.getCharacterStory().getEntity();

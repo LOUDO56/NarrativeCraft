@@ -93,6 +93,7 @@ public class Playback {
                 mob.setSilent(true);
             }
         }
+        moveEntitySilent(entity, loc);
         if(entity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().getPlayers().add(fakePlayer);
             ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
@@ -102,7 +103,6 @@ public class Playback {
         } else {
             serverLevel.addFreshEntity(entity);
         }
-        moveEntitySilent(entity, loc);
         character.setEntity(entity);
     }
 
@@ -153,9 +153,7 @@ public class Playback {
     private void killEntity() {
         if(entity == null) return;
         if(entity instanceof FakePlayer fakePlayer) {
-            serverLevel.removePlayerImmediately(fakePlayer, Entity.RemovalReason.KILLED);
             serverLevel.getServer().getPlayerList().remove(fakePlayer);
-            ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
         } else {
             entity.remove(Entity.RemovalReason.KILLED);
         }

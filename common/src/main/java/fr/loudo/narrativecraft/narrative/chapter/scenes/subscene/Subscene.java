@@ -68,6 +68,14 @@ public class Subscene extends NarrativeEntry {
         playbackList.clear();
     }
 
+    public boolean allPlaybackDone() {
+        int totalDone = 0;
+        for(Playback playback : playbackList) {
+            if(playback.hasEnded()) totalDone++;
+        }
+        return playbackList.size() == totalDone;
+    }
+
     public void setScene(Scene scene) {
         this.scene = scene;
     }

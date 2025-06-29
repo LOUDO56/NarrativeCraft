@@ -89,7 +89,8 @@ public class CameraAngleController extends KeyframeControllerBase {
                     characterStoryData.getEntityByte(),
                     characterStoryData.getLivingEntityByte(),
                     characterStoryData.getSkinName(),
-                    characterStoryData.getItemSlotDataList()
+                    characterStoryData.getItemSlotDataList(),
+                    characterStoryData.isOnlyTemplate()
             );
             oldCharacterStoryDataList.add(oldCharacterStoryData);
         }

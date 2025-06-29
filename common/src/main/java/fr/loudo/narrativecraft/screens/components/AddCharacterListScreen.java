@@ -95,7 +95,8 @@ public class AddCharacterListScreen extends OptionsSubScreen {
                 position.z,
                 localPlayer.getXRot(),
                 localPlayer.getYRot(),
-                Playback.PlaybackType.DEVELOPMENT
+                Playback.PlaybackType.DEVELOPMENT,
+                false
         );
         if(characterStoryData.getCharacterStory().getEntity() instanceof FakePlayer fakePlayer) {
             for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {

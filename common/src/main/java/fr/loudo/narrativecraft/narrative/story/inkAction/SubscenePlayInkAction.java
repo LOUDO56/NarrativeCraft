@@ -14,7 +14,7 @@ import java.util.List;
 public class SubscenePlayInkAction extends InkAction {
 
     private Subscene subscene;
-    private boolean isLooping;
+    private boolean isLooping, block;
 
     public SubscenePlayInkAction() {}
 
@@ -32,18 +32,22 @@ public class SubscenePlayInkAction extends InkAction {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
             isLooping = false;
-            if(command.length >= 4) {
-                if(command[3].equals("true") || command[3].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[3]);
+            try {
+                if(command[command.length - 2].equals("true") || command[command.length - 2].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[command.length - 2]);
                 }
-            }
+            } catch (RuntimeException ignored) {}
             subscene = storyHandler.getPlayerSession().getScene().getSubsceneByName(name);
             if(subscene == null) return InkActionResult.ERROR;
+            block = false;
             if(command[1].equals("start")) {
-                subscene.start(storyHandler.getPlayerSession().getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
+                try {
+                    if(command[command.length - 1].equals("block")) block = true;
+                } catch (RuntimeException ignored) {}
                 for(Animation animation : subscene.getAnimationList()) {
-                    storyHandler.getCurrentCharacters().add(animation.getCharacter());
+                    storyHandler.addCharacter(animation.getCharacter());
                 }
+                subscene.start(storyHandler.getPlayerSession().getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();
             } else if(command[1].equals("stop")) {
@@ -67,7 +71,11 @@ public class SubscenePlayInkAction extends InkAction {
                 storyHandler.getInkActionList().removeAll(toRemove);
             }
         }
-        return InkActionResult.PASS;
+        if(block) {
+            return InkActionResult.BLOCK;
+        } else {
+            return InkActionResult.PASS;
+        }
     }
 
     @Override
@@ -106,5 +114,9 @@ public class SubscenePlayInkAction extends InkAction {
 
     public Subscene getSubscene() {
         return subscene;
+    }
+
+    public boolean isBlock() {
+        return block;
     }
 }

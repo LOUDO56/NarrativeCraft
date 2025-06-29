@@ -6,8 +6,11 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,7 +20,7 @@ public class AnimationPlayInkAction extends InkAction {
 
     private Animation animation;
     private Playback playback;
-    private boolean isLooping;
+    private boolean isLooping, block;
 
     public AnimationPlayInkAction() {}
 
@@ -35,15 +38,20 @@ public class AnimationPlayInkAction extends InkAction {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
             isLooping = false;
-            if(command.length >= 4) {
-                if(command[3].equals("true") || command[3].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[3]);
+            try {
+                if(command[command.length - 2].equals("true") || command[command.length - 2].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[command.length - 2]);
                 }
-            }
+            } catch (RuntimeException ignored) {}
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);
+            block = false;
             PlayerSession playerSession = storyHandler.getPlayerSession();
             if(animation == null) return InkActionResult.ERROR;
             if(command[1].equals("start")) {
+                try {
+                    if(command[command.length - 1].equals("block")) block = true;
+                } catch (RuntimeException ignored) {}
+                storyHandler.addCharacter(animation.getCharacter());
                 playback = new Playback(
                         animation,
                         playerSession.getPlayer().serverLevel(),
@@ -52,7 +60,6 @@ public class AnimationPlayInkAction extends InkAction {
                         isLooping
                 );
                 playback.start();
-                storyHandler.getCurrentCharacters().add(animation.getCharacter());
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();
             } else if(command[1].equals("stop")) {
@@ -75,7 +82,11 @@ public class AnimationPlayInkAction extends InkAction {
                 storyHandler.getInkActionList().removeAll(toRemove);
             }
         }
-        return InkActionResult.PASS;
+        if(block) {
+            return InkActionResult.BLOCK;
+        } else {
+            return InkActionResult.PASS;
+        }
     }
 
     @Override
@@ -114,5 +125,9 @@ public class AnimationPlayInkAction extends InkAction {
 
     public boolean isLooping() {
         return isLooping;
+    }
+
+    public boolean isBlock() {
+        return block;
     }
 }
