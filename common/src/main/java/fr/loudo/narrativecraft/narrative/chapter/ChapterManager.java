@@ -67,7 +67,6 @@ public class ChapterManager {
                 initScenesOfChapter(chapterIndex, chapter);
                 chapters.add(chapter);
             }
-            NarrativeCraftFile.updateMainInkFile();
         }
     }
 
@@ -76,6 +75,7 @@ public class ChapterManager {
         if(scenesDirectory.exists()) {
             File[] scenesFolder = scenesDirectory.listFiles();
             if(scenesFolder != null) {
+                List<Scene> sceneList = new ArrayList<>();
                 for(File sceneFolder : scenesFolder) {
                     File dataFolder = new File(sceneFolder.getAbsoluteFile(), "data");
                     String name = sceneFolder.getName();
@@ -99,8 +99,10 @@ public class ChapterManager {
                         }
                         initSceneData(sceneFolder, scene);
                     }
-                    chapter.addScene(scene);
+                    sceneList.add(scene);
                 }
+                chapter.getSceneList().clear();
+                chapter.getSceneList().addAll(sceneList);
             }
         }
     }
@@ -266,7 +268,6 @@ public class ChapterManager {
         Chapter chapter = new Chapter(chapters.size() + 1, name, description);
         if(NarrativeCraftFile.createChapterDirectory(chapter)) {
             chapters.add(chapter);
-            NarrativeCraftFile.updateMainInkFile();
             return true;
         } else {
             return false;

@@ -184,7 +184,7 @@ public class NarrativeCraftFile {
                 writer.write(content);
             }
             try(Writer writer = new BufferedWriter(new FileWriter(sceneScriptFile))) {
-                writer.write(getKnotSceneName(scene) + "\n#on enter");
+                writer.write(getKnotSceneName(scene) + "\n# on enter");
             }
             return true;
         } catch (IOException e) {
