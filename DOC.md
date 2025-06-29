@@ -156,3 +156,9 @@ Infinite shake, smooth and slow to add immersion.
 
 ```shake 0 0 0```
 Reset shake effect
+
+## Kill Character
+
+Kill character entity and removes it
+
+``kill %name%``

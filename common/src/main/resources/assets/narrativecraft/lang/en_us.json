@@ -179,6 +179,7 @@
   "narrativecraft.debug.dialog_values": "Dialog parameter %s new value set to %s",
   "narrativecraft.debug.shake": "Shake strength=%s, rate=%s, speed=%s",
   "narrativecraft.debug.emote": "emote %s %s %s isForced=%s",
+  "narrativecraft.debug.kill_character": "Killed character %s",
 
 
   "narrativecraft.validation.missing_name": "Missing name.",

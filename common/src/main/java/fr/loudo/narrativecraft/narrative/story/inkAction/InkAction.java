@@ -65,6 +65,8 @@ public abstract class InkAction {
             return InkTagType.SHAKE;
         } else if (tag.contains("emote play") || tag.contains("emote stop")) {
             return InkTagType.EMOTE;
+        } else if (tag.startsWith("kill")) {
+            return InkTagType.KILL_CHARACTER;
         } else {
             return null;
         }
@@ -103,6 +105,7 @@ public abstract class InkAction {
             case DIALOG_VALUES -> inkAction = new DialogValuesInkAction();
             case SHAKE -> inkAction = new ShakeScreenInkAction();
             case EMOTE -> inkAction = new EmoteCraftInkAction();
+            case KILL_CHARACTER -> inkAction = new KillCharacterInkAction();
         }
         return inkAction;
     }
@@ -124,7 +127,8 @@ public abstract class InkAction {
         MINECRAFT_COMMAND,
         DIALOG_VALUES,
         SHAKE,
-        EMOTE
+        EMOTE,
+        KILL_CHARACTER
     }
 
     public enum InkActionResult {
