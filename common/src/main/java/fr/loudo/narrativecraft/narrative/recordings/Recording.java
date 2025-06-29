@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
+import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.io.IOException;
@@ -35,6 +36,9 @@ public class Recording {
     public boolean stop() {
         if(!isRecording) return false;
         isRecording = false;
+        for(ModsListenerImpl modsListener : actionDifferenceListener.getModsListenerList()) {
+            modsListener.stop();
+        }
         return true;
     }
 

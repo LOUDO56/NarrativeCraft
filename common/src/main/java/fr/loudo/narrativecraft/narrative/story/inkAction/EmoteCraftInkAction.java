@@ -5,16 +5,12 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.utils.Translation;
+import io.github.kosmx.emotes.api.events.client.ClientEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
-import io.github.kosmx.emotes.mc.McUtils;
-import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.util.StringUtil;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.UUID;
 
 public class EmoteCraftInkAction extends InkAction {
@@ -46,7 +42,7 @@ public class EmoteCraftInkAction extends InkAction {
         CharacterStory characterStory = storyHandler.getCharacter(characterName);
         if(characterStory == null) return InkActionResult.ERROR;
         if(action.equals("play")) {
-            emote = getEmote(name, UniversalEmoteSerializer.getLoadedEmotes());
+            emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
             if(emote == null) return InkActionResult.ERROR;
             ServerEmoteAPI.playEmote(characterStory.getEntity().getUUID(), emote, forced);
         } else if(action.equals("stop")) {
@@ -91,7 +87,7 @@ public class EmoteCraftInkAction extends InkAction {
                 lineText
         );
         if(command[1].equals("play")) {
-            emote = getEmote(name, UniversalEmoteSerializer.getLoadedEmotes());
+            emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
             if(emote == null) {
                 return new ErrorLine(
                         line,
@@ -104,17 +100,19 @@ public class EmoteCraftInkAction extends InkAction {
         return null;
     }
 
-    private KeyframeAnimation getEmote(String id, HashMap<UUID, KeyframeAnimation> emotes) {
-        // Comes from https://github.com/KosmX/emotes/blob/73f9a2bfdf041504738d1d2f89b67bd6525e450c/emotesMc/src/main/java/io/github/kosmx/emotes/mc/EmoteArgumentProvider.java#L56
+    private KeyframeAnimation getEmote(String id, Collection<KeyframeAnimation> emotes) {
         try {
             UUID emoteID = UUID.fromString(id);
-            return emotes.get(emoteID);
+            for (KeyframeAnimation keyframeAnimation : emotes) {
+                if(keyframeAnimation.getUuid().equals(emoteID)) {
+                    return keyframeAnimation;
+                }
+            }
         } catch(IllegalArgumentException ignore) {} //Not a UUID
 
-        for (var emote : emotes.values()) {
-            if (emote.extraData.containsKey("name")) {
-                String name = StringUtil.filterText(McUtils.fromJson(emote.extraData.get("name"), RegistryAccess.EMPTY).getString());
-                if (name.equals(id)) return emote;
+        for (KeyframeAnimation keyframeAnimation : emotes) {
+            if(keyframeAnimation.getName().equalsIgnoreCase(id)) {
+                return keyframeAnimation;
             }
         }
         return null;

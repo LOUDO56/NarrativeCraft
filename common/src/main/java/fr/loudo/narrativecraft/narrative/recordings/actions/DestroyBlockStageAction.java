@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.LivingEntity;
 
 public class DestroyBlockStageAction extends Action {
 
@@ -31,4 +32,5 @@ public class DestroyBlockStageAction extends Action {
     public int getProgress() {
         return progress;
     }
+
 }

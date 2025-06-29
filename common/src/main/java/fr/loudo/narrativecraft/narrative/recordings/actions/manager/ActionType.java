@@ -12,5 +12,6 @@ public enum ActionType {
     BLOCK_BREAK,
     DESTROY_BLOCK_STAGE,
     RIGHT_CLICK_BLOCK,
-    PROJECTILE_THROW
+    PROJECTILE_THROW,
+    EMOTE
 }

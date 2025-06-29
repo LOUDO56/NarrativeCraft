@@ -23,16 +23,6 @@ dependencies {
         exclude group: 'dev.kosmx.player-anim', module: 'anim-core'
         exclude group: 'net.raphimc', module: 'NoteBlockLib'
     }
-    compileOnly (group: 'io.github.kosmx.emotes', name: 'emotesServer', version: '2.6.1') {
-        exclude group: 'dev.kosmx.player-anim', module: 'player-animation-lib'
-        exclude group: 'dev.kosmx.player-anim', module: 'anim-core'
-        exclude group: 'net.raphimc', module: 'NoteBlockLib'
-    }
-    compileOnly (group: 'io.github.kosmx.emotes', name: 'emotesMc', version: '2.6.1') {
-        exclude group: 'dev.kosmx.player-anim', module: 'player-animation-lib'
-        exclude group: 'dev.kosmx.player-anim', module: 'anim-core'
-        exclude group: 'net.raphimc', module: 'NoteBlockLib'
-    }
     compileOnly group: 'dev.kosmx.player-anim', name: 'player-animation-lib', version: '2.0.2+1.21.5'
     compileOnly group: 'dev.kosmx.player-anim', name: 'anim-core', version: '2.0.2+1.21.5'
     include(implementation "com.bladecoder.ink:blade-ink:1.2.0+nc")

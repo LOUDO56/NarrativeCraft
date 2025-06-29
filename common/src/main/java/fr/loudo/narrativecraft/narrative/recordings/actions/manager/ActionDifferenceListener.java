@@ -5,6 +5,9 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.EntityByteAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.LivingEntityByteAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteCraftListeners;
+import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
+import fr.loudo.narrativecraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -17,6 +20,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -37,12 +41,13 @@ public class ActionDifferenceListener {
     private final EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
 
     private int tick;
-    private Recording recording;
-    private ServerPlayer player;
+    private final Recording recording;
+    private final ServerPlayer player;
     private Pose poseState;
     private byte entityByteState;
     private byte livingEntityByteState;
-    private HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
+    private final HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
+    private List<ModsListenerImpl> modsListenerList;
 
     public ActionDifferenceListener(Recording recording) {
         this.player = recording.getPlayer();
@@ -50,11 +55,21 @@ public class ActionDifferenceListener {
         this.currentItemInEquipmentSlot = new HashMap<>();
         this.tick = 0;
         initItemSlot();
+        initModsListeners();
     }
 
     private void initItemSlot() {
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             currentItemInEquipmentSlot.put(equipmentSlot, new ItemStack(Items.AIR));
+        }
+    }
+
+    private void initModsListeners() {
+        modsListenerList = new ArrayList<>();
+        if(Services.PLATFORM.isModLoaded("emotecraft")) {
+            EmoteCraftListeners emoteCraftListeners = new EmoteCraftListeners(this);
+            emoteCraftListeners.start();
+            modsListenerList.add(emoteCraftListeners);
         }
     }
 
@@ -125,5 +140,13 @@ public class ActionDifferenceListener {
 
     public int getTick() {
         return tick;
+    }
+
+    public List<ModsListenerImpl> getModsListenerList() {
+        return modsListenerList;
+    }
+
+    public Recording getRecording() {
+        return recording;
     }
 }

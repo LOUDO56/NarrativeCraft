@@ -8,6 +8,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 
 import java.lang.reflect.Type;
+import java.util.UUID;
 
 public class ActionDeserializer implements JsonDeserializer<Action> {
 
@@ -83,6 +84,10 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 String handName = jsonObject.get("handName").getAsString();
                 boolean inside = jsonObject.get("inside").getAsBoolean();
                 return new RightClickBlockAction(tick, actionType, x, y, z, directionName, handName, inside);
+            }
+            case EMOTE -> {
+                UUID emoteId = UUID.fromString(jsonObject.get("emoteId").getAsString());
+                return new EmoteAction(tick, actionType, emoteId);
             }
 
         }
