@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
@@ -54,6 +55,8 @@ public class OnHudRender {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(Minecraft.getInstance().player.getUUID());
         if(playerSession == null) return;
         if(playerSession.getKeyframeControllerBase() == null) return;
-        playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
+        if(playerSession.getKeyframeControllerBase().getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
+            playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
+        }
     }
 }

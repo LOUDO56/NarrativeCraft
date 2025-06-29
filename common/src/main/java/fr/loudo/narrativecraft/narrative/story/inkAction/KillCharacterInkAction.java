@@ -29,6 +29,11 @@ public class KillCharacterInkAction extends InkAction {
             }
         }
         storyHandler.removeCharacter(characterStory);
+        if(storyHandler.getCurrentDialogBox() != null) {
+            if(storyHandler.getCurrentDialogBox().getCharacterName().equals(characterStory.getName())) {
+                storyHandler.setCurrentDialogBox(null);
+            }
+        }
         sendDebugDetails();
         return InkActionResult.PASS;
     }
