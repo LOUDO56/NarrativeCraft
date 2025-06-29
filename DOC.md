@@ -82,9 +82,9 @@ Save on that point
 
 Play animation or subscene on the scene linked to it.
 
-``animation start %animation_name%``
+``animation start %animation_name% [loop=true/false] [block]``
 
-``subscene start %subscene_name%``
+``subscene start %subscene_name% [loop=true/false] [block]``
 
 ``animation stop %animation_name%``
 
