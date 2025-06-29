@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.utils.Translation;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
@@ -61,7 +62,7 @@ public class StoryCommand {
         }
 
         if(!errorLineList.isEmpty()) {
-            localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(0xC97C08)).withColor(0xF24949)), false);
+            localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.RED.getColor())), false);
         }
 
         return errorLineList.isEmpty() ? Command.SINGLE_SUCCESS : 0;
@@ -70,7 +71,7 @@ public class StoryCommand {
     private static int executeValidateStory(CommandContext<CommandSourceStack> context) {
 
         if(validateStory(context) == 0) return 0;
-        context.getSource().sendSystemMessage(Translation.message("validation.no_errors").withColor(0x40ed7a));
+        context.getSource().sendSystemMessage(Translation.message("validation.no_errors").withColor(ChatFormatting.GREEN.getColor()));
 
         return Command.SINGLE_SUCCESS;
     }
