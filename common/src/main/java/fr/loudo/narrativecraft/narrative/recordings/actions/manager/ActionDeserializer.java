@@ -86,7 +86,13 @@ public class ActionDeserializer implements JsonDeserializer<Action> {
                 return new RightClickBlockAction(tick, actionType, x, y, z, directionName, handName, inside);
             }
             case EMOTE -> {
-                UUID emoteId = UUID.fromString(jsonObject.get("emoteId").getAsString());
+                JsonElement emoteIdElement = jsonObject.get("emoteId");
+                UUID emoteId;
+                if(emoteIdElement != null) {
+                    emoteId = UUID.fromString(jsonObject.get("emoteId").getAsString());
+                } else {
+                    emoteId = null;
+                }
                 return new EmoteAction(tick, actionType, emoteId);
             }
 

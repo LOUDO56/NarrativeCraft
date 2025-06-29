@@ -183,7 +183,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Playback playback : playbackList) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                playback.stopAndKill();
+                playback.forceStop();
             } else if (playbackType == Playback.PlaybackType.PRODUCTION) {
                 playback.stop();
             }

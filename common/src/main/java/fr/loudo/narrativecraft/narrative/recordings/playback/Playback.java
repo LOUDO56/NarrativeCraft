@@ -153,9 +153,9 @@ public class Playback {
     private void killEntity() {
         if(entity == null) return;
         if(entity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().getPlayers().remove(fakePlayer);
+            serverLevel.removePlayerImmediately(fakePlayer, Entity.RemovalReason.KILLED);
+            serverLevel.getServer().getPlayerList().remove(fakePlayer);
             ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
-            serverLevel.removePlayerImmediately(fakePlayer, Entity.RemovalReason.UNLOADED_WITH_PLAYER);
         } else {
             entity.remove(Entity.RemovalReason.KILLED);
         }
@@ -209,21 +209,18 @@ public class Playback {
         if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            if(action instanceof PlaceBlockAction placeBlockAction) {
-                placeBlockAction.execute(entity, serverLevel);
-            } else if(action instanceof BreakBlockAction breakBlockAction) {
-                PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, ActionType.BLOCK_PLACE, breakBlockAction.getX(), breakBlockAction.getY(), breakBlockAction.getZ(), breakBlockAction.getData());
-                placeBlockAction.execute(entity, serverLevel);
-            } else if(action instanceof DestroyBlockStageAction destroyBlockStageAction) {
-                destroyBlockStageAction.execute(serverLevel, destroyBlockStageAction.getProgress() == 1);
-            } else if(action instanceof RightClickBlockAction rightClickBlockAction) {
-                rightClickBlockAction.execute(entity);
-            } else if(action instanceof PoseAction poseAction) {
-                poseAction.execute(entity, true);
-            } else if(action instanceof EntityByteAction entityByteAction) {
-                entityByteAction.execute(entity, true);
-            } else {
-                action.execute(entity);
+            switch (action) {
+                case PlaceBlockAction placeBlockAction -> placeBlockAction.execute(entity, serverLevel);
+                case BreakBlockAction breakBlockAction -> {
+                    PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, ActionType.BLOCK_PLACE, breakBlockAction.getX(), breakBlockAction.getY(), breakBlockAction.getZ(), breakBlockAction.getData());
+                    placeBlockAction.execute(entity, serverLevel);
+                }
+                case DestroyBlockStageAction destroyBlockStageAction ->
+                        destroyBlockStageAction.execute(serverLevel, destroyBlockStageAction.getProgress() == 1);
+                case RightClickBlockAction rightClickBlockAction -> rightClickBlockAction.execute(entity);
+                case PoseAction poseAction -> poseAction.execute(entity, true);
+                case EntityByteAction entityByteAction -> entityByteAction.execute(entity, true);
+                case null, default -> action.execute(entity);
             }
         }
     }
@@ -311,6 +308,26 @@ public class Playback {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getTick() {
+        return tick;
+    }
+
+    public boolean isHasEnded() {
+        return hasEnded;
+    }
+
+    public PlaybackType getPlaybackType() {
+        return playbackType;
+    }
+
+    public ServerLevel getServerLevel() {
+        return serverLevel;
+    }
+
+    public boolean isLooping() {
+        return isLooping;
     }
 
     public enum PlaybackType {

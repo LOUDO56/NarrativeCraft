@@ -21,17 +21,20 @@ public class EmoteAction extends Action {
     @Override
     public void execute(LivingEntity entity) {
         if(entity instanceof FakePlayer fakePlayer) {
-            KeyframeAnimation emote = null;
-            if(emoteId != null) {
-                for(KeyframeAnimation keyframeAnimation : ClientEmoteAPI.clientEmoteList()) {
-                    if(keyframeAnimation.getUuid().equals(emoteId)) {
-                        emote = keyframeAnimation;
-                    }
-                }
-            }
+            KeyframeAnimation emote = getEmote();
             ServerEmoteAPI.playEmote(fakePlayer.getUUID(), emote, false);
         }
     }
 
+    public KeyframeAnimation getEmote() {
+        if(emoteId != null) {
+            for(KeyframeAnimation keyframeAnimation : ClientEmoteAPI.clientEmoteList()) {
+                if(keyframeAnimation.getUuid().equals(emoteId)) {
+                    return keyframeAnimation;
+                }
+            }
+        }
+        return null;
+    }
 
 }
