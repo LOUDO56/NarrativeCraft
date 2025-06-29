@@ -111,7 +111,9 @@ public class EmoteCraftInkAction extends InkAction {
         } catch(IllegalArgumentException ignore) {} //Not a UUID
 
         for (KeyframeAnimation keyframeAnimation : emotes) {
-            if(keyframeAnimation.getName().equalsIgnoreCase(id)) {
+            String emoteName = keyframeAnimation.getName();
+            emoteName = emoteName.replace("\"", "");
+            if(emoteName.equalsIgnoreCase(id)) {
                 return keyframeAnimation;
             }
         }
