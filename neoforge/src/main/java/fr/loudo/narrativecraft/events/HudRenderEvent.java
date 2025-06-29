@@ -16,6 +16,7 @@ public class HudRenderEvent {
     private static void onWorldRender(RenderGuiEvent.Post event) {
         OnHudRender.fadeRender(event.getGuiGraphics(), event.getPartialTick());
         OnHudRender.saveIconRender(event.getGuiGraphics(), event.getPartialTick());
+        OnHudRender.keyframeControllerBaseRender(event.getGuiGraphics(), event.getPartialTick());
     }
 
 }

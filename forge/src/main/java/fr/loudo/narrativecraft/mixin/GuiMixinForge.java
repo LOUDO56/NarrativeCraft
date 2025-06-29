@@ -15,5 +15,6 @@ public class GuiMixinForge {
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         OnHudRender.fadeRender(guiGraphics, deltaTracker);
         OnHudRender.saveIconRender(guiGraphics, deltaTracker);
+        OnHudRender.keyframeControllerBaseRender(guiGraphics, deltaTracker);
     }
 }

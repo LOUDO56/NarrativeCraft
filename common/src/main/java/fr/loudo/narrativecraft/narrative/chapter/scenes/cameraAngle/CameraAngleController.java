@@ -13,8 +13,12 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
+import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundRemoveEntitiesPacket;
@@ -222,6 +226,21 @@ public class CameraAngleController extends KeyframeControllerBase {
         cameraAngleGroup.getCameraAngleList().remove((CameraAngle) keyframe);
         keyframe.removeKeyframeFromClient(player);
         return true;
+    }
+
+    @Override
+    public void renderHUDInfo(GuiGraphics guiGraphics) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
+        String infoText = Translation.message("camera_angle.hud").getString();
+        int width = minecraft.getWindow().getGuiScaledWidth();
+        guiGraphics.drawString(
+                font,
+                infoText,
+                width / 2 - font.width(infoText) / 2,
+                10,
+                ChatFormatting.WHITE.getColor()
+        );
     }
 
     public boolean isEntityInController(Entity entity) {

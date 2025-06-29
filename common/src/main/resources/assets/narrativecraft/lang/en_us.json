@@ -157,10 +157,13 @@
   "narrativecraft.cutscene.keyframe-trigger.wait.unsupported": "§cWait tag not supported. Use Minecraft's tick system for cooldowns.",
   "narrativecraft.cutscene.keyframe-trigger.save.unsupported": "§cSave tag not supported.",
   "narrativecraft.cutscene.keyframe-trigger.on-enter.unsupported": "§cOn enter tag is only for script file.",
+  "narrativecraft.cutscene.hud": "Currently in Cutscene Controller.",
 
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
 
   "narrativecraft.character.spawn.fail": "§cImpossible to spawn an entity because no character is linked to animation §c§b%s.",
+
+  "narrativecraft.camera_angle.hud": "Currently in Camera Angle Controller.",
 
   "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
   "narrativecraft.debug.animation": "Animation %s now playing.",

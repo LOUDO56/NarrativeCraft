@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
@@ -38,6 +39,7 @@ public abstract class KeyframeControllerBase {
     public abstract void stopSession(boolean save);
     public abstract boolean addKeyframe();
     public abstract boolean removeKeyframe(Keyframe keyframe);
+    public abstract void renderHUDInfo(GuiGraphics guiGraphics);
 
     public Keyframe getNextKeyframe(Keyframe current) {
         for (int i = 0; i < keyframeGroups.size(); i++) {

@@ -1,11 +1,13 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
 import java.util.ArrayList;
@@ -46,5 +48,12 @@ public class OnHudRender {
         if(storyHandler.isSaving()) {
             StorySave.showSaveIcon(guiGraphics, deltaTracker);
         }
+    }
+
+    public static void keyframeControllerBaseRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(Minecraft.getInstance().player.getUUID());
+        if(playerSession == null) return;
+        if(playerSession.getKeyframeControllerBase() == null) return;
+        playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
     }
 }

@@ -16,8 +16,12 @@ import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SubscenePlayInkAction;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
+import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
@@ -43,6 +47,7 @@ public class CutsceneController extends KeyframeControllerBase {
     private boolean isPlaying;
     private int currentTick;
     private double currentSkipCount;
+    private int totalTick;
     private KeyframeGroup selectedKeyframeGroup;
     private StoryHandler storyHandler;
     private List<KeyframeGroup> oldKeyframeGroups;
@@ -168,7 +173,7 @@ public class CutsceneController extends KeyframeControllerBase {
         } else {
             storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         }
-
+        totalTick = getTotalTick();
     }
 
     public void stopSession(boolean save) {
@@ -343,6 +348,29 @@ public class CutsceneController extends KeyframeControllerBase {
         return false;
     }
 
+    @Override
+    public void renderHUDInfo(GuiGraphics guiGraphics) {
+        Minecraft minecraft = Minecraft.getInstance();
+        Font font = minecraft.font;
+        String infoText = Translation.message("cutscene.hud").getString();
+        int width = minecraft.getWindow().getGuiScaledWidth();
+        guiGraphics.drawString(
+                font,
+                infoText,
+                width / 2 - font.width(infoText) / 2,
+                10,
+                ChatFormatting.WHITE.getColor()
+        );
+        String tickInfo = "Tick: " + currentTick + "/" + totalTick;
+        guiGraphics.drawString(
+                font,
+                tickInfo,
+                width / 2 - font.width(tickInfo) / 2,
+                25,
+                ChatFormatting.WHITE.getColor()
+        );
+    }
+
     public void removeKeyframeTrigger(KeyframeTrigger keyframeTrigger) {
         cutscene.getKeyframeTriggerList().remove(keyframeTrigger);
         keyframeTrigger.removeKeyframeFromClient(player);
@@ -449,19 +477,23 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public int getTotalTick() {
-        int totalTick = 0;
-        int totalPlayback = 0;
-        for(Subscene subscene : cutscene.getSubsceneList()) {
-            for(Playback playback : subscene.getPlaybackList()) {
+        if(totalTick == 0) {
+            int totalTick = 0;
+            int totalPlayback = 0;
+            for(Subscene subscene : cutscene.getSubsceneList()) {
+                for(Playback playback : subscene.getPlaybackList()) {
+                    totalTick += playback.getAnimation().getActionsData().getMovementData().size();
+                    totalPlayback++;
+                }
+            }
+            for(Playback playback : playbackList) {
                 totalTick += playback.getAnimation().getActionsData().getMovementData().size();
                 totalPlayback++;
             }
+            return totalTick / totalPlayback;
+        } else {
+            return totalTick;
         }
-        for(Playback playback : playbackList) {
-            totalTick += playback.getAnimation().getActionsData().getMovementData().size();
-            totalPlayback++;
-        }
-        return totalTick / totalPlayback;
     }
 
     public StoryHandler getStoryHandler() {
