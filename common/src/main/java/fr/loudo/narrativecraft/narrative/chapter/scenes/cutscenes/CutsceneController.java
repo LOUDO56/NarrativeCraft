@@ -405,15 +405,17 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
-        currentTick = Math.min(newTick, getTotalTick());
-        for(Subscene subscene : cutscene.getSubsceneList()) {
-            for(Playback playback : subscene.getPlaybackList()) {
+        player.serverLevel().getServer().execute(() -> {
+            currentTick = Math.min(newTick, getTotalTick());
+            for(Subscene subscene : cutscene.getSubsceneList()) {
+                for(Playback playback : subscene.getPlaybackList()) {
+                    playback.changeLocationByTick(newTick, seamless);
+                }
+            }
+            for(Playback playback : playbackList) {
                 playback.changeLocationByTick(newTick, seamless);
             }
-        }
-        for(Playback playback : playbackList) {
-            playback.changeLocationByTick(newTick, seamless);
-        }
+        });
     }
 
     public boolean isLastKeyframe(Keyframe keyframe) {

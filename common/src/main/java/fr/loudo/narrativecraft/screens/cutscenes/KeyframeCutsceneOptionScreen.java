@@ -161,7 +161,6 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
             currentX -= INITIAL_POS_X + gap;
             Button rightKeyframeButton = Button.builder(Component.literal("▶"), button -> {
                 cutsceneController.setCurrentPreviewKeyframe(nextKeyframe, false);
-                cutsceneController.changeTimePosition(nextKeyframe.getTick(), false);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(rightKeyframeButton);
         }
@@ -170,7 +169,6 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
             currentX -= INITIAL_POS_X + gap;
             Button leftKeyframeButton = Button.builder(Component.literal("◀"), button -> {
                 cutsceneController.setCurrentPreviewKeyframe(previousKeyframe, false);
-                cutsceneController.changeTimePosition(previousKeyframe.getTick(), false);
             }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
             this.addRenderableWidget(leftKeyframeButton);
         }

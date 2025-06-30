@@ -244,7 +244,7 @@ public class CutscenePlayback  {
             Keyframe k1 = keyframes.get(i);
             Keyframe k2 = keyframes.get(i + 1);
 
-            long segmentDuration = k2.getPathTime();
+            long segmentDuration = (long) (k2.getPathTime() / k2.getSpeed());
             if (elapsedTime < accumulatedTime + segmentDuration) {
                 t = (double) (elapsedTime - accumulatedTime) / segmentDuration;
 

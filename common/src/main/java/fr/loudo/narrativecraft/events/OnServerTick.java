@@ -8,15 +8,10 @@ import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.ChangeDayTimeInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 public class OnServerTick {
 
@@ -32,9 +27,7 @@ public class OnServerTick {
                 recording.getActionDifference().listenDifference();
             }
         }
-        Iterator<Playback> iterator = PLAYBACK_HANDLER.getPlaybacks().iterator();
-        while (iterator.hasNext()) {
-            Playback playback = iterator.next();
+        for (Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
             if (playback.isPlaying()) {
                 playback.next();
             }
