@@ -13,9 +13,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyf
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
-import fr.loudo.narrativecraft.narrative.dialog.Dialog;
-import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
-import fr.loudo.narrativecraft.narrative.dialog.DialogData;
+import fr.loudo.narrativecraft.narrative.dialog.*;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -50,7 +48,7 @@ public class StoryHandler {
     private PlayerSession playerSession;
     private Story story;
     private String currentDialog, currentCharacterTalking;
-    private Dialog currentDialogBox;
+    private DialogImpl currentDialogBox;
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
     private boolean isRunning, isDebugMode, OnCutscene, onChoice, isSaving;
@@ -201,7 +199,7 @@ public class StoryHandler {
                     );
                     playback.start();
                     currentCharacters.add(playback.getCharacter());
-                    inkActionList.add(new AnimationPlayInkAction(this, animation));
+                    inkActionList.add(new AnimationPlayInkAction(this, animation, playback));
                 }
                 for(StorySave.SubsceneInfo subsceneInfo : save.getSubsceneInfoList()) {
                     Subscene subscene = playerSessionFromSave.getScene().getSubsceneByName(subsceneInfo.getName());
@@ -241,7 +239,7 @@ public class StoryHandler {
                             );
                             currentDialogBox.setUnSkippable(dialogSaveData.isUnSkippable());
                             currentDialogBox.setForcedEndTime(dialogSaveData.getEndForceEndTime());
-                            currentDialogBox.setCharacterName(dialogSaveData.getCharacterName());
+                            ((Dialog)currentDialogBox).setCharacterName(dialogSaveData.getCharacterName());
                         }
                     }
                 }
@@ -253,9 +251,7 @@ public class StoryHandler {
                 if(!currentChoices.isEmpty()) {
                     showChoices();
                 } else {
-                    if(!currentCharacters.isEmpty()) {
-                        showDialog();
-                    }
+                    showDialog();
                 }
             }
             save = null;
@@ -290,8 +286,6 @@ public class StoryHandler {
     }
 
     public void showDialog() {
-        String[] splitDialog = currentDialog.split(":");
-        if(splitDialog.length < 2 || onChoice) return;
 
         ParsedDialog parsed = parseDialogContent(currentDialog);
 
@@ -299,26 +293,46 @@ public class StoryHandler {
             currentDialogBox.getDialogAnimationScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
-            if (currentDialogBox != null) {
+            if (currentDialogBox != null && !currentDialogBox.isDialogAutoSkipped()) {
                 currentDialogBox.endDialog();
                 return;
             } else {
-                CharacterStory currentCharacter = currentCharacters.stream()
-                        .filter(characterStory -> characterStory.getName().equalsIgnoreCase(parsed.characterName))
-                        .findFirst()
-                        .orElseThrow(() -> new RuntimeException("Character not found: " + parsed.characterName));
-                currentDialogBox = new Dialog(
-                        currentCharacter.getEntity(),
-                        parsed.cleanedText,
-                        globalDialogValue.getTextColor(), globalDialogValue.getBackgroundColor(), globalDialogValue.getPaddingX(),
-                        globalDialogValue.getPaddingY(), globalDialogValue.getScale(), globalDialogValue.getLetterSpacing(), globalDialogValue.getGap(),
-                        globalDialogValue.getMaxWidth(), globalDialogValue.getOffset()
-                );
-                currentDialogBox.getDialogEntityBobbing().setNoiseShakeStrength(globalDialogValue.getBobbingNoiseShakeStrength());
-                currentDialogBox.getDialogEntityBobbing().setNoiseShakeSpeed(globalDialogValue.getBobbingNoiseShakeSpeed());
+                if(!parsed.characterName.isEmpty()) {
+                    CharacterStory currentCharacter = currentCharacters.stream()
+                            .filter(characterStory -> characterStory.getName().equalsIgnoreCase(parsed.characterName))
+                            .findFirst()
+                            .orElse(null);
+                    if(currentCharacter == null) {
+                        stop();
+                        return;
+                    }
+                    currentDialogBox = new Dialog(
+                            currentCharacter.getEntity(),
+                            parsed.cleanedText,
+                            globalDialogValue.getTextColor(), globalDialogValue.getBackgroundColor(), globalDialogValue.getPaddingX(),
+                            globalDialogValue.getPaddingY(), globalDialogValue.getScale(), globalDialogValue.getLetterSpacing(), globalDialogValue.getGap(),
+                            globalDialogValue.getMaxWidth(), globalDialogValue.getOffset()
+                    );
+                    ((Dialog)currentDialogBox).getDialogEntityBobbing().setNoiseShakeStrength(globalDialogValue.getBobbingNoiseShakeStrength());
+                    ((Dialog)currentDialogBox).getDialogEntityBobbing().setNoiseShakeSpeed(globalDialogValue.getBobbingNoiseShakeSpeed());
+                    ((Dialog)currentDialogBox).setCharacterName(currentCharacter.getName());
+                } else {
+                    currentDialogBox = new Dialog2d(
+                            parsed.cleanedText,
+                            400,
+                            90,
+                            (int) globalDialogValue.getPaddingX(),
+                            (int) globalDialogValue.getPaddingY(),
+                            1.4f,
+                            (int) globalDialogValue.getLetterSpacing(),
+                            (int) globalDialogValue.getGap(),
+                            30,
+                            globalDialogValue.getTextColor(),
+                            globalDialogValue.getBackgroundColor()
+                    );
+                }
                 currentDialogBox.setUnSkippable(globalDialogValue.isUnSkippable());
                 currentDialogBox.setForcedEndTime(globalDialogValue.getEndForceEndTime());
-                currentDialogBox.setCharacterName(currentCharacter.getName());
             }
             currentCharacterTalking = parsed.characterName;
         }
@@ -414,9 +428,14 @@ public class StoryHandler {
      */
     private ParsedDialog parseDialogContent(String rawText) {
 
+        String characterName = "";
+        String dialogContent = rawText;
+
         String[] splitText = rawText.split(":");
-        String characterName = splitText[0].trim();
-        String dialogContent = splitText[1].trim();
+        if(splitText.length > 1) {
+            characterName = splitText[0].trim();
+            dialogContent = splitText[1].trim();
+        }
 
         if (dialogContent.startsWith("\"") && dialogContent.endsWith("\"")) {
             dialogContent = dialogContent.substring(1, dialogContent.length() - 1);
@@ -462,7 +481,7 @@ public class StoryHandler {
             effects.add(new TextEffect(type, effectStart, effectEnd, params));
             currentIndex = matcher.end();
         }
-
+        dialogContent = dialogContent.replace("\n", "");
         cleanText.append(dialogContent.substring(currentIndex));
 
         return new ParsedDialog(cleanText.toString(), effects, characterName);
@@ -575,7 +594,7 @@ public class StoryHandler {
         return story;
     }
 
-    public Dialog getCurrentDialogBox() {
+    public DialogImpl getCurrentDialogBox() {
         return currentDialogBox;
     }
 

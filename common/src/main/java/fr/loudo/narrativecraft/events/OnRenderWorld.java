@@ -26,8 +26,8 @@ public class OnRenderWorld {
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null) {
-            if(storyHandler.getCurrentDialogBox() != null) {
-                storyHandler.getCurrentDialogBox().render(poseStack);
+            if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog1) {
+                dialog1.render(poseStack);
             }
             List<InkAction> toRemove = new ArrayList<>();
             for(InkAction inkAction : storyHandler.getInkActionList()) {

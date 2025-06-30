@@ -4,11 +4,15 @@ import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.utils.MathUtils;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.font.FontSet;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
@@ -27,12 +31,13 @@ public class DialogAnimationScrollText {
 
     private final long showLetterDelay = 30L;
     private final float offset = 4.1f;
-    private final Dialog dialog;
+    private Dialog dialog;
+    private Dialog2d dialog2d;
 
     private int maxWidth;
     private boolean isPaused;
     private List<String> lines;
-    private int currentLetter;
+    private int currentLetter, totalLetters;
     private String currentLetterString, text;
     private float letterSpacing;
     private float gap, totalHeight, maxLineWidth;
@@ -42,19 +47,37 @@ public class DialogAnimationScrollText {
     private long lastTimeChar, animationTime, pauseStartTime, totalPauseTime;
 
     public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth, Dialog dialog) {
-        this.maxWidth = maxWidth;
-        this.lines = splitText(text);
+        this.dialog = dialog;
+        commonInit(text, letterSpacing, gap, maxWidth);
+    }
+
+    public DialogAnimationScrollText(String text, float letterSpacing, float gap, int maxWidth, Dialog2d dialog2d) {
+        this.dialog2d = dialog2d;
+        commonInit(text, letterSpacing, gap, maxWidth);
+    }
+
+    private void commonInit(String text, float letterSpacing, float gap, int maxWidth) {
         this.text = text;
         this.letterSpacing = letterSpacing;
         this.gap = gap;
+        this.maxWidth = maxWidth;
+        this.lines = splitText(text);
         this.currentLetter = 0;
-        this.dialogLetterEffect = new DialogLetterEffect(DialogAnimationType.NONE, 0, 0, 0, text.length() - 1);
+        this.currentLetterString = "";
+
+        this.dialogLetterEffect = new DialogLetterEffect(
+                DialogAnimationType.NONE,
+                0,
+                0,
+                0,
+                text.length() - 1
+        );
+
         long now = System.currentTimeMillis();
         for (int i = 0; i < text.length(); i++) {
             letterStartTime.put(i, now + i * 50L);
         }
-        this.dialog = dialog;
-        this.currentLetterString = "";
+        totalLetters = lines.stream().mapToInt(String::length).sum();
         init();
     }
 
@@ -80,10 +103,8 @@ public class DialogAnimationScrollText {
 
     public void render(PoseStack poseStack, MultiBufferSource bufferSource) {
         Minecraft client = Minecraft.getInstance();
-        long now = System.currentTimeMillis();
-        int totalLetters = lines.stream().mapToInt(String::length).sum();
         int shownLetters = 0;
-
+        totalLetters = lines.stream().mapToInt(String::length).sum();
         float currentY = -getTotalHeight() + dialog.getPaddingY() * 2 + 0.7f;
 
         int globalCharIndex = 0;
@@ -97,40 +118,15 @@ public class DialogAnimationScrollText {
             float textWidth = client.font.width(text) + letterSpacing * (lineLength - 1);
             float startX = textWidth == maxLineWidth ? -textWidth / 2.0F : -maxLineWidth / 2.0F;
 
-            if (!client.isPaused()) {
-                if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
-                    animationTime = now;
-                    letterOffsets.clear();
-                    for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
-                        float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
-                        float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
-                        letterOffsets.put(j, new Vector2f(offsetX, offsetY));
-                    }
-                } else if (dialogLetterEffect.getAnimation() == DialogAnimationType.WAVING) {
-                    letterOffsets.clear();
-                    float waveSpacing = 0.2f;
-                    double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
-
-                    for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
-                        float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
-                        letterOffsets.put(j, new Vector2f(0, offsetY));
-                    }
-                }
-            }
+            calculateOffset();
 
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
                 currentLetterString = character;
-                drawString(character, poseStack, bufferSource, startX + offset.x, currentY + offset.y);
+                drawStringPoseStack(character, poseStack, bufferSource, startX + offset.x, currentY + offset.y);
 
-                Style style = Style.EMPTY;
-                FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
-                GlyphInfo glyph = fontset.getGlyphInfo(text.codePointAt(j), ((FontFields) client.font).getFilterFishyGlyphs());
-                boolean bold = style.isBold();
-                float letterWidth = glyph.getAdvance(bold);
-
-                startX += letterWidth + letterSpacing;
+                startX += getLetterWidth(text.codePointAt(j)) + letterSpacing;
 
                 globalCharIndex++;
             }
@@ -138,6 +134,77 @@ public class DialogAnimationScrollText {
             currentY += lines.size() > 1 ? gap : client.font.lineHeight;
         }
 
+        playScrollSound();
+
+        dialog.getDialogEntityBobbing().updateLookDirection(client.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+
+    }
+
+    public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, float scale) {
+        Minecraft client = Minecraft.getInstance();
+        int shownLetters = 0;
+        totalLetters = lines.stream().mapToInt(String::length).sum();
+        int windowWidth = client.getWindow().getGuiScaledWidth();
+        int windowHeight = client.getWindow().getGuiScaledHeight();
+
+        int offsetDialog = dialog2d.getOffset();
+        int guiScale = client.options.guiScale().get();
+        switch (guiScale) {
+            case 1: offsetDialog *= 4;
+            case 2: offsetDialog *= 2;
+        }
+        float maxY = windowHeight - offsetDialog;
+        float rectHeight = dialog2d.getHeight() + dialog2d.getPaddingY() * 2;
+        float minY = maxY - rectHeight;
+
+        Font font = client.font;
+        float textHeight = lines.size() * (font.lineHeight * scale);
+        float currentY = minY + (rectHeight - textHeight) / 2f;
+
+        int globalCharIndex = 0;
+
+        PoseStack poseStack = guiGraphics.pose();
+
+        for (int i = 0; i < lines.size(); i++) {
+            String text = lines.get(i);
+            int lineLength = text.length();
+            int lineVisibleLetters = Math.max(0, Math.min(lineLength, currentLetter - shownLetters));
+            shownLetters += lineLength;
+
+            float lineWidth = font.width(text) * scale;
+            float startX = (windowWidth - lineWidth) / 2f;
+
+            calculateOffset();
+
+            for (int j = 0; j < lineVisibleLetters; j++) {
+                Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
+                String character = String.valueOf(text.charAt(j));
+                currentLetterString = character;
+                poseStack.pushPose();
+                poseStack.scale(scale, scale, 1.0f);
+                drawStringGui(
+                        guiGraphics,
+                        deltaTracker,
+                        character,
+                        (startX + offset.x) / scale,
+                        (currentY + offset.y) / scale,
+                        dialog2d.getTextColor()
+                );
+                poseStack.popPose();
+                startX += (getLetterWidth(text.codePointAt(j)) + letterSpacing) * scale;
+
+                globalCharIndex++;
+            }
+
+            currentY += lines.size() > 1 ? gap * scale : client.font.lineHeight * scale;
+        }
+        playScrollSound();
+
+    }
+
+    private void playScrollSound() {
+        long now = System.currentTimeMillis();
+        Minecraft client = Minecraft.getInstance();
         if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !client.isPaused()) {
             if(!currentLetterString.equals(" ") && !currentLetterString.isEmpty()) {
                 ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
@@ -148,12 +215,42 @@ public class DialogAnimationScrollText {
             currentLetter++;
             lastTimeChar = now;
         }
-
-        dialog.getDialogEntityBobbing().updateLookDirection(client.getDeltaTracker().getGameTimeDeltaPartialTick(true));
-
     }
 
-    private void drawString(String character, PoseStack poseStack, MultiBufferSource bufferSource, float x, float y) {
+    private float getLetterWidth(int letterCode) {
+        Minecraft client = Minecraft.getInstance();
+        Style style = Style.EMPTY;
+        FontSet fontset = ((FontFields) client.font).callGetFontSet(style.getFont());
+        GlyphInfo glyph = fontset.getGlyphInfo(letterCode, ((FontFields) client.font).getFilterFishyGlyphs());
+        boolean bold = style.isBold();
+        return glyph.getAdvance(bold);
+    }
+
+    private void calculateOffset() {
+        long now = System.currentTimeMillis();
+        if (!Minecraft.getInstance().isPaused()) {
+            if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
+                animationTime = now;
+                letterOffsets.clear();
+                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                    float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                    float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
+                    letterOffsets.put(j, new Vector2f(offsetX, offsetY));
+                }
+            } else if (dialogLetterEffect.getAnimation() == DialogAnimationType.WAVING) {
+                letterOffsets.clear();
+                float waveSpacing = 0.2f;
+                double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
+
+                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                    float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
+                    letterOffsets.put(j, new Vector2f(0, offsetY));
+                }
+            }
+        }
+    }
+
+    private void drawStringPoseStack(String character, PoseStack poseStack, MultiBufferSource bufferSource, float x, float y) {
         Minecraft client = Minecraft.getInstance();
 
         int color = dialog.getTextDialogColor();
@@ -168,9 +265,26 @@ public class DialogAnimationScrollText {
                 bufferSource,
                 Font.DisplayMode.SEE_THROUGH,
                 0,
-                15728880
+                LightTexture.FULL_BRIGHT
         );
 
+    }
+
+    private void drawStringGui(GuiGraphics guiGraphics, DeltaTracker deltaTracker, String text, float x, float y, int color) {
+        Minecraft client = Minecraft.getInstance();
+        PoseStack poseStack = guiGraphics.pose();
+        client.font.drawInBatch(
+                text,
+                x,
+                y,
+                color,
+                false,
+                poseStack.last().pose(),
+                client.renderBuffers().bufferSource(),
+                Font.DisplayMode.NORMAL,
+                0,
+                LightTexture.FULL_BRIGHT
+        );
     }
 
     private List<String> splitText(String text) {

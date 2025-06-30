@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
+import fr.loudo.narrativecraft.narrative.dialog.DialogImpl;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -16,14 +18,19 @@ import java.util.List;
 
 public class OnHudRender {
 
-    public static void hudRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-//        if(NarrativeCraftMod.getInstance().getTestDialog() != null) {
-//            NarrativeCraftMod.getInstance().getTestDialog().render(guiGraphics, deltaTracker);
-//        }
-//        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-//        if(storyHandler == null) return;
-//        if(storyHandler.getCurrentDialogBox() == null) return;
-//        storyHandler.getCurrentDialogBox().render(guiGraphics, deltaTracker);
+    public static void dialogHud(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+
+        Dialog2d dialog2dTest = NarrativeCraftMod.getInstance().getTestDialog2d();
+        if(dialog2dTest !=  null) {
+            dialog2dTest.render(guiGraphics, deltaTracker);
+        }
+
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
+        DialogImpl dialog = storyHandler.getCurrentDialogBox();
+        if(dialog instanceof Dialog2d dialog2d) {
+            dialog2d.render(guiGraphics, deltaTracker);
+        }
     }
 
     public static void fadeRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

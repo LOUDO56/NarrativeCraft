@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -151,8 +152,7 @@ public class DialogValuesInkAction extends InkAction {
                 }
             }
         }
-        Dialog dialog = storyHandler.getCurrentDialogBox();
-        if(dialog != null) {
+        if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog) {
             dialog.setPaddingX(dialogData.getPaddingX());
             dialog.setPaddingY(dialogData.getPaddingY());
             dialog.setScale(dialogData.getScale());
@@ -166,6 +166,15 @@ public class DialogValuesInkAction extends InkAction {
             dialog.setDialogBackgroundColor(dialogData.getBackgroundColor());
             dialog.getDialogEntityBobbing().setNoiseShakeStrength(dialogData.getBobbingNoiseShakeStrength());
             dialog.getDialogEntityBobbing().setNoiseShakeSpeed(dialogData.getBobbingNoiseShakeSpeed());
+        } else if(storyHandler.getCurrentDialogBox() instanceof Dialog2d dialog2d) {
+            dialog2d.setPaddingX((int)dialogData.getPaddingX());
+            dialog2d.setPaddingY((int)dialogData.getPaddingY());
+            dialog2d.setLetterSpacing(dialogData.getLetterSpacing());
+            dialog2d.setGap(dialogData.getGap());
+            dialog2d.setUnSkippable(dialogData.isUnSkippable());
+            dialog2d.setForcedEndTime(dialogData.getEndForceEndTime());
+            dialog2d.setTextColor(dialogData.getTextColor());
+            dialog2d.setBackgroundColor(dialogData.getBackgroundColor());
         }
         sendDebugDetails();
         return InkActionResult.PASS;

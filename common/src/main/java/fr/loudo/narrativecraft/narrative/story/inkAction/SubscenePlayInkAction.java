@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -56,8 +57,8 @@ public class SubscenePlayInkAction extends InkAction {
                     if (inkAction instanceof SubscenePlayInkAction action) {
                         if(action.subscene.getPlaybackList().equals(subscene.getPlaybackList())) {
                             for(Animation animation : subscene.getAnimationList()) {
-                                if(storyHandler.getCurrentDialogBox() != null) {
-                                    if(storyHandler.getCurrentDialogBox().getEntityClient().getUUID().equals(animation.getCharacter().getEntity().getUUID())) {
+                                if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog) {
+                                    if(dialog.getEntityClient().getUUID().equals(animation.getCharacter().getEntity().getUUID())) {
                                         storyHandler.setCurrentDialogBox(null);
                                     }
                                 }

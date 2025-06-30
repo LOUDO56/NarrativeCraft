@@ -13,8 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class GuiMixinForge {
     @Inject(method = "render", at = @At("HEAD"))
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
-        OnHudRender.fadeRender(guiGraphics, deltaTracker);
-        OnHudRender.saveIconRender(guiGraphics, deltaTracker);
         OnHudRender.keyframeControllerBaseRender(guiGraphics, deltaTracker);
+        OnHudRender.fadeRender(guiGraphics, deltaTracker);
+        OnHudRender.dialogHud(guiGraphics, deltaTracker);
+        OnHudRender.saveIconRender(guiGraphics, deltaTracker);
     }
 }

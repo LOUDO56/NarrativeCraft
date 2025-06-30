@@ -7,8 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
-import fr.loudo.narrativecraft.narrative.dialog.Dialog;
-import fr.loudo.narrativecraft.narrative.dialog.DialogData;
+import fr.loudo.narrativecraft.narrative.dialog.*;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
@@ -32,7 +31,7 @@ public class StorySave {
     private final KeyframeCoordinate soloCam;
     private final String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
-    private final DialogData dialogSaveData;
+    private DialogData dialogSaveData;
     public static long startTimeSaveIcon;
 
     public StorySave(StoryHandler storyHandler) {
@@ -49,9 +48,9 @@ public class StorySave {
             inkSave = storyHandler.getStory().getState().toJson();
             chapterIndex = playerSession.getChapter().getIndex();
             sceneName = playerSession.getScene().getName();
-            Dialog dialog = storyHandler.getCurrentDialogBox();
+            DialogImpl dialogImpl = storyHandler.getCurrentDialogBox();
             DialogData globalDialogData = storyHandler.getGlobalDialogValue();
-            if(dialog != null) {
+            if(dialogImpl instanceof Dialog dialog) {
                 dialogSaveData = new DialogData(
                         dialog.getCharacterName(),
                         storyHandler.getCurrentDialog(),

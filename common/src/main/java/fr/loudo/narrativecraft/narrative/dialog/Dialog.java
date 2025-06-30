@@ -22,7 +22,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Matrix4f;
 
-public class Dialog {
+public class Dialog extends DialogImpl {
 
 
     private final long DIALOG_TRANSITION_TIME = 500L;
@@ -31,15 +31,14 @@ public class Dialog {
     private transient Entity entityClient;
     private String characterName, text;
 
-    private final DialogAnimationScrollText dialogAnimationScrollText;
     private final DialogAppearAnimation dialogAppearAnimation;
     private final DialogAnimationArrowSkip dialogAnimationArrowSkip;
     private final DialogueTail dialogueTail;
     private final DialogEntityBobbing dialogEntityBobbing;
 
     private float paddingX, paddingY, scale, interpolatedWidth, interpolatedHeight, oldWidth, oldHeight, oldScale;
-    private long startTime, pauseStartTime, startTimeEnded, forcedEndTime;
-    private boolean acceptNewDialog, unSkippable, dialogEnded, endDialog, isPaused;
+    private long startTime, pauseStartTime;
+    private boolean isPaused;
     private int dialogBackgroundColor, textDialogColor;
     private Vec2 dialogOffset;
     private double t;
@@ -69,6 +68,7 @@ public class Dialog {
         dialogEnded = false;
         startTimeEnded = 0;
         forcedEndTime = 0;
+        dialogAutoSkipped = false;
     }
 
     public Dialog(Entity entityServer, String text, DialogData dialogData) {
@@ -96,6 +96,7 @@ public class Dialog {
         dialogEnded = false;
         startTimeEnded = 0;
         forcedEndTime = 0;
+        dialogAutoSkipped = false;
     }
 
     public void render(PoseStack poseStack) {
@@ -159,9 +160,10 @@ public class Dialog {
             dialogAnimationArrowSkip.render(poseStack, minecraft, bufferSource);
         }
 
-        if(dialogAnimationScrollText.isFinished() && forcedEndTime > 0) {
+        if(dialogAnimationScrollText.isFinished() && forcedEndTime > 0 && !dialogAutoSkipped) {
             if(startTimeEnded == 0) startTimeEnded = System.currentTimeMillis();
             if(System.currentTimeMillis() - startTimeEnded >= forcedEndTime) {
+                dialogAutoSkipped = true;
                 NarrativeCraftMod.getInstance().getStoryHandler().next();
             }
         }
@@ -293,6 +295,8 @@ public class Dialog {
     public void reset() {
         dialogEnded = false;
         endDialog = false;
+        startTimeEnded = 0;
+        dialogAutoSkipped = false;
         dialogAnimationArrowSkip.reset();
         startTime = System.currentTimeMillis();
         if(acceptNewDialog) {
@@ -429,10 +433,6 @@ public class Dialog {
         this.dialogBackgroundColor = dialogBackgroundColor;
     }
 
-    public DialogAnimationScrollText getDialogAnimationScrollText() {
-        return dialogAnimationScrollText;
-    }
-
     public int getTextDialogColor() {
         return textDialogColor;
     }
@@ -474,14 +474,6 @@ public class Dialog {
         return interpolatedHeight;
     }
 
-    public boolean isUnSkippable() {
-        return unSkippable;
-    }
-
-    public void setUnSkippable(boolean unSkippable) {
-        this.unSkippable = unSkippable;
-    }
-
     public float getInterpolatedWidth() {
         return interpolatedWidth;
     }
@@ -501,11 +493,6 @@ public class Dialog {
     public void endDialog() {
         endDialog = true;
         dialogAppearAnimation.reset();
-    }
-
-    public void endDialogAndDontSkip() {
-        unSkippable = true;
-        endDialog();
     }
 
     public void setDialogOffset(Vec2 dialogOffset) {

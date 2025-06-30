@@ -8,6 +8,8 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 
+import java.util.List;
+
 public class FadeScreenInkAction extends InkAction {
 
     private double fadeIn, stay, fadeOut, t;
@@ -44,7 +46,12 @@ public class FadeScreenInkAction extends InkAction {
         if(command.length >= 5) {
             color = Integer.parseInt(command[4], 16);
         }
-        storyHandler.getInkActionList().add(this);
+        if(fadeIn == 0 && stay == 0 && fadeOut == 0) {
+            List<InkAction> inkActions = storyHandler.getInkActionList().stream().filter(inkAction -> inkAction instanceof FadeScreenInkAction).toList();
+            storyHandler.getInkActionList().removeAll(inkActions);
+        } else {
+            storyHandler.getInkActionList().add(this);
+        }
         sendDebugDetails();
         return InkActionResult.PASS;
     }

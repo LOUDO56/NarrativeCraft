@@ -16,6 +16,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
@@ -85,6 +86,14 @@ public class TestCommand {
                                 .executes(TestCommand::playFadeOut)
                         )
                 )
+                .then(Commands.literal("dialog2d")
+                        .then(Commands.argument("text", StringArgumentType.string())
+                                .executes(commandContext -> {
+                                    String text = StringArgumentType.getString(commandContext, "text");
+                                    return dialog2d(commandContext, text);
+                                })
+                        )
+                )
                 .then(Commands.literal("dialog")
                         .then(Commands.literal("animation")
                                 .then(Commands.argument("text", StringArgumentType.string())
@@ -149,6 +158,12 @@ public class TestCommand {
         );
     }
 
+    private static int dialog2d(CommandContext<CommandSourceStack> context, String text) {
+        Dialog2d dialog2d = new Dialog2d(text, 400, 90, 4, 5, 1.4f, 0, 10, 30, 0xFFFFFF, 0xFF000000);
+        NarrativeCraftMod.getInstance().setTestDialog2d(dialog2d);
+        return Command.SINGLE_SUCCESS;
+    }
+
     private static int registerSkin(CommandContext<CommandSourceStack> context) {
         Minecraft.getInstance().execute(() -> {
             try {
@@ -188,7 +203,7 @@ public class TestCommand {
 
     private static int changeDialogAnimation(CommandContext<CommandSourceStack> commandContext, String animation, long time, float force) {
 
-        Dialog dialog = NarrativeCraftMod.getInstance().getStoryHandler().getCurrentDialogBox();
+        Dialog dialog = (Dialog) NarrativeCraftMod.getInstance().getStoryHandler().getCurrentDialogBox();
         if(dialog == null) {
             commandContext.getSource().sendFailure(Component.literal("Dialog not set."));
             return 0;

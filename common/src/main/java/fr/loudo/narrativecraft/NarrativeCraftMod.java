@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
@@ -34,6 +35,7 @@ public class NarrativeCraftMod {
     private final RecordingHandler recordingHandler;
     private final PlaybackHandler playbackHandler;
     private Dialog testDialog;
+    private Dialog2d testDialog2d;
 
     public NarrativeCraftMod() {
         chapterManager = new ChapterManager();
@@ -90,5 +92,13 @@ public class NarrativeCraftMod {
 
     public void setTestDialog(Dialog testDialog) {
         this.testDialog = testDialog;
+    }
+
+    public Dialog2d getTestDialog2d() {
+        return testDialog2d;
+    }
+
+    public void setTestDialog2d(Dialog2d testDialog2d) {
+        this.testDialog2d = testDialog2d;
     }
 }

@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -29,8 +30,8 @@ public class KillCharacterInkAction extends InkAction {
             }
         }
         storyHandler.removeCharacter(characterStory);
-        if(storyHandler.getCurrentDialogBox() != null) {
-            if(storyHandler.getCurrentDialogBox().getCharacterName().equals(characterStory.getName())) {
+        if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog) {
+            if(dialog.getCharacterName().equals(characterStory.getName())) {
                 storyHandler.setCurrentDialogBox(null);
             }
         }

@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.DialogImpl;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -85,8 +86,8 @@ public class OnClientTick {
                 }
             }
             storyHandler.getInkActionList().removeAll(toRemove);
-            Dialog dialog = storyHandler.getCurrentDialogBox();
-            if(dialog != null) {
+            DialogImpl dialogImpl = storyHandler.getCurrentDialogBox();
+            if(dialogImpl instanceof Dialog dialog) {
                 dialog.getDialogEntityBobbing().tick();
             }
 
@@ -108,7 +109,7 @@ public class OnClientTick {
         // Next dialog trigger
         ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
             if(storyHandler == null) return;
-            Dialog dialog = storyHandler.getCurrentDialogBox();
+            DialogImpl dialog = storyHandler.getCurrentDialogBox();
             if(dialog == null) return;
             if(dialog.isAnimating()) return;
             if(dialog.isUnSkippable()) return;

@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -28,9 +29,10 @@ public class AnimationPlayInkAction extends InkAction {
         super(storyHandler);
     }
 
-    public AnimationPlayInkAction(StoryHandler storyHandler, Animation animation) {
+    public AnimationPlayInkAction(StoryHandler storyHandler, Animation animation, Playback playback) {
         super(storyHandler);
         this.animation = animation;
+        this.playback = playback;
     }
 
     @Override
@@ -67,8 +69,8 @@ public class AnimationPlayInkAction extends InkAction {
                 for(InkAction inkAction : storyHandler.getInkActionList()) {
                     if(inkAction instanceof AnimationPlayInkAction action) {
                         if(animation.getName().equals(action.animation.getName())) {
-                            if(storyHandler.getCurrentDialogBox() != null) {
-                                if(storyHandler.getCurrentDialogBox().getEntityClient().getUUID().equals(action.playback.getEntity().getUUID())) {
+                            if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog) {
+                                if(dialog.getEntityClient().getUUID().equals(action.playback.getEntity().getUUID())) {
                                     storyHandler.setCurrentDialogBox(null);
                                 }
                             }
