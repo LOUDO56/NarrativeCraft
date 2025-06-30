@@ -24,14 +24,7 @@ public class OnEnterInkAction extends InkAction {
         String currentKnot = state.getCurrentKnot();
         if(currentKnot == null) return InkActionResult.PASS;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
-            String[] chapterSceneName = currentKnot.split("_");
-            int chapterIndex = Integer.parseInt(chapterSceneName[1]);
-            List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
-            String sceneName = String.join(" ", splitSceneName);
-            Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
-            Scene scene = chapter.getSceneByName(sceneName);
-            storyHandler.getPlayerSession().setChapter(chapter);
-            storyHandler.getPlayerSession().setScene(scene);
+            storyHandler.initChapterSceneSession();
             storyHandler.save();
             sendDebugDetails();
         }

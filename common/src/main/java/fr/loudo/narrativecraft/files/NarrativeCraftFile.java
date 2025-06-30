@@ -87,7 +87,7 @@ public class NarrativeCraftFile {
                     null,
                     new Vec2(0, 0.8f),
                     -1,
-                    0,
+                    0xFF000000,
                     3,
                     4,
                     0.8f,

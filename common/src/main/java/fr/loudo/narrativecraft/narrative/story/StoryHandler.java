@@ -109,11 +109,6 @@ public class StoryHandler {
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
 
-            Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst();
-            Scene firstScene = firstChapter.getSceneList().getFirst();
-            playerSession.setChapter(firstChapter);
-            playerSession.setScene(firstScene);
-
             if(save != null) {
                 story.getState().loadJson(save.getInkSave());
                 PlayerSession playerSessionFromSave = save.getPlayerSession();
@@ -245,6 +240,9 @@ public class StoryHandler {
                 }
             } else {
                 currentDialog = story.Continue();
+            }
+            if(playerSession.getChapter() == null || playerSession.getScene() == null) {
+                initChapterSceneSession();
             }
             currentChoices = story.getCurrentChoices();
             if(inkTagTranslators.executeCurrentTags()) {
@@ -402,6 +400,17 @@ public class StoryHandler {
             }
         }
         return errorLineList;
+    }
+
+    public void initChapterSceneSession() {
+        String[] chapterSceneName = story.getState().getCurrentKnot().split("_");
+        int chapterIndex = Integer.parseInt(chapterSceneName[1]);
+        List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);
+        String sceneName = String.join(" ", splitSceneName);
+        Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        Scene scene = chapter.getSceneByName(sceneName);
+        playerSession.setChapter(chapter);
+        playerSession.setScene(scene);
     }
 
     public void addCharacter(CharacterStory characterStory) {
