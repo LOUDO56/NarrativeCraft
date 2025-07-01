@@ -14,6 +14,8 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.manager.InkActionSerializer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -710,7 +712,8 @@ public class NarrativeCraftFile {
         if(!saveFile.exists()) return null;
         try {
             String saveContent = Files.readString(saveFile.toPath());
-            StorySave save = new Gson().fromJson(saveContent, StorySave.class);
+            Gson gson = new GsonBuilder().registerTypeAdapter(InkAction.class, new InkActionSerializer()).create();
+            StorySave save = gson.fromJson(saveContent, StorySave.class);
             Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
             Scene scene = chapter.getSceneByName(save.getSceneName());
             for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {

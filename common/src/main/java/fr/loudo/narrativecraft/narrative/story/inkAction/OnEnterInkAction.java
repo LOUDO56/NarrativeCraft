@@ -15,7 +15,7 @@ import java.util.List;
 public class OnEnterInkAction extends InkAction {
 
     public OnEnterInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.ON_ENTER);
     }
 
     @Override

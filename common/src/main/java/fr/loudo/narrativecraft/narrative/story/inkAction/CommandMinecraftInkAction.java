@@ -27,7 +27,7 @@ public class CommandMinecraftInkAction extends InkAction {
     public CommandMinecraftInkAction() {}
 
     public CommandMinecraftInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.MINECRAFT_COMMAND);
     }
 
     @Override

@@ -24,7 +24,7 @@ public class SongSfxInkAction extends InkAction {
     public SongSfxInkAction() {}
 
     public SongSfxInkAction(StoryHandler storyHandler, SoundType soundType) {
-        super(storyHandler);
+        super(storyHandler, null);
         this.soundType = soundType;
     }
 
@@ -32,12 +32,14 @@ public class SongSfxInkAction extends InkAction {
     public InkActionResult execute(String[] command) {
         fadeTime = 0;
         if(command[1].equals("start")) {
+            inkTagType = InkTagType.SONG_SFX_START;
             name = command[2];
             loop = false;
             volume = 1.0F;
             pitch = 1.0F;
             isStart = true;
         } else {
+            inkTagType = InkTagType.SONG_SFX_STOP;
             isStart = false;
         }
         t = 0;

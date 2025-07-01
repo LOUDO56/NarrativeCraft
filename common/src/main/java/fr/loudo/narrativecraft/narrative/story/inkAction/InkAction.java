@@ -13,13 +13,15 @@ import org.jetbrains.annotations.Nullable;
 public abstract class InkAction {
 
     protected String name;
-    protected StoryHandler storyHandler;
+    protected InkTagType inkTagType;
+    protected transient StoryHandler storyHandler;
 
     public InkAction() {}
 
-    public InkAction(StoryHandler storyHandler) {
+    public InkAction(StoryHandler storyHandler, InkTagType inkTagType) {
         this.storyHandler = storyHandler;
         this.name = "";
+        this.inkTagType = inkTagType;
     }
 
     public abstract InkActionResult execute(String[] command);
@@ -28,6 +30,14 @@ public abstract class InkAction {
 
     public String getName() {
         return name;
+    }
+
+    public StoryHandler getStoryHandler() {
+        return storyHandler;
+    }
+
+    public void setStoryHandler(StoryHandler storyHandler) {
+        this.storyHandler = storyHandler;
     }
 
     public static InkTagType getInkActionTypeByTag(String tag) {

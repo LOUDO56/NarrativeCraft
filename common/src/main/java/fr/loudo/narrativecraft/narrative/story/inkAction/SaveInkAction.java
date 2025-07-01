@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 public class SaveInkAction extends InkAction {
 
     public SaveInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.SAVE);
     }
 
     @Override

@@ -17,7 +17,7 @@ public class DialogValuesInkAction extends InkAction {
     private String value;
 
     public DialogValuesInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.DIALOG_VALUES);
     }
 
     public DialogValuesInkAction() {}

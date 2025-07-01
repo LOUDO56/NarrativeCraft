@@ -15,7 +15,7 @@ public class WaitInkAction extends InkAction {
     public WaitInkAction() {}
 
     public WaitInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.WAIT);
     }
 
     @Override

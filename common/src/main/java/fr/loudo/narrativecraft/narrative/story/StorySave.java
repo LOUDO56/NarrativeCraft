@@ -32,12 +32,14 @@ public class StorySave {
     private final String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
     private DialogData dialogSaveData;
+    private List<InkAction> inkActionList;
     public static long startTimeSaveIcon;
 
     public StorySave(StoryHandler storyHandler) {
         characterStoryDataList = new ArrayList<>();
         animationInfoList = new ArrayList<>();
         subsceneInfoList = new ArrayList<>();
+        inkActionList = new ArrayList<>();
         PlayerSession playerSession = storyHandler.getPlayerSession();
         try {
             if(playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
@@ -104,6 +106,8 @@ public class StorySave {
                                     action.isLooping()
                             )
                     );
+                } else {
+                    inkActionList.add(inkAction);
                 }
             }
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
@@ -200,6 +204,10 @@ public class StorySave {
 
     public DialogData getDialogSaveData() {
         return dialogSaveData;
+    }
+
+    public List<InkAction> getInkActionList() {
+        return inkActionList;
     }
 
     public static class AnimationInfo {

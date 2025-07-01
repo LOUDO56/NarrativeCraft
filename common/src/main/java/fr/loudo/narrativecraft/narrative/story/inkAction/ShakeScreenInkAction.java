@@ -29,7 +29,7 @@ public class ShakeScreenInkAction extends InkAction {
     public ShakeScreenInkAction() {}
 
     public ShakeScreenInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.SHAKE);
     }
 
 

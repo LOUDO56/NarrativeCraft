@@ -22,7 +22,7 @@ public class ChangeDayTimeInkAction extends InkAction {
     public ChangeDayTimeInkAction() {}
 
     public ChangeDayTimeInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.DAYTIME);
         isPaused = false;
         pauseStartTime = 0;
     }

@@ -21,7 +21,7 @@ public class FadeScreenInkAction extends InkAction {
     public FadeScreenInkAction() {}
 
     public FadeScreenInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.FADE);
         isDoneFading = false;
     }
 

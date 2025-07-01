@@ -18,7 +18,7 @@ public class CutsceneInkAction extends InkAction {
     public CutsceneInkAction() {}
 
     public CutsceneInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.CUTSCENE);
     }
 
     @Override

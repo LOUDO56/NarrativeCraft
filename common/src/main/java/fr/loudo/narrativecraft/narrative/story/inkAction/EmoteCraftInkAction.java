@@ -23,7 +23,7 @@ public class EmoteCraftInkAction extends InkAction {
     public EmoteCraftInkAction() {}
 
     public EmoteCraftInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.EMOTE);
     }
 
     @Override

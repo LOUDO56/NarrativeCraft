@@ -20,11 +20,11 @@ public class SubscenePlayInkAction extends InkAction {
     public SubscenePlayInkAction() {}
 
     public SubscenePlayInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.SUBSCENE);
     }
 
     public SubscenePlayInkAction(StoryHandler storyHandler, Subscene subscene) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.SUBSCENE);
         this.subscene = subscene;
     }
 

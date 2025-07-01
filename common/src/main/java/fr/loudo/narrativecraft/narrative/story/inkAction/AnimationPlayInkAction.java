@@ -26,11 +26,11 @@ public class AnimationPlayInkAction extends InkAction {
     public AnimationPlayInkAction() {}
 
     public AnimationPlayInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.ANIMATION);
     }
 
     public AnimationPlayInkAction(StoryHandler storyHandler, Animation animation, Playback playback) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.ANIMATION);
         this.animation = animation;
         this.playback = playback;
     }
@@ -41,8 +41,12 @@ public class AnimationPlayInkAction extends InkAction {
             name = InkAction.parseName(command, 2);
             isLooping = false;
             try {
-                if(command[command.length - 2].equals("true") || command[command.length - 2].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[command.length - 2]);
+                int boolIndex = command.length - 1;
+                if(command.length > 4) {
+                    boolIndex--;
+                }
+                if(command[boolIndex].equals("true") || command[boolIndex].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[boolIndex]);
                 }
             } catch (RuntimeException ignored) {}
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);

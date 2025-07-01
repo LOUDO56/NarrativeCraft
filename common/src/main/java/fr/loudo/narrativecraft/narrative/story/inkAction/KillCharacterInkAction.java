@@ -15,7 +15,7 @@ public class KillCharacterInkAction extends InkAction {
     }
 
     public KillCharacterInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.KILL_CHARACTER);
     }
 
     @Override

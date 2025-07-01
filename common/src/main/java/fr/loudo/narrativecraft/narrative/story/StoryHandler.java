@@ -114,6 +114,10 @@ public class StoryHandler {
                 PlayerSession playerSessionFromSave = save.getPlayerSession();
                 playerSession.setChapter(playerSessionFromSave.getChapter());
                 playerSession.setScene(playerSessionFromSave.getScene());
+                for(InkAction inkAction : save.getInkActionList()) {
+                    inkAction.setStoryHandler(this);
+                }
+                inkActionList.addAll(save.getInkActionList());
             }
             if(loadScene != null) {
                 story.choosePathString(NarrativeCraftFile.getChapterSceneSneakCase(loadScene));
@@ -178,7 +182,7 @@ public class StoryHandler {
                 playerSession.setKeyframeControllerBase(playerSessionFromSave.getKeyframeControllerBase());
                 playerSession.setSoloCam(playerSessionFromSave.getSoloCam());
                 for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
-                    if(characterStoryData.isOnlyTemplate()) {
+                    if(!characterStoryData.isOnlyTemplate()) {
                         characterStoryData.spawn(playerSession.getPlayer().serverLevel());
                         currentCharacters.add(characterStoryData.getCharacterStory());
                     }

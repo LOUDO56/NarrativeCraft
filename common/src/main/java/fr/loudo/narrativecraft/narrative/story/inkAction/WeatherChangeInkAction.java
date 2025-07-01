@@ -11,7 +11,7 @@ public class WeatherChangeInkAction extends InkAction{
     public WeatherChangeInkAction() {}
 
     public WeatherChangeInkAction(StoryHandler storyHandler) {
-        super(storyHandler);
+        super(storyHandler, InkTagType.WEATHER);
     }
 
     @Override
