@@ -694,10 +694,10 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static boolean writeSave(StoryHandler storyHandler) {
+    public static boolean writeSave(StoryHandler storyHandler, boolean newScene) {
        try {
            File saveFile = new File(savesDirectory, "save.json");
-           StorySave save = new StorySave(storyHandler);
+           StorySave save = new StorySave(storyHandler, newScene);
            try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
                new Gson().toJson(save, writer);
            }

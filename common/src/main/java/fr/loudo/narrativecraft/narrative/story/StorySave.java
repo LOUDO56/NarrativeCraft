@@ -7,7 +7,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
-import fr.loudo.narrativecraft.narrative.dialog.*;
+import fr.loudo.narrativecraft.narrative.dialog.Dialog;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
+import fr.loudo.narrativecraft.narrative.dialog.DialogImpl;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
@@ -17,35 +19,36 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.phys.Vec2;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class StorySave {
 
-    private final List<AnimationInfo> animationInfoList;
-    private final List<SubsceneInfo> subsceneInfoList;
     private final int chapterIndex;
     private final String sceneName;
-    private final KeyframeCoordinate soloCam;
-    private final String inkSave;
+    private final List<AnimationInfo> animationInfoList;
+    private final List<SubsceneInfo> subsceneInfoList;
+    private KeyframeCoordinate soloCam;
+    private String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
     private DialogData dialogSaveData;
-    private List<InkAction> inkActionList;
+    private final List<InkAction> inkActionList;
     public static long startTimeSaveIcon;
 
-    public StorySave(StoryHandler storyHandler) {
+    public StorySave(StoryHandler storyHandler, boolean newScene) {
         characterStoryDataList = new ArrayList<>();
         animationInfoList = new ArrayList<>();
         subsceneInfoList = new ArrayList<>();
         inkActionList = new ArrayList<>();
         PlayerSession playerSession = storyHandler.getPlayerSession();
         try {
-            if(playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
-                soloCam = cameraAngleController.getCurrentPreviewKeyframe().getKeyframeCoordinate();
-            } else {
-                soloCam = playerSession.getSoloCam();
+            if(!newScene) {
+                if(playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
+                    soloCam = cameraAngleController.getCurrentPreviewKeyframe().getKeyframeCoordinate();
+                } else {
+                    soloCam = playerSession.getSoloCam();
+                }
             }
             inkSave = storyHandler.getStory().getState().toJson();
             chapterIndex = playerSession.getChapter().getIndex();
@@ -90,31 +93,32 @@ public class StorySave {
                 );
             }
 
-
-            for(InkAction inkAction : storyHandler.getInkActionList()) {
-                if(inkAction instanceof SubscenePlayInkAction action) {
-                    subsceneInfoList.add(
-                            new SubsceneInfo(
-                                    action.getName(),
-                                    action.isLooping()
-                            )
-                    );
-                } else if(inkAction instanceof AnimationPlayInkAction action) {
-                    animationInfoList.add(
-                            new AnimationInfo(
-                                    action.getName(),
-                                    action.isLooping()
-                            )
-                    );
-                } else {
-                    inkActionList.add(inkAction);
-                }
+            if(!newScene) {
+                for(InkAction inkAction : storyHandler.getInkActionList()) {
+                    if(inkAction instanceof SubscenePlayInkAction action) {
+                        subsceneInfoList.add(
+                                new SubsceneInfo(
+                                        action.getName(),
+                                        action.isLooping()
+                                )
+                        );
+                    } else if(inkAction instanceof AnimationPlayInkAction action) {
+                        animationInfoList.add(
+                                new AnimationInfo(
+                                        action.getName(),
+                                        action.isLooping()
+                                )
+                        );
+                    } else {
+                        inkActionList.add(inkAction);
+                    }
             }
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-                // If character spawned by playback or camera angle
+                // If character not spawned by playback or camera angle
                 if(NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().stream().noneMatch(playback -> playback.getCharacter().getName().equals(characterStory.getName()))) {
                     characterStoryDataList.add(new CharacterStoryData(characterStory));
                 }
+            }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

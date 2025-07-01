@@ -3,14 +3,11 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import com.bladecoder.ink.runtime.StoryState;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
-import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-
-import java.util.Arrays;
-import java.util.List;
 
 public class OnEnterInkAction extends InkAction {
 
@@ -24,8 +21,14 @@ public class OnEnterInkAction extends InkAction {
         String currentKnot = state.getCurrentKnot();
         if(currentKnot == null) return InkActionResult.PASS;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
+            for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
+                NarrativeCraftMod.server.execute(characterStory::kill);
+            }
+            storyHandler.getCurrentCharacters().clear();
+            storyHandler.getPlayerSession().reset();
             storyHandler.initChapterSceneSession();
-            storyHandler.save();
+            storyHandler.setCurrentDialogBox(null);
+            storyHandler.save(true);
             sendDebugDetails();
         }
         return InkActionResult.PASS;

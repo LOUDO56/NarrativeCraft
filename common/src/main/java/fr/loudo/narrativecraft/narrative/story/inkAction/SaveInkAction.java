@@ -11,7 +11,7 @@ public class SaveInkAction extends InkAction {
 
     @Override
     public InkActionResult execute(String[] command) {
-        storyHandler.save();
+        storyHandler.save(false);
         return InkActionResult.PASS;
     }
 

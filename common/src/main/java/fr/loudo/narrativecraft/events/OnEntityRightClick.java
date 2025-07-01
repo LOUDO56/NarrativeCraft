@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.events;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
@@ -7,9 +8,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
-import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleCharacterScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeTriggerScreen;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -20,6 +21,9 @@ import net.minecraft.world.entity.Entity;
 public class OnEntityRightClick {
 
     public static void entityRightClick(ServerPlayer player, Entity entity) {
+
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null && storyHandler.isRunning() && storyHandler.getStory() != null) return;
 
         PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
         if(playerSession == null) return;

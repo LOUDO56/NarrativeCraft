@@ -146,9 +146,10 @@ public class CharacterStory extends NarrativeEntry {
 
     public void kill() {
         if(entity != null) {
-            entity.remove(Entity.RemovalReason.KILLED);
             if(entity instanceof FakePlayer fakePlayer) {
-                NarrativeCraftMod.server.getPlayerList().broadcastAll(new ClientboundPlayerInfoRemovePacket(List.of(fakePlayer.getUUID())));
+                NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+            } else {
+                entity.remove(Entity.RemovalReason.KILLED);
             }
         }
     }
