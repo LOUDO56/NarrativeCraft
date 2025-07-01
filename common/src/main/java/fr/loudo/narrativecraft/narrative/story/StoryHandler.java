@@ -111,13 +111,15 @@ public class StoryHandler {
 
             if(save != null) {
                 story.getState().loadJson(save.getInkSave());
-                PlayerSession playerSessionFromSave = save.getPlayerSession();
-                playerSession.setChapter(playerSessionFromSave.getChapter());
-                playerSession.setScene(playerSessionFromSave.getScene());
-                for(InkAction inkAction : save.getInkActionList()) {
-                    inkAction.setStoryHandler(this);
+                if(loadScene == null) {
+                    PlayerSession playerSessionFromSave = save.getPlayerSession();
+                    playerSession.setChapter(playerSessionFromSave.getChapter());
+                    playerSession.setScene(playerSessionFromSave.getScene());
+                    for(InkAction inkAction : save.getInkActionList()) {
+                        inkAction.setStoryHandler(this);
+                    }
+                    inkActionList.addAll(save.getInkActionList());
                 }
-                inkActionList.addAll(save.getInkActionList());
             }
             if(loadScene != null) {
                 story.choosePathString(NarrativeCraftFile.getChapterSceneSneakCase(loadScene));
@@ -151,6 +153,7 @@ public class StoryHandler {
         playerSession.reset();
         currentCharacters.clear();
         NarrativeCraftMod.getInstance().setStoryHandler(null);
+        Minecraft.getInstance().options.hideGui = false;
     }
 
     public boolean next() {
@@ -572,10 +575,7 @@ public class StoryHandler {
             player.setGameMode(GameType.SPECTATOR);
         } else {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                PlayerSession playerSession1 = Utils.getSessionOrNull(player);
-                if(playerSession1 != null && playerSession1.getKeyframeControllerBase() == null) {
-                    player.setGameMode(GameType.CREATIVE);
-                }
+                player.setGameMode(GameType.CREATIVE);
             } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
                 player.setGameMode(GameType.ADVENTURE);
             }
@@ -671,8 +671,8 @@ public class StoryHandler {
         return currentCharacterTalking;
     }
 
-    public void save() {
-        NarrativeCraftFile.writeSave(this);
+    public void save(boolean newScene) {
+        NarrativeCraftFile.writeSave(this, newScene);
         isSaving = true;
         StorySave.startTimeSaveIcon = System.currentTimeMillis();
     }

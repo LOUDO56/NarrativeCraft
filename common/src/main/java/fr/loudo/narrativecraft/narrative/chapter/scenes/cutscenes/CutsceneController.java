@@ -167,7 +167,6 @@ public class CutsceneController extends KeyframeControllerBase {
                 keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
             }
 
-            player.setGameMode(GameType.SPECTATOR);
             pause();
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
         } else {
@@ -402,6 +401,7 @@ public class CutsceneController extends KeyframeControllerBase {
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
         StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+        Minecraft.getInstance().options.hideGui = false;
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {

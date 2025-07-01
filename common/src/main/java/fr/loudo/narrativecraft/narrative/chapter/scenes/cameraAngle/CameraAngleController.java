@@ -121,7 +121,6 @@ public class CameraAngleController extends KeyframeControllerBase {
                 cameraAngle.showKeyframeToClient(player);
             }
 
-            player.setGameMode(GameType.SPECTATOR);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CameraAngleControllerScreen(this)));
             updateKeyframeEntityName();
             if(!cameraAngleGroup.getCharacterStoryDataList().isEmpty()) {
@@ -319,6 +318,8 @@ public class CameraAngleController extends KeyframeControllerBase {
         }
         currentPreviewKeyframe = null;
         StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+        Minecraft.getInstance().options.hideGui = false;
+
     }
 
 }
