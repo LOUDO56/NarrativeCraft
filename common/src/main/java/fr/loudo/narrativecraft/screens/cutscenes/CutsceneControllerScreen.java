@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.cutscenes;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -123,7 +124,9 @@ public class CutsceneControllerScreen extends Screen {
         startX = settingsButton.getX() + settingsButton.getWidth() + 5;
 
         Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
-            cutsceneController.stopSession(true);
+            NarrativeCraftMod.server.execute(() -> {
+                cutsceneController.stopSession(true);
+            });
             this.onClose();
         }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
         this.addRenderableWidget(saveButton);
@@ -131,7 +134,9 @@ public class CutsceneControllerScreen extends Screen {
         startX = saveButton.getX() + saveButton.getWidth() + 5;
 
         Button closeButton = Button.builder(Component.literal("✖"), button -> {
-            cutsceneController.stopSession(false);
+            NarrativeCraftMod.server.execute(() -> {
+                cutsceneController.stopSession(false);
+            });
             this.onClose();
         }).bounds(startX, initialY, btnWidth, BUTTON_HEIGHT).build();
         this.addRenderableWidget(closeButton);

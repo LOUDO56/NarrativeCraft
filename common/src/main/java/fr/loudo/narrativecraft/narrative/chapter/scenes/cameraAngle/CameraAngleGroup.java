@@ -5,7 +5,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -22,6 +21,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +57,12 @@ public class CameraAngleGroup extends NarrativeEntry {
     public void killCharacters() {
         for(CharacterStoryData characterStoryData : characterStoryDataList) {
             if(characterStoryData.getCharacterStory().getEntity() != null) {
-                characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED);
+                LivingEntity entity = characterStoryData.getCharacterStory().getEntity();
+                if(entity instanceof FakePlayer fakePlayer) {
+                    NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+                } else {
+                    characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED);
+                }
             }
         }
     }

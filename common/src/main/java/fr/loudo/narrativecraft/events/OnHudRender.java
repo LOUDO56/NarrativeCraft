@@ -63,7 +63,9 @@ public class OnHudRender {
         if(playerSession == null) return;
         if(playerSession.getKeyframeControllerBase() == null) return;
         if(playerSession.getKeyframeControllerBase().getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
-            playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
+            if(playerSession.getKeyframeControllerBase().getCurrentPreviewKeyframe() == null) {
+                playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
+            }
         }
     }
 }

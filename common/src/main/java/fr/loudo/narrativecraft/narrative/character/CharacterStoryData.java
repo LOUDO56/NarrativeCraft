@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -76,7 +77,9 @@ public class CharacterStoryData {
         entityByte = localPlayer.getEntityData().get(entityFlagByte);
         livingEntityByte = localPlayer.getEntityData().get(livingEntityFlagByte);
         this.onlyTemplate = onlyTemplate;
-        initItem(localPlayer);
+        if(!onlyTemplate) {
+            initItem(localPlayer);
+        }
     }
 
     public CharacterStoryData(CharacterStory characterStory, double x, double y, double z, float pitch, float yaw, float yBodyRot, String pose, byte entityByte, byte livingEntityByte, String skinName, List<ItemSlotData> itemSlotDataList, boolean onlyTemplate) {
@@ -158,7 +161,15 @@ public class CharacterStoryData {
         entityData.set(ENTITY_BYTE_MASK, entityByte);
         EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityData.set(LIVING_ENTITY_BYTE_MASK, livingEntityByte);
-        serverLevel.addFreshEntity(livingEntity);
+        livingEntity.setInvisible(false);
+        if(livingEntity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().getPlayers().add(fakePlayer);
+            ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
+            serverLevel.getServer().getPlayerList().broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(fakePlayer)));
+            serverLevel.addNewPlayer(fakePlayer);
+        } else {
+            serverLevel.addFreshEntity(livingEntity);
+        }
         if(characterStory.getCharacterType() == CharacterStory.CharacterType.MAIN) {
             characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(characterStory.getName());
         }

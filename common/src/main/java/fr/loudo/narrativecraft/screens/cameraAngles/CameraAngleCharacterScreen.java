@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -88,7 +89,9 @@ public class CameraAngleCharacterScreen extends Screen {
             Button removeButton = Button.builder(Translation.message("global.remove"), button -> {
                 ConfirmScreen confirm = new ConfirmScreen(b -> {
                     if (b) {
-                        cameraAngleController.removeCharacter(characterStoryData.getCharacterStory().getEntity());
+                        NarrativeCraftMod.server.execute(() -> {
+                            cameraAngleController.removeCharacter(characterStoryData.getCharacterStory().getEntity());
+                        });
                     }
                     minecraft.setScreen(null);
                 }, Component.literal(""), Translation.message("global.confirm_delete"),

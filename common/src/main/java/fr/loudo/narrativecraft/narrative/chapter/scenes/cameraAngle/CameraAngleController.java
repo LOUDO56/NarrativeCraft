@@ -5,7 +5,6 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
@@ -13,6 +12,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.ChatFormatting;
@@ -264,7 +264,11 @@ public class CameraAngleController extends KeyframeControllerBase {
     public void removeCharacter(Entity entity) {
         CharacterStoryData characterStoryData = getCharacterPositionFromEntity(entity);
         cameraAngleGroup.getCharacterStoryDataList().remove(characterStoryData);
-        entity.remove(Entity.RemovalReason.KILLED);
+        if(entity instanceof FakePlayer fakePlayer) {
+            NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+        } else {
+            entity.remove(Entity.RemovalReason.KILLED);
+        }
         NarrativeCraftMod.server.getPlayerList().broadcastAll(new ClientboundRemoveEntitiesPacket(entity.getId()));
     }
 
