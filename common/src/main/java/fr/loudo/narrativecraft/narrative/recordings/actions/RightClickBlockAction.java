@@ -8,8 +8,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -50,6 +51,15 @@ public class RightClickBlockAction extends Action {
         if(!result.consumesAction()) {
             blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
         }
+        if(itemStack.getItem() instanceof AxeItem) {
+            UseOnContext useOnContext = new UseOnContext(
+                    player,
+                    InteractionHand.valueOf(handName),
+                    blockHitResult
+            );
+            itemStack.getItem().useOn(useOnContext);
+        }
+
     }
 
     @Override
