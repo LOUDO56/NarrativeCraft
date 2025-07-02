@@ -12,6 +12,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionGsonParser;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
@@ -333,7 +335,7 @@ public class NarrativeCraftFile {
         File animationFolder = new File(dataFolder, "animations");
         if(!animationFolder.exists()) animationFolder.mkdir();
         File animationFile = createFile(animationFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionGsonParser()).create();
         try(Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
             gson.toJson(animation, writer);
             updateSubsceneFile(animation.getScene());

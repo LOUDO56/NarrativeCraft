@@ -8,8 +8,8 @@ public class SwingAction extends Action {
 
     private InteractionHand interactionHand;
 
-    public SwingAction(int waitTick, ActionType actionType, InteractionHand interactionHand) {
-        super(waitTick, actionType);
+    public SwingAction(int waitTick, InteractionHand interactionHand) {
+        super(waitTick, ActionType.SWING);
         this.interactionHand = interactionHand;
     }
 
@@ -17,4 +17,7 @@ public class SwingAction extends Action {
     public void execute(LivingEntity entity) {
         entity.swing(interactionHand);
     }
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 }

@@ -10,7 +10,6 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
@@ -25,9 +24,11 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.level.block.Blocks;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class Playback {
@@ -130,6 +131,7 @@ public class Playback {
         isPlaying = false;
         hasEnded = true;
         if(isLooping) {
+            reset();
             start();
         }
     }
@@ -146,9 +148,17 @@ public class Playback {
     public void forceStop() {
         isPlaying = false;
         hasEnded = true;
+        reset();
         killEntity();
     }
 
+    public void reset() {
+        for(Action action : animation.getActionsData().getActions()) {
+            if(action instanceof PlaceBlockAction || action instanceof BreakBlockAction) {
+                action.rewind(entity);
+            }
+        }
+    }
 
     private void killEntity() {
         if(entity == null) return;
@@ -199,7 +209,7 @@ public class Playback {
         if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            Action.parseAndExecute(action, entity);
+            action.execute(entity);
         }
     }
 
@@ -207,18 +217,22 @@ public class Playback {
         if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            switch (action) {
-                case PlaceBlockAction placeBlockAction -> placeBlockAction.execute(entity, serverLevel);
-                case BreakBlockAction breakBlockAction -> {
-                    PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, ActionType.BLOCK_PLACE, breakBlockAction.getX(), breakBlockAction.getY(), breakBlockAction.getZ(), breakBlockAction.getData());
-                    placeBlockAction.execute(entity, serverLevel);
+            if (action instanceof PoseAction poseAction) {
+                poseAction.rewind(entity);
+                if (poseAction.getPreviousPose() == Pose.SLEEPING) {
+                    SleepAction previousSleepAction = (SleepAction) animation
+                            .getActionsData()
+                            .getActions()
+                            .stream()
+                            .filter(action1 -> tick <= action.getTick() && action1 instanceof SleepAction)
+                            .toList()
+                            .getLast();
+                    if (previousSleepAction != null) {
+                        previousSleepAction.execute(entity);
+                    }
                 }
-                case DestroyBlockStageAction destroyBlockStageAction ->
-                        destroyBlockStageAction.execute(serverLevel, destroyBlockStageAction.getProgress() == 1);
-                case RightClickBlockAction rightClickBlockAction -> rightClickBlockAction.execute(entity);
-                case PoseAction poseAction -> poseAction.execute(entity, true);
-                case EntityByteAction entityByteAction -> entityByteAction.execute(entity, true);
-                case null, default -> action.execute(entity);
+            } else {
+                action.rewind(entity);
             }
         }
     }
@@ -270,10 +284,6 @@ public class Playback {
             }
         }
         this.tick = newTick;
-        List<Action> actions = animation.getActionsData().getActions().stream().filter(action -> tick >= action.getTick()).toList();
-        for(Action action : actions) {
-            Action.parseAndExecute(action, entity);
-        }
         hasEnded = newTick == animation.getActionsData().getMovementData().size() - 1;
     }
 

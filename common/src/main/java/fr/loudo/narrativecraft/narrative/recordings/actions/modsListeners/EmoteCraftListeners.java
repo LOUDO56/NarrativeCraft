@@ -13,11 +13,11 @@ public class EmoteCraftListeners extends ModsListenerImpl {
     public EmoteCraftListeners(ActionDifferenceListener actionDifferenceListener) {
         super(actionDifferenceListener);
         emotePlayEvent = (emoteData, tick, userID) -> {
-            EmoteAction emoteAction = new EmoteAction(actionDifferenceListener.getTick(), ActionType.EMOTE, emoteData.getUuid());
+            EmoteAction emoteAction = new EmoteAction(actionDifferenceListener.getTick(), emoteData.getUuid());
             actionDifferenceListener.getRecording().getActionsData().addAction(emoteAction);
         };
         localEmoteStopEvent = () -> {
-            EmoteAction emoteAction = new EmoteAction(actionDifferenceListener.getTick(), ActionType.EMOTE, null);
+            EmoteAction emoteAction = new EmoteAction(actionDifferenceListener.getTick(), null);
             actionDifferenceListener.getRecording().getActionsData().addAction(emoteAction);
         };
 

@@ -27,7 +27,7 @@ public class ServerLevelMixin {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
             if(recordingHandler.isPlayerRecording(player) && player.getId() == breakerId) {
                 Recording recording = recordingHandler.getRecordingOfPlayer(player);
-                DestroyBlockStageAction destroyBlockStageAction = new DestroyBlockStageAction(recording.getActionDifference().getTick(), ActionType.DESTROY_BLOCK_STAGE, player.getId(), pos.getX(), pos.getY(), pos.getZ(), progress);
+                DestroyBlockStageAction destroyBlockStageAction = new DestroyBlockStageAction(recording.getActionDifference().getTick(), player.getId(), pos.getX(), pos.getY(), pos.getZ(), progress);
                 recording.getActionsData().addAction(destroyBlockStageAction);
             }
         }

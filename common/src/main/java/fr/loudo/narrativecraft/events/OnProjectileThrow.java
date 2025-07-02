@@ -16,7 +16,7 @@ public class OnProjectileThrow {
         if (NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(serverPlayer)) {
             Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(serverPlayer);
             int itemId = Item.getId(itemStack.getItem());
-            ProjectileThrowAction projectileThrowAction = new ProjectileThrowAction(recording.getActionDifference().getTick(), ActionType.PROJECTILE_THROW, itemId, hand.name());
+            ProjectileThrowAction projectileThrowAction = new ProjectileThrowAction(recording.getActionDifference().getTick(), itemId, hand.name());
             recording.getActionsData().addAction(projectileThrowAction);
         }
     }

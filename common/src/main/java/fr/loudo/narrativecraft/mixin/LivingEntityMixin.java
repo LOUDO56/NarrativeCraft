@@ -27,7 +27,7 @@ public class LivingEntityMixin {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
             if(recordingHandler.isPlayerRecording(player)) {
                 Recording recording = recordingHandler.getRecordingOfPlayer(player);
-                SwingAction action = new SwingAction(recording.getActionDifference().getTick(), ActionType.SWING, hand);
+                SwingAction action = new SwingAction(recording.getActionDifference().getTick(), hand);
                 recording.getActionsData().addAction(action);
             }
         }

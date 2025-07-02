@@ -20,15 +20,15 @@ public class ItemChangeAction extends Action {
     private String data;
     private String equipmentSlot;
 
-    public ItemChangeAction(int waitTick, ActionType actionType, String equipmentSlot, int itemId) {
-        super(waitTick, actionType);
+    public ItemChangeAction(int waitTick, String equipmentSlot, int itemId) {
+        super(waitTick, ActionType.ITEM_CHANGE);
         this.itemId = itemId;
         this.equipmentSlot = equipmentSlot;
         this.data = "";
     }
 
-    public ItemChangeAction(int waitTick, ActionType actionType, int itemId, String equipmentSlot, String data) {
-        super(waitTick, actionType);
+    public ItemChangeAction(int waitTick, int itemId, String equipmentSlot, String data) {
+        super(waitTick, ActionType.ITEM_CHANGE);
         this.itemId = itemId;
         this.equipmentSlot = equipmentSlot;
         this.data = data;
@@ -49,5 +49,8 @@ public class ItemChangeAction extends Action {
         ));
         entity.setItemSlot(EquipmentSlot.valueOf(equipmentSlot), itemStack);
     }
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 
 }

@@ -86,7 +86,7 @@ public class ActionDifferenceListener {
 
     private void poseListener() {
         if(player.getPose() != poseState) {
-            PoseAction action = new PoseAction(tick, ActionType.POSE, player.getPose(), poseState);
+            PoseAction action = new PoseAction(tick, player.getPose(), poseState);
             poseState = player.getPose();
             recording.getActionsData().addAction(action);
         }
@@ -95,7 +95,7 @@ public class ActionDifferenceListener {
     private void entityByteListener() {
         byte entityCurrentByte = player.getEntityData().get(entityFlagByte);
         if(entityByteState != entityCurrentByte) {
-            EntityByteAction entityByteAction = new EntityByteAction(tick, ActionType.ENTITY_BYTE, entityCurrentByte, entityByteState);
+            EntityByteAction entityByteAction = new EntityByteAction(tick, entityCurrentByte, entityByteState);
             entityByteState = entityCurrentByte;
             recording.getActionsData().addAction(entityByteAction);
         }
@@ -105,7 +105,7 @@ public class ActionDifferenceListener {
         byte livingEntityCurrentByte = player.getEntityData().get(livingEntityFlagByte);
         if(livingEntityByteState != livingEntityCurrentByte) {
             livingEntityByteState = livingEntityCurrentByte;
-            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(tick, ActionType.LIVING_ENTITY_BYTE, livingEntityCurrentByte);
+            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(tick, livingEntityCurrentByte);
             recording.getActionsData().addAction(livingEntityByteAction);
         }
     }
@@ -124,16 +124,16 @@ public class ActionDifferenceListener {
 
     private void onItemChange(ItemStack itemStack, EquipmentSlot equipmentSlot, int tick) {
         if(itemStack.isEmpty()) {
-            recording.getActionsData().addAction(new ItemChangeAction(tick, ActionType.ITEM_CHANGE, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem())));
+            recording.getActionsData().addAction(new ItemChangeAction(tick, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem())));
             return;
         }
         Tag tag = itemStack.save(player.registryAccess());
         Tag componentsTag = ((CompoundTag)tag).get("components");
         ItemChangeAction itemChangeAction;
         if(componentsTag == null) {
-            itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, equipmentSlot.name(), Item.getId(itemStack.getItem()));
+            itemChangeAction = new ItemChangeAction(tick, equipmentSlot.name(), Item.getId(itemStack.getItem()));
         } else {
-            itemChangeAction = new ItemChangeAction(tick, ActionType.ITEM_CHANGE, BuiltInRegistries.ITEM.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
+            itemChangeAction = new ItemChangeAction(tick, BuiltInRegistries.ITEM.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }
         recording.getActionsData().addAction(itemChangeAction);
     }

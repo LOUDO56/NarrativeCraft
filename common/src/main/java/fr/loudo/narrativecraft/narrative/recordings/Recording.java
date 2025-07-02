@@ -3,6 +3,9 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.BreakBlockAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
@@ -39,6 +42,11 @@ public class Recording {
         for(ModsListenerImpl modsListener : actionDifferenceListener.getModsListenerList()) {
             modsListener.stop();
         }
+        for(Action action : actionsData.getActions()) {
+            if(action instanceof PlaceBlockAction || action instanceof BreakBlockAction) {
+                action.rewind(player);
+            }
+        }
         return true;
     }
 
@@ -68,4 +76,7 @@ public class Recording {
         return player;
     }
 
+    public int getTick() {
+        return actionDifferenceListener.getTick();
+    }
 }

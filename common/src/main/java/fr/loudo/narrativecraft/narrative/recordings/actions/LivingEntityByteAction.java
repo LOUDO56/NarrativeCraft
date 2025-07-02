@@ -10,8 +10,8 @@ public class LivingEntityByteAction extends Action {
 
     private byte livingEntityByte;
 
-    public LivingEntityByteAction(int waitTick, ActionType actionType, byte livingEntityByte) {
-        super(waitTick, actionType);
+    public LivingEntityByteAction(int waitTick, byte livingEntityByte) {
+        super(waitTick, ActionType.LIVING_ENTITY_BYTE);
         this.livingEntityByte = livingEntityByte;
     }
 
@@ -21,4 +21,7 @@ public class LivingEntityByteAction extends Action {
         EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
         entityData.set(LIVING_ENTITY_BYTE_MASK, livingEntityByte);
     }
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 }

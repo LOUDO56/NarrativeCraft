@@ -19,7 +19,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDeserializer;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionGsonParser;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.commands.CommandSourceStack;
@@ -138,7 +138,7 @@ public class ChapterManager {
 
         // Animations
         File animationsFolder = new File(dataFolder, "animations");
-        Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionGsonParser()).create();
         if(animationsFolder.exists()) {
             File[] animationsFile = animationsFolder.listFiles();
             if(animationsFile != null) {
@@ -231,7 +231,7 @@ public class ChapterManager {
         File cameraAnglesFile = new File(dataFolder, "camera_angles" + NarrativeCraftFile.EXTENSION_DATA_FILE);
         if(cameraAnglesFile.exists()) {
             try {
-                Gson gson1 = new GsonBuilder().registerTypeAdapter(Action.class, new ActionDeserializer()).create();
+                Gson gson1 = new GsonBuilder().create();
                 String content = Files.readString(cameraAnglesFile.toPath());
                 Type listType = new TypeToken<List<CameraAngleGroup>>() {}.getType();
                 List<CameraAngleGroup> cameraAngleGroupList = gson1.fromJson(content, listType);

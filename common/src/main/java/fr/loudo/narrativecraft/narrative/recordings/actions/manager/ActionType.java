@@ -13,5 +13,6 @@ public enum ActionType {
     DESTROY_BLOCK_STAGE,
     RIGHT_CLICK_BLOCK,
     PROJECTILE_THROW,
-    EMOTE
+    EMOTE,
+    SLEEP
 }

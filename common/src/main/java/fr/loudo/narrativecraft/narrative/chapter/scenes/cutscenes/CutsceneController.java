@@ -492,6 +492,7 @@ public class CutsceneController extends KeyframeControllerBase {
                 totalTick += playback.getAnimation().getActionsData().getMovementData().size();
                 totalPlayback++;
             }
+            if(totalTick == 0) return 0;
             return totalTick / totalPlayback;
         } else {
             return totalTick;

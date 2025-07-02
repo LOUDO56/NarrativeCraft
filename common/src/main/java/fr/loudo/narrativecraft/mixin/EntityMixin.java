@@ -23,7 +23,7 @@ public class EntityMixin {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
             if(recordingHandler.isPlayerRecording(player)) {
                 Recording recording = recordingHandler.getRecordingOfPlayer(player);
-                HurtAction hurtAction = new HurtAction(recording.getActionDifference().getTick(), ActionType.HURT);
+                HurtAction hurtAction = new HurtAction(recording.getActionDifference().getTick());
                 recording.getActionsData().addAction(hurtAction);
             }
         }

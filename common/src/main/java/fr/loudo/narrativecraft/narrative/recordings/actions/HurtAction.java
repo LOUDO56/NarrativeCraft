@@ -6,8 +6,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.LivingEntity;
 
 public class HurtAction extends Action {
-    public HurtAction(int waitTick, ActionType actionType) {
-        super(waitTick, actionType);
+    public HurtAction(int waitTick) {
+        super(waitTick, ActionType.HURT);
     }
 
     @Override
@@ -15,4 +15,7 @@ public class HurtAction extends Action {
         entity.getServer().getPlayerList().broadcastAll(new ClientboundHurtAnimationPacket(entity.getId(), 0F));
         entity.makeSound(SoundEvents.GENERIC_HURT);
     }
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 }

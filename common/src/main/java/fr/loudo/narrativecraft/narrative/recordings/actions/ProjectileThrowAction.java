@@ -9,12 +9,15 @@ public class ProjectileThrowAction extends Action {
     private String handName;
 
     // Standby, don't work.
-    public ProjectileThrowAction(int tick, ActionType actionType, int itemId, String handName) {
-        super(tick, actionType);
+    public ProjectileThrowAction(int tick, int itemId, String handName) {
+        super(tick, ActionType.PROJECTILE_THROW);
         this.itemId = itemId;
         this.handName = handName;
     }
 
     @Override
     public void execute(LivingEntity entity) {}
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 }

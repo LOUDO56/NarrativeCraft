@@ -9,20 +9,27 @@ public class PoseAction extends Action {
     private Pose pose;
     private Pose previousPose;
 
-    public PoseAction(int waitTick, ActionType actionType, Pose pose, Pose previousPose) {
-        super(waitTick, actionType);
+    public PoseAction(int waitTick, Pose pose, Pose previousPose) {
+        super(waitTick, ActionType.POSE);
         this.pose = pose;
         this.previousPose = previousPose;
     }
 
     @Override
     public void execute(LivingEntity entity) {
+        if(pose != Pose.SLEEPING) {
+            entity.stopSleeping();
+        }
         entity.setPose(pose);
     }
 
-    public void execute(LivingEntity entity, boolean previousOne) {
+    @Override
+    public void rewind(LivingEntity entity) {
         if(previousPose != null) {
             entity.setPose(previousPose);
+            if(previousPose != Pose.SLEEPING) {
+                entity.stopSleeping();
+            }
         }
     }
 

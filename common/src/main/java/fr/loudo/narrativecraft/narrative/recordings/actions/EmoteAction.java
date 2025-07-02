@@ -13,8 +13,8 @@ public class EmoteAction extends Action {
 
     private final UUID emoteId;
 
-    public EmoteAction(int tick, ActionType actionType, UUID emoteId) {
-        super(tick, actionType);
+    public EmoteAction(int tick, UUID emoteId) {
+        super(tick, ActionType.EMOTE);
         this.emoteId = emoteId;
     }
 
@@ -25,6 +25,9 @@ public class EmoteAction extends Action {
             ServerEmoteAPI.playEmote(fakePlayer.getUUID(), emote, false);
         }
     }
+
+    @Override
+    public void rewind(LivingEntity entity) {}
 
     public KeyframeAnimation getEmote() {
         if(emoteId != null) {

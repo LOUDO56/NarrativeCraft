@@ -11,8 +11,8 @@ public class EntityByteAction extends Action {
     private byte entityByte;
     private byte previousEntityByte;
 
-    public EntityByteAction(int waitTick, ActionType actionType, byte entityByte, byte previousEntityByte) {
-        super(waitTick, actionType);
+    public EntityByteAction(int waitTick, byte entityByte, byte previousEntityByte) {
+        super(waitTick, ActionType.ENTITY_BYTE);
         this.entityByte = entityByte;
         this.previousEntityByte = previousEntityByte;
     }
@@ -24,7 +24,8 @@ public class EntityByteAction extends Action {
         entityData.set(ENTITY_BYTE_MASK, entityByte);
     }
 
-    public void execute(LivingEntity entity, boolean previousOne) {
+    @Override
+    public void rewind(LivingEntity entity) {
         SynchedEntityData entityData = entity.getEntityData();
         EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
         entityData.set(ENTITY_BYTE_MASK, previousEntityByte);
