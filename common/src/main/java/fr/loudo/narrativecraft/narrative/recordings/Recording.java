@@ -9,9 +9,14 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.Blocks;
 
 import java.io.IOException;
+import java.util.List;
+
 public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
@@ -42,11 +47,7 @@ public class Recording {
         for(ModsListenerImpl modsListener : actionDifferenceListener.getModsListenerList()) {
             modsListener.stop();
         }
-        for(Action action : actionsData.getActions()) {
-            if(action instanceof PlaceBlockAction || action instanceof BreakBlockAction) {
-                action.rewind(player);
-            }
-        }
+        actionsData.reset(player);
         return true;
     }
 

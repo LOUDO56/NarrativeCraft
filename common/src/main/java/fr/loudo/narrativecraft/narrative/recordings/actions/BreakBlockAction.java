@@ -29,16 +29,8 @@ public class BreakBlockAction extends Action {
         this.data = data;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
-
-    public int getZ() {
-        return z;
+    public BlockPos getBlockPos() {
+        return new BlockPos(x, y , z);
     }
 
     public String getData() {

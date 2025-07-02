@@ -16,6 +16,7 @@ import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -131,7 +132,7 @@ public class Playback {
         isPlaying = false;
         hasEnded = true;
         if(isLooping) {
-            reset();
+            animation.getActionsData().reset(entity);
             start();
         }
     }
@@ -148,16 +149,8 @@ public class Playback {
     public void forceStop() {
         isPlaying = false;
         hasEnded = true;
-        reset();
+        animation.getActionsData().reset(entity);
         killEntity();
-    }
-
-    public void reset() {
-        for(Action action : animation.getActionsData().getActions()) {
-            if(action instanceof PlaceBlockAction || action instanceof BreakBlockAction) {
-                action.rewind(entity);
-            }
-        }
     }
 
     private void killEntity() {

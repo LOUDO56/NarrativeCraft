@@ -32,6 +32,7 @@ import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Manages the chapters in the narrative.
@@ -159,6 +160,7 @@ public class ChapterManager {
                             }
                         }
                         animation.setScene(scene);
+                        animation.getActionsData().getActions().removeIf(Objects::isNull);
                         scene.addAnimation(animation);
                     } catch (IOException e) {
                         NarrativeCraftMod.LOG.warn("Animation file {} does not exists, passing...", animationFile.getName());
