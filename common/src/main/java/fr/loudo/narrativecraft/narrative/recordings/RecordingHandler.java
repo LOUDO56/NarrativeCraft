@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings;
 
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,15 @@ public class RecordingHandler {
         if(!recordings.contains(recording)) return false;
         recordings.remove(recording);
         return true;
+    }
+
+    public Recording getRecordingOfPlayer(Player player) {
+        for(Recording recording : recordings) {
+            if(recording.getPlayer().getName().getString().equals(player.getName().getString())) {
+                return recording;
+            }
+        }
+        return null;
     }
 
     public Recording getRecordingOfPlayer(ServerPlayer player) {
