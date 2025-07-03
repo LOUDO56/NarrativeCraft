@@ -209,6 +209,7 @@ public class Playback {
     public void actionListenerRewind() {
         if(entity == null) return;
         List<Action> actionToBePlayed = animation.getActionsData().getActions().stream().filter(action -> tick == action.getTick()).toList();
+        actionToBePlayed = actionToBePlayed.reversed();
         for(Action action : actionToBePlayed) {
             if (action instanceof PoseAction poseAction) {
                 poseAction.rewind(entity);
