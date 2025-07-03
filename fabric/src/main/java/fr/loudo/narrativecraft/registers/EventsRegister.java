@@ -17,7 +17,7 @@ public class EventsRegister {
         ServerPlayConnectionEvents.JOIN.register(PlayerServerConnection::onPlayerJoin);
         ServerPlayConnectionEvents.DISCONNECT.register(PlayerServerConnection::onPlayerLeave);
         ServerTickEvents.END_SERVER_TICK.register(ServerTickEvent::onServerTick);
-        PlayerBlockBreakEvents.AFTER.register(BlockBreakEvent::onBlockBreak);
+        PlayerBlockBreakEvents.BEFORE.register(BlockBreakEvent::onBlockBreak);
         UseBlockCallback.EVENT.register(RightClickBlock::onRightClickBlock);
         UseEntityCallback.EVENT.register(EntityRightClick::onEntityRightClick);
         ClientTickEvents.END_CLIENT_TICK.register(OnClientTick::clientTick);

@@ -4,6 +4,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -13,6 +14,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 public class PlaceBlockAction extends Action {
 
@@ -30,26 +33,33 @@ public class PlaceBlockAction extends Action {
     @Override
     public void execute(LivingEntity entity) {
         ServerLevel serverLevel = Utils.getServerLevel();
-        try {
-            CompoundTag compoundTag = Utils.nbtFromString(data);
-            RegistryAccess registryAccess = entity.registryAccess();
-            BlockState blockState = NbtUtils.readBlockState(registryAccess.lookupOrThrow(Registries.BLOCK), compoundTag);
-            BlockPos blockPos = new BlockPos(x, y, z);
-            serverLevel.setBlock(blockPos, blockState, 3);
-            if(blockState.getBlock() instanceof BedBlock || blockState.getBlock() instanceof DoorBlock) {
-                Block block = blockState.getBlock();
-                block.setPlacedBy(entity.level(), blockPos, blockState, entity, blockState.getBlock().asItem().getDefaultInstance());
-            }
-            SoundType soundType = blockState.getSoundType();
-            serverLevel.playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
-                    SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
+        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        if(blockState == null) return;
+        BlockPos blockPos = new BlockPos(x, y, z);
+        serverLevel.setBlock(blockPos, blockState, 3);
+        SoundType soundType = blockState.getSoundType();
+        serverLevel.playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
+                SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
 
-        } catch (CommandSyntaxException ignored) {}
     }
 
     public void rewind(LivingEntity entity) {
         ServerLevel serverLevel = Utils.getServerLevel();
-        serverLevel.setBlock(getBlockPos(), Blocks.AIR.defaultBlockState(), 3);
+        BlockPos blockPos = getBlockPos();
+        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        if (blockState != null) {
+            if (blockState.getBlock() instanceof BedBlock) {
+                if (blockState.getValue(BedBlock.PART) == BedPart.FOOT) {
+                    Direction direction = blockState.getValue(BedBlock.FACING);
+                    blockPos = blockPos.relative(direction);
+                }
+            } else if (blockState.getBlock() instanceof DoorBlock) {
+                if (blockState.getValue(DoorBlock.HALF) == DoubleBlockHalf.UPPER) {
+                    blockPos = blockPos.below();
+                }
+            }
+        }
+        serverLevel.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
     }
 
     public BlockPos getBlockPos() {

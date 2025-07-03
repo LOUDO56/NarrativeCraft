@@ -5,14 +5,16 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.IntTag;
-import net.minecraft.nbt.StringTag;
-import net.minecraft.nbt.TagParser;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.nbt.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.UUID;
 
@@ -38,6 +40,15 @@ public class Utils {
     public static CompoundTag nbtFromString(String nbtString) throws CommandSyntaxException
     {
         return TagParser.parseCompoundAsArgument(new StringReader(nbtString));
+    }
+
+    public static BlockState getBlockStateFromData(String data, RegistryAccess registry) {
+        try {
+            CompoundTag compoundTag = Utils.nbtFromString(data);
+            return NbtUtils.readBlockState(registry.lookupOrThrow(Registries.BLOCK), compoundTag);
+        } catch (CommandSyntaxException ignored) {
+            return null;
+        }
     }
 
     public static ServerPlayer getServerPlayerByUUID(UUID uuid) {
