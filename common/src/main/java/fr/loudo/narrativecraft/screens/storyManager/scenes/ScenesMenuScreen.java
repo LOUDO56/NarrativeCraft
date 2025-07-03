@@ -2,12 +2,12 @@ package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.animations.AnimationsScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles.CameraAnglesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.cutscenes.CutscenesScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
-import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;

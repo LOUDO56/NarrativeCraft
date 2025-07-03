@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.screens.keyframes;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
-import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;

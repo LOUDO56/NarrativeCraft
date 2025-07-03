@@ -7,14 +7,10 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class AnimationPlayInkAction extends InkAction {

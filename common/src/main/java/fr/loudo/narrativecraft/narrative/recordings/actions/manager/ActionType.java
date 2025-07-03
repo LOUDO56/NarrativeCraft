@@ -14,5 +14,6 @@ public enum ActionType {
     RIGHT_CLICK_BLOCK,
     EMOTE,
     SLEEP,
-    USE_ITEM
+    USE_ITEM,
+    GAMEMODE
 }

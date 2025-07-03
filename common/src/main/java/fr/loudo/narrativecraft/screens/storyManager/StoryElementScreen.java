@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.screens.storyManager;
 
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
-import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;

@@ -1,17 +1,12 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.network.protocol.game.ClientboundLevelParticlesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;

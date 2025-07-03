@@ -6,7 +6,6 @@ import net.minecraft.client.KeyMapping;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.common.NeoForge;
 
 @Mod(NarrativeCraftMod.MOD_ID)
 public class KeyRegisterEvent {

@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes;
 
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
-import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
 import net.minecraft.server.level.ServerPlayer;

@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.screens.cutscenes.KeyframeCutsceneOptionScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;

@@ -15,7 +15,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.time.LocalDate;
 
 public class EditCharacterInfoScreen extends EditInfoScreen {

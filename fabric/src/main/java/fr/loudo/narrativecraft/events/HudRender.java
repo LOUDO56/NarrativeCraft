@@ -3,9 +3,6 @@ package fr.loudo.narrativecraft.events;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
 import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
-import net.minecraft.client.DeltaTracker;
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.LayeredDraw;
 import net.minecraft.resources.ResourceLocation;
 
 public class HudRender {

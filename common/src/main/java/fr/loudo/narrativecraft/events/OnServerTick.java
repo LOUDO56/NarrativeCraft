@@ -11,8 +11,6 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.util.Iterator;
-
 public class OnServerTick {
 
     private static final RecordingHandler RECORDING_HANDLER = NarrativeCraftMod.getInstance().getRecordingHandler();

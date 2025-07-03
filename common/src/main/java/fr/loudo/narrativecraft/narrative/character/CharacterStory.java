@@ -7,7 +7,6 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
-import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -17,12 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.protocol.game.ClientboundPlayerInfoRemovePacket;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-
-import java.util.List;
 
 public class CharacterStory extends NarrativeEntry {
 

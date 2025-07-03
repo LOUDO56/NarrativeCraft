@@ -5,20 +5,18 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
-import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.components.PickElementScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

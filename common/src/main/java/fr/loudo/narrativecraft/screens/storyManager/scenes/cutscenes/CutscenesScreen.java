@@ -9,14 +9,13 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
-import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.screens.components.PickElementScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
+import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
+import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -24,7 +23,6 @@ import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

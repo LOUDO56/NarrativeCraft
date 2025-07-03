@@ -2,9 +2,9 @@ package fr.loudo.narrativecraft.screens.storyManager.scenes;
 
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
-import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;

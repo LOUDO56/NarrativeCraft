@@ -2,11 +2,11 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.subscene;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;

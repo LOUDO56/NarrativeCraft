@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.server.level.ServerPlayer;
 
 public class CameraAngle extends Keyframe {

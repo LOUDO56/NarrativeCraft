@@ -1,10 +1,7 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import com.mojang.brigadier.Command;
 import com.mojang.brigadier.ParseResults;
 import com.mojang.brigadier.StringReader;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.context.ContextChain;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
@@ -14,11 +11,9 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.Arrays;
-import java.util.Optional;
 
 public class CommandMinecraftInkAction extends InkAction {
 

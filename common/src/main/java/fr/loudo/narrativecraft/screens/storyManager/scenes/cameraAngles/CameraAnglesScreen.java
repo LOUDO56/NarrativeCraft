@@ -1,26 +1,23 @@
 package fr.loudo.narrativecraft.screens.storyManager.scenes.cameraAngles;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.components.EditInfoScreen;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
-import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.util.List;
 
 public class CameraAnglesScreen extends StoryElementScreen {

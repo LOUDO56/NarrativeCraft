@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.EmoteAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import io.github.kosmx.emotes.api.events.client.ClientEmoteEvents;
 
 public class EmoteCraftListeners extends ModsListenerImpl {

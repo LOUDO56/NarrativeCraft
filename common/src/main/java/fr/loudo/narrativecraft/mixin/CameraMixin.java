@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.mixin;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;

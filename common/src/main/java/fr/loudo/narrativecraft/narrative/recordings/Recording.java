@@ -3,19 +3,11 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.BreakBlockAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PlaceBlockAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
+import fr.loudo.narrativecraft.narrative.recordings.actions.GameModeAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Vec3i;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.Blocks;
-
-import java.io.IOException;
-import java.util.List;
 
 public class Recording {
 
@@ -38,6 +30,8 @@ public class Recording {
         actionDifferenceListener = new ActionDifferenceListener(this);
         isRecording = true;
         recordingHandler.addRecording(this);
+        GameModeAction gameModeAction = new GameModeAction(0, player.gameMode.getGameModeForPlayer(), player.gameMode.getGameModeForPlayer());
+        actionsData.addAction(gameModeAction);
         return true;
     }
 

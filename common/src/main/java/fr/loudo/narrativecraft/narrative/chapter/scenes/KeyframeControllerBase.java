@@ -7,7 +7,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class KeyframeControllerBase {

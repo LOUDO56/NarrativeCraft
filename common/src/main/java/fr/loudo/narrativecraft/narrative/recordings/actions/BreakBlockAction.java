@@ -11,6 +11,10 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.BedItem;
+import net.minecraft.world.level.block.BedBlock;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.DoorBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -52,6 +56,10 @@ public class BreakBlockAction extends Action {
             BlockState blockState = NbtUtils.readBlockState(registryAccess.lookupOrThrow(Registries.BLOCK), compoundTag);
             BlockPos blockPos = new BlockPos(x, y, z);
             serverLevel.setBlock(blockPos, blockState, 3);
+            if(blockState.getBlock() instanceof BedBlock || blockState.getBlock() instanceof DoorBlock) {
+                Block block = blockState.getBlock();
+                block.setPlacedBy(entity.level(), blockPos, blockState, entity, blockState.getBlock().asItem().getDefaultInstance());
+            }
         } catch (CommandSyntaxException ignored) {}
     }
 }

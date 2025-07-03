@@ -5,7 +5,9 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "BlockItemMixin"
+    "BedItemMixin",
+    "BlockItemMixin",
+    "DoubleHighBlockItemMixin"
   ],
   "client": [
     "MinecraftMixin"

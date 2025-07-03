@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.phys.Vec3;
 
 public class SleepAction extends Action {
 

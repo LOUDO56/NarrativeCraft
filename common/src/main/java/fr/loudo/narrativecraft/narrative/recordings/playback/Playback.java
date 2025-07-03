@@ -9,14 +9,15 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
-import fr.loudo.narrativecraft.narrative.recordings.actions.*;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.SleepAction;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
@@ -25,11 +26,9 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.level.block.Blocks;
 
 import java.io.File;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 public class Playback {

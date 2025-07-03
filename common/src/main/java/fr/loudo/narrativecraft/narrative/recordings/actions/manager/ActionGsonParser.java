@@ -1,7 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import com.google.gson.*;
-import fr.loudo.narrativecraft.narrative.recordings.actions.*;
+import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 
 import java.lang.reflect.Type;
 

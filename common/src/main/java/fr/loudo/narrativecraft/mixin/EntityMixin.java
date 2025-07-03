@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.actions.HurtAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;

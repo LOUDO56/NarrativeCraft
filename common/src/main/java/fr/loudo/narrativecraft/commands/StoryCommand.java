@@ -9,7 +9,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.*;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;

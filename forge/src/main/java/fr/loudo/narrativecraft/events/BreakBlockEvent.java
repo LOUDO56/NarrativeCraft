@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

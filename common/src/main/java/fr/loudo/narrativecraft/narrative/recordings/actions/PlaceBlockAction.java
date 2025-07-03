@@ -2,7 +2,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
-import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.RegistryAccess;
@@ -12,8 +11,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class PlaceBlockAction extends Action {
@@ -38,9 +36,14 @@ public class PlaceBlockAction extends Action {
             BlockState blockState = NbtUtils.readBlockState(registryAccess.lookupOrThrow(Registries.BLOCK), compoundTag);
             BlockPos blockPos = new BlockPos(x, y, z);
             serverLevel.setBlock(blockPos, blockState, 3);
+            if(blockState.getBlock() instanceof BedBlock || blockState.getBlock() instanceof DoorBlock) {
+                Block block = blockState.getBlock();
+                block.setPlacedBy(entity.level(), blockPos, blockState, entity, blockState.getBlock().asItem().getDefaultInstance());
+            }
             SoundType soundType = blockState.getSoundType();
             serverLevel.playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
                     SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
+
         } catch (CommandSyntaxException ignored) {}
     }
 

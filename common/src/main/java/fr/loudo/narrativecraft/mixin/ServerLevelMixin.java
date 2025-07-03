@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.actions.DestroyBlockStageAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;

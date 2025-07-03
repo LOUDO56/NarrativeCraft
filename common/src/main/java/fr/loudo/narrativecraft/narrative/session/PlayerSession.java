@@ -2,13 +2,10 @@ package fr.loudo.narrativecraft.narrative.session;
 
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
-import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;

@@ -4,8 +4,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.RightClickBlockAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.SleepAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;

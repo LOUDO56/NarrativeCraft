@@ -4,19 +4,17 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
+import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
-import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.packs.PackSelectionScreen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 
-import java.io.File;
 import java.util.List;
 
 public class ChaptersScreen extends StoryElementScreen {
