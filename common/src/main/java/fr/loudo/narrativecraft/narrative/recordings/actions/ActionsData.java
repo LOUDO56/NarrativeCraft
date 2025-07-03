@@ -3,12 +3,15 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ActionsData {
 
@@ -46,29 +49,33 @@ public class ActionsData {
     }
 
     public void reset(LivingEntity entity) {
-        ServerLevel serverLevel = Utils.getServerLevel();
-        List<Action> placeList = actions.stream().filter(action -> action instanceof PlaceBlockAction).toList();
+        Map<BlockPos, Action> latestActions = new HashMap<>();
+
         for (Action action : actions) {
-            if (action instanceof PlaceBlockAction) {
-                action.rewind(entity);
-            }
+            BlockPos pos = getPosFromAction(action);
+            if(pos == null) continue;
+            latestActions.putIfAbsent(pos, action);
+        }
 
-            if (action instanceof BreakBlockAction breakBlockAction) {
-                BlockPos brokenPos = breakBlockAction.getBlockPos();
+        for (Map.Entry<BlockPos, Action> entry : latestActions.entrySet()) {
+            Action action = entry.getValue();
 
-                boolean hasMatchingPlacedBlock = placeList.stream().anyMatch(action1 ->
-                        action1 instanceof PlaceBlockAction &&
-                                ((PlaceBlockAction) action1).getBlockPos().equals(brokenPos)
-                );
-
-                boolean isStillPresent = !serverLevel
-                        .getBlockState(brokenPos)
-                        .isAir();
-
-                if (!hasMatchingPlacedBlock && !isStillPresent) {
-                    action.rewind(entity);
-                }
+            if (action instanceof PlaceBlockAction place) {
+                place.rewind(entity);
+            } else if (action instanceof BreakBlockAction breakBlockAction) {
+                breakBlockAction.rewind(entity);
             }
         }
+
     }
+
+    private BlockPos getPosFromAction(Action action) {
+        if (action instanceof PlaceBlockAction p) {
+            return p.getBlockPos();
+        } else if (action instanceof BreakBlockAction b) {
+            return b.getBlockPos();
+        }
+        return null;
+    }
+
 }
