@@ -18,7 +18,7 @@ public class PoseAction extends Action {
     @Override
     public void execute(LivingEntity entity) {
         if(pose != Pose.SLEEPING) {
-            entity.stopSleeping();
+            entity.clearSleepingPos();
         }
         entity.setPose(pose);
     }
@@ -28,7 +28,7 @@ public class PoseAction extends Action {
         if(previousPose != null) {
             entity.setPose(previousPose);
             if(previousPose != Pose.SLEEPING) {
-                entity.stopSleeping();
+                entity.clearSleepingPos();
             }
         }
     }

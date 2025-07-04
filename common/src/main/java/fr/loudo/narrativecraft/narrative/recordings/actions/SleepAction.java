@@ -17,11 +17,13 @@ public class SleepAction extends Action {
 
     @Override
     public void execute(LivingEntity entity) {
-        entity.startSleeping(new BlockPos(xB, yB, zB));
+        entity.setSleepingPos(new BlockPos(xB, yB, zB));
     }
 
     @Override
-    public void rewind(LivingEntity entity) {}
+    public void rewind(LivingEntity entity) {
+        entity.clearSleepingPos();
+    }
 
     public BlockPos getBlockPos() {
         return new BlockPos(xB, yB, zB);

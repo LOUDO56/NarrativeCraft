@@ -4,12 +4,16 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.RightClickBlockAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.SleepAction;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class OnRightClickBlock {
 
@@ -26,11 +30,6 @@ public class OnRightClickBlock {
                     inside
             );
             recording.getActionsData().addAction(rightClickBlockAction);
-            BlockState blockState = serverPlayer.serverLevel().getBlockState(blockPos);
-            if(blockState.getBlock() instanceof BedBlock) {
-                SleepAction sleepAction = new SleepAction(recording.getTick(), blockPos);
-                recording.getActionsData().addAction(sleepAction);
-            }
         }
     }
 

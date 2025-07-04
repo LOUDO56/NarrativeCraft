@@ -9,6 +9,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtUtils;
+import net.minecraft.server.commands.SummonCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -27,13 +28,13 @@ public class BreakBlockAction extends Action {
     private boolean drop;
     private String data;
 
-    public BreakBlockAction(int tick, int x, int y, int z, boolean drop, String data) {
+    public BreakBlockAction(int tick, BlockPos blockPos, BlockState blockState, boolean drop) {
         super(tick, ActionType.BLOCK_BREAK);
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.x = blockPos.getX();
+        this.y = blockPos.getY();
+        this.z = blockPos.getZ();
         this.drop = drop;
-        this.data = data;
+        this.data = NbtUtils.writeBlockState(blockState).toString();
     }
 
     public BlockPos getBlockPos() {

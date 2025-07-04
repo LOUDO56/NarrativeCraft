@@ -10,7 +10,7 @@ import net.minecraft.world.phys.BlockHitResult;
 
 public class RightClickBlock {
     public static InteractionResult onRightClickBlock(Player player, Level level, InteractionHand hand, BlockHitResult blockHitResult) {
-        if(!level.isClientSide && NarrativeCraftMod.server != null) {
+        if(level.isClientSide && NarrativeCraftMod.server != null) {
             ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(player.getUUID());
             OnRightClickBlock.onRightClick(blockHitResult.getDirection(), blockHitResult.getBlockPos(), hand, blockHitResult.isInside(), serverPlayer);
         }

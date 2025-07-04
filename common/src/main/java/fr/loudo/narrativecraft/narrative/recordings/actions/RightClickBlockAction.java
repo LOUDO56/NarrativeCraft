@@ -40,6 +40,7 @@ public class RightClickBlockAction extends Action {
         BlockPos blockPos = new BlockPos(x, y, z);
 
         ItemStack itemStack = player.getItemInHand(InteractionHand.valueOf(handName));
+        itemStack.setCount(2);
         BlockState blockState = player.serverLevel().getBlockState(blockPos);
         BlockHitResult blockHitResult = new BlockHitResult(
                 new Vec3(x, y, z),
@@ -47,17 +48,14 @@ public class RightClickBlockAction extends Action {
                 blockPos,
                 inside
         );
-        InteractionResult result = blockState.useItemOn(itemStack, player.serverLevel(), player, InteractionHand.valueOf(handName), blockHitResult);
+        UseOnContext useOnContext = new UseOnContext(
+                player,
+                InteractionHand.valueOf(handName),
+                blockHitResult
+        );
+        InteractionResult result = itemStack.getItem().useOn(useOnContext);
         if(!result.consumesAction()) {
             blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
-        }
-        if(itemStack.getItem() instanceof AxeItem) {
-            UseOnContext useOnContext = new UseOnContext(
-                    player,
-                    InteractionHand.valueOf(handName),
-                    blockHitResult
-            );
-            itemStack.getItem().useOn(useOnContext);
         }
 
     }
