@@ -124,7 +124,7 @@ public class CutsceneController extends KeyframeControllerBase {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player.serverLevel(), playbackType, false);
             for(Playback playback : subscene.getPlaybackList()) {
-                LivingEntity entity = playback.getEntity();
+                LivingEntity entity = playback.getMasterEntity();
                 for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
                     if(!serverPlayer.getName().getString().equals(player.getName().getString())) {
                         player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
@@ -465,38 +465,48 @@ public class CutsceneController extends KeyframeControllerBase {
     private void checkEndedPlayback() {
         for(Subscene subscene : cutscene.getSubsceneList()) {
             for(Playback playback : subscene.getPlaybackList()) {
-                if(playback.hasEnded() && playback.getEntity() != null) {
-                    player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
+                if(playback.hasEnded() && playback.getMasterEntity() != null) {
+                    player.connection.send(new ClientboundHurtAnimationPacket(playback.getMasterEntity()));
                 }
             }
         }
         for(Playback playback : playbackList) {
-            if(playback.hasEnded() && playback.getEntity() != null) {
-                player.connection.send(new ClientboundHurtAnimationPacket(playback.getEntity()));
+            if(playback.hasEnded() && playback.getMasterEntity() != null) {
+                player.connection.send(new ClientboundHurtAnimationPacket(playback.getMasterEntity()));
             }
         }
     }
 
     public int getTotalTick() {
-        if(totalTick == 0) {
-            int totalTick = 0;
-            int totalPlayback = 0;
-            for(Subscene subscene : cutscene.getSubsceneList()) {
-                for(Playback playback : subscene.getPlaybackList()) {
-                    totalTick += playback.getAnimation().getActionsData().getMovementData().size();
-                    totalPlayback++;
+        if (totalTick == 0) {
+            int total = 0;
+            int count = 0;
+
+            for (Subscene subscene : cutscene.getSubsceneList()) {
+                for (Playback playback : subscene.getPlaybackList()) {
+                    total += getMaxTickOfPlayback(playback);
+                    count++;
                 }
             }
-            for(Playback playback : playbackList) {
-                totalTick += playback.getAnimation().getActionsData().getMovementData().size();
-                totalPlayback++;
+
+            for (Playback playback : playbackList) {
+                total += getMaxTickOfPlayback(playback);
+                count++;
             }
-            if(totalTick == 0) return 0;
-            return totalTick / totalPlayback;
-        } else {
-            return totalTick;
+
+            if (count == 0) return 0;
+            totalTick = total / count;
         }
+        return totalTick;
     }
+
+    private int getMaxTickOfPlayback(Playback playback) {
+        return playback.getAnimation().getActionsData().stream()
+                .mapToInt(data -> data.getMovementData().size())
+                .max()
+                .orElse(0);
+    }
+
 
     public StoryHandler getStoryHandler() {
         return storyHandler;
@@ -547,7 +557,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public Animation getAnimationFromEntity(Entity entity) {
         for(Playback playback : playbackList) {
-            if(playback.getEntity().getUUID().equals(entity.getUUID())) {
+            if(playback.getMasterEntity().getUUID().equals(entity.getUUID())) {
                 return playback.getAnimation();
             }
         }

@@ -1,10 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
-import fr.loudo.narrativecraft.narrative.recordings.actions.EntityByteAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.ItemChangeAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.LivingEntityByteAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteCraftListeners;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
 import fr.loudo.narrativecraft.platform.Services;
@@ -13,7 +10,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
@@ -40,20 +36,18 @@ public class ActionDifferenceListener {
     private final EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
     private final EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
 
-    private int tick;
+    private final ActionsData actionsData;
     private final Recording recording;
-    private final ServerPlayer player;
     private Pose poseState;
     private byte entityByteState;
     private byte livingEntityByteState;
     private final HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
     private List<ModsListenerImpl> modsListenerList;
 
-    public ActionDifferenceListener(Recording recording) {
-        this.player = recording.getPlayer();
-        this.recording = recording;
+    public ActionDifferenceListener(ActionsData actionsData, Recording recording) {
+        this.actionsData = actionsData;
         this.currentItemInEquipmentSlot = new HashMap<>();
-        this.tick = 0;
+        this.recording = recording;
         initItemSlot();
         initModsListeners();
     }
@@ -80,33 +74,31 @@ public class ActionDifferenceListener {
         livingEntityByteListener();
         itemListener();
 
-        tick++;
-
     }
 
     private void poseListener() {
-        if(player.getPose() != poseState) {
-            PoseAction action = new PoseAction(tick, player.getPose(), poseState);
-            poseState = player.getPose();
-            recording.getActionsData().addAction(action);
+        if(actionsData.getEntity().getPose() != poseState) {
+            PoseAction action = new PoseAction(recording.getTick(), actionsData.getEntity().getPose(), poseState);
+            poseState = actionsData.getEntity().getPose();
+            actionsData.addAction(action);
         }
     }
 
     private void entityByteListener() {
-        byte entityCurrentByte = player.getEntityData().get(entityFlagByte);
+        byte entityCurrentByte = actionsData.getEntity().getEntityData().get(entityFlagByte);
         if(entityByteState != entityCurrentByte) {
-            EntityByteAction entityByteAction = new EntityByteAction(tick, entityCurrentByte, entityByteState);
+            EntityByteAction entityByteAction = new EntityByteAction(recording.getTick(), entityCurrentByte, entityByteState);
             entityByteState = entityCurrentByte;
-            recording.getActionsData().addAction(entityByteAction);
+            actionsData.addAction(entityByteAction);
         }
     }
 
     private void livingEntityByteListener() {
-        byte livingEntityCurrentByte = player.getEntityData().get(livingEntityFlagByte);
+        byte livingEntityCurrentByte = actionsData.getEntity().getEntityData().get(livingEntityFlagByte);
         if(livingEntityByteState != livingEntityCurrentByte) {
             livingEntityByteState = livingEntityCurrentByte;
-            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(tick, livingEntityCurrentByte);
-            recording.getActionsData().addAction(livingEntityByteAction);
+            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(recording.getTick(), livingEntityCurrentByte);
+            actionsData.addAction(livingEntityByteAction);
         }
     }
 
@@ -114,20 +106,20 @@ public class ActionDifferenceListener {
 
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             ItemStack itemFromSlot = currentItemInEquipmentSlot.get(equipmentSlot);
-            ItemStack currentItemFromSlot = player.getItemBySlot(equipmentSlot);
+            ItemStack currentItemFromSlot = actionsData.getEntity().getItemBySlot(equipmentSlot);
             if(Item.getId(itemFromSlot.getItem()) != Item.getId(currentItemFromSlot.getItem())) {
                 currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot.copy());
-                onItemChange(currentItemFromSlot, equipmentSlot, tick);
+                onItemChange(currentItemFromSlot, equipmentSlot, recording.getTick());
             }
         }
     }
 
     private void onItemChange(ItemStack itemStack, EquipmentSlot equipmentSlot, int tick) {
         if(itemStack.isEmpty()) {
-            recording.getActionsData().addAction(new ItemChangeAction(tick, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem())));
+            actionsData.addAction(new ItemChangeAction(tick, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem())));
             return;
         }
-        Tag tag = itemStack.save(player.registryAccess());
+        Tag tag = itemStack.save(actionsData.getEntity().registryAccess());
         Tag componentsTag = ((CompoundTag)tag).get("components");
         ItemChangeAction itemChangeAction;
         if(componentsTag == null) {
@@ -135,18 +127,18 @@ public class ActionDifferenceListener {
         } else {
             itemChangeAction = new ItemChangeAction(tick, BuiltInRegistries.ITEM.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }
-        recording.getActionsData().addAction(itemChangeAction);
+        actionsData.addAction(itemChangeAction);
     }
 
-    public int getTick() {
-        return tick;
+    public Recording getRecording() {
+        return recording;
     }
 
     public List<ModsListenerImpl> getModsListenerList() {
         return modsListenerList;
     }
 
-    public Recording getRecording() {
-        return recording;
+    public ActionsData getActionsData() {
+        return actionsData;
     }
 }

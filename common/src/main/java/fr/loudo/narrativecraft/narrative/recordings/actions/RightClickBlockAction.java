@@ -8,7 +8,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.AxeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,15 +47,15 @@ public class RightClickBlockAction extends Action {
                 blockPos,
                 inside
         );
-        UseOnContext useOnContext = new UseOnContext(
-                player,
-                InteractionHand.valueOf(handName),
-                blockHitResult
-        );
-        InteractionResult result = itemStack.getItem().useOn(useOnContext);
-        if(!result.consumesAction()) {
-            blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
-        }
+//        UseOnContext useOnContext = new UseOnContext(
+//                player,
+//                InteractionHand.valueOf(handName),
+//                blockHitResult
+//        );
+//        InteractionResult result = itemStack.getItem().useOn(useOnContext);
+//        if(!result.consumesAction()) {
+//            blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
+//        }
 
     }
 

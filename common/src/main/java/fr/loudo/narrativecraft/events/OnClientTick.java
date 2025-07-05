@@ -8,6 +8,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogImpl;
+import fr.loudo.narrativecraft.narrative.recordings.Recording;
+import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -21,11 +23,14 @@ import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.server.level.ServerPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class OnClientTick {
+
+    private static final RecordingHandler RECORDING_HANDLER = NarrativeCraftMod.getInstance().getRecordingHandler();
 
     public static void clientTick(Minecraft client) {
 
@@ -34,6 +39,12 @@ public class OnClientTick {
         Dialog testDialog = NarrativeCraftMod.getInstance().getTestDialog();
         if(testDialog != null) {
             testDialog.getDialogEntityBobbing().tick();
+        }
+
+        for(Recording recording : RECORDING_HANDLER.getRecordings()) {
+            if(recording.isRecording()) {
+                recording.tick();
+            }
         }
 
         // Handle ink action currently playing.

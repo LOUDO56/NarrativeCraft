@@ -19,6 +19,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
+import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionGsonParser;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -160,7 +161,9 @@ public class ChapterManager {
                             }
                         }
                         animation.setScene(scene);
-                        animation.getActionsData().getActions().removeIf(Objects::isNull);
+                        for(ActionsData actionsData : animation.getActionsData()) {
+                            actionsData.getActions().removeIf(Objects::isNull);
+                        }
                         scene.addAnimation(animation);
                     } catch (IOException e) {
                         NarrativeCraftMod.LOG.warn("Animation file {} does not exists, passing...", animationFile.getName());
@@ -209,6 +212,7 @@ public class ChapterManager {
                         cutscene.setScene(scene);
                         for (String animationName : cutscene.getAnimationListString()) {
                             Animation animation = scene.getAnimationByName(animationName);
+                            if(animation == null) continue;
                             animation.setScene(scene);
                             cutscene.getAnimationList().add(animation);
                         }

@@ -22,7 +22,7 @@ public class ItemStackMixin {
             Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
             if(recording != null) {
                 UseItemAction useItemAction = new UseItemAction(recording.getTick(), hand);
-                recording.getActionsData().addAction(useItemAction);
+                recording.getActionDataFromEntity(player).addAction(useItemAction);
             }
         }
     }

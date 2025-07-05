@@ -10,6 +10,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -29,7 +31,7 @@ public class OnRightClickBlock {
                     hand.name(),
                     inside
             );
-            recording.getActionsData().addAction(rightClickBlockAction);
+            recording.getActionDataFromEntity(serverPlayer).addAction(rightClickBlockAction);
         }
     }
 

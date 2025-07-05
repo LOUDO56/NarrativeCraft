@@ -51,7 +51,7 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         List<StoryElementList.StoryEntryData> animationEntries = new ArrayList<>();
         for(Animation animation : scene.getAnimationList()) {
             Button animationButton = Button.builder(Component.literal(animation.getName()), button -> {
-                spawnEntity(animation, animation.getActionsData().getMovementData().size() - 1);
+                spawnEntity(animation, animation.getActionsData().getFirst().getMovementData().size() - 1);
                 this.minecraft.setScreen(this);
             }).build();
             animationEntries.add(new StoryElementList.StoryEntryData(animationButton));
@@ -65,11 +65,11 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
                 int lastLocIndex = (int) (lastKeyframe.getTick() + 2 + ((lastKeyframe.getTransitionDelay() / 1000) * 20));
                 for(Subscene subscene : cutscene.getSubsceneList()) {
                     for(Animation animation : subscene.getAnimationList()) {
-                        spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getMovementData().size() - 1));
+                        spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getFirst().getMovementData().size() - 1));
                     }
                 }
                 for(Animation animation : cutscene.getAnimationList()) {
-                    spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getMovementData().size() - 1));
+                    spawnEntity(animation, Math.min(lastLocIndex, animation.getActionsData().getFirst().getMovementData().size() - 1));
                 }
                 this.minecraft.setScreen(this);
             }).build();
@@ -81,7 +81,7 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
         for(Subscene subscene : scene.getSubsceneList()) {
             Button subsceneButton = Button.builder(Component.literal(subscene.getName()), button -> {
                 for(Animation animation : subscene.getAnimationList()) {
-                    spawnEntity(animation, animation.getActionsData().getMovementData().size() - 1);
+                    spawnEntity(animation, animation.getActionsData().getFirst().getMovementData().size() - 1);
                 }
                 this.minecraft.setScreen(this);
             }).build();
@@ -103,8 +103,8 @@ public class CameraAngleAddRecord extends OptionsSubScreen {
             minecraft.player.displayClientMessage(Translation.message("character.spawn.fail", animation.getName()), false);
             return;
         }
-        MovementData movementData = animation.getActionsData().getMovementData().get(index);
-        List<Action> actions = animation.getActionsData().getActions().stream()
+        MovementData movementData = animation.getActionsData().getFirst().getMovementData().get(index);
+        List<Action> actions = animation.getActionsData().getFirst().getActions().stream()
                 .filter(action -> index >= action.getTick())
                 .toList();
         if(cameraAngleGroup.getCharacterStoryData(animation.getCharacter().getName()) != null) {

@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
-import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 
 public class HurtAction extends Action {
@@ -13,7 +13,8 @@ public class HurtAction extends Action {
     @Override
     public void execute(LivingEntity entity) {
         entity.getServer().getPlayerList().broadcastAll(new ClientboundHurtAnimationPacket(entity.getId(), 0F));
-        entity.makeSound(SoundEvents.GENERIC_HURT);
+        DamageSource damageSource = new DamageSource(entity.damageSources().generic().typeHolder());
+        entity.handleDamageEvent(damageSource);
     }
 
     @Override

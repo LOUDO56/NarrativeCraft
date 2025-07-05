@@ -13,22 +13,25 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Animation extends NarrativeEntry {
 
     private transient Scene scene;
     private CharacterStory character;
-    private ActionsData actionsData;
+    private List<ActionsData> actionsData;
     private String skinName = "main.png";
 
     public Animation(Scene scene, String name, String description) {
         super(name, description);
         this.scene = scene;
-        this.actionsData = new ActionsData();
+        this.actionsData = new ArrayList<>();
     }
 
     public Animation(String name, String description) {
         super(name, description);
-        this.actionsData = new ActionsData();
+        this.actionsData = new ArrayList<>();
     }
 
     @Override
@@ -64,11 +67,11 @@ public class Animation extends NarrativeEntry {
         this.scene = scene;
     }
 
-    public ActionsData getActionsData() {
+    public List<ActionsData> getActionsData() {
         return actionsData;
     }
 
-    public void setActionsData(ActionsData actionsData) {
+    public void setActionsData(List<ActionsData> actionsData) {
         this.actionsData = actionsData;
     }
 

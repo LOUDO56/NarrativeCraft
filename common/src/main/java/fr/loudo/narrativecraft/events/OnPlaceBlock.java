@@ -17,24 +17,19 @@ public class OnPlaceBlock {
 
         if (NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(serverPlayer)) {
             Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(serverPlayer);
-            placeBlockManually(blockState, blockPos, recording, recording.getTick());
+            PlaceBlockAction placeBlockAction = new PlaceBlockAction(recording.getTick(), blockPos, blockState);
+            recording.getActionDataFromEntity(serverPlayer).addAction(placeBlockAction);
+            if(blockState.getBlock() instanceof BedBlock) {
+                BlockPos headPos = blockPos.relative(blockState.getValue(BedBlock.FACING));
+                blockState = blockState.setValue(BedBlock.PART, BedPart.HEAD);
+                PlaceBlockAction headBedplaceBlockAction = new PlaceBlockAction(recording.getTick(), headPos, blockState);
+                recording.getActionDataFromEntity(serverPlayer).addAction(headBedplaceBlockAction);
+            } else if (blockState.getBlock() instanceof DoorBlock) {
+                BlockPos upperPos = blockPos.above();
+                blockState = blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
+                PlaceBlockAction upperDoorPlaceAction = new PlaceBlockAction(recording.getTick(), upperPos, blockState);
+                recording.getActionDataFromEntity(serverPlayer).addAction(upperDoorPlaceAction);
+            }
         }
     }
-
-    public static void placeBlockManually(BlockState blockState, BlockPos blockPos, Recording recording, int tick) {
-        PlaceBlockAction placeBlockAction = new PlaceBlockAction(tick, blockPos, blockState);
-        recording.getActionsData().addAction(placeBlockAction);
-        if(blockState.getBlock() instanceof BedBlock) {
-            BlockPos headPos = blockPos.relative(blockState.getValue(BedBlock.FACING));
-            blockState = blockState.setValue(BedBlock.PART, BedPart.HEAD);
-            PlaceBlockAction headBedplaceBlockAction = new PlaceBlockAction(tick, headPos, blockState);
-            recording.getActionsData().addAction(headBedplaceBlockAction);
-        } else if (blockState.getBlock() instanceof DoorBlock) {
-            BlockPos upperPos = blockPos.above();
-            blockState = blockState.setValue(DoorBlock.HALF, DoubleBlockHalf.UPPER);
-            PlaceBlockAction upperDoorPlaceAction = new PlaceBlockAction(tick, upperPos, blockState);
-            recording.getActionsData().addAction(upperDoorPlaceAction);
-        }
-    }
-
 }

@@ -31,7 +31,7 @@ public class RecordingHandler {
 
     public Recording getRecordingOfPlayer(Player player) {
         for(Recording recording : recordings) {
-            if(recording.getPlayer().getName().getString().equals(player.getName().getString())) {
+            if(recording.getEntity().getName().getString().equals(player.getName().getString())) {
                 return recording;
             }
         }
@@ -40,7 +40,7 @@ public class RecordingHandler {
 
     public Recording getRecordingOfPlayer(ServerPlayer player) {
         for(Recording recording : recordings) {
-            if(recording.getPlayer().getName().getString().equals(player.getName().getString())) {
+            if(recording.getEntity().getName().getString().equals(player.getName().getString())) {
                 return recording;
             }
         }
@@ -49,7 +49,7 @@ public class RecordingHandler {
 
     public boolean isPlayerRecording(ServerPlayer player) {
         for(Recording recording : recordings) {
-            if(recording.getPlayer().getName().getString().equals(player.getName().getString()) && recording.isRecording()) {
+            if(recording.getEntity().getName().getString().equals(player.getName().getString()) && recording.isRecording()) {
                 return true;
             }
         }

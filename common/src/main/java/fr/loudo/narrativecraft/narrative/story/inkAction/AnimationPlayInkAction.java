@@ -70,7 +70,7 @@ public class AnimationPlayInkAction extends InkAction {
                     if(inkAction instanceof AnimationPlayInkAction action) {
                         if(animation.getName().equals(action.animation.getName())) {
                             if(storyHandler.getCurrentDialogBox() instanceof Dialog dialog) {
-                                if(dialog.getEntityClient().getUUID().equals(action.playback.getEntity().getUUID())) {
+                                if(dialog.getEntityClient().getUUID().equals(action.playback.getMasterEntity().getUUID())) {
                                     storyHandler.setCurrentDialogBox(null);
                                 }
                             }

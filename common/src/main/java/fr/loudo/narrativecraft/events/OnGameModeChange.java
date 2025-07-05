@@ -12,7 +12,7 @@ public class OnGameModeChange {
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
         if(recording != null) {
             GameModeAction gameModeAction = new GameModeAction(recording.getTick(), gameType, oldGameType);
-            recording.getActionsData().addAction(gameModeAction);
+            recording.getActionDataFromEntity(player).addAction(gameModeAction);
         }
     }
 

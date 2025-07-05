@@ -1,24 +1,9 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.NbtUtils;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.block.BedBlock;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.DoorBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BedPart;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,23 +12,29 @@ import java.util.Map;
 
 public class ActionsData {
 
-    private List<MovementData> movementData;
-    private List<Action> actions;
+    private transient LivingEntity entity;
+    private int entityId;
+    private int spawnTick;
+    private final List<MovementData> movementData;
+    private final List<Action> actions;
 
-    public ActionsData() {
+    public ActionsData(LivingEntity entity, int spawnTick) {
         this.movementData = new ArrayList<>();
         this.actions = new ArrayList<>();
+        this.entity = entity;
+        entityId = BuiltInRegistries.ENTITY_TYPE.getId(entity.getType());
+        this.spawnTick = spawnTick;
     }
 
-    public void addMovement(ServerPlayer player) {
+    public void addMovement() {
         MovementData currentLoc = new MovementData(
-                player.getX(),
-                player.getY(),
-                player.getZ(),
-                player.getXRot(),
-                player.getYRot(),
-                player.getYHeadRot(),
-                player.onGround()
+                entity.getX(),
+                entity.getY(),
+                entity.getZ(),
+                entity.getXRot(),
+                entity.getYRot(),
+                entity.getYHeadRot(),
+                entity.onGround()
         );
         movementData.add(currentLoc);
     }
@@ -58,6 +49,22 @@ public class ActionsData {
 
     public List<Action> getActions() {
         return actions;
+    }
+
+    public LivingEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(LivingEntity entity) {
+        this.entity = entity;
+    }
+
+    public int getSpawnTick() {
+        return spawnTick;
+    }
+
+    public int getEntityId() {
+        return entityId;
     }
 
     public void reset(LivingEntity entity) {

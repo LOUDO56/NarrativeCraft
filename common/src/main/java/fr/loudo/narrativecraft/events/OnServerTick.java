@@ -10,21 +10,14 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.monster.EnderMan;
 
 public class OnServerTick {
 
-    private static final RecordingHandler RECORDING_HANDLER = NarrativeCraftMod.getInstance().getRecordingHandler();
     private static final PlaybackHandler PLAYBACK_HANDLER = NarrativeCraftMod.getInstance().getPlaybackHandler();
 
     public static void serverTick() {
         if(Minecraft.getInstance().isPaused()) return;
-        for(Recording recording : RECORDING_HANDLER.getRecordings()) {
-            if(recording.isRecording()) {
-                ServerPlayer player = recording.getPlayer();
-                recording.getActionsData().addMovement(player);
-                recording.getActionDifference().listenDifference();
-            }
-        }
         for (Playback playback : PLAYBACK_HANDLER.getPlaybacks()) {
             if (playback.isPlaying()) {
                 playback.next();
