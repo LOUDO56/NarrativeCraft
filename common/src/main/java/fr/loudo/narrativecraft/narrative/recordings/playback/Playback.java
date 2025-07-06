@@ -9,10 +9,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
-import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
-import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
-import fr.loudo.narrativecraft.narrative.recordings.actions.PoseAction;
-import fr.loudo.narrativecraft.narrative.recordings.actions.SleepAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
@@ -61,10 +58,10 @@ public class Playback {
 
         ActionsData masterEntityData = animation.getActionsData().getFirst();
         MovementData firstLoc = masterEntityData.getMovementData().getFirst();
-        spawnMasterEntity(firstLoc);
         PlaybackData playbackData = new PlaybackData(masterEntityData);
         playbackData.setEntity(masterEntity);
         entityPlaybacks.add(playbackData);
+        spawnMasterEntity(firstLoc);
 
         for (int i = 1; i < animation.getActionsData().size(); i++) {
             ActionsData actionsData = animation.getActionsData().get(i);
@@ -80,7 +77,9 @@ public class Playback {
         if (playbackType == PlaybackType.DEVELOPMENT) {
             NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(character);
         }
-
+        for(PlaybackData playbackData1 : entityPlaybacks) {
+            actionListener(playbackData1);
+        }
         return true;
     }
 
@@ -109,7 +108,7 @@ public class Playback {
             stop();
         }
         for(PlaybackData playbackData : entityPlaybacks) {
-            actionListener(playbackData.actionsData);
+            actionListener(playbackData);
         }
     }
 
@@ -117,6 +116,7 @@ public class Playback {
         for (PlaybackData playbackData : entityPlaybacks) {
             if (playbackData.getEntity() == null) continue;
 
+            playbackData.actionsData.reset(playbackData.entity);
             ActionsData actionsData = playbackData.getActionsData();
             List<MovementData> movementData = actionsData.getMovementData();
             if (movementData.isEmpty()) continue;
@@ -136,13 +136,17 @@ public class Playback {
         newTick = Math.min(newTick, animation.getActionsData().getFirst().getMovementData().size() - 1);
         for (PlaybackData playbackData : entityPlaybacks) {
             ActionsData actionsData = playbackData.getActionsData();
-            if(actionsData.getEntity() != null && actionsData.getEntity().equals(masterEntity)) {
+            if(playbackData.getEntity() != null && playbackData.getEntity().equals(masterEntity)) {
                 MovementData movementData = actionsData.getMovementData().get(newTick);
                 playbackData.setLocalTick(newTick);
                 if(seamless) {
                     moveEntitySilent(masterEntity, movementData);
                 } else {
-                    masterEntity.remove(Entity.RemovalReason.KILLED);
+                    if(masterEntity instanceof FakePlayer fakePlayer) {
+                        serverLevel.getServer().getPlayerList().remove(fakePlayer);
+                    } else {
+                        masterEntity.remove(Entity.RemovalReason.KILLED);
+                    }
                     spawnMasterEntity(movementData);
                 }
             } else {
@@ -152,12 +156,12 @@ public class Playback {
             if(tickDiff > 0) {
                 for (int i = globalTick; i < newTick; i++) {
                     globalTick = i;
-                    actionListener(actionsData);
+                    actionListener(playbackData);
                 }
             } else {
                 for (int i = globalTick; i > newTick; i--) {
                     globalTick = i;
-                    actionListenerRewind(actionsData);
+                    actionListenerRewind(playbackData);
                 }
             }
         }
@@ -165,34 +169,45 @@ public class Playback {
         this.hasEnded = entityPlaybacks.stream().allMatch(PlaybackData::hasEnded);
     }
 
-    public void actionListener(ActionsData actionsData) {
-        if(actionsData.getEntity() == null) return;
-        List<Action> actionToBePlayed = actionsData.getActions().stream().filter(action -> globalTick == action.getTick()).toList();
+    public void actionListener(PlaybackData playbackData) {
+        if(playbackData.getEntity() == null) return;
+        List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            action.execute(actionsData.getEntity());
+            if(action instanceof RidingAction ridingAction) {
+                ridingAction.setPlaybackDataList(entityPlaybacks);
+            }
+            if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
+                action.execute(livingEntity);
+            }
         }
     }
 
-    public void actionListenerRewind(ActionsData actionsData) {
-        if(actionsData.getEntity() == null) return;
-        List<Action> actionToBePlayed = actionsData.getActions().stream().filter(action -> globalTick == action.getTick()).toList();
+    public void actionListenerRewind(PlaybackData playbackData) {
+        if(playbackData.getEntity() == null) return;
+        List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         actionToBePlayed = actionToBePlayed.reversed();
         for(Action action : actionToBePlayed) {
             if (action instanceof PoseAction poseAction) {
-                poseAction.rewind(actionsData.getEntity());
+                if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
+                    poseAction.rewind(livingEntity);
+                }
                 if (poseAction.getPreviousPose() == Pose.SLEEPING) {
-                    SleepAction previousSleepAction = (SleepAction) actionsData
+                    SleepAction previousSleepAction = (SleepAction) playbackData.getActionsData()
                             .getActions()
                             .stream()
                             .filter(action1 -> globalTick <= action.getTick() && action1 instanceof SleepAction)
                             .toList()
                             .getLast();
                     if (previousSleepAction != null) {
-                        previousSleepAction.execute(actionsData.getEntity());
+                        if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
+                            previousSleepAction.execute(livingEntity);
+                        }
                     }
                 }
             } else {
-                action.rewind(actionsData.getEntity());
+                if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
+                    action.rewind(livingEntity);
+                }
             }
         }
     }
@@ -229,7 +244,7 @@ public class Playback {
         }
 
         character.setEntity(masterEntity);
-        animation.getActionsData().getFirst().setEntity(masterEntity);
+        entityPlaybacks.getFirst().setEntity(masterEntity);
     }
 
     private void loadSkin() {
@@ -250,6 +265,7 @@ public class Playback {
         isPlaying = false;
         hasEnded = true;
         for(PlaybackData playbackData : entityPlaybacks) {
+            playbackData.actionsData.reset(playbackData.entity);
             playbackData.killEntity();
         }
     }
@@ -288,7 +304,7 @@ public class Playback {
     public static class PlaybackData {
 
         private final ActionsData actionsData;
-        private LivingEntity entity;
+        private Entity entity;
         private int localTick;
 
         public PlaybackData(ActionsData actionsData) {
@@ -311,7 +327,7 @@ public class Playback {
             MovementData current = movements.get(localTick);
             MovementData next = localTick + 1 < movements.size() ? movements.get(localTick + 1) : current;
 
-            moveEntity(actionsData.getEntity(), current, next, false);
+            moveEntity(current, next, false);
 
             localTick++;
         }
@@ -329,7 +345,7 @@ public class Playback {
             localTick = newTick - actionsData.getSpawnTick();
             MovementData movementData = actionsData.getMovementData().get(localTick);
             if(seamless) {
-                moveEntity(entity, movementData, movementData, true);
+                moveEntity(movementData, movementData, true);
             } else {
                 killEntity();
                 spawnEntity(movementData);
@@ -349,15 +365,14 @@ public class Playback {
         private void spawnEntity(MovementData location) {
             ServerLevel serverLevel = Utils.getServerLevel();
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(actionsData.getEntityId());
-            entity = (LivingEntity) entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            entity = entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
             if (entity instanceof Mob mob) mob.setNoAi(true);
             if(entity == null) return;
-            moveEntity(entity, location, location, true);
+            moveEntity(location, location, true);
             serverLevel.addFreshEntity(entity);
-            actionsData.setEntity(entity);
         }
 
-        private void moveEntity(Entity entity, MovementData current, MovementData next, boolean silent) {
+        private void moveEntity(MovementData current, MovementData next, boolean silent) {
             entity.setXRot(current.getXRot());
             entity.setYRot(current.getYRot());
             entity.setYHeadRot(current.getYHeadRot());
@@ -388,7 +403,7 @@ public class Playback {
             this.localTick = localTick;
         }
 
-        public LivingEntity getEntity() {
+        public Entity getEntity() {
             return entity;
         }
 

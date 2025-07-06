@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
@@ -12,18 +13,20 @@ import java.util.Map;
 
 public class ActionsData {
 
-    private transient LivingEntity entity;
+    private transient Entity entity;
+    private int entityIdRecording;
     private int entityId;
     private int spawnTick;
     private final List<MovementData> movementData;
     private final List<Action> actions;
 
-    public ActionsData(LivingEntity entity, int spawnTick) {
+    public ActionsData(Entity entity, int spawnTick) {
         this.movementData = new ArrayList<>();
         this.actions = new ArrayList<>();
         this.entity = entity;
         entityId = BuiltInRegistries.ENTITY_TYPE.getId(entity.getType());
         this.spawnTick = spawnTick;
+        entityIdRecording = -1;
     }
 
     public void addMovement() {
@@ -51,7 +54,7 @@ public class ActionsData {
         return actions;
     }
 
-    public LivingEntity getEntity() {
+    public Entity getEntity() {
         return entity;
     }
 
@@ -63,26 +66,40 @@ public class ActionsData {
         return spawnTick;
     }
 
+    public void setSpawnTick(int spawnTick) {
+        this.spawnTick = spawnTick;
+    }
+
+    public int getEntityIdRecording() {
+        return entityIdRecording;
+    }
+
+    public void setEntityIdRecording(int entityIdRecording) {
+        this.entityIdRecording = entityIdRecording;
+    }
+
     public int getEntityId() {
         return entityId;
     }
 
-    public void reset(LivingEntity entity) {
-        Map<BlockPos, Action> latestActions = new HashMap<>();
+    public void reset(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity) {
+            Map<BlockPos, Action> latestActions = new HashMap<>();
 
-        for (Action action : actions) {
-            BlockPos pos = getPosFromAction(action);
-            if(pos == null) continue;
-            latestActions.putIfAbsent(pos, action);
-        }
+            for (Action action : actions) {
+                BlockPos pos = getPosFromAction(action);
+                if(pos == null) continue;
+                latestActions.putIfAbsent(pos, action);
+            }
 
-        for (Map.Entry<BlockPos, Action> entry : latestActions.entrySet()) {
-            Action action = entry.getValue();
+            for (Map.Entry<BlockPos, Action> entry : latestActions.entrySet()) {
+                Action action = entry.getValue();
 
-            if (action instanceof PlaceBlockAction place) {
-                place.rewind(entity);
-            } else if (action instanceof BreakBlockAction breakBlockAction) {
-                breakBlockAction.rewind(entity);
+                if (action instanceof PlaceBlockAction place) {
+                    place.rewind(livingEntity);
+                } else if (action instanceof BreakBlockAction breakBlockAction) {
+                    breakBlockAction.rewind(livingEntity);
+                }
             }
         }
 

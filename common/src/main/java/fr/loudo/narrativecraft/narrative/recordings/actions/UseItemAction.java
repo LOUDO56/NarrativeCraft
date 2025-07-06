@@ -6,7 +6,9 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 
 public class UseItemAction extends Action {
 
@@ -22,6 +24,7 @@ public class UseItemAction extends Action {
         if(entity instanceof FakePlayer fakePlayer) {
             ServerLevel serverLevel = Utils.getServerLevel();
             ItemStack itemStack = entity.getItemInHand(InteractionHand.valueOf(handName));
+            if(itemStack.getItem() instanceof SpawnEggItem || itemStack.getItem() instanceof BoatItem) return;
             itemStack.setCount(2);
             itemStack.getItem().use(serverLevel, fakePlayer, InteractionHand.valueOf(handName));
         }

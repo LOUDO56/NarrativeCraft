@@ -10,6 +10,7 @@
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
     "ServerLevelMixin",
+    "ServerPlayerCommonMixin",
     "fields.ArmorStandFields",
     "fields.DisplayFields",
     "fields.ItemDisplayFields",
@@ -19,7 +20,6 @@
   "client": [
     "CameraMixin",
     "GameRendererMixin",
-    "GuiMixin",
     "LevelRendererMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",

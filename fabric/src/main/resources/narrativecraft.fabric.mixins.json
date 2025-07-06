@@ -8,7 +8,7 @@
     "BedItemMixin",
     "BlockItemMixin",
     "DoubleHighBlockItemMixin",
-    "ServerPlayerMixin"
+    "ServerPlayerCommonMixin"
   ],
   "client": [
     "MinecraftMixin"

@@ -15,5 +15,6 @@ public enum ActionType {
     EMOTE,
     SLEEP,
     USE_ITEM,
-    GAMEMODE
+    GAMEMODE,
+    RIDE
 }

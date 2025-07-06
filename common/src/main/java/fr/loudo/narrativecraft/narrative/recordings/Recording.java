@@ -10,18 +10,23 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsLi
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.*;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.projectile.EyeOfEnder;
+import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
+import net.minecraft.world.entity.vehicle.VehicleEntity;
+import net.minecraft.world.item.ProjectileItem;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
 
+    private final AtomicInteger ids = new AtomicInteger();
     private final RecordingData entityRecorderData;
     private final List<RecordingData> recordingDataList;
     private List<Entity> trackedEntities;
@@ -32,24 +37,34 @@ public class Recording {
         tick = 0;
         this.entityRecorderData = new RecordingData(entity, this);
         entityRecorderData.savingTrack = true;
+        entityRecorderData.actionsData.setEntityIdRecording(ids.incrementAndGet());
         this.recordingDataList = new ArrayList<>();
+        trackedEntities = new ArrayList<>();
         this.isRecording = false;
     }
 
     public void tick() {
 
-        trackedEntities = entityRecorderData.entity.level().getEntities(entityRecorderData.entity, entityRecorderData.entity.getBoundingBox().inflate(30));
-
-        Set<UUID> trackedUUIDs = trackedEntities.stream()
+        List<UUID> trackedUUIDs = trackedEntities.stream()
                 .map(Entity::getUUID)
-                .collect(Collectors.toSet());
+                .toList();
 
         List<Entity> nearbyEntities = entityRecorderData.entity.level()
                 .getEntities(entityRecorderData.entity, entityRecorderData.entity.getBoundingBox().inflate(30));
 
         for (Entity entity : nearbyEntities) {
-            if (trackedUUIDs.contains(entity.getUUID()) && entity instanceof LivingEntity livingEntity) {
-                recordingDataList.add(new RecordingData(livingEntity, this));
+            if (!trackedUUIDs.contains(entity.getUUID())
+                    && !(entity instanceof ProjectileItem)
+                    && !(entity instanceof EyeOfEnder)
+                    && !(entity instanceof ThrowableItemProjectile)
+                    && !(entity instanceof ItemEntity)
+            ) {
+                trackedEntities.add(entity);
+                RecordingData recordingData = new RecordingData(entity, this);
+                recordingDataList.add(recordingData);
+                if(entity instanceof VehicleEntity || entity instanceof AbstractHorse) {
+                    trackEntity(entity, tick);
+                }
             }
         }
 
@@ -63,6 +78,7 @@ public class Recording {
     public boolean start() {
         if(isRecording) return false;
         recordingDataList.clear();
+        trackedEntities.clear();
         recordingDataList.add(entityRecorderData);
         recordingHandler.removeRecording(this);
         recordingHandler.addRecording(this);
@@ -71,12 +87,6 @@ public class Recording {
             GameModeAction gameModeAction = new GameModeAction(0, player.gameMode.getGameModeForPlayer(), player.gameMode.getGameModeForPlayer());
             entityRecorderData.actionsData.addAction(gameModeAction);
         }
-        trackedEntities = entityRecorderData.entity.level().getEntities(entityRecorderData.entity, entityRecorderData.entity.getBoundingBox().inflate(30));
-        for(Entity entity : trackedEntities) {
-            if(entity instanceof LivingEntity livingEntity)  {
-                recordingDataList.add(new RecordingData(livingEntity, this));
-            }
-        }
         return true;
     }
 
@@ -84,6 +94,7 @@ public class Recording {
         if(!isRecording) return false;
         isRecording = false;
         for(RecordingData recordingData : recordingDataList) {
+            if(!(recordingData.entity instanceof LivingEntity)) continue;
             recordingData.actionsData.reset(recordingData.entity);
             for(ModsListenerImpl modsListener : recordingData.actionDifferenceListener.getModsListenerList()) {
                 modsListener.stop();
@@ -108,17 +119,17 @@ public class Recording {
         return false;
     }
 
-    public ActionsData getActionDataFromEntity(LivingEntity entity) {
+    public ActionsData getActionDataFromEntity(Entity entity) {
         for(RecordingData recordingData : recordingDataList) {
             if(recordingData.entity.getUUID().equals(entity.getUUID())) {
-                recordingData.savingTrack = true;
+                recordingData.setSavingTrack(true);
                 return recordingData.actionsData;
             }
         }
         return null;
     }
 
-    public RecordingData getRecordingDataFromEntity(LivingEntity entity) {
+    public RecordingData getRecordingDataFromEntity(Entity entity) {
         for(RecordingData recordingData : recordingDataList) {
             if(recordingData.entity.getUUID().equals(entity.getUUID())) {
                 return recordingData;
@@ -131,7 +142,7 @@ public class Recording {
         return isRecording;
     }
 
-    public LivingEntity getEntity() {
+    public Entity getEntity() {
         return entityRecorderData.entity;
     }
 
@@ -139,18 +150,58 @@ public class Recording {
         return tick;
     }
 
+    public AtomicInteger getIds() {
+        return ids;
+    }
+
+    public boolean trackEntity(Entity entity) {
+        RecordingData recordingData = getRecordingDataFromEntity(entity);
+        if(recordingData == null || recordingData.savingTrack) return false;
+        recordingData.setSavingTrack(true);
+        recordingData.actionsData.setSpawnTick(0);
+        recordingData.actionsData.setEntityIdRecording(ids.incrementAndGet());
+        return true;
+    }
+
+    public void trackEntity(Entity entity, int tickSpawn) {
+       if(!trackEntity(entity)) return;
+       RecordingData recordingData = getRecordingDataFromEntity(entity);
+       recordingData.actionsData.setSpawnTick(tickSpawn);
+    }
+
+
     public static class RecordingData {
 
-        private final LivingEntity entity;
+        private final Entity entity;
         private final ActionDifferenceListener actionDifferenceListener;
         private final ActionsData actionsData;
         private boolean savingTrack;
 
-        public RecordingData(LivingEntity entity, Recording recording) {
+        public RecordingData(Entity entity, Recording recording) {
             this.entity = entity;
             actionsData = new ActionsData(entity, recording.tick);
             actionDifferenceListener = new ActionDifferenceListener(actionsData, recording);
             savingTrack = false;
+        }
+
+        public Entity getEntity() {
+            return entity;
+        }
+
+        public ActionDifferenceListener getActionDifferenceListener() {
+            return actionDifferenceListener;
+        }
+
+        public ActionsData getActionsData() {
+            return actionsData;
+        }
+
+        public boolean isSavingTrack() {
+            return savingTrack;
+        }
+
+        public void setSavingTrack(boolean savingTrack) {
+            this.savingTrack = savingTrack;
         }
     }
 }

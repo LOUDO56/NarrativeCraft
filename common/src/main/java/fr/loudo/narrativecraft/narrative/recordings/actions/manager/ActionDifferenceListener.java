@@ -11,6 +11,7 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -69,10 +70,12 @@ public class ActionDifferenceListener {
 
     public void listenDifference() {
 
-        poseListener();
-        entityByteListener();
-        livingEntityByteListener();
-        itemListener();
+        if(actionsData.getEntity() instanceof LivingEntity) {
+            poseListener();
+            entityByteListener();
+            livingEntityByteListener();
+            itemListener();
+        }
 
     }
 
@@ -106,13 +109,13 @@ public class ActionDifferenceListener {
 
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             ItemStack itemFromSlot = currentItemInEquipmentSlot.get(equipmentSlot);
-            ItemStack currentItemFromSlot = actionsData.getEntity().getItemBySlot(equipmentSlot);
+            ItemStack currentItemFromSlot = ((LivingEntity)actionsData.getEntity()).getItemBySlot(equipmentSlot);
             if(Item.getId(itemFromSlot.getItem()) != Item.getId(currentItemFromSlot.getItem())) {
                 currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot.copy());
                 onItemChange(currentItemFromSlot, equipmentSlot, recording.getTick());
             }
         }
-    }
+}
 
     private void onItemChange(ItemStack itemStack, EquipmentSlot equipmentSlot, int tick) {
         if(itemStack.isEmpty()) {

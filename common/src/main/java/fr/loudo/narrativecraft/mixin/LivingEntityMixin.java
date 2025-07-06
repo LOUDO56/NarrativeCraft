@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -21,9 +22,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
-public class LivingEntityMixin {
+public abstract class LivingEntityMixin {
 
-    @Shadow public InteractionHand swingingArm;
+    @Shadow public abstract void remove(Entity.RemovalReason p_276115_);
 
     @Inject(method = "swing(Lnet/minecraft/world/InteractionHand;)V", at = @At(value = "HEAD"))
     private void onSwing(InteractionHand hand, CallbackInfo ci) {
@@ -60,6 +61,7 @@ public class LivingEntityMixin {
                 ActionsData actionsData = recording.getActionDataFromEntity(livingEntity);
                 if(actionsData != null) {
                     actionsData.addAction(hurtAction);
+                    recording.trackEntity(livingEntity, recording.getTick());
                 }
             }
         }

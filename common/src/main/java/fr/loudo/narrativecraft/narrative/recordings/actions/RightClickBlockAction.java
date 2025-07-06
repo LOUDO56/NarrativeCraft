@@ -8,7 +8,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.SpawnEggItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
@@ -39,6 +41,7 @@ public class RightClickBlockAction extends Action {
         BlockPos blockPos = new BlockPos(x, y, z);
 
         ItemStack itemStack = player.getItemInHand(InteractionHand.valueOf(handName));
+        if(itemStack.getItem() instanceof SpawnEggItem || itemStack.getItem() instanceof BoatItem) return;
         itemStack.setCount(2);
         BlockState blockState = player.serverLevel().getBlockState(blockPos);
         BlockHitResult blockHitResult = new BlockHitResult(
@@ -47,15 +50,15 @@ public class RightClickBlockAction extends Action {
                 blockPos,
                 inside
         );
-//        UseOnContext useOnContext = new UseOnContext(
-//                player,
-//                InteractionHand.valueOf(handName),
-//                blockHitResult
-//        );
-//        InteractionResult result = itemStack.getItem().useOn(useOnContext);
-//        if(!result.consumesAction()) {
-//            blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
-//        }
+        UseOnContext useOnContext = new UseOnContext(
+                player,
+                InteractionHand.valueOf(handName),
+                blockHitResult
+        );
+        InteractionResult result = itemStack.getItem().useOn(useOnContext);
+        if(!result.consumesAction()) {
+            blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
+        }
 
     }
 
