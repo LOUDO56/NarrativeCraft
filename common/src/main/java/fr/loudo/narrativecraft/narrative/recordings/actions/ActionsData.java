@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -17,6 +18,7 @@ public class ActionsData {
     private int entityIdRecording;
     private int entityId;
     private int spawnTick;
+    private String nbtData;
     private final List<MovementData> movementData;
     private final List<Action> actions;
 
@@ -24,6 +26,11 @@ public class ActionsData {
         this.movementData = new ArrayList<>();
         this.actions = new ArrayList<>();
         this.entity = entity;
+        CompoundTag compoundTag = entity.saveWithoutId(new CompoundTag());
+        compoundTag.remove("UUID");
+        compoundTag.remove("Pos");
+        compoundTag.remove("Motion");
+        nbtData = compoundTag.toString();
         entityId = BuiltInRegistries.ENTITY_TYPE.getId(entity.getType());
         this.spawnTick = spawnTick;
         entityIdRecording = -1;
@@ -80,6 +87,10 @@ public class ActionsData {
 
     public int getEntityId() {
         return entityId;
+    }
+
+    public String getNbtData() {
+        return nbtData;
     }
 
     public void reset(Entity entity) {

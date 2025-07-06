@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
@@ -22,6 +23,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 
 import java.io.File;
 import java.util.*;
@@ -366,8 +368,13 @@ public class Playback {
             ServerLevel serverLevel = Utils.getServerLevel();
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(actionsData.getEntityId());
             entity = entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
-            if (entity instanceof Mob mob) mob.setNoAi(true);
             if(entity == null) return;
+            try {
+                entity.load(Utils.nbtFromString(actionsData.getNbtData()));
+            } catch (CommandSyntaxException e) {
+                NarrativeCraftMod.LOG.error("Unexpected error when trying to load nbt entity data! ", e);
+            }
+            if (entity instanceof Mob mob) mob.setNoAi(true);
             moveEntity(location, location, true);
             serverLevel.addFreshEntity(entity);
         }
