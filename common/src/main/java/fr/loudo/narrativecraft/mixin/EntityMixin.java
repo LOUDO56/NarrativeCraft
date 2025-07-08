@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class EntityMixin {
 
     @Inject(method = "markHurt", at = @At("HEAD"))
-    private void mark(CallbackInfo ci) {
+    private void narrativecraft$mark(CallbackInfo ci) {
 
         if((Object) this instanceof ServerPlayer player) {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
@@ -28,5 +28,4 @@ public class EntityMixin {
         }
 
     }
-
 }

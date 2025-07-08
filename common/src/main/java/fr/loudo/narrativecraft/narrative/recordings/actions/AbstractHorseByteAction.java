@@ -1,0 +1,39 @@
+package fr.loudo.narrativecraft.narrative.recordings.actions;
+
+import fr.loudo.narrativecraft.mixin.fields.AbstractHorseFields;
+import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+
+public class AbstractHorseByteAction extends Action {
+
+    private final byte currentByte;
+    private final byte oldByte;
+
+    public AbstractHorseByteAction(int tick, byte currentByte, byte oldByte) {
+        super(tick, ActionType.ABSTRACT_HORSE_BYTE);
+        this.currentByte = currentByte;
+        this.oldByte = oldByte;
+    }
+
+    @Override
+    public void execute(LivingEntity entity) {
+        if(entity instanceof AbstractHorse abstractHorse) {
+            entity.getEntityData().set(AbstractHorseFields.getDATA_ID_FLAGS(), currentByte);
+            if(currentByte >= AbstractHorseFields.getFLAG_STANDING()) {
+                if(abstractHorse.getItemBySlot(EquipmentSlot.SADDLE).isEmpty()) {
+                    abstractHorse.ejectPassengers();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void rewind(LivingEntity entity) {
+        if(entity instanceof AbstractHorse) {
+            entity.getEntityData().set(AbstractHorseFields.getDATA_ID_FLAGS(), oldByte);
+        }
+    }
+}

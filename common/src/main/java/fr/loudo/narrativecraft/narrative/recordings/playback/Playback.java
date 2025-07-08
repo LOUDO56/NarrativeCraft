@@ -136,6 +136,7 @@ public class Playback {
 
     public void changeLocationByTick(int newTick, boolean seamless) {
         newTick = Math.min(newTick, animation.getActionsData().getFirst().getMovementData().size() - 1);
+        int oldTick = globalTick;
         for (PlaybackData playbackData : entityPlaybacks) {
             ActionsData actionsData = playbackData.getActionsData();
             if(playbackData.getEntity() != null && playbackData.getEntity().equals(masterEntity)) {
@@ -166,6 +167,7 @@ public class Playback {
                     actionListenerRewind(playbackData);
                 }
             }
+            globalTick = oldTick;
         }
         this.globalTick = newTick;
         this.hasEnded = entityPlaybacks.stream().allMatch(PlaybackData::hasEnded);
@@ -214,7 +216,6 @@ public class Playback {
         }
     }
 
-
     private void spawnMasterEntity(MovementData loc) {
         if (masterEntity != null && masterEntity.isAlive()) {
             moveEntitySilent(masterEntity, loc);
@@ -247,6 +248,13 @@ public class Playback {
 
         character.setEntity(masterEntity);
         entityPlaybacks.getFirst().setEntity(masterEntity);
+    }
+
+    public int getMaxTick() {
+        return animation.getActionsData().stream()
+                .mapToInt(data -> data.getMovementData().size())
+                .max()
+                .orElse(0);
     }
 
     private void loadSkin() {

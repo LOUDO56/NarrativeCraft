@@ -484,13 +484,13 @@ public class CutsceneController extends KeyframeControllerBase {
 
             for (Subscene subscene : cutscene.getSubsceneList()) {
                 for (Playback playback : subscene.getPlaybackList()) {
-                    total += getMaxTickOfPlayback(playback);
+                    total += playback.getMaxTick();
                     count++;
                 }
             }
 
             for (Playback playback : playbackList) {
-                total += getMaxTickOfPlayback(playback);
+                total += playback.getMaxTick();
                 count++;
             }
 
@@ -499,14 +499,6 @@ public class CutsceneController extends KeyframeControllerBase {
         }
         return totalTick;
     }
-
-    private int getMaxTickOfPlayback(Playback playback) {
-        return playback.getAnimation().getActionsData().stream()
-                .mapToInt(data -> data.getMovementData().size())
-                .max()
-                .orElse(0);
-    }
-
 
     public StoryHandler getStoryHandler() {
         return storyHandler;

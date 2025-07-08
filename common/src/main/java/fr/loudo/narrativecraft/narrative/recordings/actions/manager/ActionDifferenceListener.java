@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
+import fr.loudo.narrativecraft.mixin.fields.AbstractHorseFields;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteCraftListeners;
@@ -13,6 +14,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -42,6 +44,7 @@ public class ActionDifferenceListener {
     private Pose poseState;
     private byte entityByteState;
     private byte livingEntityByteState;
+    private byte abstractHorseEntityByteState;
     private final HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
     private List<ModsListenerImpl> modsListenerList;
 
@@ -74,6 +77,7 @@ public class ActionDifferenceListener {
             poseListener();
             entityByteListener();
             livingEntityByteListener();
+            abstractHorseEntityByteListener();
             itemListener();
         }
 
@@ -105,12 +109,23 @@ public class ActionDifferenceListener {
         }
     }
 
+    private void abstractHorseEntityByteListener() {
+        if(actionsData.getEntity() instanceof AbstractHorse abstractHorse) {
+            byte abstractHorseCurrentByte = actionsData.getEntity().getEntityData().get(AbstractHorseFields.getDATA_ID_FLAGS());
+            if(abstractHorseEntityByteState != abstractHorseCurrentByte) {
+                abstractHorseEntityByteState = abstractHorseCurrentByte;
+                AbstractHorseByteAction action = new AbstractHorseByteAction(recording.getTick(), abstractHorseCurrentByte, abstractHorseEntityByteState);
+                actionsData.addAction(action);
+            }
+        }
+    }
+
     private void itemListener() {
 
         for(EquipmentSlot equipmentSlot : equipmentSlotList) {
             ItemStack itemFromSlot = currentItemInEquipmentSlot.get(equipmentSlot);
             ItemStack currentItemFromSlot = ((LivingEntity)actionsData.getEntity()).getItemBySlot(equipmentSlot);
-            if(Item.getId(itemFromSlot.getItem()) != Item.getId(currentItemFromSlot.getItem())) {
+            if(BuiltInRegistries.ITEM.getId(itemFromSlot.getItem()) != BuiltInRegistries.ITEM.getId(currentItemFromSlot.getItem())) {
                 currentItemInEquipmentSlot.replace(equipmentSlot, currentItemFromSlot.copy());
                 onItemChange(currentItemFromSlot, equipmentSlot, recording.getTick());
             }
@@ -126,7 +141,7 @@ public class ActionDifferenceListener {
         Tag componentsTag = ((CompoundTag)tag).get("components");
         ItemChangeAction itemChangeAction;
         if(componentsTag == null) {
-            itemChangeAction = new ItemChangeAction(tick, equipmentSlot.name(), Item.getId(itemStack.getItem()));
+            itemChangeAction = new ItemChangeAction(tick, equipmentSlot.name(), BuiltInRegistries.ITEM.getId(itemStack.getItem()));
         } else {
             itemChangeAction = new ItemChangeAction(tick, BuiltInRegistries.ITEM.getId(itemStack.getItem()), equipmentSlot.name(), componentsTag.toString());
         }

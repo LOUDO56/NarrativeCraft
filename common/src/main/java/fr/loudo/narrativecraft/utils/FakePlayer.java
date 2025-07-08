@@ -39,7 +39,7 @@ public class FakePlayer extends ServerPlayer
 
     private static class FakePlayerNetHandler extends ServerGamePacketListenerImpl
     {
-        private static final Connection DUMMY_CONNECTION = new DummyConnection(PacketFlow.SERVERBOUND);
+        private static final Connection DUMMY_CONNECTION = new DummyConnection(PacketFlow.CLIENTBOUND);
 
         public FakePlayerNetHandler(MinecraftServer server, ServerPlayer player, GameProfile profile)
         {

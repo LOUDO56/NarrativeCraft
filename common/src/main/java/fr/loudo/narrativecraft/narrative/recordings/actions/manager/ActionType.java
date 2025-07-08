@@ -16,5 +16,7 @@ public enum ActionType {
     SLEEP,
     USE_ITEM,
     GAMEMODE,
-    RIDE
+    RIDE,
+    UN_RIDE,
+    ABSTRACT_HORSE_BYTE
 }
