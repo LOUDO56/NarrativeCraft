@@ -123,14 +123,6 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player.serverLevel(), playbackType, false);
-            for(Playback playback : subscene.getPlaybackList()) {
-                LivingEntity entity = playback.getMasterEntity();
-                for(ServerPlayer serverPlayer : player.serverLevel().getServer().getPlayerList().getPlayers()) {
-                    if(!serverPlayer.getName().getString().equals(player.getName().getString())) {
-                        player.connection.send(new ClientboundPlayerInfoRemovePacket(List.of(entity.getUUID())));
-                    }
-                }
-            }
         }
 
         for(Animation animation : cutscene.getAnimationList()) {

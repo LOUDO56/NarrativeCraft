@@ -93,6 +93,8 @@ public class Animation extends NarrativeEntry {
             subscene.getAnimationList().removeIf(animation -> animation.getName().equals(name));
         }
         NarrativeCraftFile.removeAnimationFileFromScene(this);
+        NarrativeCraftFile.updateCutsceneFile(scene);
+        NarrativeCraftFile.updateSubsceneFile(scene);
     }
 
     @Override
