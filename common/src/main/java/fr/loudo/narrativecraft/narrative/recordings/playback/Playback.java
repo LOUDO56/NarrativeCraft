@@ -284,6 +284,15 @@ public class Playback {
         entity.teleportTo(movementData.getX(), movementData.getY(), movementData.getZ());
     }
 
+    public boolean entityInPlayback(Entity entity) {
+        for(PlaybackData playbackData : entityPlaybacks) {
+            if(playbackData.entity != null) {
+                if(playbackData.entity.getUUID().equals(entity.getUUID())) return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isPlaying() { return isPlaying; }
     public boolean hasEnded() { return hasEnded; }
     public int getTick() { return globalTick; }

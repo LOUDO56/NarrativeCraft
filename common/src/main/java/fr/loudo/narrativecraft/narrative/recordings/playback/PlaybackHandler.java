@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.playback;
 
+import net.minecraft.world.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -36,5 +38,12 @@ public class PlaybackHandler {
             }
         }
         return null;
+    }
+
+    public boolean entityInPlayback(Entity entity) {
+        for(Playback playback : playbacks) {
+            if(playback.entityInPlayback(entity)) return true;
+        }
+        return false;
     }
 }

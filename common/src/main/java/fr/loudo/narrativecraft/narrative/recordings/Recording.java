@@ -70,6 +70,9 @@ public class Recording {
         }
 
         for(RecordingData recordingData : recordingDataList) {
+            if(NarrativeCraftMod.getInstance().getPlaybackHandler().entityInPlayback(recordingData.entity)) {
+                recordingData.savingTrack = false;
+            }
             recordingData.actionsData.addMovement();
             recordingData.actionDifferenceListener.listenDifference();
         }
