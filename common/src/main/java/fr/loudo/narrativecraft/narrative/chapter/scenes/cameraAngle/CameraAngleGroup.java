@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.EntityFields;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
@@ -16,8 +17,6 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -101,8 +100,7 @@ public class CameraAngleGroup extends NarrativeEntry {
                             fakePlayer.setItemSlot(EquipmentSlot.valueOf(itemSlotData.equipmentSlot()), itemSlotData.getItem(characterStory1.getEntity().registryAccess()));
                         }
                         fakePlayer.setPose(characterStoryData.getPose());
-                        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-                        fakePlayer.getEntityData().set(entityFlagByte, characterStoryData.getEntityByte());
+                        fakePlayer.getEntityData().set(EntityFields.getDATA_SHARED_FLAGS_ID(), characterStoryData.getEntityByte());
                     }
                     return;
                 }

@@ -1,11 +1,9 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
+import fr.loudo.narrativecraft.mixin.fields.EntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 public class EntityByteAction extends Action {
 
@@ -21,14 +19,12 @@ public class EntityByteAction extends Action {
     @Override
     public void execute(Entity entity) {
         SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_BYTE_MASK, entityByte);
+        entityData.set(EntityFields.getDATA_SHARED_FLAGS_ID(), entityByte);
     }
 
     @Override
     public void rewind(Entity entity) {
         SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_BYTE_MASK, previousEntityByte);
+        entityData.set(EntityFields.getDATA_SHARED_FLAGS_ID(), previousEntityByte);
     }
 }

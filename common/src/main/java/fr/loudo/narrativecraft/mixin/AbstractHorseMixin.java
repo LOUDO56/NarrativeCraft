@@ -1,10 +1,8 @@
 package fr.loudo.narrativecraft.mixin;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.mixin.fields.AbstractHorseFields;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
-import fr.loudo.narrativecraft.narrative.recordings.actions.AbstractHorseByteAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.syncher.EntityDataAccessor;

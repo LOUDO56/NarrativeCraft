@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 public class HurtAction extends Action {
     public HurtAction(int waitTick) {

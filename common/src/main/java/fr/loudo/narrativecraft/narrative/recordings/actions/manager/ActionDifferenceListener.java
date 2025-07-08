@@ -8,8 +8,6 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteC
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
 import fr.loudo.narrativecraft.platform.Services;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;

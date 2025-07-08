@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.GameType;
 
 public class GameModeAction extends Action {

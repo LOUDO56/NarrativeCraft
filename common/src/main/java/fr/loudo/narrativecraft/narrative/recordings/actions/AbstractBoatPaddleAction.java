@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.mixin.fields.AbstractBoatFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.vehicle.AbstractBoat;
 
 public class AbstractBoatPaddleAction extends Action {

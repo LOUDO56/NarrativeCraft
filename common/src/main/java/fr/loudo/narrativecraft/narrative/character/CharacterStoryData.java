@@ -3,6 +3,8 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.mixin.fields.EntityFields;
+import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.mixin.fields.PlayerFields;
 import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -15,8 +17,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
@@ -54,10 +54,8 @@ public class CharacterStoryData {
         yaw = livingEntity.getYRot();
         yBodyRot = livingEntity.yBodyRot;
         pose = livingEntity.getPose().name();
-        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
-        entityByte = livingEntity.getEntityData().get(entityFlagByte);
-        livingEntityByte = livingEntity.getEntityData().get(livingEntityFlagByte);
+        entityByte = livingEntity.getEntityData().get(EntityFields.getDATA_SHARED_FLAGS_ID());
+        livingEntityByte = livingEntity.getEntityData().get(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS());
         onlyTemplate = false;
         initItem(livingEntity);
     }
@@ -73,10 +71,8 @@ public class CharacterStoryData {
         itemSlotDataList = new ArrayList<>();
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         pose = localPlayer.getPose().name();
-        EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
-        entityByte = localPlayer.getEntityData().get(entityFlagByte);
-        livingEntityByte = localPlayer.getEntityData().get(livingEntityFlagByte);
+        entityByte = localPlayer.getEntityData().get(EntityFields.getDATA_SHARED_FLAGS_ID());
+        livingEntityByte = localPlayer.getEntityData().get(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS());
         this.onlyTemplate = onlyTemplate;
         if(!onlyTemplate) {
             initItem(localPlayer);
@@ -157,10 +153,8 @@ public class CharacterStoryData {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
             fakePlayer.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
         }
-        EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-        entityData.set(ENTITY_BYTE_MASK, entityByte);
-        EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
-        entityData.set(LIVING_ENTITY_BYTE_MASK, livingEntityByte);
+        entityData.set(EntityFields.getDATA_SHARED_FLAGS_ID(), entityByte);
+        entityData.set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), livingEntityByte);
         livingEntity.setInvisible(false);
         if(livingEntity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().getPlayers().add(fakePlayer);

@@ -1,13 +1,13 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
+import fr.loudo.narrativecraft.mixin.fields.EntityFields;
+import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
@@ -37,15 +37,13 @@ public class CameraAngleChangePoseScreen extends Screen {
                 livingEntity.setPose(pose);
                 characterStoryData.setPose(pose);
                 SynchedEntityData entityData = livingEntity.getEntityData();
-                EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-                EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
-                byte currentMask = entityData.get(ENTITY_BYTE_MASK);
-                byte currentLivingEntityByte = entityData.get(LIVING_ENTITY_BYTE_MASK);
+                byte currentMask = entityData.get(EntityFields.getDATA_SHARED_FLAGS_ID());
+                byte currentLivingEntityByte = entityData.get(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS());
                 if (pose == Pose.CROUCHING) {
-                    entityData.set(ENTITY_BYTE_MASK, (byte) (currentMask | 0x02));
+                    entityData.set(EntityFields.getDATA_SHARED_FLAGS_ID(), (byte) (currentMask | 0x02));
                     characterStoryData.setEntityByte((byte) (currentMask | 0x02));
                 } else {
-                    entityData.set(ENTITY_BYTE_MASK, (byte) (currentMask & ~0x02));
+                    entityData.set(EntityFields.getDATA_SHARED_FLAGS_ID(), (byte) (currentMask & ~0x02));
                     characterStoryData.setEntityByte((byte) (currentMask & ~0x02));
                 }
                 if(pose == Pose.SHOOTING) {
@@ -56,10 +54,10 @@ public class CameraAngleChangePoseScreen extends Screen {
                         byteToAdd = 3;
                     }
                     if(currentLivingEntityByte == 0) {
-                        entityData.set(LIVING_ENTITY_BYTE_MASK, byteToAdd);
+                        entityData.set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), byteToAdd);
                         characterStoryData.setLivingEntityByte(byteToAdd);
                     } else {
-                        entityData.set(LIVING_ENTITY_BYTE_MASK, (byte) 0);
+                        entityData.set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), (byte) 0);
                         characterStoryData.setLivingEntityByte((byte) 0);
                     }
                 }
