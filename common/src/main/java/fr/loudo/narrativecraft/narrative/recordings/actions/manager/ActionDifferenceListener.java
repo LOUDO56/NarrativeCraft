@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
-import fr.loudo.narrativecraft.mixin.fields.AbstractHorseFields;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteCraftListeners;
@@ -13,6 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.vehicle.AbstractBoat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -39,9 +39,16 @@ public class ActionDifferenceListener {
     private final ActionsData actionsData;
     private final Recording recording;
     private Pose poseState;
+
     private byte entityByteState;
     private byte livingEntityByteState;
+
     private byte abstractHorseEntityByteState;
+
+    private int abstractBoatEntityBubbleState;
+    private boolean abstractBoatEntityLeftPaddleState;
+    private boolean abstractBoatEntityRightPaddleState;
+
     private final HashMap<EquipmentSlot, ItemStack> currentItemInEquipmentSlot;
     private List<ModsListenerImpl> modsListenerList;
 
@@ -49,6 +56,8 @@ public class ActionDifferenceListener {
         this.actionsData = actionsData;
         this.currentItemInEquipmentSlot = new HashMap<>();
         this.recording = recording;
+        abstractBoatEntityLeftPaddleState = false;
+        abstractBoatEntityRightPaddleState = false;
         initItemSlot();
         initModsListeners();
     }
@@ -106,10 +115,37 @@ public class ActionDifferenceListener {
     }
 
     public void abstractHorseEntityByteListener(byte abstractHorseCurrentByte) {
-        if(actionsData.getEntity() instanceof AbstractHorse abstractHorse) {
+        if(actionsData.getEntity() instanceof AbstractHorse) {
             if(abstractHorseEntityByteState != abstractHorseCurrentByte) {
                 AbstractHorseByteAction action = new AbstractHorseByteAction(recording.getTick(), abstractHorseCurrentByte, abstractHorseEntityByteState);
                 abstractHorseEntityByteState = abstractHorseCurrentByte;
+                actionsData.addAction(action);
+            }
+        }
+    }
+
+    public void abstractBoatEntityBubbleListener(int abstractBoatCurrentBubble) {
+        if(actionsData.getEntity() instanceof AbstractBoat) {
+            if(abstractBoatEntityBubbleState != abstractBoatCurrentBubble) {
+                AbstractBoatBubbleAction action = new AbstractBoatBubbleAction(recording.getTick(), abstractBoatCurrentBubble, abstractBoatEntityBubbleState);
+                abstractBoatEntityBubbleState = abstractBoatCurrentBubble;
+                actionsData.addAction(action);
+            }
+        }
+    }
+
+    public void abstractBoatEntityPaddleListener(boolean left, boolean right) {
+        if(actionsData.getEntity() instanceof AbstractBoat) {
+            if(abstractBoatEntityLeftPaddleState != left || abstractBoatEntityRightPaddleState != right) {
+                AbstractBoatPaddleAction action = new AbstractBoatPaddleAction(
+                        recording.getTick(),
+                        left,
+                        right,
+                        abstractBoatEntityLeftPaddleState,
+                        abstractBoatEntityRightPaddleState
+                );
+                abstractBoatEntityLeftPaddleState = left;
+                abstractBoatEntityRightPaddleState = right;
                 actionsData.addAction(action);
             }
         }

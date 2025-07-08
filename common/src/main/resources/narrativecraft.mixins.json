@@ -5,6 +5,7 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
+    "AbstractBoatMixin",
     "AbstractHorseMixin",
     "EntityMixin",
     "ItemStackMixin",
@@ -12,6 +13,7 @@
     "LivingEntityRendererMixin",
     "ServerLevelMixin",
     "ServerPlayerCommonMixin",
+    "fields.AbstractBoatFields",
     "fields.AbstractHorseFields",
     "fields.ArmorStandFields",
     "fields.DisplayFields",
