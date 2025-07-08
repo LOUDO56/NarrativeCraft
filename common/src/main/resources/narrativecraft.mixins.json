@@ -17,7 +17,10 @@
     "fields.AbstractHorseFields",
     "fields.ArmorStandFields",
     "fields.DisplayFields",
+    "fields.EntityFields",
     "fields.ItemDisplayFields",
+    "fields.LivingEntityFields",
+    "fields.PlayerFields",
     "fields.PlayerListFields",
     "fields.TextDisplayFields"
   ],

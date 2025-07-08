@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.character;
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.mixin.fields.PlayerFields;
 import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -154,8 +155,7 @@ public class CharacterStoryData {
         SynchedEntityData entityData = livingEntity.getEntityData();
         if(livingEntity instanceof FakePlayer fakePlayer) {
             serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
-            EntityDataAccessor<Byte> ENTITY_LAYER = new EntityDataAccessor<>(17, EntityDataSerializers.BYTE);
-            entityData.set(ENTITY_LAYER, (byte) 0b01111111);
+            fakePlayer.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
         }
         EntityDataAccessor<Byte> ENTITY_BYTE_MASK = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
         entityData.set(ENTITY_BYTE_MASK, entityByte);

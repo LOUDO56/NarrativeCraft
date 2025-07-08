@@ -1,5 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.manager;
 
+import fr.loudo.narrativecraft.mixin.fields.EntityFields;
+import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.EmoteCraftListeners;
@@ -33,8 +35,6 @@ public class ActionDifferenceListener {
             EquipmentSlot.FEET,
             EquipmentSlot.SADDLE
     );
-    private final EntityDataAccessor<Byte> entityFlagByte = new EntityDataAccessor<>(0, EntityDataSerializers.BYTE);
-    private final EntityDataAccessor<Byte> livingEntityFlagByte = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
 
     private final ActionsData actionsData;
     private final Recording recording;
@@ -97,7 +97,7 @@ public class ActionDifferenceListener {
     }
 
     private void entityByteListener() {
-        byte entityCurrentByte = actionsData.getEntity().getEntityData().get(entityFlagByte);
+        byte entityCurrentByte = actionsData.getEntity().getEntityData().get(EntityFields.getDATA_SHARED_FLAGS_ID());
         if(entityByteState != entityCurrentByte) {
             EntityByteAction entityByteAction = new EntityByteAction(recording.getTick(), entityCurrentByte, entityByteState);
             entityByteState = entityCurrentByte;
@@ -106,10 +106,10 @@ public class ActionDifferenceListener {
     }
 
     private void livingEntityByteListener() {
-        byte livingEntityCurrentByte = actionsData.getEntity().getEntityData().get(livingEntityFlagByte);
+        byte livingEntityCurrentByte = actionsData.getEntity().getEntityData().get(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS());
         if(livingEntityByteState != livingEntityCurrentByte) {
+            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(recording.getTick(), livingEntityCurrentByte, livingEntityByteState);
             livingEntityByteState = livingEntityCurrentByte;
-            LivingEntityByteAction livingEntityByteAction = new LivingEntityByteAction(recording.getTick(), livingEntityCurrentByte);
             actionsData.addAction(livingEntityByteAction);
         }
     }

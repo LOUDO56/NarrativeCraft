@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
+import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -9,20 +10,26 @@ import net.minecraft.world.entity.LivingEntity;
 
 public class LivingEntityByteAction extends Action {
 
-    private byte livingEntityByte;
+    private final byte livingEntityByte;
+    private final byte oldLivingEntityByte;
 
-    public LivingEntityByteAction(int waitTick, byte livingEntityByte) {
+    public LivingEntityByteAction(int waitTick, byte livingEntityByte, byte oldLivingEntityByte) {
         super(waitTick, ActionType.LIVING_ENTITY_BYTE);
         this.livingEntityByte = livingEntityByte;
+        this.oldLivingEntityByte = oldLivingEntityByte;
     }
 
     @Override
     public void execute(Entity entity) {
-        SynchedEntityData entityData = entity.getEntityData();
-        EntityDataAccessor<Byte> LIVING_ENTITY_BYTE_MASK = new EntityDataAccessor<>(8, EntityDataSerializers.BYTE);
-        entityData.set(LIVING_ENTITY_BYTE_MASK, livingEntityByte);
+        if(entity instanceof LivingEntity) {
+            entity.getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), livingEntityByte);
+        }
     }
 
     @Override
-    public void rewind(Entity entity) {}
+    public void rewind(Entity entity) {
+        if(entity instanceof LivingEntity) {
+            entity.getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), oldLivingEntityByte);
+        }
+    }
 }
