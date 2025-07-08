@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.GameModeAction;
+import fr.loudo.narrativecraft.narrative.recordings.actions.RidingAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
 import net.minecraft.server.level.ServerPlayer;
@@ -71,6 +72,13 @@ public class Recording {
         for(RecordingData recordingData : recordingDataList) {
             recordingData.actionsData.addMovement();
             recordingData.actionDifferenceListener.listenDifference();
+        }
+        if(tick == 0 && entityRecorderData.entity.getVehicle() != null) {
+            ActionsData actionsData = getActionDataFromEntity(entityRecorderData.entity.getVehicle());
+            if(actionsData != null) {
+                RidingAction action = new RidingAction(0, actionsData.getEntityIdRecording());
+                entityRecorderData.actionsData.addAction(action);
+            }
         }
         tick++;
     }
