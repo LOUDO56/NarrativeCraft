@@ -180,9 +180,7 @@ public class Playback {
             if(action instanceof RidingAction ridingAction) {
                 ridingAction.setPlaybackDataList(entityPlaybacks);
             }
-            if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
-                action.execute(livingEntity);
-            }
+            action.execute(playbackData.entity);
         }
     }
 

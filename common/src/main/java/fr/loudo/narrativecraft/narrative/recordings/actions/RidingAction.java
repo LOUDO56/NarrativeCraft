@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 
 import java.util.List;
 
@@ -18,7 +17,7 @@ public class RidingAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
         Entity vehicle = null;
         for(Playback.PlaybackData playbackData : playbackDataList) {
             if(playbackData.getActionsData().getEntityIdRecording() == entityRecordingId) {
@@ -32,7 +31,7 @@ public class RidingAction extends Action {
 
 
     @Override
-    public void rewind(LivingEntity entity) {
+    public void rewind(Entity entity) {
         entity.stopRiding();
     }
 

@@ -19,7 +19,7 @@ public class AbstractHorseByteAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
         if(entity instanceof AbstractHorse abstractHorse) {
             entity.getEntityData().set(AbstractHorseFields.getDATA_ID_FLAGS(), currentByte);
             if(currentByte >= AbstractHorseFields.getFLAG_STANDING()) {
@@ -31,7 +31,7 @@ public class AbstractHorseByteAction extends Action {
     }
 
     @Override
-    public void rewind(LivingEntity entity) {
+    public void rewind(Entity entity) {
         if(entity instanceof AbstractHorse) {
             entity.getEntityData().set(AbstractHorseFields.getDATA_ID_FLAGS(), oldByte);
         }

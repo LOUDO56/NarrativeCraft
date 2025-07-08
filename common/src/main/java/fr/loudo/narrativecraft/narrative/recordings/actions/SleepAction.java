@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class SleepAction extends Action {
@@ -16,13 +17,17 @@ public class SleepAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
-        entity.setSleepingPos(new BlockPos(xB, yB, zB));
+    public void execute(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity){
+            livingEntity.setSleepingPos(new BlockPos(xB, yB, zB));
+        }
     }
 
     @Override
-    public void rewind(LivingEntity entity) {
-        entity.clearSleepingPos();
+    public void rewind(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity){
+            livingEntity.clearSleepingPos();
+        }
     }
 
     public BlockPos getBlockPos() {

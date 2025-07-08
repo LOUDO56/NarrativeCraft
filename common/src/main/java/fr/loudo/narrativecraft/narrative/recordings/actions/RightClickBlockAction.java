@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BoatItem;
 import net.minecraft.world.item.ItemStack;
@@ -33,7 +34,7 @@ public class RightClickBlockAction extends Action {
         this.inside = inside;
     }
 
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
 
         ServerPlayer player = Utils.getServerPlayerByUUID(entity.getUUID());
         if(player == null) return;
@@ -63,5 +64,5 @@ public class RightClickBlockAction extends Action {
     }
 
     @Override
-    public void rewind(LivingEntity entity) {}
+    public void rewind(Entity entity) {}
 }

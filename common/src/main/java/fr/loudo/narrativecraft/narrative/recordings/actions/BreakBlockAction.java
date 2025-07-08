@@ -12,6 +12,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.commands.SummonCommand;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BedItem;
 import net.minecraft.world.level.block.BedBlock;
@@ -46,7 +47,7 @@ public class BreakBlockAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
         BlockPos blockPos = new BlockPos(x, y, z);
         ServerLevel serverLevel = Utils.getServerLevel();
         BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
@@ -66,7 +67,8 @@ public class BreakBlockAction extends Action {
     }
 
     @Override
-    public void rewind(LivingEntity entity) {
+    public void rewind(Entity entity) {
+        if(!(entity instanceof LivingEntity)) return;
         ServerLevel serverLevel = Utils.getServerLevel();
         BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
         if(blockState == null) return;
@@ -86,7 +88,7 @@ public class BreakBlockAction extends Action {
         }
         serverLevel.setBlock(blockPos, blockState, 3);
         if(block instanceof BedBlock || block instanceof DoorBlock) {
-            block.setPlacedBy(entity.level(), blockPos, blockState, entity, blockState.getBlock().asItem().getDefaultInstance());
+            block.setPlacedBy(entity.level(), blockPos, blockState, (LivingEntity) entity, blockState.getBlock().asItem().getDefaultInstance());
         }
     }
 }

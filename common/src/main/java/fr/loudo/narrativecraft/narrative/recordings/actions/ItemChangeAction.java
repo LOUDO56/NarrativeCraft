@@ -8,6 +8,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundSetEquipmentPacket;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Item;
@@ -44,13 +45,17 @@ public class ItemChangeAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
-        changeItem(entity, itemId, data);
+    public void execute(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity) {
+            changeItem(livingEntity, itemId, data);
+        }
     }
 
     @Override
-    public void rewind(LivingEntity entity) {
-        changeItem(entity, oldItemId, oldData);
+    public void rewind(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity) {
+            changeItem(livingEntity, oldItemId, oldData);
+        }
     }
 
     private void changeItem(LivingEntity entity, int itemId, String data) {

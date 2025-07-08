@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public abstract class Action {
@@ -21,6 +22,6 @@ public abstract class Action {
         return actionType;
     }
 
-    public abstract void execute(LivingEntity entity);
-    public abstract void rewind(LivingEntity entity);
+    public abstract void execute(Entity entity);
+    public abstract void rewind(Entity entity);
 }

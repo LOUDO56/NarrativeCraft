@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.NbtUtils;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.BedBlock;
@@ -31,7 +32,7 @@ public class PlaceBlockAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
         ServerLevel serverLevel = Utils.getServerLevel();
         BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
         if(blockState == null) return;
@@ -43,7 +44,7 @@ public class PlaceBlockAction extends Action {
 
     }
 
-    public void rewind(LivingEntity entity) {
+    public void rewind(Entity entity) {
         ServerLevel serverLevel = Utils.getServerLevel();
         BlockPos blockPos = getBlockPos();
         BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());

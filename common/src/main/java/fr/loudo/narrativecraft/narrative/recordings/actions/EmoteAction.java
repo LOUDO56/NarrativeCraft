@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import io.github.kosmx.emotes.api.events.client.ClientEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.UUID;
@@ -19,7 +20,7 @@ public class EmoteAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
+    public void execute(Entity entity) {
         if(entity instanceof FakePlayer fakePlayer) {
             KeyframeAnimation emote = getEmote();
             ServerEmoteAPI.playEmote(fakePlayer.getUUID(), emote, false);
@@ -27,7 +28,7 @@ public class EmoteAction extends Action {
     }
 
     @Override
-    public void rewind(LivingEntity entity) {}
+    public void rewind(Entity entity) {}
 
     public KeyframeAnimation getEmote() {
         if(emoteId != null) {

@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class SwingAction extends Action {
@@ -14,10 +15,12 @@ public class SwingAction extends Action {
     }
 
     @Override
-    public void execute(LivingEntity entity) {
-        entity.swing(interactionHand);
+    public void execute(Entity entity) {
+        if(entity instanceof LivingEntity livingEntity) {
+            livingEntity.swing(interactionHand);
+        }
     }
 
     @Override
-    public void rewind(LivingEntity entity) {}
+    public void rewind(Entity entity) {}
 }
