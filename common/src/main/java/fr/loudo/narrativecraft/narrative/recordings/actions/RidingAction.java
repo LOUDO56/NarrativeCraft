@@ -4,12 +4,9 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.world.entity.Entity;
 
-import java.util.List;
-
 public class RidingAction extends Action {
 
     private final int entityRecordingId;
-    private transient List<Playback.PlaybackData> playbackDataList;
 
     public RidingAction(int tick, int entityRecordingId) {
         super(tick, ActionType.RIDE);
@@ -17,25 +14,20 @@ public class RidingAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
+    public void execute(Playback.PlaybackData playbackData) {
         Entity vehicle = null;
-        for(Playback.PlaybackData playbackData : playbackDataList) {
-            if(playbackData.getActionsData().getEntityIdRecording() == entityRecordingId) {
-                vehicle = playbackData.getEntity();
-            }
+        if(playbackData.getActionsData().getEntityIdRecording() == entityRecordingId) {
+            vehicle = playbackData.getEntity();
         }
         if(vehicle != null) {
-            entity.startRiding(vehicle, true);
+            playbackData.getEntity() .startRiding(vehicle, true);
         }
     }
 
 
     @Override
-    public void rewind(Entity entity) {
-        entity.stopRiding();
+    public void rewind(Playback.PlaybackData playbackData) {
+        playbackData.getEntity().stopRiding();
     }
 
-    public void setPlaybackDataList(List<Playback.PlaybackData> playbackDataList) {
-        this.playbackDataList = playbackDataList;
-    }
 }

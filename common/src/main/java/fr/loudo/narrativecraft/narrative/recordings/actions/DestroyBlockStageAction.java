@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ClientboundBlockDestructionPacket;
@@ -23,13 +24,13 @@ public class DestroyBlockStageAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
+    public void execute(Playback.PlaybackData playbackData) {
         ServerLevel serverLevel = Utils.getServerLevel();
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundBlockDestructionPacket(id, new BlockPos(x, y, z), progress));
     }
 
     @Override
-    public void rewind(Entity entity) {
+    public void rewind(Playback.PlaybackData playbackData) {
         ServerLevel serverLevel = Utils.getServerLevel();
         serverLevel.getServer().getPlayerList().broadcastAll(new ClientboundBlockDestructionPacket(id, new BlockPos(x, y, z), progress == 1 ? -1 : progress));
     }

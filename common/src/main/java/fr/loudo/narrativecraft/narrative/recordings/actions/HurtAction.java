@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.network.protocol.game.ClientboundHurtAnimationPacket;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -11,12 +12,12 @@ public class HurtAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        entity.getServer().getPlayerList().broadcastAll(new ClientboundHurtAnimationPacket(entity.getId(), 0F));
-        DamageSource damageSource = new DamageSource(entity.damageSources().generic().typeHolder());
-        entity.handleDamageEvent(damageSource);
+    public void execute(Playback.PlaybackData playbackData) {
+        playbackData.getEntity() .getServer().getPlayerList().broadcastAll(new ClientboundHurtAnimationPacket(playbackData.getEntity() .getId(), 0F));
+        DamageSource damageSource = new DamageSource(playbackData.getEntity() .damageSources().generic().typeHolder());
+        playbackData.getEntity().handleDamageEvent(damageSource);
     }
 
     @Override
-    public void rewind(Entity entity) {}
+    public void rewind(Playback.PlaybackData playbackData) {}
 }

@@ -21,6 +21,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,6 +37,7 @@ public class Playback {
     private LivingEntity masterEntity;
     private ServerLevel serverLevel;
     private PlaybackType playbackType;
+    private Entity lastRideEntity;
     private boolean isPlaying, hasEnded;
     private int globalTick;
     private final List<PlaybackData> entityPlaybacks = new ArrayList<>();
@@ -59,14 +61,14 @@ public class Playback {
 
         ActionsData masterEntityData = animation.getActionsData().getFirst();
         MovementData firstLoc = masterEntityData.getMovementData().getFirst();
-        PlaybackData playbackData = new PlaybackData(masterEntityData);
+        PlaybackData playbackData = new PlaybackData(masterEntityData, this);
         playbackData.setEntity(masterEntity);
         entityPlaybacks.add(playbackData);
         spawnMasterEntity(firstLoc);
 
         for (int i = 1; i < animation.getActionsData().size(); i++) {
             ActionsData actionsData = animation.getActionsData().get(i);
-            PlaybackData playbackData1 = new PlaybackData(actionsData);
+            PlaybackData playbackData1 = new PlaybackData(actionsData, this);
             if(actionsData.getSpawnTick() == 0) {
                 playbackData1.spawnEntity(actionsData.getMovementData().getFirst());
             }
@@ -132,6 +134,19 @@ public class Playback {
         stop();
     }
 
+    public void killMasterEntity() {
+        PlaybackData playbackData = entityPlaybacks.getFirst();
+        if(masterEntity instanceof FakePlayer fakePlayer) {
+            serverLevel.getServer().getPlayerList().remove(fakePlayer);
+        } else {
+            masterEntity.remove(Entity.RemovalReason.KILLED);
+        }
+        playbackData.setEntity(null);
+    }
+
+    public void respawnMasterEntity(MovementData position) {
+        spawnMasterEntity(position);
+    }
 
     public void changeLocationByTick(int newTick, boolean seamless) {
         newTick = Math.min(newTick, animation.getActionsData().getFirst().getMovementData().size() - 1);
@@ -144,16 +159,14 @@ public class Playback {
                 if(seamless) {
                     moveEntitySilent(masterEntity, movementData);
                 } else {
-                    if(masterEntity instanceof FakePlayer fakePlayer) {
-                        serverLevel.getServer().getPlayerList().remove(fakePlayer);
-                    } else {
-                        masterEntity.remove(Entity.RemovalReason.KILLED);
-                    }
+                    killMasterEntity();
                     spawnMasterEntity(movementData);
                 }
             } else {
                 playbackData.changeLocationByTick(newTick, seamless);
             }
+        }
+        for (PlaybackData playbackData : entityPlaybacks) {
             int tickDiff = newTick - globalTick;
             if(tickDiff > 0) {
                 for (int i = globalTick; i < newTick; i++) {
@@ -176,22 +189,17 @@ public class Playback {
         if(playbackData.getEntity() == null) return;
         List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
-            if(action instanceof RidingAction ridingAction) {
-                ridingAction.setPlaybackDataList(entityPlaybacks);
-            }
-            action.execute(playbackData.entity);
+            action.execute(playbackData);
         }
     }
 
     public void actionListenerRewind(PlaybackData playbackData) {
-        if(playbackData.getEntity() == null) return;
         List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         actionToBePlayed = actionToBePlayed.reversed();
         for(Action action : actionToBePlayed) {
+            if(!(action instanceof DeathAction) && playbackData.getEntity() == null) continue;
             if (action instanceof PoseAction poseAction) {
-                if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
-                    poseAction.rewind(livingEntity);
-                }
+                poseAction.rewind(playbackData);
                 if (poseAction.getPreviousPose() == Pose.SLEEPING) {
                     SleepAction previousSleepAction = (SleepAction) playbackData.getActionsData()
                             .getActions()
@@ -200,15 +208,11 @@ public class Playback {
                             .toList()
                             .getLast();
                     if (previousSleepAction != null) {
-                        if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
-                            previousSleepAction.execute(livingEntity);
-                        }
+                        previousSleepAction.execute(playbackData);
                     }
                 }
             } else {
-                if(playbackData.getEntity() instanceof LivingEntity livingEntity) {
-                    action.rewind(livingEntity);
-                }
+                action.rewind(playbackData);
             }
         }
     }
@@ -293,6 +297,14 @@ public class Playback {
         return false;
     }
 
+    public List<PlaybackData> getEntityPlaybacks() {
+        return entityPlaybacks;
+    }
+
+    public ActionsData getMasterEntityData() {
+        return animation.getActionsData().getFirst();
+    }
+
     public boolean isPlaying() { return isPlaying; }
     public boolean hasEnded() { return hasEnded; }
     public int getTick() { return globalTick; }
@@ -318,12 +330,14 @@ public class Playback {
     public static class PlaybackData {
 
         private final ActionsData actionsData;
+        private final Playback playback;
         private Entity entity;
         private int localTick;
 
-        public PlaybackData(ActionsData actionsData) {
+        public PlaybackData(ActionsData actionsData, Playback playback) {
             this.actionsData = actionsData;
             this.localTick = 0;
+            this.playback = playback;
         }
 
         public void tick(int globalTick) {
@@ -366,7 +380,7 @@ public class Playback {
             }
         }
 
-        private void killEntity() {
+        public void killEntity() {
             if(entity == null) return;
             if(entity instanceof FakePlayer fakePlayer) {
                 NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
@@ -376,8 +390,9 @@ public class Playback {
             entity = null;
         }
 
-        private void spawnEntity(MovementData location) {
+        public void spawnEntity(MovementData location) {
             ServerLevel serverLevel = Utils.getServerLevel();
+            if(actionsData.getEntityId() == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) return;
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(actionsData.getEntityId());
             entity = entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
             if(entity == null) return;
@@ -392,6 +407,7 @@ public class Playback {
         }
 
         private void moveEntity(MovementData current, MovementData next, boolean silent) {
+            if(entity == null) return;
             entity.setXRot(current.getXRot());
             entity.setYRot(current.getYRot());
             entity.setYHeadRot(current.getYHeadRot());
@@ -426,8 +442,12 @@ public class Playback {
             return entity;
         }
 
-        public void setEntity(LivingEntity entity) {
+        public void setEntity(Entity entity) {
             this.entity = entity;
+        }
+
+        public Playback getPlayback() {
+            return playback;
         }
     }
 

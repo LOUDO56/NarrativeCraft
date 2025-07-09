@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -39,10 +40,10 @@ public class BreakBlockAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
+    public void execute(Playback.PlaybackData playbackData) {
         BlockPos blockPos = new BlockPos(x, y, z);
         ServerLevel serverLevel = Utils.getServerLevel();
-        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        BlockState blockState = Utils.getBlockStateFromData(data, playbackData.getEntity().registryAccess());
         if (blockState != null) {
             if (blockState.getBlock() instanceof BedBlock) {
                 if (blockState.getValue(BedBlock.PART) == BedPart.FOOT) {
@@ -59,10 +60,10 @@ public class BreakBlockAction extends Action {
     }
 
     @Override
-    public void rewind(Entity entity) {
-        if(!(entity instanceof LivingEntity)) return;
+    public void rewind(Playback.PlaybackData playbackData) {
+        if(!(playbackData.getEntity() instanceof LivingEntity)) return;
         ServerLevel serverLevel = Utils.getServerLevel();
-        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        BlockState blockState = Utils.getBlockStateFromData(data, playbackData.getEntity().registryAccess());
         if(blockState == null) return;
         BlockPos blockPos = new BlockPos(x, y, z);
         Block block = blockState.getBlock();
@@ -80,7 +81,7 @@ public class BreakBlockAction extends Action {
         }
         serverLevel.setBlock(blockPos, blockState, 3);
         if(block instanceof BedBlock || block instanceof DoorBlock) {
-            block.setPlacedBy(entity.level(), blockPos, blockState, (LivingEntity) entity, blockState.getBlock().asItem().getDefaultInstance());
+            block.setPlacedBy(playbackData.getEntity().level(), blockPos, blockState, (LivingEntity) playbackData.getEntity(), blockState.getBlock().asItem().getDefaultInstance());
         }
     }
 }

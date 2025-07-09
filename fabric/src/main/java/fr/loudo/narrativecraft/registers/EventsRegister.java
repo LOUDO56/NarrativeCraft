@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.registers;
 import fr.loudo.narrativecraft.events.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
@@ -16,6 +17,7 @@ public class EventsRegister {
         ServerLifecycleEvents.SERVER_STARTED.register(LifecycleEvent::onServerStart);
         ServerPlayConnectionEvents.JOIN.register(PlayerServerConnection::onPlayerJoin);
         ServerPlayConnectionEvents.DISCONNECT.register(PlayerServerConnection::onPlayerLeave);
+        ServerPlayerEvents.AFTER_RESPAWN.register(RespawnEvent::onRespawn);
         ServerTickEvents.END_SERVER_TICK.register(ServerTickEvent::onServerTick);
         PlayerBlockBreakEvents.BEFORE.register(BlockBreakEvent::onBlockBreak);
         UseBlockCallback.EVENT.register(RightClickBlock::onRightClickBlock);

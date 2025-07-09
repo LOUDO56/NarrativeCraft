@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -17,8 +18,8 @@ public class PoseAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity){
+    public void execute(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity()  instanceof LivingEntity livingEntity){
             if(pose != Pose.SLEEPING) {
                 livingEntity.clearSleepingPos();
             }
@@ -27,10 +28,10 @@ public class PoseAction extends Action {
     }
 
     @Override
-    public void rewind(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity){
+    public void rewind(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity()  instanceof LivingEntity livingEntity){
             if(previousPose != null) {
-                entity.setPose(previousPose);
+                playbackData.getEntity() .setPose(previousPose);
                 if(previousPose != Pose.SLEEPING) {
                     livingEntity.clearSleepingPos();
                 }

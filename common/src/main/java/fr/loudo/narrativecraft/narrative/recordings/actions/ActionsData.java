@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -94,23 +95,23 @@ public class ActionsData {
     }
 
     public void reset(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity) {
-            Map<BlockPos, Action> latestActions = new HashMap<>();
+        Playback.PlaybackData playbackData = new Playback.PlaybackData(this, null);
+        playbackData.setEntity(entity);
+        Map<BlockPos, Action> latestActions = new HashMap<>();
 
-            for (Action action : actions) {
-                BlockPos pos = getPosFromAction(action);
-                if(pos == null) continue;
-                latestActions.putIfAbsent(pos, action);
-            }
+        for (Action action : actions) {
+            BlockPos pos = getPosFromAction(action);
+            if(pos == null) continue;
+            latestActions.putIfAbsent(pos, action);
+        }
 
-            for (Map.Entry<BlockPos, Action> entry : latestActions.entrySet()) {
-                Action action = entry.getValue();
+        for (Map.Entry<BlockPos, Action> entry : latestActions.entrySet()) {
+            Action action = entry.getValue();
 
-                if (action instanceof PlaceBlockAction place) {
-                    place.rewind(livingEntity);
-                } else if (action instanceof BreakBlockAction breakBlockAction) {
-                    breakBlockAction.rewind(livingEntity);
-                }
+            if (action instanceof PlaceBlockAction place) {
+                place.rewind(playbackData);
+            } else if (action instanceof BreakBlockAction breakBlockAction) {
+                breakBlockAction.rewind(playbackData);
             }
         }
 

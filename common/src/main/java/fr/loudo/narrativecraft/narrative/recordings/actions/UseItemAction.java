@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.server.level.ServerLevel;
@@ -20,8 +21,8 @@ public class UseItemAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        if(entity instanceof FakePlayer fakePlayer) {
+    public void execute(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity() instanceof FakePlayer fakePlayer) {
             ServerLevel serverLevel = Utils.getServerLevel();
             ItemStack itemStack = fakePlayer.getItemInHand(InteractionHand.valueOf(handName));
             if(itemStack.getItem() instanceof SpawnEggItem || itemStack.getItem() instanceof BoatItem) return;
@@ -31,5 +32,5 @@ public class UseItemAction extends Action {
     }
 
     @Override
-    public void rewind(Entity entity) {}
+    public void rewind(Playback.PlaybackData playbackData) {}
 }

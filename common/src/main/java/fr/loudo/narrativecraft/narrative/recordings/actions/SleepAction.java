@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,15 +18,15 @@ public class SleepAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity){
+    public void execute(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity() instanceof LivingEntity livingEntity){
             livingEntity.setSleepingPos(new BlockPos(xB, yB, zB));
         }
     }
 
     @Override
-    public void rewind(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity){
+    public void rewind(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity() instanceof LivingEntity livingEntity){
             livingEntity.clearSleepingPos();
         }
     }

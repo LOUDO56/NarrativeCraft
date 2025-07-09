@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -17,16 +18,16 @@ public class LivingEntityByteAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        if(entity instanceof LivingEntity) {
-            entity.getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), livingEntityByte);
+    public void execute(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity() instanceof LivingEntity) {
+            playbackData.getEntity().getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), livingEntityByte);
         }
     }
 
     @Override
-    public void rewind(Entity entity) {
-        if(entity instanceof LivingEntity) {
-            entity.getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), oldLivingEntityByte);
+    public void rewind(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity() instanceof LivingEntity) {
+            playbackData.getEntity().getEntityData().set(LivingEntityFields.getDATA_LIVING_ENTITY_FLAGS(), oldLivingEntityByte);
         }
     }
 }

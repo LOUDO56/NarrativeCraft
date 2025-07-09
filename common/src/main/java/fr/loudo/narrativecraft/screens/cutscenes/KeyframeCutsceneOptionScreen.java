@@ -36,7 +36,6 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
     @Override
     protected void init() {
         if(!hide) {
-            updateCurrentTick();
             if(!keyframe.isParentGroup()) {
                 pathTimeBox = addLabeledEditBox(Translation.message("screen.keyframe_option.path_time"), String.valueOf(MathUtils.getSecondsByMillis(keyframe.getPathTime())));
                 speedBox = addLabeledEditBox(Translation.message("screen.keyframe_option.speed"), String.valueOf(keyframe.getSpeed()));

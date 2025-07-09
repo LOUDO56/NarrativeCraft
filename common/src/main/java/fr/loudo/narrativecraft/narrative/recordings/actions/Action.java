@@ -1,12 +1,13 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.world.entity.Entity;
 
 public abstract class Action {
 
-    private int tick;
-    private ActionType actionType;
+    protected int tick;
+    protected ActionType actionType;
 
     public Action(int tick, ActionType actionType) {
         this.tick = tick;
@@ -21,6 +22,6 @@ public abstract class Action {
         return actionType;
     }
 
-    public abstract void execute(Entity entity);
-    public abstract void rewind(Entity entity);
+    public abstract void execute(Playback.PlaybackData playbackData);
+    public abstract void rewind(Playback.PlaybackData playbackData);
 }

@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import com.mojang.datafixers.util.Pair;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -45,15 +46,15 @@ public class ItemChangeAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity) {
+    public void execute(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity()  instanceof LivingEntity livingEntity) {
             changeItem(livingEntity, itemId, data);
         }
     }
 
     @Override
-    public void rewind(Entity entity) {
-        if(entity instanceof LivingEntity livingEntity) {
+    public void rewind(Playback.PlaybackData playbackData) {
+        if(playbackData.getEntity()  instanceof LivingEntity livingEntity) {
             changeItem(livingEntity, oldItemId, oldData);
         }
     }

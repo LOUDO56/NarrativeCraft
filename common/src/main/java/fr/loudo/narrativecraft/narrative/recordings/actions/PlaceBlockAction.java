@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions;
 
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
+import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -30,22 +31,22 @@ public class PlaceBlockAction extends Action {
     }
 
     @Override
-    public void execute(Entity entity) {
+    public void execute(Playback.PlaybackData playbackData) {
         ServerLevel serverLevel = Utils.getServerLevel();
-        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        BlockState blockState = Utils.getBlockStateFromData(data, playbackData.getEntity().registryAccess());
         if(blockState == null) return;
         BlockPos blockPos = new BlockPos(x, y, z);
         serverLevel.setBlock(blockPos, blockState, 3);
         SoundType soundType = blockState.getSoundType();
-        serverLevel.playSound(entity, blockPos, blockState.getSoundType().getPlaceSound(),
+        serverLevel.playSound(playbackData.getEntity() , blockPos, blockState.getSoundType().getPlaceSound(),
                 SoundSource.BLOCKS, (soundType.getVolume() + 1.0f) / 2.0f, soundType.getPitch() * 0.8f);
 
     }
 
-    public void rewind(Entity entity) {
+    public void rewind(Playback.PlaybackData playbackData) {
         ServerLevel serverLevel = Utils.getServerLevel();
         BlockPos blockPos = getBlockPos();
-        BlockState blockState = Utils.getBlockStateFromData(data, entity.registryAccess());
+        BlockState blockState = Utils.getBlockStateFromData(data, playbackData.getEntity().registryAccess());
         if (blockState != null) {
             if (blockState.getBlock() instanceof BedBlock) {
                 if (blockState.getValue(BedBlock.PART) == BedPart.FOOT) {
