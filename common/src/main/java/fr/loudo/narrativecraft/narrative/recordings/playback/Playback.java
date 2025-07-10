@@ -13,6 +13,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -21,7 +22,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.phys.Vec3;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -64,7 +64,23 @@ public class Playback {
         PlaybackData playbackData = new PlaybackData(masterEntityData, this);
         playbackData.setEntity(masterEntity);
         entityPlaybacks.add(playbackData);
-        spawnMasterEntity(firstLoc);
+        if(playbackType == PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
+                if(characterStory.getEntity() == null) continue;
+                if(characterStory.getName().equals(character.getName())) {
+                    if(characterStory.getEntity().position().distanceTo(firstLoc.getVec3()) <= 0.8) {
+                        masterEntity = characterStory.getEntity();
+                    } else {
+                        characterStory.kill();
+                    }
+                }
+            }
+        }
+        playbackData.setEntity(masterEntity);
+        if(masterEntity == null) {
+            spawnMasterEntity(firstLoc);
+        }
 
         for (int i = 1; i < animation.getActionsData().size(); i++) {
             ActionsData actionsData = animation.getActionsData().get(i);

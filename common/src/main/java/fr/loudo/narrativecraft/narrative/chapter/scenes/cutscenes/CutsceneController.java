@@ -229,8 +229,10 @@ public class CutsceneController extends KeyframeControllerBase {
                 NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(animationPlayInkAction.getPlayback());
             }
         }
-        storyHandler.getInkActionList().clear();
-        storyHandler.stopAllSound();
+        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            storyHandler.getInkActionList().clear();
+            storyHandler.stopAllSound();
+        }
         changePlayingPlaybackState();
     }
 

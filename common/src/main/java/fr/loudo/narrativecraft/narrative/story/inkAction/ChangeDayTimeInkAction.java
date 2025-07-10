@@ -21,14 +21,14 @@ public class ChangeDayTimeInkAction extends InkAction {
 
     public ChangeDayTimeInkAction() {}
 
-    public ChangeDayTimeInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.DAYTIME);
+    public ChangeDayTimeInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.DAYTIME, command);
         isPaused = false;
         pauseStartTime = 0;
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         subCommand = command[1];
         firstTick = 0;
         secondTick = 0;

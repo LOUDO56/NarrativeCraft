@@ -11,16 +11,16 @@ import net.minecraft.client.Minecraft;
 
 public class OnEnterInkAction extends InkAction {
 
-    public OnEnterInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.ON_ENTER);
+    public OnEnterInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.ON_ENTER, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
         if(currentKnot == null) return InkActionResult.PASS;
-        if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSneakCase(storyHandler.getPlayerSession().getScene()))) {
+        if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSnakeCase(storyHandler.getPlayerSession().getScene()))) {
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
                 NarrativeCraftMod.server.execute(characterStory::kill);
             }

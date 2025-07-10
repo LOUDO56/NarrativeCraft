@@ -27,20 +27,16 @@ public class StorySave {
 
     private final int chapterIndex;
     private final String sceneName;
-    private final List<AnimationInfo> animationInfoList;
-    private final List<SubsceneInfo> subsceneInfoList;
     private KeyframeCoordinate soloCam;
     private String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
     private DialogData dialogSaveData;
-    private final List<InkAction> inkActionList;
+    private final List<String> tagList;
     public static long startTimeSaveIcon;
 
     public StorySave(StoryHandler storyHandler, boolean newScene) {
         characterStoryDataList = new ArrayList<>();
-        animationInfoList = new ArrayList<>();
-        subsceneInfoList = new ArrayList<>();
-        inkActionList = new ArrayList<>();
+        tagList = new ArrayList<>();
         PlayerSession playerSession = storyHandler.getPlayerSession();
         try {
             if(!newScene) {
@@ -95,30 +91,20 @@ public class StorySave {
 
             if(!newScene) {
                 for(InkAction inkAction : storyHandler.getInkActionList()) {
-                    if(inkAction instanceof SubscenePlayInkAction action) {
-                        subsceneInfoList.add(
-                                new SubsceneInfo(
-                                        action.getName(),
-                                        action.isLooping()
-                                )
-                        );
-                    } else if(inkAction instanceof AnimationPlayInkAction action) {
-                        animationInfoList.add(
-                                new AnimationInfo(
-                                        action.getName(),
-                                        action.isLooping()
-                                )
-                        );
-                    } else {
-                        inkActionList.add(inkAction);
-                    }
-            }
-            for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-                // If character not spawned by playback or camera angle
-                if(NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().stream().noneMatch(playback -> playback.getCharacter().getName().equals(characterStory.getName()))) {
-                    characterStoryDataList.add(new CharacterStoryData(characterStory));
+                    tagList.add(inkAction.getCommand());
                 }
-            }
+                for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
+                    // If character not spawned by playback or camera angle
+                    if(NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().stream().noneMatch(playback -> playback.getCharacter().getName().equals(characterStory.getName()))) {
+                        characterStoryDataList.add(new CharacterStoryData(characterStory));
+                    }
+                }
+            } else {
+                for(InkAction inkAction : storyHandler.getInkActionList()) {
+                    if(!(inkAction instanceof SubscenePlayInkAction) && !(inkAction instanceof AnimationPlayInkAction)) {
+                        tagList.add(inkAction.getCommand());
+                    }
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -182,14 +168,6 @@ public class StorySave {
         return playerSession;
     }
 
-    public List<AnimationInfo> getAnimationInfoList() {
-        return animationInfoList;
-    }
-
-    public List<SubsceneInfo> getSubsceneInfoList() {
-        return subsceneInfoList;
-    }
-
     public String getInkSave() {
         return inkSave;
     }
@@ -210,43 +188,7 @@ public class StorySave {
         return dialogSaveData;
     }
 
-    public List<InkAction> getInkActionList() {
-        return inkActionList;
-    }
-
-    public static class AnimationInfo {
-        private String name;
-        private boolean wasLooping;
-
-        public AnimationInfo(String name, boolean wasLooping) {
-            this.name = name;
-            this.wasLooping = wasLooping;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean wasLooping() {
-            return wasLooping;
-        }
-    }
-
-    public static class SubsceneInfo {
-        private String name;
-        private boolean wasLooping;
-
-        public SubsceneInfo(String name, boolean wasLooping) {
-            this.name = name;
-            this.wasLooping = wasLooping;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public boolean wasLooping() {
-            return wasLooping;
-        }
+    public List<String> getTagList() {
+        return tagList;
     }
 }

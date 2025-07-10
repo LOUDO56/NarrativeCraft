@@ -20,13 +20,13 @@ public class FadeScreenInkAction extends InkAction {
 
     public FadeScreenInkAction() {}
 
-    public FadeScreenInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.FADE);
+    public FadeScreenInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.FADE, command);
         isDoneFading = false;
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         fadeCurrentState = StoryHandler.FadeCurrentState.FADE_IN;
         startTime = System.currentTimeMillis();
         fadeIn = 2.0;

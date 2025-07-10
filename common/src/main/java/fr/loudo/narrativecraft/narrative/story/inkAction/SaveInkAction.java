@@ -5,12 +5,12 @@ import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 
 public class SaveInkAction extends InkAction {
 
-    public SaveInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.SAVE);
+    public SaveInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.SAVE, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         storyHandler.save(false);
         return InkActionResult.PASS;
     }

@@ -14,12 +14,12 @@ public class WaitInkAction extends InkAction {
 
     public WaitInkAction() {}
 
-    public WaitInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.WAIT);
+    public WaitInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.WAIT, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         double timeValue = Double.parseDouble(command[1]);
         unitTime = command[2];
         if(unitTime.contains("second")) {

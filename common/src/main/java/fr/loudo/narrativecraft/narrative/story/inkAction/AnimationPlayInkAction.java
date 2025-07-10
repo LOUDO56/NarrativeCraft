@@ -21,18 +21,12 @@ public class AnimationPlayInkAction extends InkAction {
 
     public AnimationPlayInkAction() {}
 
-    public AnimationPlayInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.ANIMATION);
-    }
-
-    public AnimationPlayInkAction(StoryHandler storyHandler, Animation animation, Playback playback) {
-        super(storyHandler, InkTagType.ANIMATION);
-        this.animation = animation;
-        this.playback = playback;
+    public AnimationPlayInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.ANIMATION, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
             isLooping = false;

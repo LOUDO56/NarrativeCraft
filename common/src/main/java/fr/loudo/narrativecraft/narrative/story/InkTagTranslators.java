@@ -63,54 +63,30 @@ public class InkTagTranslators {
     }
 
     public InkAction.InkActionResult executeTag(String tag) {
-        String[] tagSplit = tag.split(" ");
         InkAction inkAction = null;
         InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
         switch (tagType) {
-            case ON_ENTER -> inkAction = new OnEnterInkAction(storyHandler);
-            case CUTSCENE -> inkAction = new CutsceneInkAction(storyHandler);
-            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction(storyHandler);
-            case SONG_SFX_START -> {
-                SongSfxInkAction.SoundType soundType;
-                if(tag.contains("song start")) soundType = SongSfxInkAction.SoundType.SONG;
-                else soundType = SongSfxInkAction.SoundType.SFX;
-                inkAction = new SongSfxInkAction(storyHandler, soundType);
-            }
-            case SONG_SFX_STOP -> {
-                if(tagSplit.length < 3) {
-                    throw new RuntimeException("No parameter set for song/sfx");
-                }
-                String value = tagSplit[2];
-                if(value.equalsIgnoreCase("all")) {
-                    SongSfxInkAction.SoundType soundType;
-                    if(tag.contains("song stop")) soundType = SongSfxInkAction.SoundType.SONG;
-                    else soundType = SongSfxInkAction.SoundType.SFX;
-                    storyHandler.stopAllSoundByType(soundType);
-                } else {
-                    for(InkAction inkAction1 : storyHandler.getInkActionList()) {
-                        if(inkAction1.getName().equals(value)) {
-                            inkAction = inkAction1;
-                        }
-                    }
-                }
-            }
+            case ON_ENTER -> inkAction = new OnEnterInkAction(storyHandler, tag);
+            case CUTSCENE -> inkAction = new CutsceneInkAction(storyHandler, tag);
+            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction(storyHandler, tag);
+            case SONG_SFX_START, SONG_SFX_STOP -> inkAction = new SongSfxInkAction(storyHandler, tag);
             case SOUND_STOP_ALL -> storyHandler.stopAllSound();
-            case FADE -> inkAction = new FadeScreenInkAction(storyHandler);
-            case WAIT -> inkAction = new WaitInkAction(storyHandler);
-            case SAVE -> inkAction = new SaveInkAction(storyHandler);
-            case SUBSCENE -> inkAction = new SubscenePlayInkAction(storyHandler);
-            case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler);
-            case DAYTIME -> inkAction = new ChangeDayTimeInkAction(storyHandler);
-            case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler);
-            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction(storyHandler);
-            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction(storyHandler);
-            case SHAKE -> inkAction = new ShakeScreenInkAction(storyHandler);
-            case EMOTE -> inkAction = new EmoteCraftInkAction(storyHandler);
-            case KILL_CHARACTER -> inkAction = new KillCharacterInkAction(storyHandler);
+            case FADE -> inkAction = new FadeScreenInkAction(storyHandler, tag);
+            case WAIT -> inkAction = new WaitInkAction(storyHandler, tag);
+            case SAVE -> inkAction = new SaveInkAction(storyHandler, tag);
+            case SUBSCENE -> inkAction = new SubscenePlayInkAction(storyHandler, tag);
+            case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler, tag);
+            case DAYTIME -> inkAction = new ChangeDayTimeInkAction(storyHandler, tag);
+            case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler, tag);
+            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction(storyHandler, tag);
+            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction(storyHandler, tag);
+            case SHAKE -> inkAction = new ShakeScreenInkAction(storyHandler, tag);
+            case EMOTE -> inkAction = new EmoteCraftInkAction(storyHandler, tag);
+            case KILL_CHARACTER -> inkAction = new KillCharacterInkAction(storyHandler, tag);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story
-        return inkAction.execute(tagSplit); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
+        return inkAction.execute(); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
     }
     public List<String> getTagsToExecuteLater() {
         return tagsToExecuteLater;

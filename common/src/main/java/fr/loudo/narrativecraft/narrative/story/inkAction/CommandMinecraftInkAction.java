@@ -21,12 +21,12 @@ public class CommandMinecraftInkAction extends InkAction {
 
     public CommandMinecraftInkAction() {}
 
-    public CommandMinecraftInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.MINECRAFT_COMMAND);
+    public CommandMinecraftInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.MINECRAFT_COMMAND, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length == 1) return InkActionResult.ERROR;
         commandMinecraft = String.join(" ", Arrays.stream(command).toList().subList(1, command.length));
         CommandSourceStack commandSourceStack = getCommandSourceStack();

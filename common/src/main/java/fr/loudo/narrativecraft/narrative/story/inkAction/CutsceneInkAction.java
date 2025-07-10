@@ -17,12 +17,12 @@ public class CutsceneInkAction extends InkAction {
 
     public CutsceneInkAction() {}
 
-    public CutsceneInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.CUTSCENE);
+    public CutsceneInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.CUTSCENE, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         storyHandler.getPlayerSession().setSoloCam(null);
         name = InkAction.parseName(command, 2);
         Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(name);

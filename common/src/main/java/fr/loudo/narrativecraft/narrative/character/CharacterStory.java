@@ -147,6 +147,7 @@ public class CharacterStory extends NarrativeEntry {
             } else {
                 entity.remove(Entity.RemovalReason.KILLED);
             }
+            entity = null;
         }
     }
 

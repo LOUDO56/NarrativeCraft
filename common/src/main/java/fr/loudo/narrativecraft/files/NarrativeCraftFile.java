@@ -16,8 +16,6 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.Action;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionGsonParser;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.manager.InkActionSerializer;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
@@ -233,8 +231,8 @@ public class NarrativeCraftFile {
                 File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
                 File scriptFile = new File(sceneFolder, getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
                 String scriptContent = Files.readString(scriptFile.toPath());
-                if(scriptContent.contains(NarrativeCraftFile.getChapterSceneSneakCase(chapter.getIndex(), oldName))) {
-                    scriptContent = scriptContent.replace(getChapterSceneSneakCase(chapter.getIndex(), oldName), getChapterSceneSneakCase(chapter.getIndex(), newName));
+                if(scriptContent.contains(NarrativeCraftFile.getChapterSceneSnakeCase(chapter.getIndex(), oldName))) {
+                    scriptContent = scriptContent.replace(getChapterSceneSnakeCase(chapter.getIndex(), oldName), getChapterSceneSnakeCase(chapter.getIndex(), newName));
                     try(Writer writer = new BufferedWriter(new FileWriter(scriptFile))) {
                         writer.write(scriptContent);
                     }
@@ -717,7 +715,7 @@ public class NarrativeCraftFile {
         if(!saveFile.exists()) return null;
         try {
             String saveContent = Files.readString(saveFile.toPath());
-            Gson gson = new GsonBuilder().registerTypeAdapter(InkAction.class, new InkActionSerializer()).create();
+            Gson gson = new GsonBuilder().create();
             StorySave save = gson.fromJson(saveContent, StorySave.class);
             Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
             Scene scene = chapter.getSceneByName(save.getSceneName());
@@ -737,16 +735,16 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static String getChapterSceneSneakCase(Scene scene) {
+    public static String getChapterSceneSnakeCase(Scene scene) {
         return "chapter_" + scene.getChapter().getIndex() + "_" + getSnakeCaseName(scene.getName());
     }
 
-    private static String getChapterSceneSneakCase(int chapterIndex, String sceneName) {
+    private static String getChapterSceneSnakeCase(int chapterIndex, String sceneName) {
         return "chapter_" + chapterIndex + "_" + getSnakeCaseName(sceneName);
     }
 
     private static String getKnotSceneName(Scene scene) {
-        return "=== " + getChapterSceneSneakCase(scene) + " ===";
+        return "=== " + getChapterSceneSnakeCase(scene) + " ===";
     }
 
     private static String getSnakeCaseName(String name) {

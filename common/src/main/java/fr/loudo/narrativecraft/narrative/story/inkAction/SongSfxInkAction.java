@@ -23,23 +23,39 @@ public class SongSfxInkAction extends InkAction {
 
     public SongSfxInkAction() {}
 
-    public SongSfxInkAction(StoryHandler storyHandler, SoundType soundType) {
-        super(storyHandler, null);
-        this.soundType = soundType;
+    public SongSfxInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, null, command);
+        if(command.contains("start")) {
+            inkTagType = InkTagType.SONG_SFX_START;
+        } else if(command.contains("stop")) {
+            inkTagType = InkTagType.SONG_SFX_STOP;
+        }
+        if(command.contains("song")) {
+            soundType = SoundType.SONG;
+        } else if(command.contains("sfx")) {
+            soundType = SoundType.SFX;
+        }
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
+        if(command.length < 3) return InkActionResult.ERROR;
         fadeTime = 0;
-        if(command[1].equals("start")) {
-            inkTagType = InkTagType.SONG_SFX_START;
-            name = command[2];
+        name = command[2];
+        if(name.equals("all")) {
+            if(soundType == null) {
+                storyHandler.stopAllSound();
+            } else {
+                storyHandler.stopAllSoundByType(soundType);
+            }
+            return InkActionResult.PASS;
+        }
+        if(inkTagType == InkTagType.SONG_SFX_START) {
             loop = false;
             volume = 1.0F;
             pitch = 1.0F;
             isStart = true;
         } else {
-            inkTagType = InkTagType.SONG_SFX_STOP;
             isStart = false;
         }
         t = 0;
@@ -96,7 +112,18 @@ public class SongSfxInkAction extends InkAction {
         } else {
             if(fadeCurrentState == null && fadeTime == 0) {
                 storyHandler.stopSound(sound);
+                return InkActionResult.PASS;
             }
+            SongSfxInkAction currentSfxSong = storyHandler.getInkActionList().stream()
+                    .filter(inkAction -> inkAction instanceof SongSfxInkAction && inkAction.getName().equals(this.name))
+                    .map(inkAction -> (SongSfxInkAction) inkAction)
+                    .findFirst()
+                    .orElse(null);
+            if(currentSfxSong == null) return InkActionResult.PASS;
+            this.soundInstance = currentSfxSong.soundInstance;
+            this.volume = currentSfxSong.volume;
+            this.pitch = currentSfxSong.pitch;
+            storyHandler.getInkActionList().remove(currentSfxSong);
         }
         sendDebugDetails();
         storyHandler.getInkActionList().add(this);

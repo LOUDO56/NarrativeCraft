@@ -10,12 +10,12 @@ public class WeatherChangeInkAction extends InkAction{
 
     public WeatherChangeInkAction() {}
 
-    public WeatherChangeInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.WEATHER);
+    public WeatherChangeInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.WEATHER, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length < 2) return InkActionResult.ERROR;
         name = command[2];
         switch (name) {

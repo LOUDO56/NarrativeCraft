@@ -28,8 +28,8 @@ public class ShakeScreenInkAction extends InkAction {
 
     public ShakeScreenInkAction() {}
 
-    public ShakeScreenInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.SHAKE);
+    public ShakeScreenInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.SHAKE, command);
     }
 
 
@@ -62,7 +62,7 @@ public class ShakeScreenInkAction extends InkAction {
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length < 4) return InkActionResult.ERROR;
         noise = new SimplexNoise(RandomSource.create());
         try {

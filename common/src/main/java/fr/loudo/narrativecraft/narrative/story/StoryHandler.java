@@ -7,19 +7,15 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.dialog.*;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogLetterEffect;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.story.inkAction.AnimationPlayInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
-import fr.loudo.narrativecraft.narrative.story.inkAction.SubscenePlayInkAction;
 import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
@@ -84,6 +80,7 @@ public class StoryHandler {
 
     public void start() {
         try {
+            Minecraft.getInstance().options.hideGui = true;
             inkActionList.clear();
             globalDialogValue = new DialogData(DialogData.globalDialogData);
             if(playerSession == null) {
@@ -114,14 +111,13 @@ public class StoryHandler {
                     PlayerSession playerSessionFromSave = save.getPlayerSession();
                     playerSession.setChapter(playerSessionFromSave.getChapter());
                     playerSession.setScene(playerSessionFromSave.getScene());
-                    for(InkAction inkAction : save.getInkActionList()) {
-                        inkAction.setStoryHandler(this);
+                    for(String tag : save.getTagList()) {
+                        inkTagTranslators.executeTag(tag);
                     }
-                    inkActionList.addAll(save.getInkActionList());
                 }
             }
             if(loadScene != null) {
-                story.choosePathString(NarrativeCraftFile.getChapterSceneSneakCase(loadScene));
+                story.choosePathString(NarrativeCraftFile.getChapterSceneSnakeCase(loadScene));
                 playerSession.setChapter(loadChapter);
                 playerSession.setScene(loadScene);
                 save = null;
@@ -189,27 +185,6 @@ public class StoryHandler {
                         currentCharacters.add(characterStoryData.getCharacterStory());
                     }
                 }
-                for(StorySave.AnimationInfo animationInfo : save.getAnimationInfoList()) {
-                    Animation animation = playerSessionFromSave.getScene().getAnimationByName(animationInfo.getName());
-                    Playback playback = new Playback(
-                            animation,
-                            playerSession.getPlayer().serverLevel(),
-                            animation.getCharacter(),
-                            Playback.PlaybackType.PRODUCTION,
-                            animationInfo.wasLooping()
-                    );
-                    playback.start();
-                    currentCharacters.add(playback.getCharacter());
-                    inkActionList.add(new AnimationPlayInkAction(this, animation, playback));
-                }
-                for(StorySave.SubsceneInfo subsceneInfo : save.getSubsceneInfoList()) {
-                    Subscene subscene = playerSessionFromSave.getScene().getSubsceneByName(subsceneInfo.getName());
-                    subscene.start(playerSession.getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, subsceneInfo.wasLooping());
-                    for(Playback playback : subscene.getPlaybackList()) {
-                        currentCharacters.add(playback.getCharacter());
-                    }
-                    inkActionList.add(new SubscenePlayInkAction(this, subscene));
-                }
                 if(save.getDialogSaveData() != null) {
                     DialogData dialogSaveData = save.getDialogSaveData();
                     globalDialogValue = dialogSaveData;
@@ -257,6 +232,8 @@ public class StoryHandler {
                 } else {
                     showDialog();
                 }
+            } else {
+                if(currentDialogBox != null) currentDialogBox.endDialogAndDontSkip();
             }
             save = null;
             if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
@@ -278,7 +255,7 @@ public class StoryHandler {
     public void showChoices() {
         if(!currentChoices.isEmpty()) {
             if(currentDialogBox != null) {
-                currentDialogBox.endDialog();
+                currentDialogBox.endDialogAndDontSkip();
             }
             ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));

@@ -14,12 +14,12 @@ public class KillCharacterInkAction extends InkAction {
     public KillCharacterInkAction() {
     }
 
-    public KillCharacterInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.KILL_CHARACTER);
+    public KillCharacterInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.KILL_CHARACTER, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length < 1) return InkActionResult.ERROR;
         name = command[1];
         CharacterStory characterStory = storyHandler.getCharacter(name);

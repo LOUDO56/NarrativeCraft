@@ -22,12 +22,12 @@ public class EmoteCraftInkAction extends InkAction {
 
     public EmoteCraftInkAction() {}
 
-    public EmoteCraftInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.EMOTE);
+    public EmoteCraftInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.EMOTE, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length < 3) return InkActionResult.ERROR;
         forced = false;
         characterName = InkAction.parseName(command, 2);

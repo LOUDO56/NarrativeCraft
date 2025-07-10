@@ -16,14 +16,14 @@ public class DialogValuesInkAction extends InkAction {
 
     private String value;
 
-    public DialogValuesInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.DIALOG_VALUES);
+    public DialogValuesInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.DIALOG_VALUES, command);
     }
 
     public DialogValuesInkAction() {}
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         if(command.length == 1) return InkActionResult.ERROR;
         name = command[1];
         DialogData dialogData = storyHandler.getGlobalDialogValue();

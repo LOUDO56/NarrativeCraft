@@ -15,12 +15,12 @@ public class CameraAngleInkAction extends InkAction {
 
     public CameraAngleInkAction() {}
 
-    public CameraAngleInkAction(StoryHandler storyHandler) {
-        super(storyHandler, InkTagType.CAMERA_ANGLE);
+    public CameraAngleInkAction(StoryHandler storyHandler, String command) {
+        super(storyHandler, InkTagType.CAMERA_ANGLE, command);
     }
 
     @Override
-    public InkActionResult execute(String[] command) {
+    public InkActionResult execute() {
         storyHandler.getPlayerSession().setSoloCam(null);
         name = InkAction.parseName(command, 2);
         child = InkAction.parseName(command, command.length - 1);
