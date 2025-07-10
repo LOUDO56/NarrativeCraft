@@ -83,6 +83,8 @@ public abstract class InkAction {
             return InkTagType.EMOTE;
         } else if (tag.startsWith("kill")) {
             return InkTagType.KILL_CHARACTER;
+        } else if (tag.startsWith("border")) {
+            return InkTagType.BORDER;
         } else {
             return null;
         }
@@ -122,6 +124,7 @@ public abstract class InkAction {
             case SHAKE -> inkAction = new ShakeScreenInkAction();
             case EMOTE -> inkAction = new EmoteCraftInkAction();
             case KILL_CHARACTER -> inkAction = new KillCharacterInkAction();
+            case BORDER -> inkAction = new BorderInkAction();
         }
         return inkAction;
     }
@@ -144,7 +147,8 @@ public abstract class InkAction {
         DIALOG_VALUES,
         SHAKE,
         EMOTE,
-        KILL_CHARACTER
+        KILL_CHARACTER,
+        BORDER
     }
 
     public enum InkActionResult {

@@ -83,6 +83,7 @@ public class InkTagTranslators {
             case SHAKE -> inkAction = new ShakeScreenInkAction(storyHandler, tag);
             case EMOTE -> inkAction = new EmoteCraftInkAction(storyHandler, tag);
             case KILL_CHARACTER -> inkAction = new KillCharacterInkAction(storyHandler, tag);
+            case BORDER -> inkAction = new BorderInkAction(storyHandler, tag);
             case null -> {}
         }
         if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story

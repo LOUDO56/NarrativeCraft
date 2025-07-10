@@ -162,3 +162,18 @@ Reset shake effect
 Kill character entity and removes it
 
 ``kill %name%``
+
+## Border
+
+Put borders on your screen to custom the screen resolution and add an ambiance.
+
+``border %up% %right% %down% %left% [%color%] [%opacity%]``
+
+Examples:
+
+``border 10 0 10 0 4J5162 0.5``
+
+### Presets:
+- 2.39:1 : ``border 56 0 56 0``
+- 1.85:1 : ``border 21 0 21 0``
+- 4/3 : ``border 75 0 75 0``

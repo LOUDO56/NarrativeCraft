@@ -14,8 +14,9 @@ public class GuiMixinForge {
     @Inject(method = "render", at = @At("HEAD"))
     private void onRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker, CallbackInfo ci) {
         OnHudRender.keyframeControllerBaseRender(guiGraphics, deltaTracker);
-        OnHudRender.fadeRender(guiGraphics, deltaTracker);
         OnHudRender.dialogHud(guiGraphics, deltaTracker);
+        OnHudRender.fadeRender(guiGraphics, deltaTracker);
+        OnHudRender.borderHud(guiGraphics, deltaTracker);
         OnHudRender.saveIconRender(guiGraphics, deltaTracker);
     }
 }

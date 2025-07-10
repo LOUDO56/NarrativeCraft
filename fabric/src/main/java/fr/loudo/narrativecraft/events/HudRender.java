@@ -11,6 +11,7 @@ public class HudRender {
     private static final ResourceLocation FADE_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "fade-hud");
     private static final ResourceLocation SAVE_ICON_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "save-icon-hud");
     private static final ResourceLocation KEYFRAME_CONTROLLER_BASE_INFO = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "keyframe-controller-base-hud");
+    private static final ResourceLocation BORDER_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "border-hud");
 
     public static void fadeHUDRender(LayeredDrawerWrapper layeredDrawerWrapper) {
         layeredDrawerWrapper.addLayer(IdentifiedLayer.of(FADE_HUD, OnHudRender::fadeRender));
@@ -26,5 +27,9 @@ public class HudRender {
 
     public static void keyframeControllerBaseHUDRender(LayeredDrawerWrapper layeredDrawerWrapper) {
         layeredDrawerWrapper.addLayer(IdentifiedLayer.of(KEYFRAME_CONTROLLER_BASE_INFO, OnHudRender::keyframeControllerBaseRender));
+    }
+
+    public static void borderHud(LayeredDrawerWrapper layeredDrawerWrapper) {
+        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(BORDER_HUD, OnHudRender::borderHud));
     }
 }

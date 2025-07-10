@@ -183,6 +183,7 @@
   "narrativecraft.debug.shake": "Shake strength=%s, rate=%s, speed=%s",
   "narrativecraft.debug.emote": "emote %s %s %s isForced=%s",
   "narrativecraft.debug.kill_character": "Killed character %s",
+  "narrativecraft.debug.border": "Border up=%s, right=%s, down=%s, left=%s, color=%s, opacity=%s",
 
 
   "narrativecraft.validation.missing_name": "Missing name.",

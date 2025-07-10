@@ -24,8 +24,9 @@ public class EventsRegister {
         UseEntityCallback.EVENT.register(EntityRightClick::onEntityRightClick);
         ClientTickEvents.END_CLIENT_TICK.register(OnClientTick::clientTick);
         HudLayerRegistrationCallback.EVENT.register(HudRender::keyframeControllerBaseHUDRender);
-        HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::dialogHud);
+        HudLayerRegistrationCallback.EVENT.register(HudRender::borderHud);
+        HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::saveIconRender);
     }
 

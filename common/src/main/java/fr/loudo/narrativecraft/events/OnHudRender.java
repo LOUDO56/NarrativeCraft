@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
+import fr.loudo.narrativecraft.narrative.story.inkAction.BorderInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import net.minecraft.client.DeltaTracker;
@@ -67,5 +68,16 @@ public class OnHudRender {
                 playerSession.getKeyframeControllerBase().renderHUDInfo(guiGraphics);
             }
         }
+    }
+
+    public static void borderHud(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler == null) return;
+        for(InkAction inkAction : storyHandler.getInkActionList()) {
+            if(inkAction instanceof BorderInkAction borderInkAction) {
+                borderInkAction.render(guiGraphics, deltaTracker);
+            }
+        }
+
     }
 }
