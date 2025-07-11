@@ -62,51 +62,10 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void initOldData() {
-        oldKeyframeGroups = new ArrayList<>();
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            List<Keyframe> oldKeyframes = new ArrayList<>();
-            for(Keyframe keyframe : keyframeGroup.getKeyframeList()) {
-                KeyframeCoordinate keyframeCoordinate = keyframe.getKeyframeCoordinate();
-                KeyframeCoordinate oldKeyframeCoordinate = new KeyframeCoordinate(
-                        keyframeCoordinate.getX(),
-                        keyframeCoordinate.getY(),
-                        keyframeCoordinate.getZ(),
-                        keyframeCoordinate.getXRot(),
-                        keyframeCoordinate.getYRot(),
-                        keyframeCoordinate.getFov()
-                );
-                Keyframe oldKeyframe = new Keyframe(
-                        keyframe.getId(),
-                        oldKeyframeCoordinate,
-                        keyframe.getTick(),
-                        keyframe.getStartDelay(),
-                        keyframe.getPathTime()
-                );
-                oldKeyframes.add(oldKeyframe);
-            }
-            KeyframeGroup oldKeyframeGroup = new KeyframeGroup(keyframeGroup.getId());
-            oldKeyframeGroup.getKeyframeList().addAll(oldKeyframes);
-            oldKeyframeGroups.add(oldKeyframeGroup);
-        }
-        oldKeyframeTriggers = new ArrayList<>();
-        for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
-            KeyframeCoordinate keyframeCoordinate = keyframeTrigger.getKeyframeCoordinate();
-            KeyframeCoordinate oldKeyframeCoordinate = new KeyframeCoordinate(
-                    keyframeCoordinate.getX(),
-                    keyframeCoordinate.getY(),
-                    keyframeCoordinate.getZ(),
-                    keyframeCoordinate.getXRot(),
-                    keyframeCoordinate.getYRot(),
-                    keyframeCoordinate.getFov()
-            );
-            KeyframeTrigger oldKeyframeTrigger = new KeyframeTrigger(
-                    keyframeTrigger.getId(),
-                    oldKeyframeCoordinate,
-                    keyframeTrigger.getTick(),
-                    keyframeTrigger.getCommands()
-            );
-            oldKeyframeTriggers.add(oldKeyframeTrigger);
-        }
+        Cutscene oldCutsceneData = NarrativeCraftFile.getCutsceneData(cutscene);
+        if(oldCutsceneData == null) return;
+        oldKeyframeGroups = oldCutsceneData.getKeyframeGroupList();
+        oldKeyframeTriggers = oldCutsceneData.getKeyframeTriggerList();
     }
 
     public void startSession() {
@@ -119,15 +78,32 @@ public class CutsceneController extends KeyframeControllerBase {
 
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 
+        if(playbackType == Playback.PlaybackType.PRODUCTION) {
+            storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        }
+
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player.serverLevel(), playbackType, false);
+            if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                for(Playback playback : subscene.getPlaybackList()) {
+                    if(!storyHandler.getCurrentCharacters().contains(playback.getCharacter())) {
+                        storyHandler.getCurrentCharacters().add(playback.getCharacter());
+                    }
+                }
+            }
         }
 
         for(Animation animation : cutscene.getAnimationList()) {
             Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
             playback.start();
             playbackList.add(playback);
+            if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                if(!storyHandler.getCurrentCharacters().contains(playback.getCharacter())) {
+                    storyHandler.getCurrentCharacters().add(playback.getCharacter());
+                }
+            }
         }
+
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
 
@@ -159,7 +135,10 @@ public class CutsceneController extends KeyframeControllerBase {
             pause();
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CutsceneControllerScreen(this)));
         } else {
-            storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            int firstTick = keyframeGroups.getFirst().getKeyframeList().getFirst().getTick();
+            if(firstTick > 0) {
+                changeTimePosition(firstTick, false);
+            }
         }
         totalTick = getTotalTick();
     }
@@ -168,7 +147,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                subscene.stopAndKill();
+                subscene.forceStop();
             } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
                 subscene.stop();
             }
@@ -204,11 +183,15 @@ public class CutsceneController extends KeyframeControllerBase {
             if(save) {
                 NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
             } else {
-                cutscene.getKeyframeGroupList().clear();
-                cutscene.getKeyframeGroupList().addAll(oldKeyframeGroups);
+                if(oldKeyframeGroups != null) {
+                    cutscene.getKeyframeGroupList().clear();
+                    cutscene.getKeyframeGroupList().addAll(oldKeyframeGroups);
+                }
 
-                cutscene.getKeyframeTriggerList().clear();
-                cutscene.getKeyframeTriggerList().addAll(oldKeyframeTriggers);
+                if(oldKeyframeTriggers != null) {
+                    cutscene.getKeyframeTriggerList().clear();
+                    cutscene.getKeyframeTriggerList().addAll(oldKeyframeTriggers);
+                }
             }
         }
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {

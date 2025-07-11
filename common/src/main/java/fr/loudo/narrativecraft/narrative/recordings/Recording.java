@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsLi
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ambient.Bat;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.projectile.EyeOfEnder;
@@ -28,8 +29,8 @@ public class Recording {
     private final RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
 
     private final AtomicInteger ids = new AtomicInteger();
-    private final RecordingData entityRecorderData;
     private final List<RecordingData> recordingDataList;
+    private RecordingData entityRecorderData;
     private List<Entity> trackedEntities;
     private boolean isRecording;
     private int tick;
@@ -88,6 +89,10 @@ public class Recording {
 
     public boolean start() {
         if(isRecording) return false;
+        ids.set(0);
+        entityRecorderData = new RecordingData(entityRecorderData.entity, this);
+        entityRecorderData.savingTrack = true;
+        entityRecorderData.actionsData.setEntityIdRecording(ids.incrementAndGet());
         recordingDataList.clear();
         trackedEntities.clear();
         recordingDataList.add(entityRecorderData);

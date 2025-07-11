@@ -34,14 +34,10 @@ public class CutsceneInkAction extends InkAction {
     }
 
     private void executeCutscene(Cutscene cutscene) {
-        for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-            characterStory.kill();
-        }
         KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             cameraAngleController.stopSession(false);
         }
-        storyHandler.getCurrentCharacters().clear();
         storyHandler.setCurrentDialogBox(null);
         CutsceneController cutsceneController = new CutsceneController(cutscene, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
         cutsceneController.startSession();
@@ -49,10 +45,6 @@ public class CutsceneInkAction extends InkAction {
         CutscenePlayback cutscenePlayback = new CutscenePlayback(storyHandler.getPlayerSession().getPlayer(), cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
         cutscenePlayback.start();
         cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
-        for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
-            storyHandler.getCurrentCharacters().removeIf(characterStory -> characterStory.getName().equals(playback.getCharacter().getName()));
-            storyHandler.getCurrentCharacters().add(playback.getCharacter());
-        }
         sendDebugDetails();
     }
 

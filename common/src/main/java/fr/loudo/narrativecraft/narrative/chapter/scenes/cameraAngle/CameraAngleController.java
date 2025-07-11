@@ -46,57 +46,13 @@ public class CameraAngleController extends KeyframeControllerBase {
     }
 
     public void initOldData() {
-        oldCameraAngleDataList = new ArrayList<>();
-        for(CameraAngle cameraAngle : cameraAngleGroup.getCameraAngleList()) {
-            KeyframeCoordinate keyframeCoordinate = cameraAngle.getKeyframeCoordinate();
-            KeyframeCoordinate oldKeyframeCoordinate = new KeyframeCoordinate(
-                    keyframeCoordinate.getX(),
-                    keyframeCoordinate.getY(),
-                    keyframeCoordinate.getZ(),
-                    keyframeCoordinate.getXRot(),
-                    keyframeCoordinate.getYRot(),
-                    keyframeCoordinate.getFov()
-            );
-            CameraAngle oldCameraAngle = new CameraAngle(
-                    cameraAngle.getId(),
-                    oldKeyframeCoordinate,
-                    cameraAngle.getName()
-            );
-            oldCameraAngleDataList.add(oldCameraAngle);
-        }
-        oldCharacterStoryDataList = new ArrayList<>();
-        for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
-            CharacterStory characterStory = characterStoryData.getCharacterStory();
-            CharacterStory oldCharacterStory = new CharacterStory(
-                    characterStory.getName(),
-                    characterStory.getDescription(),
-                    characterStory.getEntity(),
-                    characterStory.getEntityType(),
-                    characterStory.getCharacterSkinController(),
-                    characterStory.getScene(),
-                    characterStory.getEntityTypeId(),
-                    characterStory.getModel(),
-                    characterStory.getBirthdate(),
-                    characterStory.getCharacterType()
-            );
-            CharacterSkinController OldCharacterSkinController = new CharacterSkinController(oldCharacterStory);
-            oldCharacterStory.setCharacterSkinController(OldCharacterSkinController);
-            CharacterStoryData oldCharacterStoryData = new CharacterStoryData(
-                    oldCharacterStory,
-                    characterStoryData.getX(),
-                    characterStoryData.getY(),
-                    characterStoryData.getZ(),
-                    characterStoryData.getPitch(),
-                    characterStoryData.getYaw(),
-                    characterStoryData.getyBodyRot(),
-                    characterStoryData.getPose().name(),
-                    characterStoryData.getEntityByte(),
-                    characterStoryData.getLivingEntityByte(),
-                    characterStoryData.getSkinName(),
-                    characterStoryData.getItemSlotDataList(),
-                    characterStoryData.isOnlyTemplate()
-            );
-            oldCharacterStoryDataList.add(oldCharacterStoryData);
+        CameraAngleGroup oldCameraAngleGroup = NarrativeCraftFile.getCameraAngleData(cameraAngleGroup);
+        if(oldCameraAngleGroup == null) return;
+        oldCameraAngleDataList = oldCameraAngleGroup.getCameraAngleList();
+        oldCharacterStoryDataList = oldCameraAngleGroup.getCharacterStoryDataList();
+        for(CharacterStoryData characterStoryData : oldCharacterStoryDataList) {
+            CharacterStory originalCharacter = cameraAngleGroup.getCharacterStoryData(characterStoryData.getCharacterStory().getName()).getCharacterStory();
+            characterStoryData.setCharacterStory(originalCharacter);
         }
     }
 
@@ -147,10 +103,14 @@ public class CameraAngleController extends KeyframeControllerBase {
             if(save) {
                 NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());
             } else {
-                cameraAngleGroup.getCameraAngleList().clear();
-                cameraAngleGroup.getCameraAngleList().addAll(oldCameraAngleDataList);
-                cameraAngleGroup.getCharacterStoryDataList().clear();
-                cameraAngleGroup.getCharacterStoryDataList().addAll(oldCharacterStoryDataList);
+                if(oldCameraAngleDataList != null) {
+                    cameraAngleGroup.getCameraAngleList().clear();
+                    cameraAngleGroup.getCameraAngleList().addAll(oldCameraAngleDataList);
+                }
+                if(oldCharacterStoryDataList != null) {
+                    cameraAngleGroup.getCharacterStoryDataList().clear();
+                    cameraAngleGroup.getCharacterStoryDataList().addAll(oldCharacterStoryDataList);
+                }
             }
         }
         PlayerSession playerSession = Utils.getSessionOrNull(player);

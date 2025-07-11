@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OnPlayerServerConnection {
@@ -32,6 +33,10 @@ public class OnPlayerServerConnection {
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
         if(recording != null) {
             recording.stop();
+        }
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        if(storyHandler != null) {
+            storyHandler.stop();
         }
 
 

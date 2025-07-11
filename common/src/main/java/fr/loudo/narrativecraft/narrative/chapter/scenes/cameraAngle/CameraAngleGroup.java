@@ -62,6 +62,10 @@ public class CameraAngleGroup extends NarrativeEntry {
                 } else {
                     characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED);
                 }
+                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+                if(storyHandler != null) {
+                    storyHandler.getCurrentCharacters().remove(characterStoryData.getCharacterStory());
+                }
             }
         }
     }

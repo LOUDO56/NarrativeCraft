@@ -183,16 +183,23 @@ public class Playback {
             }
         }
         for (PlaybackData playbackData : entityPlaybacks) {
-            int tickDiff = newTick - globalTick;
-            if(tickDiff > 0) {
-                for (int i = globalTick; i < newTick; i++) {
-                    globalTick = i;
-                    actionListener(playbackData);
+            if(seamless) {
+                int tickDiff = newTick - globalTick;
+                if(tickDiff > 0) {
+                    for (int i = globalTick; i < newTick; i++) {
+                        globalTick = i;
+                        actionListener(playbackData);
+                    }
+                } else {
+                    for (int i = globalTick; i > newTick; i--) {
+                        globalTick = i;
+                        actionListenerRewind(playbackData);
+                    }
                 }
             } else {
-                for (int i = globalTick; i > newTick; i--) {
+                for (int i = 0; i < newTick; i++) {
                     globalTick = i;
-                    actionListenerRewind(playbackData);
+                    actionListener(playbackData);
                 }
             }
             globalTick = oldTick;

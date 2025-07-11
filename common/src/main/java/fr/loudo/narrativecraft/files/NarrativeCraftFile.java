@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.files;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec2;
 
 import java.io.*;
+import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
@@ -46,8 +48,21 @@ public class NarrativeCraftFile {
     private static final String SCENES_DIRECTORY_NAME = "scenes";
     private static final String CHARACTERS_DIRECTORY_NAME = "characters";
     private static final String SAVES_DIRECTORY_NAME = "saves";
-    private static final String DATA_DIRECTORY_NAME = "data";
     private static final String MAIN_INK_NAME = "main" + EXTENSION_SCRIPT_FILE;
+
+    public static final String CAMERA_ANGLES_FILE_NAME = "camera_angles" + EXTENSION_DATA_FILE;
+    public static final String CUTSCENES_FILE_NAME = "cutscenes" + EXTENSION_DATA_FILE;
+    public static final String DETAILS_FILE_NAME = "details" + EXTENSION_DATA_FILE;
+    public static final String SUBSCENES_FILE_NAME = "subscenes" + EXTENSION_DATA_FILE;
+    public static final String DIALOG_FILE_NAME = "dialog" + EXTENSION_DATA_FILE;
+    public static final String SAVE_FILE_NAME = "save" + EXTENSION_DATA_FILE;
+    public static final String DATA_FILE_NAME = "data" + EXTENSION_DATA_FILE;
+    public static final String STORY_FILE_NAME = "story" + EXTENSION_DATA_FILE;
+
+    public static final String ANIMATIONS_FOLDER_NAME = "animations";
+    public static final String NPC_FOLDER_NAME = "npc";
+    private static final String DATA_FOLDER_NAME = "data";
+    private static final String SKINS_FOLDER_NAME = "skins";
 
     public static File mainDirectory;
     public static File chaptersDirectory;
@@ -63,18 +78,18 @@ public class NarrativeCraftFile {
         characterDirectory = createDirectory(mainDirectory, CHARACTERS_DIRECTORY_NAME);
         savesDirectory = createDirectory(mainDirectory, SAVES_DIRECTORY_NAME);
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
-        dataDirectory = createDirectory(mainDirectory, DATA_DIRECTORY_NAME);
+        dataDirectory = createDirectory(mainDirectory, DATA_FOLDER_NAME);
         mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
         createGlobalDialogValues();
     }
 
     public static File getDetailsFile(File file) {
-        return new File(file.getAbsoluteFile(), "details" + NarrativeCraftFile.EXTENSION_DATA_FILE);
+        return new File(file.getAbsoluteFile(), DETAILS_FILE_NAME);
     }
 
     public static DialogData getGlobalDialogValues() {
         createGlobalDialogValues();
-        File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+        File dialogFile = new File(dataDirectory, DIALOG_FILE_NAME);
         try {
             String dialogContent = Files.readString(dialogFile.toPath());
             return new Gson().fromJson(dialogContent, DialogData.class);
@@ -83,10 +98,10 @@ public class NarrativeCraftFile {
     }
 
     public static void createGlobalDialogValues() {
-        if(!dataDirectory.exists()) createDirectory(mainDirectory, DATA_DIRECTORY_NAME);
-        File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+        if(!dataDirectory.exists()) createDirectory(mainDirectory, DATA_FOLDER_NAME);
+        File dialogFile = new File(dataDirectory, DIALOG_FILE_NAME);
         if(!dialogFile.exists()) {
-            createFile(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+            createFile(dataDirectory, DIALOG_FILE_NAME);
             DialogData dialogData = new DialogData(
                     null,
                     null,
@@ -115,7 +130,7 @@ public class NarrativeCraftFile {
     public static void updateGlobalDialogValues(DialogData dialogData) {
         try {
             createGlobalDialogValues();
-            File dialogFile = new File(dataDirectory, "dialog" + EXTENSION_DATA_FILE);
+            File dialogFile = new File(dataDirectory, DIALOG_FILE_NAME);
             try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
                 new Gson().toJson(dialogData, writer);
             } catch (IOException e) {
@@ -172,18 +187,18 @@ public class NarrativeCraftFile {
         File sceneFolder = new File(scenesFolder.getAbsoluteFile(), getSnakeCaseName(scene.getName()));
         if(sceneFolder.exists()) return true;
         sceneFolder.mkdir();
-        File dataFolder = new File(sceneFolder.getAbsoluteFile(), "data");
+        File dataFolder = new File(sceneFolder.getAbsoluteFile(), DATA_FOLDER_NAME);
         dataFolder.mkdir();
         try {
             File detailsFile = getDetailsFile(dataFolder);
             detailsFile.createNewFile();
             File sceneScriptFile = new File(sceneFolder.getAbsoluteFile(), getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
             sceneScriptFile.createNewFile();
-            createDirectory(dataFolder, "npc");
-            new File(dataFolder.getAbsoluteFile(), "animations").mkdir();
-            new File(dataFolder.getAbsoluteFile(), "cutscenes" + EXTENSION_DATA_FILE).createNewFile();
-            new File(dataFolder.getAbsoluteFile(), "subscenes" + EXTENSION_DATA_FILE).createNewFile();
-            new File(dataFolder.getAbsoluteFile(), "camera_angles" + EXTENSION_DATA_FILE).createNewFile();
+            createDirectory(dataFolder, NPC_FOLDER_NAME);
+            new File(dataFolder.getAbsoluteFile(), ANIMATIONS_FOLDER_NAME).mkdir();
+            new File(dataFolder.getAbsoluteFile(), CUTSCENES_FILE_NAME).createNewFile();
+            new File(dataFolder.getAbsoluteFile(), SUBSCENES_FILE_NAME).createNewFile();
+            new File(dataFolder.getAbsoluteFile(), CAMERA_ANGLES_FILE_NAME).createNewFile();
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", scene.getName(), scene.getDescription());
             try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
                 writer.write(content);
@@ -209,7 +224,7 @@ public class NarrativeCraftFile {
                 Files.move(sceneFolder.toPath(), newSceneFolder.toPath());
                 sceneFolder = newSceneFolder;
             }
-            File sceneDetails = getDetailsFile(new File(sceneFolder, "data"));
+            File sceneDetails = getDetailsFile(new File(sceneFolder, DATA_FOLDER_NAME));
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
                 writer.write(content);
@@ -281,7 +296,7 @@ public class NarrativeCraftFile {
 
     public static boolean updateCutsceneFile(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        File cutsceneFile = new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE);
+        File cutsceneFile = new File(dataFolder, CUTSCENES_FILE_NAME);
         Gson gson = new GsonBuilder().create();
         for(Cutscene cutscene : scene.getCutsceneList()) {
             cutscene.getAnimationListString().clear();
@@ -300,7 +315,7 @@ public class NarrativeCraftFile {
 
     public static boolean updateSubsceneFile(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        File subscenesFile = new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE);
+        File subscenesFile = new File(dataFolder, SUBSCENES_FILE_NAME);
         Gson gson = new GsonBuilder().create();
         for(Subscene subscene : scene.getSubsceneList()) {
             subscene.getAnimationNameList().clear();
@@ -320,7 +335,7 @@ public class NarrativeCraftFile {
 
     public static boolean updateCameraAnglesFile(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        File subscenesFile = new File(dataFolder, "camera_angles" + EXTENSION_DATA_FILE);
+        File subscenesFile = new File(dataFolder, CAMERA_ANGLES_FILE_NAME);
         Gson gson = new GsonBuilder().create();
         try(Writer writer = new BufferedWriter(new FileWriter(subscenesFile))) {
             gson.toJson(scene.getCameraAngleGroupList(), writer);
@@ -333,7 +348,7 @@ public class NarrativeCraftFile {
 
     public static boolean updateAnimationFile(Animation animation) {
         File dataFolder = getDataFolderOfScene(animation.getScene());
-        File animationFolder = new File(dataFolder, "animations");
+        File animationFolder = new File(dataFolder, ANIMATIONS_FOLDER_NAME);
         if(!animationFolder.exists()) animationFolder.mkdir();
         File animationFile = createFile(animationFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
         Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionGsonParser()).create();
@@ -351,8 +366,8 @@ public class NarrativeCraftFile {
         CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(newName);
         File characterFolderNew = new File(characterDirectory, Utils.getSnakeCase(newName));
         File characterFolderOld = new File(characterDirectory, Utils.getSnakeCase(oldName));
-        File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
-        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        File characterFile = new File(characterFolderNew, DATA_FILE_NAME);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         try {
             Files.move(characterFolderOld.toPath(), characterFolderNew.toPath());
             List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
@@ -398,8 +413,8 @@ public class NarrativeCraftFile {
 
     public static boolean updateCharacterFolder(CharacterStory characterStory) {
         File characterFolderNew = new File(characterDirectory, Utils.getSnakeCase(characterStory.getName()));
-        File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
-        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        File characterFile = new File(characterFolderNew, DATA_FILE_NAME);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         try {
             List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
             for(Chapter chapter : chapters) {
@@ -443,13 +458,13 @@ public class NarrativeCraftFile {
 
     public static boolean updateNpcSceneFolder(String oldName, String newName, Scene scene) {
         File sceneFolder = getSceneFolder(scene);
-        File dataFile = new File(sceneFolder, "data");
-        File npcFolder = new File(dataFile, "npc");
+        File dataFile = new File(sceneFolder, DATA_FOLDER_NAME);
+        File npcFolder = new File(dataFile, NPC_FOLDER_NAME);
         CharacterStory characterStory = scene.getNpc(newName);
         File characterFolderNew = new File(npcFolder, Utils.getSnakeCase(newName));
         File characterFolderOld = new File(npcFolder, Utils.getSnakeCase(oldName));
-        File characterFile = new File(characterFolderNew, "data" + EXTENSION_DATA_FILE);
-        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        File characterFile = new File(characterFolderNew, DATA_FILE_NAME);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         try {
             Files.move(characterFolderOld.toPath(), characterFolderNew.toPath());
             for(Animation animation : scene.getAnimationList()) {
@@ -490,11 +505,11 @@ public class NarrativeCraftFile {
 
     public static boolean updateNpcSceneFolder(CharacterStory characterStory, Scene scene) {
         File sceneFolder = getSceneFolder(scene);
-        File dataFile = new File(sceneFolder, "data");
-        File npcFolder = new File(dataFile, "npc");
+        File dataFile = new File(sceneFolder, DATA_FOLDER_NAME);
+        File npcFolder = new File(dataFile, NPC_FOLDER_NAME);
         File characterFolder = new File(npcFolder, Utils.getSnakeCase(characterStory.getName()));
-        File characterFile = new File(characterFolder, "data" + EXTENSION_DATA_FILE);
-        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        File characterFile = new File(characterFolder, DATA_FILE_NAME);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         try {
             for(Animation animation : scene.getAnimationList()) {
                 if(animation.getCharacter().getName().equalsIgnoreCase(characterStory.getName())) {
@@ -533,8 +548,8 @@ public class NarrativeCraftFile {
 
     public static boolean createCharacterFile(CharacterStory characterStory) {
         File characterFolder = createDirectory(characterDirectory, getSnakeCaseName(characterStory.getName()));
-        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
-        File skinsFolder = createDirectory(characterFolder, "skins");
+        File characterFile = createFile(characterFolder, DATA_FILE_NAME);
+        File skinsFolder = createDirectory(characterFolder, SKINS_FOLDER_NAME);
         PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
         characterStory.setModel(defaultPlayerSkin.model());
         File mainSkinFile = createFile(skinsFolder, "main.png");
@@ -554,10 +569,10 @@ public class NarrativeCraftFile {
 
     public static boolean createCharacterFileScene(CharacterStory characterStory, Scene scene) {
         File sceneFile = getSceneFolder(scene);
-        File sceneDataFolder = new File(sceneFile, "data");
-        File npcFolder = new File(sceneDataFolder, "npc");
+        File sceneDataFolder = new File(sceneFile, DATA_FOLDER_NAME);
+        File npcFolder = new File(sceneDataFolder, NPC_FOLDER_NAME);
         File characterFolder = createDirectory(npcFolder, Utils.getSnakeCase(characterStory.getName()));
-        File characterFile = createFile(characterFolder, "data" + EXTENSION_DATA_FILE);
+        File characterFile = createFile(characterFolder, DATA_FILE_NAME);
         PlayerSkin defaultPlayerSkin = DefaultPlayerSkin.get(UUID.randomUUID());
         characterStory.setModel(defaultPlayerSkin.model());
         File mainSkinFile = createFile(characterFolder, "main.png");
@@ -581,8 +596,8 @@ public class NarrativeCraftFile {
 
     public static void removeNpcFolder(CharacterStory characterStory) {
         File sceneFolder = getSceneFolder(characterStory.getScene());
-        File dataFolder = new File(sceneFolder, "data");
-        File npcFolder = new File(dataFolder, "npc");
+        File dataFolder = new File(sceneFolder, DATA_FOLDER_NAME);
+        File npcFolder = new File(dataFolder, NPC_FOLDER_NAME);
         deleteDirectory(new File(npcFolder, Utils.getSnakeCase(characterStory.getName())));
     }
 
@@ -602,41 +617,41 @@ public class NarrativeCraftFile {
 
     public static void removeAnimationFileFromScene(Animation animation) {
         File dataFolder = getDataFolderOfScene(animation.getScene());
-        File animationsFolder = new File(dataFolder, "animations");
+        File animationsFolder = new File(dataFolder, ANIMATIONS_FOLDER_NAME);
         File animationFile = new File(animationsFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
         animationFile.delete();
     }
 
     public static boolean subscenesFileExist(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        return new File(dataFolder, "subscenes" + EXTENSION_DATA_FILE).exists();
+        return new File(dataFolder, SUBSCENES_FILE_NAME).exists();
     }
 
     public static boolean cutscenesFileExist(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        return new File(dataFolder, "cutscenes" + EXTENSION_DATA_FILE).exists();
+        return new File(dataFolder, CUTSCENES_FILE_NAME).exists();
     }
 
     public static boolean animationFileExist(Scene scene, Animation animation) {
         File dataFolder = getDataFolderOfScene(scene);
-        File animationsFolder = new File(dataFolder, "animations");
+        File animationsFolder = new File(dataFolder, ANIMATIONS_FOLDER_NAME);
         return new File(animationsFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE).exists();
     }
 
     public static boolean animationFileExist(Scene scene, String animationName) {
         File dataFolder = getDataFolderOfScene(scene);
-        File animationsFolder = new File(dataFolder, "animations");
+        File animationsFolder = new File(dataFolder, ANIMATIONS_FOLDER_NAME);
         return new File(animationsFolder, getSnakeCaseName(animationName) + EXTENSION_DATA_FILE).exists();
     }
 
     public static File animationFolder(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
-        return new File(dataFolder, "animations");
+        return new File(dataFolder, ANIMATIONS_FOLDER_NAME);
     }
 
     public static String getStoryFile() throws IOException {
-        File buildFolder = new File(mainDirectory, "build");
-        return Files.readString(new File(buildFolder, "story.json").toPath());
+        File buildFolder = new File(mainDirectory, BUILD_DIRECTORY_NAME);
+        return Files.readString(new File(buildFolder, STORY_FILE_NAME).toPath());
     }
 
     public static List<String> readSceneLines(Scene scene) {
@@ -699,7 +714,7 @@ public class NarrativeCraftFile {
 
     public static boolean writeSave(StoryHandler storyHandler, boolean newScene) {
        try {
-           File saveFile = new File(savesDirectory, "save.json");
+           File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
            StorySave save = new StorySave(storyHandler, newScene);
            try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
                new Gson().toJson(save, writer);
@@ -711,7 +726,7 @@ public class NarrativeCraftFile {
     }
 
     public static StorySave getSave() {
-        File saveFile = new File(savesDirectory, "save" + EXTENSION_DATA_FILE);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         if(!saveFile.exists()) return null;
         try {
             String saveContent = Files.readString(saveFile.toPath());
@@ -755,7 +770,7 @@ public class NarrativeCraftFile {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
-        return new File(sceneFolder, "data");
+        return new File(sceneFolder, DATA_FOLDER_NAME);
     }
 
     private static File createDirectory(File parent, String name) {
@@ -790,12 +805,48 @@ public class NarrativeCraftFile {
 
     public static File getSkinFile(CharacterStory characterStory, String name) {
         File characterFolder = new File(characterDirectory, getSnakeCaseName(characterStory.getName()));
-        File skinsFolder = new File(characterFolder, "skins");
+        File skinsFolder = new File(characterFolder, SKINS_FOLDER_NAME);
         File skin = new File(skinsFolder, name);
         if(skin.exists()) {
             return skin;
         } else {
             return null;
         }
+    }
+
+    public static Cutscene getCutsceneData(Cutscene cutscene) {
+        File sceneData = getDataFolderOfScene(cutscene.getScene());
+        File cutsceneFile = new File(sceneData, CUTSCENES_FILE_NAME);
+        Type listType = new TypeToken<List<Cutscene>>() {}.getType();
+        try {
+            String content = Files.readString(cutsceneFile.toPath());
+            List<Cutscene> cutscenes = new Gson().fromJson(content, listType);
+            for(Cutscene cutscene1 : cutscenes) {
+                if(cutscene.getName().equals(cutscene1.getName())) {
+                    return cutscene1;
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
+    }
+
+    public static CameraAngleGroup getCameraAngleData(CameraAngleGroup cameraAngleGroup) {
+        File sceneData = getDataFolderOfScene(cameraAngleGroup.getScene());
+        File cameraAngleFile = new File(sceneData, CAMERA_ANGLES_FILE_NAME);
+        Type listType = new TypeToken<List<CameraAngleGroup>>() {}.getType();
+        try {
+            String content = Files.readString(cameraAngleFile.toPath());
+            List<CameraAngleGroup> cameraAngleGroupList = new Gson().fromJson(content, listType);
+            for(CameraAngleGroup cameraAngleGroup1 : cameraAngleGroupList) {
+                if(cameraAngleGroup1.getName().equals(cameraAngleGroup.getName())) {
+                    return cameraAngleGroup1;
+                }
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        return null;
     }
 }

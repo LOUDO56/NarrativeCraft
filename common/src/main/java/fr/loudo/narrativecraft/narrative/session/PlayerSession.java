@@ -106,5 +106,6 @@ public class PlayerSession {
         keyframeControllerBase = null;
         cutscenePlayback = null;
         overwriteState = false;
+        soloCam = null;
     }
 }

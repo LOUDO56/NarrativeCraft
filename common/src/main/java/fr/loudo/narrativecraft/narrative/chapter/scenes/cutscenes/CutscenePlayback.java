@@ -86,6 +86,7 @@ public class CutscenePlayback  {
         KeyframeCoordinate lastPos = secondKeyframe.getKeyframeCoordinate();
         Minecraft.getInstance().player.setPos(lastPos.getVec3());
         cutsceneController.pause();
+        playerSession.setCutscenePlayback(null);
         if(cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
             cutsceneController.setCurrentPreviewKeyframe(secondKeyframe, true);
         } else {
@@ -94,7 +95,6 @@ public class CutscenePlayback  {
                 onCutsceneEnd.run();
             }
         }
-        playerSession.setCutscenePlayback(null);
     }
 
     private void initValues() {
