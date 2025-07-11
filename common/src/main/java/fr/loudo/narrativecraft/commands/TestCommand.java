@@ -20,6 +20,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
+import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
@@ -68,6 +69,13 @@ public class TestCommand {
                         )
                         .then(Commands.literal("choice")
                                 .executes(TestCommand::choiceScreen)
+                        )
+                        .then(Commands.literal("mainScreen")
+                                .executes(commandContext -> {
+                                    MainScreen mainScreen = new MainScreen();
+                                    Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
+                                    return Command.SINGLE_SUCCESS;
+                                })
                         )
                 )
                 .then(Commands.literal("fake_player")

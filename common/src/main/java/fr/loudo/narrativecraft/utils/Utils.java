@@ -2,13 +2,19 @@ package fr.loudo.narrativecraft.utils;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.mojang.realmsclient.RealmsMainScreen;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.GenericMessageScreen;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.client.gui.screens.multiplayer.JoinMultiplayerScreen;
+import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.Item;
@@ -80,5 +86,25 @@ public class Utils {
 
     public static String getSnakeCase(String text) {
         return String.join("_", text.toLowerCase().split(" "));
+    }
+    
+    public static void disconnectPlayer(Minecraft minecraft) {
+        boolean flag = minecraft.isLocalServer();
+        ServerData serverdata = minecraft.getCurrentServer();
+        minecraft.level.disconnect();
+        if (flag) {
+            minecraft.disconnect(new GenericMessageScreen(Component.translatable("menu.returnToMenu")));
+        } else {
+            minecraft.disconnect();
+        }
+
+        TitleScreen titlescreen = new TitleScreen();
+        if (flag) {
+            minecraft.setScreen(titlescreen);
+        } else if (serverdata != null && serverdata.isRealm()) {
+            minecraft.setScreen(new RealmsMainScreen(titlescreen));
+        } else {
+            minecraft.setScreen(new JoinMultiplayerScreen(titlescreen));
+        }
     }
 }

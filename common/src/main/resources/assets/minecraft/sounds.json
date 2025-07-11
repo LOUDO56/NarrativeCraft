@@ -6,5 +6,9 @@
   "custom.choice_appear": {
     "category": "master",
     "sounds": ["custom/choice_appear"]
+  },
+  "narrativecraft_mainscreen.music": {
+    "category": "master",
+    "sounds": ["narrativecraft_mainscreen/music"]
   }
 }
