@@ -2,22 +2,22 @@ package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
+import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OnPlayerServerConnection {
 
     public static void playerJoin(ServerPlayer player) {
-        PlayerSessionManager playerSessionManager = NarrativeCraftMod.getInstance().getPlayerSessionManager();
-        if(playerSessionManager.getPlayerSession(player) == null) {
-            PlayerSession playerSession = new PlayerSession(player);
-            playerSessionManager.getPlayerSessions().add(playerSession);
-        }
         CutsceneEditItems.init(player.registryAccess());
+        MainScreen mainScreen = new MainScreen(player);
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
     }
 
     public static void playerLeave(ServerPlayer player) {
@@ -36,7 +36,7 @@ public class OnPlayerServerConnection {
         }
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null) {
-            storyHandler.stop();
+            NarrativeCraftMod.server.execute(storyHandler::stop);
         }
 
 

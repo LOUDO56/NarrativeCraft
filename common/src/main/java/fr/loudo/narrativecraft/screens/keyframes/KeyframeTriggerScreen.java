@@ -1,7 +1,10 @@
 package fr.loudo.narrativecraft.screens.keyframes;
 
+import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
+import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -26,18 +29,18 @@ public class KeyframeTriggerScreen extends Screen {
     private ScreenUtils.LabelBox tickBox;
     private ScreenUtils.MultilineLabelBox commandBox;
 
-    private CutsceneController cutsceneController;
+    private KeyframeControllerBase keyframeControllerBase;
     private KeyframeTrigger keyframeTrigger;
 
-    public KeyframeTriggerScreen(CutsceneController cutsceneController, int defaultTick) {
+    public KeyframeTriggerScreen(KeyframeControllerBase keyframeControllerBase, int defaultTick) {
         super(Component.literal("Keyframe Trigger Screen"));
-        this.cutsceneController = cutsceneController;
+        this.keyframeControllerBase = keyframeControllerBase;
         this.defaultTick = defaultTick;
     }
 
-    public KeyframeTriggerScreen(CutsceneController cutsceneController, KeyframeTrigger keyframeTrigger) {
+    public KeyframeTriggerScreen(KeyframeControllerBase keyframeControllerBase, KeyframeTrigger keyframeTrigger) {
         super(Component.literal("Keyframe Trigger Screen"));
-        this.cutsceneController = cutsceneController;
+        this.keyframeControllerBase = keyframeControllerBase;
         this.keyframeTrigger = keyframeTrigger;
     }
 
@@ -114,10 +117,14 @@ public class KeyframeTriggerScreen extends Screen {
                     return;
                 }
                 InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
+                Scene scene = null;
+                if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                    scene = cutsceneController.getCutscene().getScene();
+                }
                 if(tagType != null) {
                     InkAction inkAction = InkAction.getInkAction(tagType);
                     if(inkAction != null) {
-                        InkAction.ErrorLine errorLine = inkAction.validate(tag.split(" "), i + 1, tag, cutsceneController.getCutscene().getScene());
+                        InkAction.ErrorLine errorLine = inkAction.validate(tag.split(" "), i + 1, tag, scene);
                         if(errorLine != null) {
                             String lineText = errorLine.getLineText();
                             if(lineText.length() >= 40) {
@@ -133,7 +140,11 @@ public class KeyframeTriggerScreen extends Screen {
                 }
             }
             if(keyframeTrigger == null) {
-                cutsceneController.addKeyframeTrigger(commandBox.getMultiLineEditBox().getValue(), Integer.parseInt(tickBox.getEditBox().getValue()));
+                if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                    cutsceneController.addKeyframeTrigger(commandBox.getMultiLineEditBox().getValue(), Integer.parseInt(tickBox.getEditBox().getValue()));
+                } else if(keyframeControllerBase instanceof MainScreenController mainScreenController) {
+                    mainScreenController.addKeyframeTrigger(commandBox.getMultiLineEditBox().getValue(), 0);
+                }
             } else {
                 keyframeTrigger.setTick(Integer.parseInt(tickBox.getEditBox().getValue()));
                 keyframeTrigger.setCommands(commandBox.getMultiLineEditBox().getValue());
@@ -155,10 +166,19 @@ public class KeyframeTriggerScreen extends Screen {
             Button removeButton = Button.builder(Translation.message("global.remove"), button -> {
                 ConfirmScreen confirmScreen = new ConfirmScreen(b -> {
                     if(b) {
-                        cutsceneController.removeKeyframeTrigger(keyframeTrigger);
+                        if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                            cutsceneController.removeKeyframeTrigger(keyframeTrigger);
+                        } else if(keyframeControllerBase instanceof MainScreenController mainScreenController) {
+                            mainScreenController.removeKeyframeTrigger();
+                        }
                         onClose();
                     } else {
-                        KeyframeTriggerScreen screen = new KeyframeTriggerScreen(cutsceneController, keyframeTrigger);
+                        KeyframeTriggerScreen screen = null;
+                        if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                            screen = new KeyframeTriggerScreen(cutsceneController, keyframeTrigger);
+                        } else if(keyframeControllerBase instanceof MainScreenController mainScreenController) {
+                            screen = new KeyframeTriggerScreen(mainScreenController, keyframeTrigger);
+                        }
                         minecraft.setScreen(screen);
                     }
                 }, Component.literal(""), Translation.message("global.confirm_delete"),

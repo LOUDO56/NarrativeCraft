@@ -12,11 +12,13 @@ import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
+import fr.loudo.narrativecraft.screens.mainScreen.MainScreenControllerScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -106,7 +108,7 @@ public class OnClientTick {
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
             Screen screen;
             PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
-            if(playerSession == null) {
+            if(playerSession == null || playerSession.getScene() == null) {
                 screen = new ChaptersScreen();
             } else {
                 screen = new ScenesMenuScreen(playerSession.getScene());
@@ -164,7 +166,18 @@ public class OnClientTick {
                 client.execute(() -> client.setScreen(screen));
             });
         }
-        if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
+
+        if(keyframeControllerBase instanceof MainScreenController mainScreenController) {
+            if(mainScreenController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
+            ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
+                CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(mainScreenController);
+                client.execute(() -> client.setScreen(screen));
+            });
+            ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                MainScreenControllerScreen screen = new MainScreenControllerScreen(mainScreenController);
+                client.execute(() -> client.setScreen(screen));
+            });
+        } else if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             if(cameraAngleController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
                 CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController);

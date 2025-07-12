@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.character.CharacterSkinController;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
@@ -33,11 +34,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CameraAngleController extends KeyframeControllerBase {
 
-    private final AtomicInteger keyframeCounter = new AtomicInteger();
+    protected final AtomicInteger keyframeCounter = new AtomicInteger();
 
-    private final CameraAngleGroup cameraAngleGroup;
-    private List<CameraAngle> oldCameraAngleDataList;
-    private List<CharacterStoryData> oldCharacterStoryDataList;
+    protected CameraAngleGroup cameraAngleGroup;
+    protected List<CameraAngle> oldCameraAngleDataList;
+    protected List<CharacterStoryData> oldCharacterStoryDataList;
 
     public CameraAngleController(CameraAngleGroup cameraAngleGroup, ServerPlayer player, Playback.PlaybackType playbackType) {
         super(player, playbackType);
@@ -63,6 +64,7 @@ public class CameraAngleController extends KeyframeControllerBase {
         if(keyframeControllerBase != null) {
             keyframeControllerBase.stopSession(false);
         }
+        playerSession.setKeyframeControllerBase(this);
 
         cameraAngleGroup.spawnCharacters(playbackType);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
@@ -75,6 +77,9 @@ public class CameraAngleController extends KeyframeControllerBase {
             }
             for(CameraAngle cameraAngle : cameraAngleGroup.getCameraAngleList()) {
                 cameraAngle.showKeyframeToClient(player);
+            }
+            for(KeyframeTrigger keyframeTrigger : cameraAngleGroup.getKeyframeTriggerList()) {
+                keyframeTrigger.showKeyframeToClient(player);
             }
 
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new CameraAngleControllerScreen(this)));
@@ -98,7 +103,9 @@ public class CameraAngleController extends KeyframeControllerBase {
             for(CameraAngle cameraAngle : cameraAngleGroup.getCameraAngleList()) {
                 cameraAngle.removeKeyframeFromClient(player);
             }
-
+            for(KeyframeTrigger keyframeTrigger : cameraAngleGroup.getKeyframeTriggerList()) {
+                keyframeTrigger.removeKeyframeFromClient(player);
+            }
             player.setGameMode(GameType.CREATIVE);
             if(save) {
                 NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());

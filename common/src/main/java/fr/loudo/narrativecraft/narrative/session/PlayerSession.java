@@ -30,6 +30,9 @@ public class PlayerSession {
 
     public PlayerSession(ServerPlayer player, Chapter chapter, Scene scene) {
         this.player = player;
+        this.chapter = chapter;
+        this.scene = scene;
+        this.subscenesPlaying = new ArrayList<>();
         this.overwriteState = false;
     }
     public PlayerSession(Chapter chapter, Scene scene) {

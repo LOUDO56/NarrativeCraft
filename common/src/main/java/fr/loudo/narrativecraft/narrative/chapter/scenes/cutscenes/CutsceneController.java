@@ -75,6 +75,7 @@ public class CutsceneController extends KeyframeControllerBase {
         if(keyframeControllerBase != null) {
             keyframeControllerBase.stopSession(false);
         }
+        playerSession.setKeyframeControllerBase(this);
 
         keyframeGroupCounter.set(cutscene.getKeyframeGroupList().size());
 

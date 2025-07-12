@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
+import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
@@ -72,12 +73,14 @@ public class CameraAngleOptionsScreen extends KeyframeOptionScreen {
             this.addRenderableWidget(leftKeyframeButton);
         }
         this.addRenderableWidget(closeButton);
-        currentX -= INITIAL_POS_X + gap;
-        Button editButton = Button.builder(ImageFontConstants.EDIT, button -> {
-            CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController, (CameraAngle) keyframe);
-            minecraft.setScreen(screen);
-        }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
-        this.addRenderableWidget(editButton);
+        if(!(cameraAngleController instanceof MainScreenController)) {
+            currentX -= INITIAL_POS_X + gap;
+            Button editButton = Button.builder(ImageFontConstants.EDIT, button -> {
+                CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController, (CameraAngle) keyframe);
+                minecraft.setScreen(screen);
+            }).bounds(currentX - (width / 2), INITIAL_POS_Y - 5, width, BUTTON_HEIGHT).build();
+            this.addRenderableWidget(editButton);
+        }
         currentX -= INITIAL_POS_X + gap;
         Button eyeOpen = Button.builder(ImageFontConstants.EYE_OPEN, button -> {
             CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(keyframe, player, true);

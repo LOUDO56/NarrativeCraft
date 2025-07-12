@@ -65,23 +65,14 @@ public class Utils {
     }
 
     public static PlayerSession getSessionOrNull(ServerPlayer player) {
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
-        if(playerSession == null) return null;
-        if(playerSession.getChapter() == null || playerSession.getScene() == null) {
-            return null;
-        }
-        return playerSession;
+        if(NarrativeCraftMod.server == null) return null;
+        return NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
     }
 
     public static PlayerSession getSessionOrNull(UUID uuid) {
         if(NarrativeCraftMod.server == null) return null;
         ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(uuid);
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(serverPlayer);
-        if(playerSession == null) return null;
-        if(playerSession.getChapter() == null || playerSession.getScene() == null) {
-            return null;
-        }
-        return playerSession;
+        return NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(serverPlayer);
     }
 
     public static String getSnakeCase(String text) {

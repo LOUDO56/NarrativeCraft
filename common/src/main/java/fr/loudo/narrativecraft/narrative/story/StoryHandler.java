@@ -65,8 +65,6 @@ public class StoryHandler {
     public StoryHandler(Chapter chapter, Scene scene) {
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
         playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, chapter, scene);
-        playerSession.setChapter(chapter);
-        playerSession.setScene(scene);
         currentCharacters = new ArrayList<>();
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);

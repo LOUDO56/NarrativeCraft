@@ -39,7 +39,7 @@ public class PlayerSessionManager {
 
     public PlayerSession getPlayerSession(ServerPlayer player) {
         for(PlayerSession playerSession : playerSessions) {
-            if(playerSession.getPlayer().getName().getString().equals(player.getName().getString())) {
+            if(playerSession.getPlayer().getUUID().equals(player.getUUID())) {
                 return playerSession;
             }
         }

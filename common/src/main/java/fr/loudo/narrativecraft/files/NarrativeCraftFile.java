@@ -58,6 +58,7 @@ public class NarrativeCraftFile {
     public static final String SAVE_FILE_NAME = "save" + EXTENSION_DATA_FILE;
     public static final String DATA_FILE_NAME = "data" + EXTENSION_DATA_FILE;
     public static final String STORY_FILE_NAME = "story" + EXTENSION_DATA_FILE;
+    public static final String MAIN_SCREEN_BACKGROUND_FILE_NAME = "main_screen_background" + EXTENSION_DATA_FILE;
 
     public static final String ANIMATIONS_FOLDER_NAME = "animations";
     public static final String NPC_FOLDER_NAME = "npc";
@@ -342,6 +343,18 @@ public class NarrativeCraftFile {
             return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update camera angles file of scene {} of chapter {} ! {}", scene.getName(), scene.getChapter().getIndex(), e.getStackTrace());
+            return false;
+        }
+    }
+
+    public static boolean updateMainScreenBackgroundFile(CameraAngleGroup cameraAngleGroup) {
+        File mainScreenFile = new File(dataDirectory, MAIN_SCREEN_BACKGROUND_FILE_NAME);
+        Gson gson = new GsonBuilder().create();
+        try(Writer writer = new BufferedWriter(new FileWriter(mainScreenFile))) {
+            gson.toJson(cameraAngleGroup, writer);
+            return true;
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't update main screen background file ! ", e.getStackTrace());
             return false;
         }
     }
@@ -848,5 +861,15 @@ public class NarrativeCraftFile {
             return null;
         }
         return null;
+    }
+
+    public static CameraAngleGroup getMainScreenBackgroundFile() {
+        File mainScreenBackgroundFile = new File(dataDirectory, MAIN_SCREEN_BACKGROUND_FILE_NAME);
+        try {
+            String content = Files.readString(mainScreenBackgroundFile.toPath());
+            return new Gson().fromJson(content, CameraAngleGroup.class);
+        } catch (IOException e) {
+            return null;
+        }
     }
 }

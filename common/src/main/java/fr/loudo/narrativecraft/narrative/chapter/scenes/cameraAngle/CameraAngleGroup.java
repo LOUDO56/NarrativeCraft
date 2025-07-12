@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.EntityFields;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryData;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
@@ -29,12 +30,14 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     private transient Scene scene;
     private List<CameraAngle> cameraAngleList;
+    private List<KeyframeTrigger> keyframeTriggerList;
     private final List<CharacterStoryData> characterStoryDataList;
 
     public CameraAngleGroup(Scene scene, String name, String description) {
         super(name, description);
         this.scene = scene;
         cameraAngleList = new ArrayList<>();
+        keyframeTriggerList = new ArrayList<>();
         characterStoryDataList = new ArrayList<>();
     }
 
@@ -133,6 +136,19 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     public List<CameraAngle> getCameraAngleList() {
         return cameraAngleList;
+    }
+
+    public List<KeyframeTrigger> getKeyframeTriggerList() {
+        return keyframeTriggerList;
+    }
+
+    public KeyframeTrigger getKeyframeTriggerByEntity(Entity entity) {
+        for(KeyframeTrigger keyframe : keyframeTriggerList) {
+            if(keyframe.getCameraEntity().getId() == entity.getId()) {
+                return keyframe;
+            }
+        }
+        return null;
     }
 
     public CameraAngle getCameraAngleByName(String name) {

@@ -23,6 +23,7 @@
   "narrativecraft.global.pitch": "Pitch",
   "narrativecraft.global.remove": "Remove",
   "narrativecraft.global.close": "Close",
+  "narrativecraft.global.dev_env": "Welcome in the development environment! Have fun creating :p",
 
   "narrativecraft.session.set": "Your session is now set to §lChapter %d §rand §lScene %s.",
   "narrativecraft.session.not_set": "You need to set the chapter and scene session.",
@@ -119,6 +120,9 @@
   "narrativecraft.screen.camera_angle_character.add.fail": "You cannot add two instances of the same character.",
   "narrativecraft.screen.change_skin_link.title": "Change skin of character %s",
 
+  "narrativecraft.screen.story_options.title": "Story options",
+  "narrativecraft.screen.story_options.main_screen": "Main Screen Controller",
+
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",
   "narrativecraft.screen.add.text": "Add",
@@ -172,6 +176,7 @@
   "narrativecraft.character.spawn.fail": "§cImpossible to spawn an entity because no character is linked to animation §c§b%s.",
 
   "narrativecraft.camera_angle.hud": "Currently in Camera Angle Controller.",
+  "narrativecraft.main_screen.hud": "Currently in Main Screen Controller.",
 
   "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
   "narrativecraft.debug.animation": "Animation %s now playing.",

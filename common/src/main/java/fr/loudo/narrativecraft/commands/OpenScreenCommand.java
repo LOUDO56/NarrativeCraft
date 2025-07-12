@@ -5,6 +5,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
+import fr.loudo.narrativecraft.screens.storyManager.options.StoryOptionsScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -20,8 +21,17 @@ public class OpenScreenCommand {
                         .then(Commands.literal("character_manager")
                                 .executes(OpenScreenCommand::openCharacterManager)
                         )
+                        .then(Commands.literal("story_options")
+                                .executes(OpenScreenCommand::openStoryOptions)
+                        )
                 )
         );
+    }
+
+    private static int openStoryOptions(CommandContext<CommandSourceStack> context) {
+        StoryOptionsScreen screen = new StoryOptionsScreen();
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
+        return Command.SINGLE_SUCCESS;
     }
 
     private static int openStoryManager(CommandContext<CommandSourceStack> context) {

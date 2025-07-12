@@ -7,12 +7,11 @@ import net.minecraft.server.network.ServerGamePacketListenerImpl;
 public class PlayerServerConnection {
 
     public static void onPlayerJoin(ServerGamePacketListenerImpl serverGamePacketListener, PacketSender packetSender, MinecraftServer server) {
-        OnPlayerServerConnection.playerJoin(serverGamePacketListener.getPlayer());
+        OnPlayerServerConnection.playerJoin(serverGamePacketListener.player);
     }
 
     public static void onPlayerLeave(ServerGamePacketListenerImpl serverGamePacketListener, MinecraftServer server) {
         OnPlayerServerConnection.playerLeave(serverGamePacketListener.getPlayer());
 
     }
-
 }

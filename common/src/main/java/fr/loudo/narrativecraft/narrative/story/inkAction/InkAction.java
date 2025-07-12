@@ -160,63 +160,80 @@ public abstract class InkAction {
     public static class ErrorLine {
         private final int line;
         private final Scene scene;
-        private final String fileName;
+        private String fileName;
         private final String message;
         private final String lineText;
 
         public ErrorLine(int line, Scene scene, String message, String lineText) {
             this.line = line;
             this.scene = scene;
-            this.fileName = scene.getSnakeCase() + NarrativeCraftFile.EXTENSION_SCRIPT_FILE;
+            if(scene != null) {
+                this.fileName = scene.getSnakeCase() + NarrativeCraftFile.EXTENSION_SCRIPT_FILE;
+            }
             this.message = message;
             this.lineText = lineText;
         }
 
         public Component toMessage() {
-            return Component.empty()
-                    .append("\n")
-                    .append(Component.literal("Chapter: ")
-                            .withColor(ChatFormatting.RED.getColor())
-                            .withStyle(ChatFormatting.BOLD)
-                    )
-                    .append(Component.literal(String.valueOf(scene.getChapter().getIndex()))
-                            .withColor(ChatFormatting.RED.getColor())
-                            .withStyle(style -> style.withBold(false))
-                    )
-                    .append("\n")
-                    .append(Component.literal("Scene: ")
-                            .withColor(ChatFormatting.RED.getColor())
-                            .withStyle(ChatFormatting.BOLD)
-                    )
-                    .append(Component.literal(scene.getName() + " ")
-                            .withColor(ChatFormatting.RED.getColor())
-                            .withStyle(style -> style.withBold(false))
-                    )
-                    .append(Component.literal("(" + fileName + ")")
-                            .withColor(ChatFormatting.GRAY.getColor())
-                            .withStyle(style -> style.withBold(false)
-                                    .withClickEvent(new ClickEvent.OpenFile(
-                                            NarrativeCraftFile.getSceneInkFile(scene)
-                                    ))
-                                    .withHoverEvent(new HoverEvent.ShowText(Translation.message("validation.quick_edit")))
-                            )
-                    )
-                    .append("\n")
-                    .append(Translation.message("global.line")
-                            .withColor(ChatFormatting.GOLD.getColor())
-                    )
-                    .append(" " + line + ": ")
-                    .withColor(ChatFormatting.GOLD.getColor())
-                    .append(Component.literal(lineText)
-                            .withColor(ChatFormatting.GRAY.getColor())
-                            .withStyle(style -> style.withBold(false))
-                    )
-                    .append("\n")
-                    .append(Component.literal("'" + message + "'")
-                            .withColor(ChatFormatting.RED.getColor())
-                            .withStyle(style -> style.withBold(false))
-                    )
-                    .append("\n");
+            Component component = Component.empty();
+            if(scene != null) {
+                return Component.empty()
+                        .append(Component.literal(lineText)
+                                .withColor(ChatFormatting.GRAY.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append("\n")
+                        .append(Component.literal("'" + message + "'")
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append("\n");
+            } else {
+                return Component.empty()
+                        .append("\n")
+                        .append(Component.literal("Chapter: ")
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(ChatFormatting.BOLD)
+                        )
+                        .append(Component.literal(String.valueOf(scene.getChapter().getIndex()))
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append("\n")
+                        .append(Component.literal("Scene: ")
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(ChatFormatting.BOLD)
+                        )
+                        .append(Component.literal(scene.getName() + " ")
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append(Component.literal("(" + fileName + ")")
+                                .withColor(ChatFormatting.GRAY.getColor())
+                                .withStyle(style -> style.withBold(false)
+                                        .withClickEvent(new ClickEvent.OpenFile(
+                                                NarrativeCraftFile.getSceneInkFile(scene)
+                                        ))
+                                        .withHoverEvent(new HoverEvent.ShowText(Translation.message("validation.quick_edit")))
+                                )
+                        )
+                        .append("\n")
+                        .append(Translation.message("global.line")
+                                .withColor(ChatFormatting.GOLD.getColor())
+                        )
+                        .append(" " + line + ": ")
+                        .withColor(ChatFormatting.GOLD.getColor())
+                        .append(Component.literal(lineText)
+                                .withColor(ChatFormatting.GRAY.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append("\n")
+                        .append(Component.literal("'" + message + "'")
+                                .withColor(ChatFormatting.RED.getColor())
+                                .withStyle(style -> style.withBold(false))
+                        )
+                        .append("\n");
+            }
         }
 
         public int getLine() {
