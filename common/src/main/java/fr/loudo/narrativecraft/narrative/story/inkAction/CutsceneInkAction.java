@@ -43,8 +43,8 @@ public class CutsceneInkAction extends InkAction {
         cutsceneController.startSession();
         storyHandler.getPlayerSession().setKeyframeControllerBase(cutsceneController);
         CutscenePlayback cutscenePlayback = new CutscenePlayback(storyHandler.getPlayerSession().getPlayer(), cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
-        cutscenePlayback.start();
         cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
+        cutscenePlayback.start();
         sendDebugDetails();
     }
 

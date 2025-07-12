@@ -130,6 +130,7 @@
   "narrativecraft.screen.main_screen.options": "Options",
   "narrativecraft.screen.main_screen.minecraft_options": "Minecraft options",
   "narrativecraft.screen.main_screen.quit": "Quit",
+  "narrativecraft.screen.main_screen.loading": "Loading...",
 
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
   "narrativecraft.character.create.fail": "An unexpected error occurred while creating the character! Check if characters in your map world directory exists!",

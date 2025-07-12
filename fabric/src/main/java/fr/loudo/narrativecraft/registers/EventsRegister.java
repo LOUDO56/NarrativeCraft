@@ -28,6 +28,7 @@ public class EventsRegister {
         HudLayerRegistrationCallback.EVENT.register(HudRender::borderHud);
         HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::saveIconRender);
+        HudLayerRegistrationCallback.EVENT.register(HudRender::loadingRender);
     }
 
 }

@@ -46,7 +46,7 @@ public class StoryHandler {
     private DialogImpl currentDialogBox;
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
-    private boolean isRunning, isDebugMode, OnCutscene, onChoice, isSaving;
+    private boolean isRunning, isDebugMode, isLoading, OnCutscene, onChoice, isSaving;
     private DialogData globalDialogValue;
     private final List<InkAction> inkActionList;
 
@@ -645,6 +645,14 @@ public class StoryHandler {
 
     public String getCurrentCharacterTalking() {
         return currentCharacterTalking;
+    }
+
+    public boolean isLoading() {
+        return isLoading;
+    }
+
+    public void setLoading(boolean loading) {
+        isLoading = loading;
     }
 
     public void save(boolean newScene) {

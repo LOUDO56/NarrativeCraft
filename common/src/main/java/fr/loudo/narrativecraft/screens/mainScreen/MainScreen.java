@@ -5,19 +5,15 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.options.OptionsScreen;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ARGB;
-import org.lwjgl.glfw.GLFW;
 
 public class MainScreen extends Screen {
 
@@ -26,9 +22,7 @@ public class MainScreen extends Screen {
     public static final ResourceLocation BACKGROUND_IMAGE = ResourceLocation.withDefaultNamespace("textures/narrativecraft_mainscreen/background.png");
     public static final ResourceLocation MUSIC = ResourceLocation.withDefaultNamespace("narrativecraft_mainscreen.music");
 
-    private static final SimpleSoundInstance MUSIC_INSTANCE = new SimpleSoundInstance(SoundEvent.createVariableRangeEvent(MainScreen.MUSIC).location(), SoundSource.MASTER, 0.7f, 1, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, 0.0F, 0.0F, 0.0F, true);
-
-    private long startTime = 0;
+    public static final SimpleSoundInstance MUSIC_INSTANCE = new SimpleSoundInstance(SoundEvent.createVariableRangeEvent(MainScreen.MUSIC).location(), SoundSource.MASTER, 0.7f, 1, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, 0.0F, 0.0F, 0.0F, true);
 
     private final int buttonWidth = 100;
     private final int buttonHeight = 20;
@@ -44,17 +38,8 @@ public class MainScreen extends Screen {
     private void playStory() {
         this.onClose();
         StoryHandler storyHandler = new StoryHandler();
-        NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
-        storyHandler.start();
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        if(startTime == 0) return;
-        if(System.currentTimeMillis() - startTime >= 5 * 1000L) {
-            playStory();
-        }
+        minecraft.getSoundManager().setVolume(MUSIC_INSTANCE, 0.3F);
+        NarrativeCraftMod.server.execute(storyHandler::start);
     }
 
     @Override
@@ -78,10 +63,7 @@ public class MainScreen extends Screen {
             playBtnComponent = Translation.message("screen.main_screen.continue");
         }
         Button playButton = Button.builder(playBtnComponent, button -> {
-            minecraft.getSoundManager().setVolume(MUSIC_INSTANCE, 0.4f);
-            startTime = System.currentTimeMillis();
-            GLFW.glfwSetInputMode(minecraft.getWindow().getWindow(), 208897, 212995); // Hide mouse
-            clearWidgets();
+            playStory();
         }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
         this.addRenderableWidget(playButton);
 
@@ -110,22 +92,6 @@ public class MainScreen extends Screen {
         }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
         this.addRenderableWidget(quitButton);
 
-    }
-
-    @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if(startTime > 0) {
-            guiGraphics.fill(0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
-            guiGraphics.blit(
-                    RenderType::guiTextured,
-                    MainScreen.LOADING_LOGO,
-                    guiGraphics.guiWidth() - 30, guiGraphics.guiHeight() - 30,
-                    0, 0,
-                    12, 12,
-                    12, 12,
-                    0xFFFFFFFF
-            );
-        }
     }
 
     @Override

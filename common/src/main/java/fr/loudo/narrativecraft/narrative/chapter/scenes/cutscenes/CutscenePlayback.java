@@ -76,10 +76,10 @@ public class CutscenePlayback  {
     }
 
     public void start() {
-        next();
         playerSession.setCutscenePlayback(this);
         cutsceneController.resume();
         StoryHandler.changePlayerCutsceneMode(player, cutsceneController.getPlaybackType(), true);
+        next();
     }
 
     public void stop() {
@@ -116,8 +116,8 @@ public class CutscenePlayback  {
     }
 
     public KeyframeCoordinate next() {
-        long currentTime = System.currentTimeMillis();
         Minecraft minecraft = Minecraft.getInstance();
+        long currentTime = System.currentTimeMillis();
         if(minecraft.options.keyShift.isDown() && cutsceneController.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
             currentLoc = firstKeyframe.getKeyframeCoordinate();
             cutsceneController.pause();
