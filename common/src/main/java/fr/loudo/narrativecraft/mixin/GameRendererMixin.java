@@ -31,8 +31,7 @@ public class GameRendererMixin {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer == null) return;
 
-        PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
-        if (playerSession == null) return;
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
 
         keyframeControllerFov(playerSession, callbackInfo);
         cutscenePlayingFov(playerSession, callbackInfo);

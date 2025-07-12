@@ -13,7 +13,6 @@ import java.util.List;
 
 public class PlayerSession {
 
-    private transient ServerPlayer player;
     private transient List<Subscene> subscenesPlaying;
     private transient CutscenePlayback cutscenePlayback;
     private transient boolean overwriteState;
@@ -22,19 +21,11 @@ public class PlayerSession {
     private KeyframeControllerBase keyframeControllerBase;
     private KeyframeCoordinate soloCam;
 
-    public PlayerSession(ServerPlayer player) {
-        this.player = player;
+    public PlayerSession() {
         this.subscenesPlaying = new ArrayList<>();
         this.overwriteState = false;
     }
 
-    public PlayerSession(ServerPlayer player, Chapter chapter, Scene scene) {
-        this.player = player;
-        this.chapter = chapter;
-        this.scene = scene;
-        this.subscenesPlaying = new ArrayList<>();
-        this.overwriteState = false;
-    }
     public PlayerSession(Chapter chapter, Scene scene) {
         this.chapter = chapter;
         this.scene = scene;
@@ -42,12 +33,8 @@ public class PlayerSession {
         this.overwriteState = false;
     }
 
-    public ServerPlayer getPlayer() {
-        return player;
-    }
-
-    public void setPlayer(ServerPlayer player) {
-        this.player = player;
+    public boolean sessionSet() {
+        return chapter != null && scene != null;
     }
 
     public Chapter getChapter() {

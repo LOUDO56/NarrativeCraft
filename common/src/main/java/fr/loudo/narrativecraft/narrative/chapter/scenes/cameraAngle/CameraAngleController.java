@@ -59,7 +59,7 @@ public class CameraAngleController extends KeyframeControllerBase {
 
     public void startSession() {
 
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase != null) {
             keyframeControllerBase.stopSession(false);
@@ -120,9 +120,9 @@ public class CameraAngleController extends KeyframeControllerBase {
                 }
             }
         }
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(null);
-        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+        StoryHandler.changePlayerCutsceneMode(playbackType, false);
     }
 
     @Override
@@ -275,7 +275,7 @@ public class CameraAngleController extends KeyframeControllerBase {
                 cameraAngle.removeKeyframeFromClient(player);
             }
         }
-        StoryHandler.changePlayerCutsceneMode(player, playbackType, true);
+        StoryHandler.changePlayerCutsceneMode(playbackType, true);
     }
 
     public void clearCurrentPreviewKeyframe() {
@@ -284,7 +284,7 @@ public class CameraAngleController extends KeyframeControllerBase {
             updateKeyframeEntityName();
         }
         currentPreviewKeyframe = null;
-        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+        StoryHandler.changePlayerCutsceneMode(playbackType, false);
         Minecraft.getInstance().options.hideGui = false;
 
     }

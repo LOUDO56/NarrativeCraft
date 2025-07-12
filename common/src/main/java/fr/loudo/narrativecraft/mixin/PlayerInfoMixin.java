@@ -57,7 +57,7 @@ public class PlayerInfoMixin {
     }
 
     private List<CharacterStory> getRelevantCharacters() {
-        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         NarrativeCraftMod mod = NarrativeCraftMod.getInstance();
         StoryHandler storyHandler = mod.getStoryHandler();
         if (storyHandler != null && storyHandler.getStory() != null) {

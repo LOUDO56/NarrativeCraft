@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class SubscenePlayInkAction extends InkAction {
                 for(Animation animation : subscene.getAnimationList()) {
                     storyHandler.addCharacter(animation.getCharacter());
                 }
-                subscene.start(storyHandler.getPlayerSession().getPlayer().serverLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
+                subscene.start(Utils.getServerLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();
             } else if(command[1].equals("stop")) {

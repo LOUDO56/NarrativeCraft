@@ -36,11 +36,11 @@ import java.util.regex.Pattern;
 
 public class StoryHandler {
 
+    private final PlayerSession playerSession;
     private final List<CharacterStory> currentCharacters;
     private final List<TypedSoundInstance> typedSoundInstanceList;
     private final InkTagTranslators inkTagTranslators;
     private StorySave save;
-    private PlayerSession playerSession;
     private Story story;
     private String currentDialog, currentCharacterTalking;
     private DialogImpl currentDialogBox;
@@ -51,6 +51,7 @@ public class StoryHandler {
     private final List<InkAction> inkActionList;
 
     public StoryHandler() {
+        playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         currentCharacters = new ArrayList<>();
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
@@ -63,8 +64,9 @@ public class StoryHandler {
     }
 
     public StoryHandler(Chapter chapter, Scene scene) {
-        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
-        playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, chapter, scene);
+        playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        playerSession.setChapter(chapter);
+        playerSession.setScene(scene);
         currentCharacters = new ArrayList<>();
         isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
@@ -81,10 +83,6 @@ public class StoryHandler {
             Minecraft.getInstance().options.hideGui = true;
             inkActionList.clear();
             globalDialogValue = new DialogData(DialogData.globalDialogData);
-            if(playerSession == null) {
-                ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
-                playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(serverPlayer, null, null);
-            }
 
             Chapter loadChapter = playerSession.getChapter();
             Scene loadScene = playerSession.getScene();
@@ -138,7 +136,7 @@ public class StoryHandler {
             playback.forceStop();
         }
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().clear();
-        StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, false);
+        StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, false);
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
@@ -179,7 +177,7 @@ public class StoryHandler {
                 playerSession.setSoloCam(playerSessionFromSave.getSoloCam());
                 for(CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
                     if(!characterStoryData.isOnlyTemplate()) {
-                        characterStoryData.spawn(playerSession.getPlayer().serverLevel());
+                        characterStoryData.spawn(Utils.getServerLevel());
                         currentCharacters.add(characterStoryData.getCharacterStory());
                     }
                 }
@@ -241,7 +239,7 @@ public class StoryHandler {
                         false
                 );
             }
-            StoryHandler.changePlayerCutsceneMode(playerSession.getPlayer(), Playback.PlaybackType.PRODUCTION, playerSession.getSoloCam() != null || playerSession.getKeyframeControllerBase() != null);
+            StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, playerSession.getSoloCam() != null || playerSession.getKeyframeControllerBase() != null);
         } catch (StoryException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
@@ -543,15 +541,16 @@ public class StoryHandler {
     }
 
 
-    public static void changePlayerCutsceneMode(ServerPlayer player, Playback.PlaybackType playbackType, boolean state) {
+    public static void changePlayerCutsceneMode(Playback.PlaybackType playbackType, boolean state) {
         NarrativeCraftMod.getInstance().setCutsceneMode(state);
+        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
         if(state) {
-            player.setGameMode(GameType.SPECTATOR);
+            serverPlayer.setGameMode(GameType.SPECTATOR);
         } else {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                player.setGameMode(GameType.CREATIVE);
+                serverPlayer.setGameMode(GameType.CREATIVE);
             } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                player.setGameMode(GameType.ADVENTURE);
+                serverPlayer.setGameMode(GameType.ADVENTURE);
             }
         }
     }
@@ -635,10 +634,6 @@ public class StoryHandler {
 
     public DialogData getGlobalDialogValue() {
         return globalDialogValue;
-    }
-
-    public void setPlayerSession(PlayerSession playerSession) {
-        this.playerSession = playerSession;
     }
 
     public String getCurrentCharacterTalking() {

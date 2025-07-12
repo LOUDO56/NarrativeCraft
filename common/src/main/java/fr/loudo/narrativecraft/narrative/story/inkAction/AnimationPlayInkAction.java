@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
@@ -50,7 +51,7 @@ public class AnimationPlayInkAction extends InkAction {
                 storyHandler.addCharacter(animation.getCharacter());
                 playback = new Playback(
                         animation,
-                        playerSession.getPlayer().serverLevel(),
+                        Utils.getServerLevel(),
                         animation.getCharacter(),
                         Playback.PlaybackType.PRODUCTION,
                         isLooping

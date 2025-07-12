@@ -11,7 +11,9 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CutsceneInkAction extends InkAction {
 
@@ -39,10 +41,11 @@ public class CutsceneInkAction extends InkAction {
             cameraAngleController.stopSession(false);
         }
         storyHandler.setCurrentDialogBox(null);
-        CutsceneController cutsceneController = new CutsceneController(cutscene, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
+        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
+        CutsceneController cutsceneController = new CutsceneController(cutscene, serverPlayer, Playback.PlaybackType.PRODUCTION);
         cutsceneController.startSession();
         storyHandler.getPlayerSession().setKeyframeControllerBase(cutsceneController);
-        CutscenePlayback cutscenePlayback = new CutscenePlayback(storyHandler.getPlayerSession().getPlayer(), cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
+        CutscenePlayback cutscenePlayback = new CutscenePlayback(serverPlayer, cutscene.getKeyframeGroupList(), cutscene.getKeyframeGroupList().getFirst().getKeyframeList().getFirst(), cutsceneController);
         cutscenePlayback.setOnCutsceneEnd(() -> handleEndCutscene(cutsceneController));
         cutscenePlayback.start();
         sendDebugDetails();

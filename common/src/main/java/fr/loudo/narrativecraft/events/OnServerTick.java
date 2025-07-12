@@ -26,11 +26,10 @@ public class OnServerTick {
             }
         }
 
-        for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
-            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
-            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
-                cutsceneController.next();
-            }
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+            cutsceneController.next();
         }
     }
 }

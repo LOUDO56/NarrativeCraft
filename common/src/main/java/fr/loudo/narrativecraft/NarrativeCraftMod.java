@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
-import fr.loudo.narrativecraft.narrative.session.PlayerSessionManager;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
@@ -25,9 +25,9 @@ public class NarrativeCraftMod {
     private boolean isCutsceneMode;
     private final ChapterManager chapterManager;
     private final CharacterManager characterManager;
-    private final PlayerSessionManager playerSessionManager;
     private final RecordingHandler recordingHandler;
     private final PlaybackHandler playbackHandler;
+    private final PlayerSession playerSession;
     private Dialog testDialog;
     private Dialog2d testDialog2d;
 
@@ -35,8 +35,8 @@ public class NarrativeCraftMod {
         chapterManager = new ChapterManager();
         characterManager = new CharacterManager();
         recordingHandler = new RecordingHandler();
-        playerSessionManager = new PlayerSessionManager();
         playbackHandler = new PlaybackHandler();
+        playerSession = new PlayerSession();
         isCutsceneMode = false;
     }
 
@@ -50,10 +50,6 @@ public class NarrativeCraftMod {
 
     public CharacterManager getCharacterManager() {
         return characterManager;
-    }
-
-    public PlayerSessionManager getPlayerSessionManager() {
-        return playerSessionManager;
     }
 
     public RecordingHandler getRecordingHandler() {
@@ -94,5 +90,9 @@ public class NarrativeCraftMod {
 
     public void setTestDialog2d(Dialog2d testDialog2d) {
         this.testDialog2d = testDialog2d;
+    }
+
+    public PlayerSession getPlayerSession() {
+        return playerSession;
     }
 }

@@ -39,8 +39,7 @@ public abstract class CameraMixin {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer == null) return;
 
-        PlayerSession playerSession = Utils.getSessionOrNull(localPlayer.getUUID());
-        if (playerSession == null) return;
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
 
         keyframePreviewAction(playerSession);
         cutscenePlaying(playerSession);

@@ -112,9 +112,8 @@ public class Playback {
         boolean allEnded = entityPlaybacks.stream().allMatch(PlaybackData::hasEnded);
         if (allEnded) {
             if (playbackType == PlaybackType.DEVELOPMENT) {
-                PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
-                KeyframeControllerBase keyframeControllerBase = playerSession != null ? playerSession.getKeyframeControllerBase() : null;
-                if (!(keyframeControllerBase instanceof CutsceneController)) {
+                PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+                if (!(playerSession.getKeyframeControllerBase() instanceof CutsceneController)) {
                     stopAndKill();
                     return;
                 }

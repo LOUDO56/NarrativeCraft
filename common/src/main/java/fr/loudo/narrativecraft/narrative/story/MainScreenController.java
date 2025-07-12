@@ -55,7 +55,7 @@ public class MainScreenController extends CameraAngleController {
     @Override
     public void startSession() {
         super.startSession();
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(this);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new MainScreenControllerScreen(this)));
@@ -93,7 +93,7 @@ public class MainScreenController extends CameraAngleController {
                 }
             }
         }
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(null);
     }
 

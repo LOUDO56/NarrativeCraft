@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleG
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 
 public class CameraAngleInkAction extends InkAction {
@@ -36,7 +37,7 @@ public class CameraAngleInkAction extends InkAction {
     private void executeCameraAngle(CameraAngleGroup cameraAngleGroup, CameraAngle cameraAngle) {
         CameraAngleController cameraAngleController = (CameraAngleController) storyHandler.getPlayerSession().getKeyframeControllerBase();
         if(cameraAngleController == null) {
-            cameraAngleController = new CameraAngleController(cameraAngleGroup, storyHandler.getPlayerSession().getPlayer(), Playback.PlaybackType.PRODUCTION);
+            cameraAngleController = new CameraAngleController(cameraAngleGroup, Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID()), Playback.PlaybackType.PRODUCTION);
             cameraAngleController.startSession();
             storyHandler.getPlayerSession().setKeyframeControllerBase(cameraAngleController);
         }

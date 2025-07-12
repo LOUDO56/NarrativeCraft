@@ -8,6 +8,7 @@ import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -52,7 +53,9 @@ public class PlayerSessionCommand {
         }
 
         Scene scene = chapter.getSceneByName(sceneName);
-        NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(player, chapter, scene);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        playerSession.setChapter(chapter);
+        playerSession.setScene(scene);
         context.getSource().sendSuccess(() -> Translation.message("session.set", chapter.getIndex(), scene.getName()), false);
 
         return Command.SINGLE_SUCCESS;
@@ -61,11 +64,9 @@ public class PlayerSessionCommand {
 
     private static int clearSession(CommandContext<CommandSourceStack> context) {
 
-        if(NarrativeCraftMod.getInstance().getPlayerSessionManager().clearSession(context.getSource().getPlayer())) {
-            context.getSource().sendSuccess(() -> Translation.message("session.cleared"), false);
-        } else {
-            context.getSource().sendFailure(Translation.message("session.cleared.fail"));
-        }
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        playerSession.reset();
+        context.getSource().sendSuccess(() -> Translation.message("session.cleared"), false);
 
         return Command.SINGLE_SUCCESS;
     }

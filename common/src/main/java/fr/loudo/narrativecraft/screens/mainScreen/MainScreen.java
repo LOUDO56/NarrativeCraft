@@ -42,7 +42,7 @@ public class MainScreen extends Screen {
     private int showDevBtnCount;
     private Button devButton;
 
-    public MainScreen(ServerPlayer serverPlayer) {
+    public MainScreen() {
         super(Component.literal("Main screen"));
     }
 
@@ -58,7 +58,7 @@ public class MainScreen extends Screen {
         super.onClose();
         minecraft.options.hideGui = false;
         minecraft.getSoundManager().stop(MUSIC_INSTANCE);
-        PlayerSession playerSession = Utils.getSessionOrNull(minecraft.player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         NarrativeCraftMod.server.execute(() -> {
             playerSession.getKeyframeControllerBase().stopSession(false);
         });
@@ -68,14 +68,12 @@ public class MainScreen extends Screen {
     protected void init() {
 
         showDevBtnCount = 0;
-        PlayerSession playerSession = Utils.getSessionOrNull(minecraft.player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         minecraft.options.hideGui = true;
         if(playerSession == null || playerSession.getKeyframeControllerBase() == null) {
             CameraAngleGroup cameraAngleGroup = NarrativeCraftFile.getMainScreenBackgroundFile();
             if(cameraAngleGroup != null) {
-                playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(minecraft.player, null, null);
                 StoryHandler storyHandler = new StoryHandler();
-                storyHandler.setPlayerSession(playerSession);
                 NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
                 MainScreenController mainScreenController = new MainScreenController(
                         cameraAngleGroup,

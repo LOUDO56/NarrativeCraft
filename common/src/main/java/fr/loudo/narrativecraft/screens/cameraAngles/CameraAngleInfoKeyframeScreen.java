@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -12,6 +13,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 
 public class CameraAngleInfoKeyframeScreen extends Screen {
 
@@ -35,9 +37,10 @@ public class CameraAngleInfoKeyframeScreen extends Screen {
 
     @Override
     public void onClose() {
-        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
         if(playerSession != null && cameraAngle != null) {
-            CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(cameraAngle, playerSession.getPlayer(), false);
+            CameraAngleOptionsScreen screen = new CameraAngleOptionsScreen(cameraAngle, serverPlayer, false);
             minecraft.setScreen(screen);
         } else {
             super.onClose();

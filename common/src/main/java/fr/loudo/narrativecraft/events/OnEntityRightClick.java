@@ -26,7 +26,7 @@ public class OnEntityRightClick {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null && storyHandler.isRunning() && storyHandler.getStory() != null) return;
 
-        PlayerSession playerSession = Utils.getSessionOrNull(Minecraft.getInstance().player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if(playerSession == null) return;
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase == null) return;

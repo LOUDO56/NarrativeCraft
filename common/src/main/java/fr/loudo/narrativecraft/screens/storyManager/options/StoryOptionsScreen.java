@@ -49,7 +49,6 @@ public class StoryOptionsScreen extends StoryElementScreen {
 
         entries.add(new StoryElementList.StoryEntryData(
                 Button.builder(Translation.message("screen.story_options.main_screen"), button -> {
-                    NarrativeCraftMod.getInstance().getPlayerSessionManager().setSession(Minecraft.getInstance().player, null, null);
                     CameraAngleGroup group = NarrativeCraftFile.getMainScreenBackgroundFile();
                     MainScreenController mainScreenController = new MainScreenController(group, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()), Playback.PlaybackType.DEVELOPMENT);
                     mainScreenController.startSession();

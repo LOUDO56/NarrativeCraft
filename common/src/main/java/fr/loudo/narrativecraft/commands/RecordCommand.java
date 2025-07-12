@@ -54,8 +54,8 @@ public class RecordCommand {
     private static int startRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
-        if(playerSession == null) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        if(playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -83,8 +83,8 @@ public class RecordCommand {
     private static int startRecordingWithSubscenes(CommandContext<CommandSourceStack> context, String subscenes) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
-        if(playerSession == null) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        if(playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -122,8 +122,8 @@ public class RecordCommand {
     private static int stopRecording(CommandContext<CommandSourceStack> context) {
 
         ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
-        if(playerSession == null) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        if(playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -146,9 +146,8 @@ public class RecordCommand {
     }
 
     private static int saveRecording(CommandContext<CommandSourceStack> context, String newAnimationName) {
-        ServerPlayer player = context.getSource().getPlayer();
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
-        if(playerSession == null) {
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        if(playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }

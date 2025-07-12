@@ -107,7 +107,7 @@ public class OnClientTick {
         // Open story manager screen trigger
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
             Screen screen;
-            PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
+            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if(playerSession == null || playerSession.getScene() == null) {
                 screen = new ChaptersScreen();
             } else {
@@ -138,7 +138,7 @@ public class OnClientTick {
             storyHandler.next();
         });
 
-        PlayerSession playerSession = Utils.getSessionOrNull(client.player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if(playerSession == null) return;
 
 
@@ -152,12 +152,14 @@ public class OnClientTick {
             });
             ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
                 if (cutsceneController.addKeyframe()) {
-                    playerSession.getPlayer().sendSystemMessage(
-                            Translation.message("cutscene.keyframe.added", cutsceneController.getSelectedKeyframeGroup().getId())
+                    client.player.displayClientMessage(
+                            Translation.message("cutscene.keyframe.added", cutsceneController.getSelectedKeyframeGroup().getId()),
+                            false
                     );
                 } else {
-                    playerSession.getPlayer().sendSystemMessage(
-                            Translation.message("cutscene.keyframe.added.fail")
+                    client.player.displayClientMessage(
+                            Translation.message("cutscene.keyframe.added.fail"),
+                            false
                     );
                 }
             });

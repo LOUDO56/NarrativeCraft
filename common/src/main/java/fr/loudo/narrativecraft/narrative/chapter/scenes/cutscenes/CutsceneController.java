@@ -17,7 +17,6 @@ import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SubscenePlayInkAction;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -70,7 +69,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void startSession() {
 
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase != null) {
             keyframeControllerBase.stopSession(false);
@@ -110,7 +109,6 @@ public class CutsceneController extends KeyframeControllerBase {
 
             this.storyHandler = new StoryHandler();
             storyHandler.setDebugMode(true);
-            storyHandler.setPlayerSession(playerSession);
             NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
 
             for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
@@ -178,7 +176,7 @@ public class CutsceneController extends KeyframeControllerBase {
             player.setGameMode(GameType.CREATIVE);
         }
 
-        PlayerSession playerSession = Utils.getSessionOrNull(player);
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(null);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             if(save) {
@@ -196,7 +194,7 @@ public class CutsceneController extends KeyframeControllerBase {
             }
         }
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-            StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+            StoryHandler.changePlayerCutsceneMode(playbackType, false);
         }
         isPlaying = false;
 
@@ -361,7 +359,7 @@ public class CutsceneController extends KeyframeControllerBase {
             }
             changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
         }
-        StoryHandler.changePlayerCutsceneMode(player, playbackType, true);
+        StoryHandler.changePlayerCutsceneMode(playbackType, true);
     }
 
     public void clearCurrentPreviewKeyframe() {
@@ -375,7 +373,7 @@ public class CutsceneController extends KeyframeControllerBase {
         }
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
-        StoryHandler.changePlayerCutsceneMode(player, playbackType, false);
+        StoryHandler.changePlayerCutsceneMode(playbackType, false);
         Minecraft.getInstance().options.hideGui = false;
     }
 

@@ -40,7 +40,7 @@ public class CommandMinecraftInkAction extends InkAction {
     }
 
     private CommandSourceStack getCommandSourceStack() {
-        ServerPlayer serverPlayer = storyHandler.getPlayerSession().getPlayer();
+        ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
         CommandSource commandSource = CommandSource.NULL;
         return new CommandSourceStack(
                 commandSource,

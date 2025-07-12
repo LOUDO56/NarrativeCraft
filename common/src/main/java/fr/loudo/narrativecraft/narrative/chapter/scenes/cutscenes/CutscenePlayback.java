@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
@@ -18,6 +19,7 @@ public class CutscenePlayback  {
 
     private double t;
     private long startTime, startDelay, transitionDelay, endTime, defaultEndTime, pauseStartTime, totalPausedTime;
+    private final PlayerSession playerSession;
     private boolean isPaused;
     private int currentIndexKeyframe, currentIndexKeyframeGroup;
     private KeyframeCoordinate currentLoc;
@@ -25,11 +27,11 @@ public class CutscenePlayback  {
     private List<KeyframeGroup> keyframeGroupList;
     private KeyframeGroup currentKeyframeGroup;
     private ServerPlayer player;
-    private PlayerSession playerSession;
     private CutsceneController cutsceneController;
     private Runnable onCutsceneEnd;
 
     public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, CutsceneController cutsceneController) {
+        playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
         this.currentKeyframeGroup = keyframeGroupList.getFirst();
@@ -37,16 +39,15 @@ public class CutscenePlayback  {
         this.secondKeyframe = currentKeyframeGroup.getKeyframeList().size() == 1 ? null : currentKeyframeGroup.getKeyframeList().get(currentKeyframeGroup.getKeyframeList().size() + 1);
         this.currentIndexKeyframe = 0;
         this.currentIndexKeyframeGroup = 0;
-        this.playerSession = Utils.getSessionOrNull(player);
         this.cutsceneController = cutsceneController;
         initValues();
     }
 
     public CutscenePlayback(ServerPlayer player, List<KeyframeGroup> keyframeGroupList, Keyframe keyframe, CutsceneController cutsceneController) {
+        playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         this.player = player;
         this.keyframeGroupList = keyframeGroupList;
         this.cutsceneController = cutsceneController;
-        playerSession = Utils.getSessionOrNull(player);
         currentKeyframeGroup = cutsceneController.getKeyframeGroupByKeyframe(keyframe);
         currentIndexKeyframe = cutsceneController.getKeyframeIndex(currentKeyframeGroup, keyframe);
         currentIndexKeyframeGroup = currentKeyframeGroup.getId() - 1;
@@ -78,7 +79,7 @@ public class CutscenePlayback  {
     public void start() {
         playerSession.setCutscenePlayback(this);
         cutsceneController.resume();
-        StoryHandler.changePlayerCutsceneMode(player, cutsceneController.getPlaybackType(), true);
+        StoryHandler.changePlayerCutsceneMode(cutsceneController.getPlaybackType(), true);
         next();
     }
 

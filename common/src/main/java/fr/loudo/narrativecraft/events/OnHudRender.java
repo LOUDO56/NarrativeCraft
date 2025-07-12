@@ -65,7 +65,7 @@ public class OnHudRender {
     }
 
     public static void keyframeControllerBaseRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(Minecraft.getInstance().player.getUUID());
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if(playerSession == null) return;
         if(playerSession.getKeyframeControllerBase() == null) return;
         if(playerSession.getKeyframeControllerBase().getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {

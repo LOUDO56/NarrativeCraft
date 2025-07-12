@@ -330,7 +330,7 @@ public class ChapterManager {
 
     public SuggestionProvider<CommandSourceStack> getSubscenesOfScenesSuggestions() {
         return (context, builder) -> {
-            PlayerSession playerSession = Utils.getSessionOrNull(context.getSource().getPlayer());
+            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if(playerSession == null) return builder.buildFuture();
             for (Subscene subscene : playerSession.getScene().getSubsceneList()) {
                 if(subscene.getName().split(" ").length > 1) {

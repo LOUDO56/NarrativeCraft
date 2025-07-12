@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.keyframes;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
@@ -48,7 +49,7 @@ public class KeyframeOptionScreen extends Screen {
         this.leftRightValue = keyframe.getKeyframeCoordinate().getYRot();
         this.rotationValue = keyframe.getKeyframeCoordinate().getZRot();
         this.fovValue = keyframe.getKeyframeCoordinate().getFov();
-        this.playerSession = Utils.getSessionOrNull(player);
+        this.playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         this.hide = hide;
     }
 

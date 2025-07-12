@@ -39,15 +39,14 @@ public class OnRenderWorld {
             storyHandler.getInkActionList().removeAll(toRemove);
         }
 
-        for(PlayerSession playerSession : NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSessions()) {
-            KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
-            if(keyframeControllerBase == null) return;
-            if(keyframeControllerBase.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
-                if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
-                    if (cutsceneController.getCurrentPreviewKeyframe() == null) {
-                        for (KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
-                            keyframeGroup.showLineBetweenKeyframes(poseStack);
-                        }
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
+        if(keyframeControllerBase == null) return;
+        if(keyframeControllerBase.getPlaybackType() == Playback.PlaybackType.DEVELOPMENT) {
+            if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
+                if (cutsceneController.getCurrentPreviewKeyframe() == null) {
+                    for (KeyframeGroup keyframeGroup : cutsceneController.getCutscene().getKeyframeGroupList()) {
+                        keyframeGroup.showLineBetweenKeyframes(poseStack);
                     }
                 }
             }

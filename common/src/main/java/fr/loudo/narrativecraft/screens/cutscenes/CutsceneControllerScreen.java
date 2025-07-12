@@ -32,12 +32,10 @@ public class CutsceneControllerScreen extends Screen {
     private Button nextSkip;
 
     private final CutsceneController cutsceneController;
-    private final PlayerSession playerSession;
 
     public CutsceneControllerScreen(CutsceneController cutsceneController) {
         super(Component.literal("Cutscene Controller Screen"));
         this.cutsceneController = cutsceneController;
-        this.playerSession = Utils.getSessionOrNull(client.player.getUUID());
     }
 
     @Override

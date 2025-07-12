@@ -64,17 +64,6 @@ public class Utils {
         return NarrativeCraftMod.server.getPlayerList().getPlayer(Minecraft.getInstance().player.getUUID()).serverLevel();
     }
 
-    public static PlayerSession getSessionOrNull(ServerPlayer player) {
-        if(NarrativeCraftMod.server == null) return null;
-        return NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(player);
-    }
-
-    public static PlayerSession getSessionOrNull(UUID uuid) {
-        if(NarrativeCraftMod.server == null) return null;
-        ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(uuid);
-        return NarrativeCraftMod.getInstance().getPlayerSessionManager().getPlayerSession(serverPlayer);
-    }
-
     public static String getSnakeCase(String text) {
         return String.join("_", text.toLowerCase().split(" "));
     }
