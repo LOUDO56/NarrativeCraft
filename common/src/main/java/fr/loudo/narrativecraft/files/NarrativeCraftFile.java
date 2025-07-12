@@ -3,7 +3,9 @@ package fr.loudo.narrativecraft.files;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -59,6 +61,7 @@ public class NarrativeCraftFile {
     public static final String DATA_FILE_NAME = "data" + EXTENSION_DATA_FILE;
     public static final String STORY_FILE_NAME = "story" + EXTENSION_DATA_FILE;
     public static final String MAIN_SCREEN_BACKGROUND_FILE_NAME = "main_screen_background" + EXTENSION_DATA_FILE;
+    public static final String DIALOG_USER_FILE_NAME = "dialog_user" + EXTENSION_DATA_FILE;
 
     public static final String ANIMATIONS_FOLDER_NAME = "animations";
     public static final String NPC_FOLDER_NAME = "npc";
@@ -128,14 +131,38 @@ public class NarrativeCraftFile {
         }
     }
 
+    public static void updateDialogUserValue() {
+        File dialogUserValue = createFile(dataDirectory, DIALOG_USER_FILE_NAME);
+        try {
+            try (Writer writer = new BufferedWriter(new FileWriter(dialogUserValue))) {
+                new Gson().toJson(NarrativeCraftMod.getInstance().getNarrativeUserOptions(), writer);
+            } catch (IOException e) {
+                NarrativeCraftMod.LOG.error("Couldn't update dialog user values! ", e.getStackTrace());
+            }
+        } catch (JsonIOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static NarrativeUserOptions getDialogUserValue() {
+        File dialogUserValue = createFile(dataDirectory, DIALOG_USER_FILE_NAME);
+        try {
+            String content = Files.readString(dialogUserValue.toPath());
+            return new Gson().fromJson(content, NarrativeUserOptions.class);
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't read dialog user values! ", e.getStackTrace());
+        }
+        return null;
+    }
+
     public static void updateGlobalDialogValues(DialogData dialogData) {
         try {
             createGlobalDialogValues();
-            File dialogFile = new File(dataDirectory, DIALOG_FILE_NAME);
+            File dialogFile = createFile(dataDirectory, DIALOG_FILE_NAME);
             try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
                 new Gson().toJson(dialogData, writer);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                NarrativeCraftMod.LOG.error("Couldn't global dialog values! ", e.getStackTrace());
             }
         } catch (Exception ignored) {}
     }

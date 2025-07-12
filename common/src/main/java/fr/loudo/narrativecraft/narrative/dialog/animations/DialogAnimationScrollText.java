@@ -2,6 +2,8 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
@@ -205,7 +207,7 @@ public class DialogAnimationScrollText {
     private void playScrollSound() {
         long now = System.currentTimeMillis();
         Minecraft client = Minecraft.getInstance();
-        if (currentLetter < totalLetters && now - lastTimeChar >= showLetterDelay && !client.isPaused()) {
+        if (currentLetter < totalLetters && now - lastTimeChar >= NarrativeCraftMod.getInstance().getNarrativeUserOptions().TEXT_SPEED && !client.isPaused()) {
             if(!currentLetterString.equals(" ") && !currentLetterString.isEmpty()) {
                 ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
                 SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);

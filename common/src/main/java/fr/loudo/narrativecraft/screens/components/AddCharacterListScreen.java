@@ -52,15 +52,17 @@ public class AddCharacterListScreen extends OptionsSubScreen {
         LinearLayout linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
         linearlayout.defaultCellSetting().alignVerticallyMiddle();
         linearlayout.addChild(new StringWidget(this.title, this.font));
-        linearlayout.addChild(Button.builder(characterType == CharacterStory.CharacterType.NPC ? Component.literal("MAIN") : Component.literal("NPC"), button -> {
-            Screen screen;
-            if(characterType == CharacterStory.CharacterType.MAIN) {
-                screen = new AddCharacterListScreen(cameraAngleGroup, cameraAngleGroup.getScene().getNpcs(), CharacterStory.CharacterType.NPC);
-            } else {
-                screen = new AddCharacterListScreen(cameraAngleGroup, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories(), CharacterStory.CharacterType.MAIN);
-            }
-            minecraft.setScreen(screen);
-        }).width(40).build());
+        if(cameraAngleGroup.getScene() != null) {
+            linearlayout.addChild(Button.builder(characterType == CharacterStory.CharacterType.NPC ? Component.literal("MAIN") : Component.literal("NPC"), button -> {
+                Screen screen;
+                if(characterType == CharacterStory.CharacterType.MAIN) {
+                    screen = new AddCharacterListScreen(cameraAngleGroup, cameraAngleGroup.getScene().getNpcs(), CharacterStory.CharacterType.NPC);
+                } else {
+                    screen = new AddCharacterListScreen(cameraAngleGroup, NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories(), CharacterStory.CharacterType.MAIN);
+                }
+                minecraft.setScreen(screen);
+            }).width(40).build());
+        }
     }
 
     protected void addContents() {

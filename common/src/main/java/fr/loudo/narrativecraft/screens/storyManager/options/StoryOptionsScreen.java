@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.MainScreenController;
+import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -52,6 +53,13 @@ public class StoryOptionsScreen extends StoryElementScreen {
                     CameraAngleGroup group = NarrativeCraftFile.getMainScreenBackgroundFile();
                     MainScreenController mainScreenController = new MainScreenController(group, Utils.getServerPlayerByUUID(this.minecraft.player.getUUID()), Playback.PlaybackType.DEVELOPMENT);
                     mainScreenController.startSession();
+                }).build()
+        ));
+
+        entries.add(new StoryElementList.StoryEntryData(
+                Button.builder(Translation.message("screen.story_options.dialog"), button -> {
+                    DialogCustomScreen dialogCustomScreen = new DialogCustomScreen(this);
+                    minecraft.setScreen(dialogCustomScreen);
                 }).build()
         ));
 

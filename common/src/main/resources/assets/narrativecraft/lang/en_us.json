@@ -122,6 +122,10 @@
 
   "narrativecraft.screen.story_options.title": "Story options",
   "narrativecraft.screen.story_options.main_screen": "Main Screen Controller",
+  "narrativecraft.screen.story_options.dialog": "Dialog values",
+
+  "narrativecraft.screen.main_screen.options.dialog_speed": "Text speed: %s",
+  "narrativecraft.screen.main_screen.options.auto_skip": "Auto-skip",
 
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",

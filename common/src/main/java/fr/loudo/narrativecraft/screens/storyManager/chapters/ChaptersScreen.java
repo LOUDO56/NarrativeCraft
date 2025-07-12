@@ -28,15 +28,6 @@ public class ChaptersScreen extends StoryElementScreen {
         this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (p_345997_) -> this.onClose()).width(200).build());
     }
 
-    @Override
-    protected void addTitle() {
-        super.addTitle();
-        linearlayout.addChild(Button.builder(ImageFontConstants.DIALOG, button -> {
-            DialogCustomScreen screen = new DialogCustomScreen(this);
-            this.minecraft.setScreen(screen);
-        }).width(25).build());
-    }
-
     protected void openFolder() {
         Util.getPlatform().openPath(NarrativeCraftFile.chaptersDirectory.toPath());
     }

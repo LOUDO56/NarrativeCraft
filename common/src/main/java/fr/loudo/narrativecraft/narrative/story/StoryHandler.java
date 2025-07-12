@@ -4,6 +4,7 @@ import com.bladecoder.ink.runtime.Choice;
 import com.bladecoder.ink.runtime.Story;
 import com.bladecoder.ink.runtime.StoryException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
@@ -36,6 +37,7 @@ import java.util.regex.Pattern;
 
 public class StoryHandler {
 
+    private final NarrativeUserOptions narrativeUserOptions = NarrativeCraftMod.getInstance().getNarrativeUserOptions();
     private final PlayerSession playerSession;
     private final List<CharacterStory> currentCharacters;
     private final List<TypedSoundInstance> typedSoundInstanceList;
@@ -270,7 +272,7 @@ public class StoryHandler {
             currentDialogBox.getDialogAnimationScrollText().setText(parsed.cleanedText);
             currentDialogBox.reset();
         } else {
-            if (currentDialogBox != null && !currentDialogBox.isDialogAutoSkipped()) {
+            if (currentDialogBox != null && (!currentDialogBox.isDialogAutoSkipped() || narrativeUserOptions.AUTO_SKIP)) {
                 currentDialogBox.endDialog();
                 return;
             } else {
@@ -312,6 +314,11 @@ public class StoryHandler {
                 currentDialogBox.setForcedEndTime(globalDialogValue.getEndForceEndTime());
             }
             currentCharacterTalking = parsed.characterName;
+        }
+        if(globalDialogValue.getEndForceEndTime() == 0) {
+            if(narrativeUserOptions.AUTO_SKIP) {
+                currentDialogBox.setForcedEndTime(currentDialog.replaceAll("\\s+", "").length() * 80L);
+            }
         }
         applyTextEffects(parsed.effects);
     }

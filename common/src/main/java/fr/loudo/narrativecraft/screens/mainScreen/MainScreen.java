@@ -8,6 +8,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.screens.mainScreen.options.MainScreenOptionsScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -73,8 +74,7 @@ public class MainScreen extends Screen {
         if(playerSession == null || playerSession.getKeyframeControllerBase() == null) {
             CameraAngleGroup cameraAngleGroup = NarrativeCraftFile.getMainScreenBackgroundFile();
             if(cameraAngleGroup != null) {
-                StoryHandler storyHandler = new StoryHandler();
-                NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
+                NarrativeCraftMod.getInstance().setStoryHandler(new StoryHandler());
                 MainScreenController mainScreenController = new MainScreenController(
                         cameraAngleGroup,
                         Utils.getServerPlayerByUUID(minecraft.player.getUUID()),
@@ -110,7 +110,8 @@ public class MainScreen extends Screen {
 
         startY += buttonHeight + gap;
         Button optionsButton = Button.builder(Translation.message("screen.main_screen.options"), button -> {
-
+            MainScreenOptionsScreen screen = new MainScreenOptionsScreen(this);
+            minecraft.setScreen(screen);
         }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
         this.addRenderableWidget(optionsButton);
 

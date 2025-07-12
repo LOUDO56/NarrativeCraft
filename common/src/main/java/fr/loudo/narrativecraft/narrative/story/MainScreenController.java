@@ -13,7 +13,6 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreenControllerScreen;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -23,8 +22,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
-
-import java.util.List;
 
 public class MainScreenController extends CameraAngleController {
 
@@ -59,12 +56,13 @@ public class MainScreenController extends CameraAngleController {
         playerSession.setKeyframeControllerBase(this);
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(new MainScreenControllerScreen(this)));
-        }
-        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        for(KeyframeTrigger keyframeTrigger : cameraAngleGroup.getKeyframeTriggerList()) {
-            String[] tags = keyframeTrigger.getCommands().split("\n");
-            for(String tag : tags) {
-                storyHandler.getInkTagTranslators().executeTag(tag);
+        } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            for(KeyframeTrigger keyframeTrigger : cameraAngleGroup.getKeyframeTriggerList()) {
+                String[] tags = keyframeTrigger.getCommands().split("\n");
+                for(String tag : tags) {
+                    storyHandler.getInkTagTranslators().executeTag(tag);
+                }
             }
         }
     }
@@ -92,6 +90,8 @@ public class MainScreenController extends CameraAngleController {
                     cameraAngleGroup.getCharacterStoryDataList().addAll(oldCharacterStoryDataList);
                 }
             }
+        } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
+            NarrativeCraftMod.getInstance().setStoryHandler(null);
         }
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(null);

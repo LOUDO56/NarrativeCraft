@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft;
 
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
@@ -28,6 +29,7 @@ public class NarrativeCraftMod {
     private final RecordingHandler recordingHandler;
     private final PlaybackHandler playbackHandler;
     private final PlayerSession playerSession;
+    private NarrativeUserOptions narrativeUserOptions;
     private Dialog testDialog;
     private Dialog2d testDialog2d;
 
@@ -37,6 +39,10 @@ public class NarrativeCraftMod {
         recordingHandler = new RecordingHandler();
         playbackHandler = new PlaybackHandler();
         playerSession = new PlayerSession();
+        narrativeUserOptions = NarrativeCraftFile.getDialogUserValue();
+        if(narrativeUserOptions == null) {
+            narrativeUserOptions = new NarrativeUserOptions();
+        }
         isCutsceneMode = false;
     }
 
@@ -94,5 +100,9 @@ public class NarrativeCraftMod {
 
     public PlayerSession getPlayerSession() {
         return playerSession;
+    }
+
+    public NarrativeUserOptions getNarrativeUserOptions() {
+        return narrativeUserOptions;
     }
 }

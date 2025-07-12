@@ -25,7 +25,7 @@ public class MainScreenControllerScreen extends Screen {
     @Override
     protected void init() {
         int spacing = 5;
-        int totalWidth = BUTTON_WIDTH * 4 + spacing * 4;
+        int totalWidth = BUTTON_WIDTH * 5 + spacing * 4;
         int startX = (this.width - totalWidth) / 2;
         int y = this.height - 50;
 
@@ -43,8 +43,12 @@ public class MainScreenControllerScreen extends Screen {
         this.addRenderableWidget(addCharacter);
 
         Button addTriggerKeyframeButton = Button.builder(ImageFontConstants.ADD_KEYFRAME_TRIGGER, button -> {
-            KeyframeTriggerScreen screen = new KeyframeTriggerScreen(mainScreenController, 0);
-            minecraft.setScreen(screen);
+            if(mainScreenController.getCameraAngleGroup().getKeyframeTriggerList().isEmpty()) {
+                KeyframeTriggerScreen screen = new KeyframeTriggerScreen(mainScreenController, 0);
+                minecraft.setScreen(screen);
+            } else {
+                minecraft.player.displayClientMessage(Component.literal("Only one keyframe trigger"), false);
+            }
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         addTriggerKeyframeButton.setTooltip(Tooltip.create(Translation.message("screen.cutscene_controller.tooltip.keyframe_trigger")));
         this.addRenderableWidget(addTriggerKeyframeButton);
