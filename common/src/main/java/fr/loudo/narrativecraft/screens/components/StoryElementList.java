@@ -20,10 +20,10 @@ import java.util.List;
 
 public class StoryElementList extends ContainerObjectSelectionList<StoryElementList.Entry> {
 
-    public StoryElementList(Minecraft minecraft, Screen screen, List<StoryEntryData> entriesData) {
+    public StoryElementList(Minecraft minecraft, Screen screen, List<StoryEntryData> entriesData, boolean editButton) {
         super(minecraft, 240, screen.width, screen.height, 25);
         for (StoryEntryData data : entriesData) {
-            this.addEntry(new Entry(data, screen));
+            this.addEntry(new Entry(data, screen, editButton));
         }
     }
 
@@ -54,13 +54,13 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         private final List<Button> buttons;
         private final Screen screen;
 
-        public Entry(StoryEntryData data, Screen screen) {
+        public Entry(StoryEntryData data, Screen screen, boolean editButton) {
             this.screen = screen;
             this.mainButton = data.mainButton;
             this.buttons = new ArrayList<>();
             buttons.add(mainButton);
 
-            if (data.narrativeEntry != null) {
+            if (data.narrativeEntry != null && editButton) {
                 buttons.add(createEditButton(data.narrativeEntry));
                 buttons.add(createRemoveButton(data.narrativeEntry));
             }
@@ -99,8 +99,10 @@ public class StoryElementList extends ContainerObjectSelectionList<StoryElementL
         @Override
         public void render(GuiGraphics graphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean hovered, float partial) {
             int totalWidth = buttons.stream().mapToInt(Button::getWidth).sum() + (buttons.size() - 1) * gap;
-            int x = (screen.width / 2 - totalWidth / 2) - gap; //  this line is wrong but sorry my head hurts okay, those mouseX coord shit is driving me crazy
-
+            int x = (screen.width / 2 - totalWidth / 2); //  this line is wrong but sorry my head hurts okay, those mouseX coord shit is driving me crazy
+            if(buttons.size() > 1) {
+                x -= gap;
+            }
             for (Button button : buttons) {
                 button.setPosition(x, top);
                 button.render(graphics, mouseX, mouseY, partial);

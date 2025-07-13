@@ -71,7 +71,7 @@ public class CutscenesScreen extends StoryElementScreen {
             entries.add(new StoryElementList.StoryEntryData(mainButton, cutscene, extraButtons));
         }
 
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
     private Button createSettingsButton(Cutscene cutscene) {

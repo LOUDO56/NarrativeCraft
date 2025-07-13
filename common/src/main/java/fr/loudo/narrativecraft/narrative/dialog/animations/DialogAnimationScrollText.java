@@ -234,7 +234,7 @@ public class DialogAnimationScrollText {
             if (dialogLetterEffect.getAnimation() == DialogAnimationType.SHAKING && now - animationTime >= dialogLetterEffect.getTime()) {
                 animationTime = now;
                 letterOffsets.clear();
-                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex() - 1; j++) {
                     float offsetX = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
                     float offsetY = MathUtils.getRandomFloat(-dialogLetterEffect.getForce(), dialogLetterEffect.getForce());
                     letterOffsets.put(j, new Vector2f(offsetX, offsetY));
@@ -244,7 +244,7 @@ public class DialogAnimationScrollText {
                 float waveSpacing = 0.2f;
                 double waveSpeed = (double) (now - totalPauseTime) / dialogLetterEffect.getTime();
 
-                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex(); j++) {
+                for (int j = dialogLetterEffect.getStartIndex() - 1; j < dialogLetterEffect.getEndIndex() - 1; j++) {
                     float offsetY = (float) (Math.sin(waveSpeed + j * waveSpacing) * dialogLetterEffect.getForce());
                     letterOffsets.put(j, new Vector2f(0, offsetY));
                 }

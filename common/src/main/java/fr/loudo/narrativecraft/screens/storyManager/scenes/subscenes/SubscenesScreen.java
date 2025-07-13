@@ -84,7 +84,7 @@ public class SubscenesScreen extends StoryElementScreen {
 
             entries.add(new StoryElementList.StoryEntryData(mainButton, subscene, List.of(settingsButton)));
         }
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
 

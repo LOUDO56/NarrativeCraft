@@ -24,6 +24,7 @@ import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.WinScreen;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -74,6 +75,13 @@ public class TestCommand {
                                 .executes(commandContext -> {
                                     MainScreen mainScreen = new MainScreen();
                                     Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
+                                    return Command.SINGLE_SUCCESS;
+                                })
+                        )
+                        .then(Commands.literal("winScreen")
+                                .executes(commandContext -> {
+                                    WinScreen winScreen = new WinScreen(false, () -> {});
+                                    Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(winScreen));
                                     return Command.SINGLE_SUCCESS;
                                 })
                         )

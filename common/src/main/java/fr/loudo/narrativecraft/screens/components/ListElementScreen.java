@@ -19,7 +19,7 @@ public class ListElementScreen extends OptionsSubScreen {
 
     @Override
     protected void addContents() {
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
     protected void repositionElements() {

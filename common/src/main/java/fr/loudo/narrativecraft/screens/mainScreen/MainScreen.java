@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.mainScreen.options.MainScreenOptionsScreen;
+import fr.loudo.narrativecraft.screens.mainScreen.sceneSelection.ChapterSelectorScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -49,7 +50,6 @@ public class MainScreen extends Screen {
 
     private void playStory() {
         this.onClose();
-        NarrativeCraftMod.getInstance().setStoryHandler(null);
         StoryHandler storyHandler = new StoryHandler();
         NarrativeCraftMod.server.execute(storyHandler::start);
     }
@@ -68,6 +68,7 @@ public class MainScreen extends Screen {
     @Override
     protected void init() {
 
+        boolean storyFinished = NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY;
         showDevBtnCount = 0;
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         minecraft.options.hideGui = true;
@@ -89,7 +90,8 @@ public class MainScreen extends Screen {
             minecraft.getSoundManager().play(MUSIC_INSTANCE);
         }
 
-        int startY = height / 2 - ((buttonHeight + gap) * 5) / 2;
+        int startY = height / 2 - ((buttonHeight + gap) * 4) / 2;
+        if(storyFinished) startY += buttonHeight + gap;
 
         Component playBtnComponent;
         if(NarrativeCraftFile.getSave() == null) {
@@ -102,11 +104,14 @@ public class MainScreen extends Screen {
         }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
         this.addRenderableWidget(playButton);
 
-        startY += buttonHeight + gap;
-        Button selectSceneButton = Button.builder(Translation.message("screen.main_screen.select_screen"), button -> {
-
-        }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
-        this.addRenderableWidget(selectSceneButton);
+        if(storyFinished) {
+            startY += buttonHeight + gap;
+            Button selectSceneButton = Button.builder(Translation.message("screen.main_screen.select_screen"), button -> {
+                ChapterSelectorScreen screen = new ChapterSelectorScreen(this);
+                minecraft.setScreen(screen);
+            }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
+            this.addRenderableWidget(selectSceneButton);
+        }
 
         startY += buttonHeight + gap;
         Button optionsButton = Button.builder(Translation.message("screen.main_screen.options"), button -> {

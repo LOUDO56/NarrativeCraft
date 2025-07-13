@@ -74,7 +74,7 @@ public class AnimationsScreen extends StoryElementScreen {
                     }).build();
                     return new StoryElementList.StoryEntryData(button, animation, List.of(settingsButton, changeSkin));
                 }).toList();
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
     private Button createSettingsButton(Animation animation) {

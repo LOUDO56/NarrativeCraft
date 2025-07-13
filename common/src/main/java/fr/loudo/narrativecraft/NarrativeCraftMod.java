@@ -39,7 +39,7 @@ public class NarrativeCraftMod {
         recordingHandler = new RecordingHandler();
         playbackHandler = new PlaybackHandler();
         playerSession = new PlayerSession();
-        narrativeUserOptions = NarrativeCraftFile.getDialogUserValue();
+        narrativeUserOptions = NarrativeCraftFile.getUserOptions();
         if(narrativeUserOptions == null) {
             narrativeUserOptions = new NarrativeUserOptions();
         }

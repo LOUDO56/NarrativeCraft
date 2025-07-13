@@ -63,7 +63,7 @@ public class StoryOptionsScreen extends StoryElementScreen {
                 }).build()
         ));
 
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
 }

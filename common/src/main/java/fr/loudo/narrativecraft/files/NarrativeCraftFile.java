@@ -61,7 +61,7 @@ public class NarrativeCraftFile {
     public static final String DATA_FILE_NAME = "data" + EXTENSION_DATA_FILE;
     public static final String STORY_FILE_NAME = "story" + EXTENSION_DATA_FILE;
     public static final String MAIN_SCREEN_BACKGROUND_FILE_NAME = "main_screen_background" + EXTENSION_DATA_FILE;
-    public static final String DIALOG_USER_FILE_NAME = "dialog_user" + EXTENSION_DATA_FILE;
+    public static final String USER_OPTIONS_FILE_NAME = "user_options" + EXTENSION_DATA_FILE;
 
     public static final String ANIMATIONS_FOLDER_NAME = "animations";
     public static final String NPC_FOLDER_NAME = "npc";
@@ -131,8 +131,8 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static void updateDialogUserValue() {
-        File dialogUserValue = createFile(dataDirectory, DIALOG_USER_FILE_NAME);
+    public static void updateUserOptions() {
+        File dialogUserValue = createFile(dataDirectory, USER_OPTIONS_FILE_NAME);
         try {
             try (Writer writer = new BufferedWriter(new FileWriter(dialogUserValue))) {
                 new Gson().toJson(NarrativeCraftMod.getInstance().getNarrativeUserOptions(), writer);
@@ -144,8 +144,8 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static NarrativeUserOptions getDialogUserValue() {
-        File dialogUserValue = createFile(dataDirectory, DIALOG_USER_FILE_NAME);
+    public static NarrativeUserOptions getUserOptions() {
+        File dialogUserValue = createFile(dataDirectory, USER_OPTIONS_FILE_NAME);
         try {
             String content = Files.readString(dialogUserValue.toPath());
             return new Gson().fromJson(content, NarrativeUserOptions.class);

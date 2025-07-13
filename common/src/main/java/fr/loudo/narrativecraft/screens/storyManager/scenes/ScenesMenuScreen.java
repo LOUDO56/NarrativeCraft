@@ -66,7 +66,7 @@ public class ScenesMenuScreen extends OptionsSubScreen {
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.subscenes"), b -> minecraft.setScreen(new SubscenesScreen(scene))).build()),
                 new StoryElementList.StoryEntryData(Button.builder(Translation.message("global.npc"), b -> minecraft.setScreen(new NpcScreen(scene))).build())
         );
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
 

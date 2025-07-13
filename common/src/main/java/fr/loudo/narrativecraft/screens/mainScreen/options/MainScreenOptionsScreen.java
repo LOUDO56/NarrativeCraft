@@ -28,7 +28,7 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
         super.onClose();
         narrativeUserOptions.TEXT_SPEED = textSpeed;
         narrativeUserOptions.AUTO_SKIP = autoSkipCheck.selected();
-        NarrativeCraftFile.updateDialogUserValue();
+        NarrativeCraftFile.updateUserOptions();
     }
 
     @Override

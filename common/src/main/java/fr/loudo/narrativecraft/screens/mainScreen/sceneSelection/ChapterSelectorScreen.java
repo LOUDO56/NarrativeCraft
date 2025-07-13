@@ -1,35 +1,31 @@
-package fr.loudo.narrativecraft.screens.storyManager.chapters;
+package fr.loudo.narrativecraft.screens.mainScreen.sceneSelection;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
-import fr.loudo.narrativecraft.screens.components.DialogCustomScreen;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.storyManager.StoryElementScreen;
-import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesScreen;
-import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
-import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.client.gui.components.StringWidget;
+import net.minecraft.client.gui.layouts.LinearLayout;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-public class ChaptersScreen extends StoryElementScreen {
+public class ChapterSelectorScreen extends StoryElementScreen {
 
-    public ChaptersScreen() {
-        super(null, Minecraft.getInstance().options, Translation.message("screen.chapter_manager.title"));
+    public ChapterSelectorScreen(Screen lastScreen) {
+        super(lastScreen, Minecraft.getInstance().options, Translation.message("screen.chapter_manager.title"));
     }
 
     @Override
-    protected void addFooter() {
-        this.layout.addToFooter(Button.builder(CommonComponents.GUI_DONE, (p_345997_) -> this.onClose()).width(200).build());
-    }
-
-    protected void openFolder() {
-        Util.getPlatform().openPath(NarrativeCraftFile.chaptersDirectory.toPath());
+    protected void addTitle() {
+        linearlayout = this.layout.addToHeader(LinearLayout.horizontal()).spacing(8);
+        linearlayout.defaultCellSetting().alignVerticallyMiddle();
+        linearlayout.addChild(new StringWidget(this.title, this.font));
     }
 
     @Override
@@ -44,14 +40,22 @@ public class ChaptersScreen extends StoryElementScreen {
                     }
 
                     Button button = Button.builder(Component.literal(label), b -> {
-                        this.minecraft.setScreen(new ScenesScreen(chapter));
+                        SceneSelectorScreen screen = new SceneSelectorScreen(this, chapter);
+                        minecraft.setScreen(screen);
                     }).build();
 
                     return new StoryElementList.StoryEntryData(button, chapter);
                 })
                 .toList();
 
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, false));
     }
 
+    @Override
+    protected void openFolder() {}
+
+    @Override
+    public boolean isPauseScreen() {
+        return false;
+    }
 }

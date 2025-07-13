@@ -80,7 +80,7 @@ public class NpcScreen extends StoryElementScreen {
                 })
                 .toList();
 
-        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries));
+        this.storyElementList = this.layout.addToContents(new StoryElementList(this.minecraft, this, entries, true));
     }
 
     public Scene getScene() {
