@@ -32,6 +32,7 @@ public class EditInfoScreen extends Screen {
     protected String name, description;
     protected Button actionButton, backButton;
     protected ScreenUtils.LabelBox nameBox;
+    protected ScreenUtils.LabelBox placementBox;
     protected ScreenUtils.MultilineLabelBox descriptionBox;
     protected StringWidget titleWidget;
     protected Screen lastScreen;
@@ -61,7 +62,7 @@ public class EditInfoScreen extends Screen {
         int labelHeight = this.font.lineHeight + 5;
 
         int centerX = this.width / 2 - WIDGET_WIDTH / 2;
-        int centerY = this.height / 2 - (labelHeight + EDIT_BOX_NAME_HEIGHT + GAP + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
+        int centerY = this.height / 2 - (labelHeight + ((EDIT_BOX_NAME_HEIGHT + GAP ) * 2) + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
 
         titleWidget = ScreenUtils.text(title, this.font, titleX, centerY - labelHeight);
         this.addRenderableWidget(titleWidget);
@@ -99,9 +100,33 @@ public class EditInfoScreen extends Screen {
         this.addRenderableWidget(descriptionBox.getMultiLineEditBox());
 
         centerY += labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + GAP;
+        if(narrativeEntry instanceof Scene scene) {
+            placementBox = new ScreenUtils.LabelBox(
+                    Translation.message("screen.story.placement"),
+                    minecraft.font,
+                    40,
+                    EDIT_BOX_NAME_HEIGHT,
+                    centerX,
+                    centerY,
+                    ScreenUtils.Align.HORIZONTAL
+            );
+            placementBox.getEditBox().setValue(String.valueOf(scene.getPlacement()));
+            placementBox.getEditBox().setFilter(string -> string.matches("^\\d*$"));
+            this.addRenderableWidget(placementBox.getEditBox());
+            this.addRenderableWidget(placementBox.getStringWidget());
+            centerY += placementBox.getEditBox().getHeight() + GAP;
+        }
         actionButton = Button.builder(buttonActionMessage, button -> {
             String name = nameBox.getEditBox().getValue();
             String desc = descriptionBox.getMultiLineEditBox().getValue();
+            int placement = 0;
+            if(narrativeEntry instanceof Scene scene) {
+                if(placementBox.getEditBox().getValue().isEmpty()) {
+                    placement = scene.getPlacement();
+                } else {
+                    placement = Math.max(1, Integer.parseInt(placementBox.getEditBox().getValue()));
+                }
+            }
             if(name.isEmpty()) {
                 ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.story.name.required"));
                 return;
@@ -122,6 +147,9 @@ public class EditInfoScreen extends Screen {
                 addCameraAnglesAction(name, desc);
             }
             if(narrativeEntry != null) {
+                if(narrativeEntry instanceof Scene scene) {
+                    scene.update(name, desc, placement);
+                }
                 narrativeEntry.update(name, desc);
             }
         }).bounds(centerX, centerY, WIDGET_WIDTH, BUTTON_HEIGHT).build();

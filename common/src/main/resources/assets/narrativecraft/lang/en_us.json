@@ -129,6 +129,7 @@
 
   "narrativecraft.screen.story.name": "Name",
   "narrativecraft.screen.story.description": "Description",
+  "narrativecraft.screen.story.placement": "Placement",
   "narrativecraft.screen.add.text": "Add",
   "narrativecraft.screen.update.text": "Update",
 

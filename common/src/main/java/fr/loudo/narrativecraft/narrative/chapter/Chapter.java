@@ -11,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Chapter extends NarrativeEntry {
@@ -70,8 +71,15 @@ public class Chapter extends NarrativeEntry {
     }
 
     public List<Scene> getSceneList() {
-        return sceneList;
+       return sceneList;
     }
+
+    public List<Scene> getSortedSceneList() {
+        return sceneList.stream()
+                .sorted(Comparator.comparingInt(Scene::getPlacement))
+                .toList();
+    }
+
 
     @Override
     public void update(String name, String description) {

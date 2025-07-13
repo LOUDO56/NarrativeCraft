@@ -20,6 +20,7 @@ import java.util.List;
 public class Scene extends NarrativeEntry {
 
     private Chapter chapter;
+    private int placement;
     private transient List<CharacterStory> npcs;
     private List<Animation> animationList;
     private List<Cutscene> cutsceneList;
@@ -34,6 +35,7 @@ public class Scene extends NarrativeEntry {
         this.subsceneList = new ArrayList<>();
         this.cameraAngleGroupList = new ArrayList<>();
         this.npcs = new ArrayList<>();
+        placement = chapter.getSceneList().size();
     }
 
     public Chapter getChapter() {
@@ -42,6 +44,14 @@ public class Scene extends NarrativeEntry {
 
     public void setChapter(Chapter chapter) {
         this.chapter = chapter;
+    }
+
+    public int getPlacement() {
+        return placement;
+    }
+
+    public void setPlacement(int placement) {
+        this.placement = placement;
     }
 
     public void addAnimation(Animation animation) {
@@ -225,14 +235,23 @@ public class Scene extends NarrativeEntry {
     }
 
     @Override
-    public void update(String name, String description) {
-        if(!NarrativeCraftFile.updateSceneDetails(this, name, description)) {
+    public void update(String name, String description) {}
+
+    public void update(String name, String description, int placement) {
+        if(!NarrativeCraftFile.updateSceneDetails(this, name, description, placement)) {
             ScreenUtils.sendToast(Translation.message("global.error"), Translation.message("screen.scene_manager.update.failed", name));
             return;
         }
         String oldName = this.name;
         this.name = name;
         this.description = description;
+        for(Scene scene : chapter.getSceneList()) {
+            if(scene.getPlacement() == placement) {
+                scene.setPlacement(this.placement);
+                NarrativeCraftFile.updateSceneDetails(scene, scene.getName(), scene.getDescription(), scene.getPlacement());
+            }
+        }
+        this.placement = placement;
         ScreenUtils.sendToast(Translation.message("global.info"), Translation.message("toast.description.updated", name, chapter.getIndex()));
         Minecraft.getInstance().setScreen(reloadScreen());
         NarrativeCraftFile.updateMainInkFile();

@@ -88,7 +88,7 @@ public class NarrativeCraftFile {
     }
 
     public static File getDetailsFile(File file) {
-        return new File(file.getAbsoluteFile(), DETAILS_FILE_NAME);
+        return createFile(file, DETAILS_FILE_NAME);
     }
 
     public static DialogData getGlobalDialogValues() {
@@ -242,7 +242,7 @@ public class NarrativeCraftFile {
 
     }
 
-    public static boolean updateSceneDetails(Scene scene, String name, String description) {
+    public static boolean updateSceneDetails(Scene scene, String name, String description, int placement) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         File sceneFolder = new File(scenesFolder, getSnakeCaseName(scene.getName()));
@@ -253,7 +253,7 @@ public class NarrativeCraftFile {
                 sceneFolder = newSceneFolder;
             }
             File sceneDetails = getDetailsFile(new File(sceneFolder, DATA_FOLDER_NAME));
-            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", name, description);
+            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\",\"placement\":%s}", name, description, placement);
             try(Writer writer = new BufferedWriter(new FileWriter(sceneDetails))) {
                 writer.write(content);
             }

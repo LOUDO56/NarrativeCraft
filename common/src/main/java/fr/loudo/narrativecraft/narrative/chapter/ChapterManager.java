@@ -93,8 +93,10 @@ public class ChapterManager {
                                 JsonObject json = JsonParser.parseString(content).getAsJsonObject();
                                 name = json.get("name").getAsString();
                                 desc = json.get("description").getAsString();
+                                int placement = json.get("placement").getAsInt();
                                 scene.setName(name);
                                 scene.setDescription(desc);
+                                scene.setPlacement(placement);
                             } catch (IOException e) {
                                 NarrativeCraftMod.LOG.warn("Settings file of scene {} of chapter {} does not exists, passing...", sceneFolder.getName(), chapterIndex.getName());
                             }

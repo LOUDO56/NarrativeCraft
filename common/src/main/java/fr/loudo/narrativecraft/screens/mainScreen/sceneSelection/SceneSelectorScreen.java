@@ -33,7 +33,7 @@ public class SceneSelectorScreen extends StoryElementScreen {
 
     @Override
     protected void addContents() {
-        List<StoryElementList.StoryEntryData> entries = chapter.getSceneList().stream()
+        List<StoryElementList.StoryEntryData> entries = chapter.getSortedSceneList().stream()
                 .map(scene -> {
                     Button button = Button.builder(Component.literal(scene.getName()), b -> {
                         StoryHandler storyHandler = new StoryHandler(chapter, scene);
