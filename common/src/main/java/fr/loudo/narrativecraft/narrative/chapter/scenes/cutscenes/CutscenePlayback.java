@@ -4,6 +4,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
+import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -101,8 +102,10 @@ public class CutscenePlayback  {
     public void skip() {
         Keyframe lastKeyframe = keyframeGroupList.getLast().getKeyframeList().getLast();
         int lastTick = (int) (lastKeyframe.getTick() + ((lastKeyframe.getTransitionDelay() / 1000L) * 20));
-        cutsceneController.changeTimePosition(lastTick, true);
-        stop();
+        NarrativeCraftMod.server.execute(() -> {
+            cutsceneController.changeTimePosition(lastTick, false);
+            stop();
+        });
     }
 
     private void initValues() {
@@ -159,7 +162,7 @@ public class CutscenePlayback  {
         }
         if(t >= 1.0 && adjustedTime >= transitionDelay || adjustedTime >= defaultEndTime) {
             if(cutsceneController.isLastKeyframe(secondKeyframe)) {
-                stop();
+                NarrativeCraftMod.server.execute(this::stop);
             } else {
                 nextFrame();
             }

@@ -155,7 +155,6 @@ public class MainScreen extends Screen {
             startY += buttonHeight + gap;
             Button loadLastSaveButton = Button.builder(Translation.message("screen.main_screen.pause.load_last_save"), button -> {
                 minecraft.setScreen(null);
-                NarrativeCraftMod.getInstance().getStoryHandler().stop();
                 new StoryHandler().start();
             }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
             this.addRenderableWidget(loadLastSaveButton);
@@ -165,7 +164,7 @@ public class MainScreen extends Screen {
                 minecraft.setScreen(null);
                 CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
                 if(cutscenePlayback != null) {
-                    cutscenePlayback.skip();
+                    NarrativeCraftMod.server.execute(cutscenePlayback::skip);
                 }
             }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
             skipCutsceneButton.active = playerSession.getCutscenePlayback() != null;

@@ -91,6 +91,7 @@ public class CutsceneController extends KeyframeControllerBase {
                     }
                 }
             }
+            playbackList.addAll(subscene.getPlaybackList());
         }
 
         for(Animation animation : cutscene.getAnimationList()) {
@@ -144,19 +145,11 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void stopSession(boolean save) {
 
-        for(Subscene subscene : cutscene.getSubsceneList()) {
-            if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                NarrativeCraftMod.server.execute(subscene::forceStop);
-            } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                NarrativeCraftMod.server.execute(subscene::stop);
-            }
-        }
-
         for(Playback playback : playbackList) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                NarrativeCraftMod.server.execute(playback::forceStop);
+                playback.forceStop();
             } else if (playbackType == Playback.PlaybackType.PRODUCTION) {
-                NarrativeCraftMod.server.execute(playback::stop);
+                playback.stop();
             }
         }
 
@@ -196,6 +189,7 @@ public class CutsceneController extends KeyframeControllerBase {
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             StoryHandler.changePlayerCutsceneMode(playbackType, false);
         }
+        playbackList.clear();
         isPlaying = false;
 
     }
@@ -357,7 +351,7 @@ public class CutsceneController extends KeyframeControllerBase {
                     keyframeFromGroup.removeKeyframeFromClient(player);
                 }
             }
-            changeTimePosition(currentPreviewKeyframe.getTick(), seamless);
+            NarrativeCraftMod.server.execute(() -> changeTimePosition(currentPreviewKeyframe.getTick(), seamless));
         }
         StoryHandler.changePlayerCutsceneMode(playbackType, true);
     }
@@ -378,17 +372,10 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
-        player.serverLevel().getServer().execute(() -> {
-            currentTick = Math.min(newTick, getTotalTick());
-            for(Subscene subscene : cutscene.getSubsceneList()) {
-                for(Playback playback : subscene.getPlaybackList()) {
-                    playback.changeLocationByTick(newTick, seamless);
-                }
-            }
-            for(Playback playback : playbackList) {
-                playback.changeLocationByTick(newTick, seamless);
-            }
-        });
+        currentTick = Math.min(newTick, getTotalTick());
+        for(Playback playback : playbackList) {
+            playback.changeLocationByTick(newTick, seamless);
+        }
     }
 
     public boolean isLastKeyframe(Keyframe keyframe) {

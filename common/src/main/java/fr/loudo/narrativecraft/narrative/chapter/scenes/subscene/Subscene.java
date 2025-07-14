@@ -36,6 +36,7 @@ public class Subscene extends NarrativeEntry {
         if(playbackList == null) {
             playbackList = new ArrayList<>();
         }
+        playbackList.clear();
         for(String animationName : animationNameList) {
             Animation animation = scene.getAnimationByName(animationName);
             Playback playback = new Playback(animation, level, animation.getCharacter(), playbackType, isLooping);

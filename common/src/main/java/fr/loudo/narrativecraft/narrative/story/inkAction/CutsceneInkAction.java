@@ -52,9 +52,6 @@ public class CutsceneInkAction extends InkAction {
     }
 
     private void handleEndCutscene(CutsceneController cutsceneController) {
-        for(Playback playback : cutsceneController.getPlaybackList()) {
-            NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().remove(playback);
-        }
         storyHandler.getPlayerSession().setSoloCam(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
         if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty() && storyHandler.isFinished()) {
             storyHandler.stop();
