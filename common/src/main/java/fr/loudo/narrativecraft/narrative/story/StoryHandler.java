@@ -130,7 +130,7 @@ public class StoryHandler {
     }
 
     public void stop(boolean force) {
-        if(!force && isFinished()) {
+        if(!force) {
             if(!isDebugMode) {
                 CreditsScreen creditsScreen = new CreditsScreen(false, !NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY);
                 NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY = true;
@@ -160,7 +160,7 @@ public class StoryHandler {
 
     public boolean next() {
         try {
-            if(isFinished()) {
+            if(!story.canContinue() && currentChoices.isEmpty() && save == null) {
                 stop(false);
                 return false;
             }
@@ -270,7 +270,7 @@ public class StoryHandler {
     }
 
     public boolean isFinished() {
-        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty() && save == null;
+        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty();
     }
 
     public void showDialog() {
