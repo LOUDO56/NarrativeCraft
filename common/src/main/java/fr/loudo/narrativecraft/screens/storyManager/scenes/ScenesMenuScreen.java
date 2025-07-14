@@ -13,7 +13,6 @@ import fr.loudo.narrativecraft.screens.storyManager.scenes.npcs.NpcScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.subscenes.SubscenesScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.Button;

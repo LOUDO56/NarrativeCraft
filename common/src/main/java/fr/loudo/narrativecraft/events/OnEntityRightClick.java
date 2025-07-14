@@ -14,7 +14,6 @@ import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleCharacterScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeTriggerScreen;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;

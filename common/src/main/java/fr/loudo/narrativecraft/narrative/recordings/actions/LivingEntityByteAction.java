@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.recordings.actions;
 import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
 public class LivingEntityByteAction extends Action {

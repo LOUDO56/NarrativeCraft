@@ -1,8 +1,6 @@
 package fr.loudo.narrativecraft.screens.credits;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.WinScreenFields;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.utils.Utils;

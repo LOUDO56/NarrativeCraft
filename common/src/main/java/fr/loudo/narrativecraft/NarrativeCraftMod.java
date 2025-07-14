@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft;
 
-import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterManager;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;

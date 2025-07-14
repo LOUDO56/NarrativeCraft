@@ -6,7 +6,6 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import io.github.kosmx.emotes.api.events.client.ClientEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
-import net.minecraft.world.entity.Entity;
 
 import java.util.UUID;
 

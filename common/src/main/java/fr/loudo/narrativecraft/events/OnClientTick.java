@@ -22,7 +22,6 @@ import fr.loudo.narrativecraft.screens.mainScreen.MainScreenControllerScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
 

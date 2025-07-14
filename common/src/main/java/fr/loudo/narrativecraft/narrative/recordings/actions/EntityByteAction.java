@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.mixin.fields.EntityFields;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.world.entity.Entity;
 
 public class EntityByteAction extends Action {
 

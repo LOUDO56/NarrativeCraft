@@ -24,7 +24,6 @@ import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;

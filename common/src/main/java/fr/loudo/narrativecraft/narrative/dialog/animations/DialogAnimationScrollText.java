@@ -3,7 +3,6 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;

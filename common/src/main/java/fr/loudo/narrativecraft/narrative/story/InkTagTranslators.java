@@ -1,8 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story;
 
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
-import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
-import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
