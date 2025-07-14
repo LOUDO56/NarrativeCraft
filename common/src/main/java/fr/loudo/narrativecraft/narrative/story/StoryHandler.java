@@ -124,6 +124,7 @@ public class StoryHandler {
             isRunning = true;
             NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
+            NarrativeCraftFile.writeSave(this, false);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
