@@ -652,6 +652,10 @@ public class StoryHandler {
         return globalDialogValue;
     }
 
+    public void setGlobalDialogValue(DialogData globalDialogValue) {
+        this.globalDialogValue = globalDialogValue;
+    }
+
     public String getCurrentCharacterTalking() {
         return currentCharacterTalking;
     }

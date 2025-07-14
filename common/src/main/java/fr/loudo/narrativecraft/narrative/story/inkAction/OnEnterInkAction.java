@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
+import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -24,6 +25,7 @@ public class OnEnterInkAction extends InkAction {
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
                 NarrativeCraftMod.server.execute(characterStory::kill);
             }
+            storyHandler.setGlobalDialogValue(new DialogData(DialogData.globalDialogData));
             storyHandler.getCurrentCharacters().clear();
             storyHandler.getPlayerSession().reset();
             storyHandler.initChapterSceneSession();
