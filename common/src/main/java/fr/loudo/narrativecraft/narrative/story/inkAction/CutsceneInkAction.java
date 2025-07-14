@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayba
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -54,7 +55,7 @@ public class CutsceneInkAction extends InkAction {
     private void handleEndCutscene(CutsceneController cutsceneController) {
         storyHandler.getPlayerSession().setSoloCam(cutsceneController.getCutscene().getKeyframeGroupList().getLast().getKeyframeList().getLast().getKeyframeCoordinate());
         if(storyHandler.getInkTagTranslators().getTagsToExecuteLater().isEmpty() && storyHandler.isFinished()) {
-            storyHandler.stop();
+            storyHandler.stop(false);
         }
         storyHandler.getInkTagTranslators().executeLaterTags();
 

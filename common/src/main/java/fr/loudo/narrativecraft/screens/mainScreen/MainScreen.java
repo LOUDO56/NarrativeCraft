@@ -181,7 +181,7 @@ public class MainScreen extends Screen {
         if(pause) {
             startY += buttonHeight + gap;
             Button quitButton = Button.builder(Translation.message("screen.main_screen.pause.leave"), button -> {
-                NarrativeCraftMod.getInstance().getStoryHandler().stop();
+                NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
                 MainScreen mainScreen = new MainScreen(false, false);
                 minecraft.setScreen(mainScreen);
             }).bounds(initialX, startY, buttonWidth, buttonHeight).build();

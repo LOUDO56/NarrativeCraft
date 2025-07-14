@@ -68,7 +68,7 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
         }).build());
 
         linearlayout.addChild(Button.builder(Component.literal("Credits"), button -> {
-            CreditsScreen screen = new CreditsScreen();
+            CreditsScreen screen = new CreditsScreen(true, false);
             minecraft.setScreen(screen);
         }).build());
     }

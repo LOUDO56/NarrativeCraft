@@ -118,7 +118,7 @@ public class StoryCommand {
             return 0;
         }
 
-        storyHandler.stop();
+        storyHandler.stop(true);
         context.getSource().sendSuccess(() -> Component.literal("Story stopped."), false);
 
         return Command.SINGLE_SUCCESS;

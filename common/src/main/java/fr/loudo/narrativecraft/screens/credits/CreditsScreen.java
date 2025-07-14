@@ -27,13 +27,11 @@ public class CreditsScreen extends WinScreen {
     public static final SimpleSoundInstance MUSIC_INSTANCE = SimpleSoundInstance.forUI(SoundEvent.createVariableRangeEvent(MUSIC), 1, 1);
 
 
-    public CreditsScreen() {
+    public CreditsScreen(boolean fromMainMenu, boolean showFinishScreen) {
         super(false, () -> {
             MainScreen mainScreen;
-            if(!NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY) {
+            if(showFinishScreen && !fromMainMenu) {
                 mainScreen = new MainScreen(true, false);
-                NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY = true;
-                NarrativeCraftFile.updateUserOptions();
             } else {
                 mainScreen = new MainScreen(false, false);
             }

@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.narrative.story;
 
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
+import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
+import net.minecraft.client.Minecraft;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ public class InkTagTranslators {
             }
             if(storyHandler.getStory() != null) {
                 if(storyHandler.isFinished()) {
-                    storyHandler.stop();
+                    storyHandler.stop(false);
                 }
             }
             return true;
@@ -56,7 +58,7 @@ public class InkTagTranslators {
         if(storyHandler.getStory() != null) {
             storyHandler.showDialog();
             if(storyHandler.isFinished()) {
-                storyHandler.stop();
+                storyHandler.stop(false);
             }
         }
 

@@ -85,7 +85,7 @@ public class StoryHandler {
     public void start() {
         try {
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
-                NarrativeCraftMod.getInstance().getStoryHandler().stop();
+                NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
             }
             Minecraft.getInstance().options.hideGui = true;
             inkActionList.clear();
@@ -130,7 +130,15 @@ public class StoryHandler {
         }
     }
 
-    public void stop() {
+    public void stop(boolean force) {
+        if(!force && isFinished()) {
+            if(!isDebugMode) {
+                CreditsScreen creditsScreen = new CreditsScreen(false, !NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY);
+                NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY = true;
+                NarrativeCraftFile.updateUserOptions();
+                Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(creditsScreen));
+            }
+        }
         isRunning = false;
         for(CharacterStory characterStory : currentCharacters) {
             NarrativeCraftMod.server.execute(characterStory::kill);
@@ -153,12 +161,8 @@ public class StoryHandler {
 
     public boolean next() {
         try {
-            if(!story.canContinue() && currentChoices.isEmpty() && save == null) {
-                stop();
-                if(!isDebugMode) {
-                    CreditsScreen creditsScreen = new CreditsScreen();
-                    Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(creditsScreen));
-                }
+            if(isFinished()) {
+                stop(false);
                 return false;
             }
             if(!currentChoices.isEmpty()) {
@@ -241,7 +245,7 @@ public class StoryHandler {
             }
             save = null;
             if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
-                stop();
+                stop(true);
                 Minecraft.getInstance().player.displayClientMessage(
                         Component.literal("§c" + Translation.message("story.load.scene.fail").getString()),
                         false
@@ -267,7 +271,7 @@ public class StoryHandler {
     }
 
     public boolean isFinished() {
-        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty();
+        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty() && save == null;
     }
 
     public void showDialog() {
@@ -288,7 +292,7 @@ public class StoryHandler {
                             .findFirst()
                             .orElse(null);
                     if(currentCharacter == null) {
-                        stop();
+                        stop(true);
                         return;
                     }
                     currentDialogBox = new Dialog(
