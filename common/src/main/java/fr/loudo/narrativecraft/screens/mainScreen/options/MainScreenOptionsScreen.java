@@ -3,12 +3,15 @@ package fr.loudo.narrativecraft.screens.mainScreen.options;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
 
@@ -58,6 +61,16 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
         linearlayout.addChild(abstractSliderButton);
         autoSkipCheck = Checkbox.builder(Translation.message("screen.main_screen.options.auto_skip"), minecraft.font).selected(narrativeUserOptions.AUTO_SKIP).build();
         linearlayout.addChild(autoSkipCheck);
+
+        linearlayout.addChild(Button.builder(Translation.message("screen.main_screen.minecraft_options"), button -> {
+            OptionsScreen screen = new OptionsScreen(this, minecraft.options);
+            minecraft.setScreen(screen);
+        }).build());
+
+        linearlayout.addChild(Button.builder(Component.literal("Credits"), button -> {
+            CreditsScreen screen = new CreditsScreen();
+            minecraft.setScreen(screen);
+        }).build());
     }
 
     @Override

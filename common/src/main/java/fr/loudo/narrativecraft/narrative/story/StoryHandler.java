@@ -19,10 +19,12 @@ import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
+import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.LoadingOverlay;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -82,6 +84,9 @@ public class StoryHandler {
 
     public void start() {
         try {
+            if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
+                NarrativeCraftMod.getInstance().getStoryHandler().stop();
+            }
             Minecraft.getInstance().options.hideGui = true;
             inkActionList.clear();
             globalDialogValue = new DialogData(DialogData.globalDialogData);
@@ -96,9 +101,6 @@ public class StoryHandler {
                         NarrativeCraftMod.getInstance().getCharacterManager().reloadSkin(npc);
                     }
                 }
-            }
-            if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
-                NarrativeCraftMod.getInstance().getStoryHandler().stop();
             }
             String content = NarrativeCraftFile.getStoryFile();
             story = new Story(content);
@@ -129,13 +131,12 @@ public class StoryHandler {
     }
 
     public void stop() {
-        inkActionList.clear();
         isRunning = false;
         for(CharacterStory characterStory : currentCharacters) {
-            characterStory.kill();
+            NarrativeCraftMod.server.execute(characterStory::kill);
         }
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
-            playback.forceStop();
+            NarrativeCraftMod.server.execute(playback::forceStop);
         }
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().clear();
         StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, false);
@@ -143,16 +144,21 @@ public class StoryHandler {
             Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
         }
         currentKeyframeCoordinate = null;
-        playerSession.reset();
+        inkActionList.clear();
         currentCharacters.clear();
-        NarrativeCraftMod.getInstance().setStoryHandler(null);
+        playerSession.reset();
         Minecraft.getInstance().options.hideGui = false;
+        NarrativeCraftMod.getInstance().setStoryHandler(null);
     }
 
     public boolean next() {
         try {
             if(!story.canContinue() && currentChoices.isEmpty() && save == null) {
                 stop();
+                if(!isDebugMode) {
+                    CreditsScreen creditsScreen = new CreditsScreen();
+                    Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(creditsScreen));
+                }
                 return false;
             }
             if(!currentChoices.isEmpty()) {
@@ -656,7 +662,9 @@ public class StoryHandler {
     }
 
     public void save(boolean newScene) {
-        NarrativeCraftFile.writeSave(this, newScene);
+        if(!isDebugMode) {
+            NarrativeCraftFile.writeSave(this, newScene);
+        }
         isSaving = true;
         StorySave.startTimeSaveIcon = System.currentTimeMillis();
     }

@@ -28,10 +28,13 @@
     "CameraMixin",
     "GameRendererMixin",
     "LevelRendererMixin",
+    "MinecraftCommonMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",
+    "WinScreenMixin",
     "fields.FontFields",
-    "fields.GameRendererFields"
+    "fields.GameRendererFields",
+    "fields.WinScreenFields"
   ],
   "server": [],
   "injectors": {

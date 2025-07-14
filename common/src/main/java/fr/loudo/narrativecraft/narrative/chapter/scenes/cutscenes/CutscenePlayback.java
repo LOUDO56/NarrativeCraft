@@ -98,6 +98,13 @@ public class CutscenePlayback  {
         }
     }
 
+    public void skip() {
+        Keyframe lastKeyframe = keyframeGroupList.getLast().getKeyframeList().getLast();
+        int lastTick = (int) (lastKeyframe.getTick() + ((lastKeyframe.getTransitionDelay() / 1000L) * 20));
+        cutsceneController.changeTimePosition(lastTick, true);
+        stop();
+    }
+
     private void initValues() {
         totalPausedTime = 0;
         startTime = System.currentTimeMillis();
@@ -346,6 +353,7 @@ public class CutscenePlayback  {
     public void setOnCutsceneEnd(Runnable onCutsceneEnd) {
         this.onCutsceneEnd = onCutsceneEnd;
     }
+
 
 
 }

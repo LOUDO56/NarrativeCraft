@@ -1,14 +1,10 @@
 {
-  "custom.dialog_sound": {
+  "sfx.dialog_sound": {
     "category": "master",
-    "sounds": ["custom/dialog_sound"]
+    "sounds": ["sfx/dialog_sound"]
   },
-  "custom.choice_appear": {
+  "sfx.choice_appear": {
     "category": "master",
-    "sounds": ["custom/choice_appear"]
-  },
-  "narrativecraft_mainscreen.music": {
-    "category": "master",
-    "sounds": ["narrativecraft_mainscreen/music"]
+    "sounds": ["sfx/choice_appear"]
   }
 }

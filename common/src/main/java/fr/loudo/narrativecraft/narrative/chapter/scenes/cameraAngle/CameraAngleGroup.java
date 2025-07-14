@@ -61,9 +61,9 @@ public class CameraAngleGroup extends NarrativeEntry {
             if(characterStoryData.getCharacterStory().getEntity() != null) {
                 LivingEntity entity = characterStoryData.getCharacterStory().getEntity();
                 if(entity instanceof FakePlayer fakePlayer) {
-                    NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+                    NarrativeCraftMod.server.execute(() -> NarrativeCraftMod.server.getPlayerList().remove(fakePlayer));
                 } else {
-                    characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED);
+                    NarrativeCraftMod.server.execute(() -> characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED));
                 }
                 StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
                 if(storyHandler != null) {

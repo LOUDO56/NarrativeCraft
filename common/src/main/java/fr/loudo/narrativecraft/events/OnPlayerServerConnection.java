@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
@@ -14,7 +15,8 @@ public class OnPlayerServerConnection {
 
     public static void playerJoin(ServerPlayer player) {
         CutsceneEditItems.init(player.registryAccess());
-        MainScreen mainScreen = new MainScreen();
+        NarrativeCraftFile.getUserOptions();
+        MainScreen mainScreen = new MainScreen(false, false);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
     }
 

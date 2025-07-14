@@ -4,7 +4,6 @@ import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.realmsclient.RealmsMainScreen;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.GenericMessageScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
@@ -15,11 +14,19 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.*;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Utils {
@@ -86,5 +93,30 @@ public class Utils {
         } else {
             minecraft.setScreen(new JoinMultiplayerScreen(titlescreen));
         }
+    }
+
+    public static int[] getImageResolution(ResourceLocation resourceLocation) {
+        ResourceManager resourceManager = Minecraft.getInstance().getResourceManager();
+
+        Optional<Resource> resource = resourceManager.getResource(resourceLocation);
+        if (resource.isPresent()) {
+            try (InputStream stream = resource.get().open()) {
+                BufferedImage image = ImageIO.read(stream);
+                int width = image.getWidth();
+                int height = image.getHeight();
+
+                return new int[]{width, height};
+            } catch (IOException ignored) {}
+        }
+        return null;
+    }
+
+    public static int getDynamicHeight(int[] resolution, int newWidth) {
+        float ratio = (float) resolution[1] / resolution[0];
+        return Math.round(ratio * newWidth);
+    }
+
+    public static boolean resourceExists(ResourceLocation resourceLocation) {
+        return Minecraft.getInstance().getResourceManager().getResource(resourceLocation).isPresent();
     }
 }

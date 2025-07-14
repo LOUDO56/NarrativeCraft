@@ -13,7 +13,7 @@
     "ServerPlayerMixin"
   ],
   "client": [
-    "MinecraftMixin"
+    "MinecraftFabricMixin"
   ],
   "server": [],
   "injectors": {

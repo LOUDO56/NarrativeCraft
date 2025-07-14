@@ -1,6 +1,9 @@
 package fr.loudo.narrativecraft.screens.mainScreen.sceneSelection;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
+import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.components.StoryElementList;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
@@ -36,10 +39,13 @@ public class SceneSelectorScreen extends StoryElementScreen {
         List<StoryElementList.StoryEntryData> entries = chapter.getSortedSceneList().stream()
                 .map(scene -> {
                     Button button = Button.builder(Component.literal(scene.getName()), b -> {
-                        StoryHandler storyHandler = new StoryHandler(chapter, scene);
-                        storyHandler.start();
+                        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+                        if(playerSession.getKeyframeControllerBase() instanceof MainScreenController mainScreenController) {
+                            mainScreenController.stopSession(false);
+                        }
                         minecraft.getSoundManager().stop(MainScreen.MUSIC_INSTANCE);
                         minecraft.setScreen(null);
+                        new StoryHandler(chapter, scene).start();
                     }).build();
                     return new StoryElementList.StoryEntryData(button, scene);
                 }).toList();

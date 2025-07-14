@@ -84,6 +84,10 @@ public class NarrativeCraftFile {
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
         dataDirectory = createDirectory(mainDirectory, DATA_FOLDER_NAME);
         mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
+        NarrativeUserOptions narrativeUserOptions = getUserOptions();
+        if(narrativeUserOptions != null) {
+            NarrativeCraftMod.getInstance().setNarrativeUserOptions(narrativeUserOptions);
+        }
         createGlobalDialogValues();
     }
 
@@ -148,6 +152,7 @@ public class NarrativeCraftFile {
         File dialogUserValue = createFile(dataDirectory, USER_OPTIONS_FILE_NAME);
         try {
             String content = Files.readString(dialogUserValue.toPath());
+            if(content.isEmpty()) return null;
             return new Gson().fromJson(content, NarrativeUserOptions.class);
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't read dialog user values! ", e.getStackTrace());
@@ -788,6 +793,12 @@ public class NarrativeCraftFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static void removeSave() {
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
+        if(!saveFile.exists()) return;
+        saveFile.delete();
     }
 
     public static String getChapterSceneSnakeCase(Scene scene) {

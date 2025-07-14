@@ -9,6 +9,8 @@ import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.PlaybackHandler;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.screens.mainScreen.NarrativeCraftLogoRenderer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +31,7 @@ public class NarrativeCraftMod {
     private final RecordingHandler recordingHandler;
     private final PlaybackHandler playbackHandler;
     private final PlayerSession playerSession;
+    private final NarrativeCraftLogoRenderer narrativeCraftLogoRenderer;
     private NarrativeUserOptions narrativeUserOptions;
     private Dialog testDialog;
     private Dialog2d testDialog2d;
@@ -39,10 +42,8 @@ public class NarrativeCraftMod {
         recordingHandler = new RecordingHandler();
         playbackHandler = new PlaybackHandler();
         playerSession = new PlayerSession();
-        narrativeUserOptions = NarrativeCraftFile.getUserOptions();
-        if(narrativeUserOptions == null) {
-            narrativeUserOptions = new NarrativeUserOptions();
-        }
+        narrativeCraftLogoRenderer = new NarrativeCraftLogoRenderer(ResourceLocation.withDefaultNamespace("textures/narrativecraft_logo.png"));
+        narrativeUserOptions = new NarrativeUserOptions();
         isCutsceneMode = false;
     }
 
@@ -104,5 +105,13 @@ public class NarrativeCraftMod {
 
     public NarrativeUserOptions getNarrativeUserOptions() {
         return narrativeUserOptions;
+    }
+
+    public void setNarrativeUserOptions(NarrativeUserOptions narrativeUserOptions) {
+        this.narrativeUserOptions = narrativeUserOptions;
+    }
+
+    public NarrativeCraftLogoRenderer getNarrativeCraftLogoRenderer() {
+        return narrativeCraftLogoRenderer;
     }
 }

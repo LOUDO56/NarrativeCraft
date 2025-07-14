@@ -146,17 +146,17 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                subscene.forceStop();
+                NarrativeCraftMod.server.execute(subscene::forceStop);
             } else if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                subscene.stop();
+                NarrativeCraftMod.server.execute(subscene::stop);
             }
         }
 
         for(Playback playback : playbackList) {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
-                playback.forceStop();
+                NarrativeCraftMod.server.execute(playback::forceStop);
             } else if (playbackType == Playback.PlaybackType.PRODUCTION) {
-                playback.stop();
+                NarrativeCraftMod.server.execute(playback::stop);
             }
         }
 

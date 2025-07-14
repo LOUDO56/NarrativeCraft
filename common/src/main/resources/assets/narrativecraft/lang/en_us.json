@@ -134,12 +134,19 @@
   "narrativecraft.screen.update.text": "Update",
 
   "narrativecraft.screen.main_screen.play": "Play",
+  "narrativecraft.screen.main_screen.new_game": "New Game",
+  "narrativecraft.screen.main_screen.new_game.confirm": "Are you sure? This will erase your save data.",
   "narrativecraft.screen.main_screen.continue": "Continue",
   "narrativecraft.screen.main_screen.select_screen": "Select scene",
   "narrativecraft.screen.main_screen.options": "Options",
   "narrativecraft.screen.main_screen.minecraft_options": "Minecraft options",
   "narrativecraft.screen.main_screen.quit": "Quit",
   "narrativecraft.screen.main_screen.loading": "Loading...",
+
+  "narrativecraft.screen.main_screen.pause.load_last_save": "Load last save",
+  "narrativecraft.screen.main_screen.pause.skip_cutscene": "Skip cutscene",
+  "narrativecraft.screen.main_screen.pause.leave": "Leave",
+
 
   "narrativecraft.character.create.success": "Character %s created successfully. (To modify his attributes, go to saves -> {your_world_name} -> narrativecraft -> characters -> %s.json",
   "narrativecraft.character.create.fail": "An unexpected error occurred while creating the character! Check if characters in your map world directory exists!",
@@ -235,8 +242,4 @@
   "narrativecraft.validation.character": "%s character does not exist.",
   "narrativecraft.validation.emote": "%s emote does not exists.",
   "narrativecraft.validation.emotecraft": "EmoteCraft mod isn't loaded, you can't use that ink action, please either remove this line or download it."
-
-
-
-
 }

@@ -46,7 +46,7 @@ public class ChoicesScreen extends Screen {
     @Override
     protected void init() {
         if(!initiated) {
-            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.choice_appear");
+            ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("sfx.choice_appear");
             SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
             this.minecraft.player.playSound(sound, 1.0F, 1.0F);
         }

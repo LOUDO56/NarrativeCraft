@@ -209,7 +209,7 @@ public class DialogAnimationScrollText {
         Minecraft client = Minecraft.getInstance();
         if (currentLetter < totalLetters && now - lastTimeChar >= NarrativeCraftMod.getInstance().getNarrativeUserOptions().TEXT_SPEED && !client.isPaused()) {
             if(!currentLetterString.equals(" ") && !currentLetterString.isEmpty()) {
-                ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("custom.dialog_sound");
+                ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("sfx.dialog_sound");
                 SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
                 float pitch = 0.8F + new Random().nextFloat() * 0.4F;
                 client.player.playSound(sound, 1.0F, pitch);

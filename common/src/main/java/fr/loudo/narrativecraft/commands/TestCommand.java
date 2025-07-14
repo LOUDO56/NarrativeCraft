@@ -73,7 +73,7 @@ public class TestCommand {
                         )
                         .then(Commands.literal("mainScreen")
                                 .executes(commandContext -> {
-                                    MainScreen mainScreen = new MainScreen();
+                                    MainScreen mainScreen = new MainScreen(false, false);
                                     Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
                                     return Command.SINGLE_SUCCESS;
                                 })
