@@ -77,7 +77,9 @@ public class DialogAnimationArrowSkip {
                     0
             );
             newOpacity = (int) MathUtils.lerp(0, opacity, t);
-            t = Easing.getInterpolation(easing, Math.min((double) (now - startTime) / totalTime, 1.0));
+            if(!isPaused) {
+                t = Easing.getInterpolation(easing, Math.min((double) (now - startTime) / totalTime, 1.0));
+            }
         } else {
             startTime = 0;
         }
