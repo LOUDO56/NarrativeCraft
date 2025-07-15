@@ -61,7 +61,6 @@ public class FadeScreenInkAction extends InkAction {
         int width = Minecraft.getInstance().getWindow().getWidth();
         int height = Minecraft.getInstance().getWindow().getHeight();
         long now = System.currentTimeMillis();
-        long elapsedTime = now - startTime;
         long endTime = 0L;
         int opacityInterpolate = 255;
         switch (fadeCurrentState) {
@@ -88,6 +87,7 @@ public class FadeScreenInkAction extends InkAction {
             isPaused = false;
             startTime += now - pauseStartTime;
         }
+        long elapsedTime = now - startTime;
         int newColor = (opacityInterpolate << 24) | (color & 0xFFFFFF);
         guiGraphics.fill(0, 0, width, height, newColor);
         if(!isPaused) {
