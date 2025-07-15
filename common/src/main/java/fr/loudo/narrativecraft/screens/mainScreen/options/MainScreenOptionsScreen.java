@@ -66,14 +66,14 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
         linearlayout.addChild(Button.builder(Translation.message("screen.main_screen.minecraft_options"), button -> {
             OptionsScreen screen = new OptionsScreen(this, minecraft.options);
             minecraft.setScreen(screen);
-        }).build());
+        }).width(200).build());
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null || storyHandler.getStory() == null) {
             linearlayout.addChild(Button.builder(Component.literal("Credits"), button -> {
                 CreditsScreen screen = new CreditsScreen(true, false);
                 minecraft.setScreen(screen);
-            }).build());
+            }).width(200).build());
         }
 
     }
