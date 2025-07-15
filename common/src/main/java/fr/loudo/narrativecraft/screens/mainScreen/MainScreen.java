@@ -79,7 +79,6 @@ public class MainScreen extends Screen {
 
     @Override
     protected void init() {
-
         boolean storyFinished = NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY;
         showDevBtnCount = 0;
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
@@ -254,6 +253,7 @@ public class MainScreen extends Screen {
         }
         if(keyCode == InputConstants.KEY_ESCAPE && pause) {
             this.onClose();
+            MainScreen.wasPaused = true;
         }
         return super.keyReleased(keyCode, scanCode, modifiers);
     }

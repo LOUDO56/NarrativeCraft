@@ -27,6 +27,7 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.Main;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -84,7 +85,6 @@ public class StoryHandler {
 
     public void start() {
         try {
-            MainScreen.wasPaused = false;
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
             }
