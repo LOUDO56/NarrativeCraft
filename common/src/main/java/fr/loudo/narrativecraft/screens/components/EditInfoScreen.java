@@ -62,8 +62,11 @@ public class EditInfoScreen extends Screen {
         int labelHeight = this.font.lineHeight + 5;
 
         int centerX = this.width / 2 - WIDGET_WIDTH / 2;
-        int centerY = this.height / 2 - (labelHeight + ((EDIT_BOX_NAME_HEIGHT + GAP ) * 2) + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
+        int centerY = this.height / 2 - (labelHeight + (EDIT_BOX_NAME_HEIGHT + GAP) + labelHeight + EDIT_BOX_DESCRIPTION_HEIGHT + (BUTTON_HEIGHT * 2)) / 2;
 
+        if(narrativeEntry instanceof Scene) {
+            centerY -= (EDIT_BOX_NAME_HEIGHT + GAP) / 2;
+        }
         titleWidget = ScreenUtils.text(title, this.font, titleX, centerY - labelHeight);
         this.addRenderableWidget(titleWidget);
 

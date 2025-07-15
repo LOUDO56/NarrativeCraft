@@ -35,7 +35,7 @@ public class Scene extends NarrativeEntry {
         this.subsceneList = new ArrayList<>();
         this.cameraAngleGroupList = new ArrayList<>();
         this.npcs = new ArrayList<>();
-        placement = chapter.getSceneList().size();
+        placement = chapter.getSceneList().size() + 1;
     }
 
     public Chapter getChapter() {
