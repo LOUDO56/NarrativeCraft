@@ -31,6 +31,8 @@ import net.minecraft.world.level.GameType;
 
 public class MainScreen extends Screen {
 
+    public static boolean wasPaused = false;
+
     public static final ResourceLocation BACKGROUND_IMAGE = ResourceLocation.withDefaultNamespace("textures/narrativecraft_mainscreen/background.png");
     public static final ResourceLocation MUSIC = ResourceLocation.withDefaultNamespace("narrativecraft_mainscreen.music");
 
@@ -249,6 +251,9 @@ public class MainScreen extends Screen {
             if(showDevBtnCount == 5) {
                 this.addRenderableWidget(devButton);
             }
+        }
+        if(keyCode == InputConstants.KEY_ESCAPE && pause) {
+            this.onClose();
         }
         return super.keyReleased(keyCode, scanCode, modifiers);
     }

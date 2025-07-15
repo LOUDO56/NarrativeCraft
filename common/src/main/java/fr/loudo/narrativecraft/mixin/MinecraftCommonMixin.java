@@ -4,7 +4,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.Screen;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -21,10 +20,13 @@ public abstract class MinecraftCommonMixin {
     private void narrativecraft$pauseGame(Minecraft instance, Screen old) {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) {
-            instance.setScreen(new PauseScreen(true));
+            instance.setScreen(old);
         } else {
-            MainScreen mainScreen = new MainScreen(false, true);
-            this.setScreen(mainScreen);
+            MainScreen.wasPaused = !MainScreen.wasPaused;
+            if(MainScreen.wasPaused) {
+                MainScreen mainScreen = new MainScreen(false, true);
+                this.setScreen(mainScreen);
+            }
         }
     }
 
