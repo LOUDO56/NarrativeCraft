@@ -22,12 +22,8 @@ public abstract class MinecraftCommonMixin {
         if(storyHandler == null) {
             instance.setScreen(old);
         } else {
-            if(MainScreen.wasPaused) {
-                MainScreen.wasPaused = false;
-            } else {
-                MainScreen mainScreen = new MainScreen(false, true);
-                this.setScreen(mainScreen);
-            }
+            MainScreen mainScreen = new MainScreen(false, true);
+            this.setScreen(mainScreen);
         }
     }
 

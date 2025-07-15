@@ -31,13 +31,11 @@ import net.minecraft.world.level.GameType;
 
 public class MainScreen extends Screen {
 
-    public static boolean wasPaused = false;
-
     public static final ResourceLocation BACKGROUND_IMAGE = ResourceLocation.withDefaultNamespace("textures/narrativecraft_mainscreen/background.png");
     public static final ResourceLocation MUSIC = ResourceLocation.withDefaultNamespace("narrativecraft_mainscreen.music");
 
     public static final SimpleSoundInstance MUSIC_INSTANCE = new SimpleSoundInstance(SoundEvent.createVariableRangeEvent(MainScreen.MUSIC).location(), SoundSource.MASTER, 0.7f, 1, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, 0.0F, 0.0F, 0.0F, true);
-    
+
     private final NarrativeCraftLogoRenderer narrativeCraftLogo = NarrativeCraftMod.getInstance().getNarrativeCraftLogoRenderer();
     private final int buttonWidth = 100;
     private final int buttonHeight = 20;
@@ -45,7 +43,7 @@ public class MainScreen extends Screen {
     private final int initialX = 50;
     private int initialY;
     private final int gap = 5;
-    
+
     private int showDevBtnCount;
     private Button devButton;
 
@@ -99,7 +97,6 @@ public class MainScreen extends Screen {
 
         if(!pause){
             if(!minecraft.getSoundManager().isActive(MUSIC_INSTANCE)) {
-                minecraft.getSoundManager().stop();
                 minecraft.getSoundManager().play(MUSIC_INSTANCE);
             }
         }
@@ -251,9 +248,8 @@ public class MainScreen extends Screen {
                 this.addRenderableWidget(devButton);
             }
         }
-        if(keyCode == InputConstants.KEY_ESCAPE && pause) {
-            this.onClose();
-            MainScreen.wasPaused = true;
+        if(keyCode == InputConstants.KEY_ESCAPE && !pause) {
+            return false;
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
