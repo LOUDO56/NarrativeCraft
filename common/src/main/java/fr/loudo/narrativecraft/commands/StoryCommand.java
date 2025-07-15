@@ -113,7 +113,7 @@ public class StoryCommand {
     private static int stopStory(CommandContext<CommandSourceStack> context) {
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler == null) {
+        if(storyHandler == null || !storyHandler.isRunning()) {
             context.getSource().sendFailure(Translation.message("story.load.no_story_playing"));
             return 0;
         }

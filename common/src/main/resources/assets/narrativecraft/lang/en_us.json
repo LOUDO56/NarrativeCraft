@@ -8,6 +8,8 @@
   "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
   "key.dialog.next": "Next Dialog",
 
+  "narrativecraft.user.first_time": "Hello, and thank you for installing NarrativeCraft! Here's everything you need to know before getting started.\n- To open the story manager, press %s.\n- To open other managers, use /nc open {manager_name}.\n- To write your script, install %s.\nTo get fully started, visit the documentation: %s\nIf you have any questions, don't hesitate to join the %s server!",
+
   "narrativecraft.global.animations": "Animations",
   "narrativecraft.global.cutscenes": "Cutscenes",
   "narrativecraft.global.subscenes": "Subscenes",
@@ -142,6 +144,7 @@
   "narrativecraft.screen.main_screen.minecraft_options": "Minecraft options",
   "narrativecraft.screen.main_screen.quit": "Quit",
   "narrativecraft.screen.main_screen.loading": "Loading...",
+  "narrativecraft.screen.main_screen.dev_tip": "To exists this screen and go in development mode, press 5 times LEFT_CTRL",
 
   "narrativecraft.screen.main_screen.pause.load_last_save": "Load last save",
   "narrativecraft.screen.main_screen.pause.skip_cutscene": "Skip cutscene",

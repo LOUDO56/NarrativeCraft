@@ -77,6 +77,8 @@ public class NarrativeCraftFile {
     public static File mainInkFile;
 
     public static void init(MinecraftServer server) {
+        File mainDirectoryCheck = new File(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
+        NarrativeCraftMod.firstTime = !mainDirectoryCheck.exists();
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         chaptersDirectory = createDirectory(mainDirectory, CHAPTERS_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTERS_DIRECTORY_NAME);
@@ -84,7 +86,7 @@ public class NarrativeCraftFile {
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
         dataDirectory = createDirectory(mainDirectory, DATA_FOLDER_NAME);
         mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
-        NarrativeUserOptions narrativeUserOptions = getUserOptions();
+        NarrativeUserOptions narrativeUserOptions = loadUserOptions();
         if(narrativeUserOptions != null) {
             NarrativeCraftMod.getInstance().setNarrativeUserOptions(narrativeUserOptions);
         }
@@ -148,7 +150,7 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static NarrativeUserOptions getUserOptions() {
+    public static NarrativeUserOptions loadUserOptions() {
         File dialogUserValue = createFile(dataDirectory, USER_OPTIONS_FILE_NAME);
         try {
             String content = Files.readString(dialogUserValue.toPath());

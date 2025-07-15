@@ -20,6 +20,7 @@ public class NarrativeCraftMod {
     public static final String MOD_ID = "narrativecraft";
     public static final String MOD_NAME = "NarrativeCraft";
     public static final Logger LOG = LoggerFactory.getLogger(MOD_NAME);
+    public static boolean firstTime = true;
 
     public static MinecraftServer server;
 

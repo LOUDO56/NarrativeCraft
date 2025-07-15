@@ -50,10 +50,13 @@ public class MainScreen extends Screen {
     private final boolean finishedStory;
     private final boolean pause;
 
+    private int userFloodedKeyboard;
+
     public MainScreen(boolean finishedStory, boolean pause) {
         super(Component.literal("Main screen"));
         this.finishedStory = finishedStory;
         this.pause = pause;
+        userFloodedKeyboard = 0;
     }
 
     private void playStory() {
@@ -211,6 +214,15 @@ public class MainScreen extends Screen {
         if(narrativeCraftLogo.logoExists()) {
             narrativeCraftLogo.render(guiGraphics, initialX, initialY - narrativeCraftLogo.getImageHeight() - gap - 5);
         }
+        if(NarrativeCraftMod.getInstance().getChapterManager().getChapters().isEmpty() || userFloodedKeyboard > 20) {
+            guiGraphics.drawString(
+                    minecraft.font,
+                    Translation.message("screen.main_screen.dev_tip").getString(),
+                    guiGraphics.guiWidth() / 2 - minecraft.font.width(Translation.message("screen.main_screen.dev_tip")) / 2,
+                    20,
+                    ARGB.colorFromFloat(1, 1, 1, 1)
+            );
+        }
 
     }
 
@@ -218,7 +230,7 @@ public class MainScreen extends Screen {
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(pause) super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
         else {
-            if(NarrativeCraftFile.getMainScreenBackgroundFile() == null) {
+            if(Utils.resourceExists(BACKGROUND_IMAGE)) {
                 guiGraphics.blit(
                         RenderType::guiTextured,
                         BACKGROUND_IMAGE,
@@ -228,6 +240,8 @@ public class MainScreen extends Screen {
                         guiGraphics.guiWidth(), guiGraphics.guiHeight(),
                         ARGB.colorFromFloat(1, 1, 1, 1)
                 );
+            } else {
+                guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
             }
         }
     }
@@ -242,6 +256,7 @@ public class MainScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(!pause) userFloodedKeyboard++;
         if(keyCode == InputConstants.KEY_LCONTROL && !pause) {
             showDevBtnCount++;
             if(showDevBtnCount == 5) {
