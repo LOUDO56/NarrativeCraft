@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ARGB;
 
 public class DialogAppearAnimation2d {
 
@@ -48,7 +49,7 @@ public class DialogAppearAnimation2d {
         int alpha = (int) (opacity * 255.0F);
 
         int dialogBcColor = dialog2d.getBackgroundColor();
-        dialog2d.setBackgroundColor((alpha << 24) | (dialogBcColor & 0x00FFFFFF));
+        dialog2d.setBackgroundColor(ARGB.color(alpha, dialogBcColor));
 
         if(!isPaused) {
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));

@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.phys.Vec3;
 
 public class DialogAppearAnimation {
@@ -61,7 +62,7 @@ public class DialogAppearAnimation {
         int alpha = (int) (opacity * 255.0F);
 
         int dialogBcColor = dialog.getDialogBackgroundColor();
-        dialog.setDialogBackgroundColorCustomAlpha((alpha << 24) | (dialogBcColor & 0x00FFFFFF));
+        dialog.setDialogBackgroundColorCustomAlpha(ARGB.color(alpha, dialogBcColor));
 
         if(!isPaused) {
             t = Easing.getInterpolation(easing, Math.min((double) (currentTime - startTime) / APPEAR_TIME, 1.0));

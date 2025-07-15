@@ -9,6 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 
 public class ChoiceButtonWidget extends AbstractButton {
 
@@ -100,9 +101,9 @@ public class ChoiceButtonWidget extends AbstractButton {
     }
 
     public void setOpacity(int opacity) {
-        backgroundColor = (opacity << 24) | (backgroundColor & 0x00FFFFFF);
-        textColor = (opacity << 24) | (textColor & 0x00FFFFFF);
-        hoverColor = (opacity << 24) | (hoverColor & 0x00FFFFFF);
+        backgroundColor = ARGB.color(opacity, backgroundColor);
+        textColor = ARGB.color(opacity, textColor);
+        hoverColor = ARGB.color(opacity, hoverColor);
     }
 
     public boolean isCanPress() {

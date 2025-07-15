@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.ARGB;
 
 public class BorderInkAction extends InkAction {
 
@@ -41,7 +42,7 @@ public class BorderInkAction extends InkAction {
         } catch (RuntimeException e) {
             return InkActionResult.ERROR;
         }
-        color = ((int)(opacity * 255) << 24) | (color & 0xFFFFFF);
+        color = ARGB.color((int)(opacity * 255), color);
         if(up == 0 && right == 0 && down == 0 && left == 0) {
             storyHandler.getInkActionList().removeIf(inkAction -> inkAction instanceof BorderInkAction);
         } else {

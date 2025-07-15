@@ -7,6 +7,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.util.ARGB;
 
 import java.util.List;
 
@@ -88,7 +89,7 @@ public class FadeScreenInkAction extends InkAction {
             startTime += now - pauseStartTime;
         }
         long elapsedTime = now - startTime;
-        int newColor = (opacityInterpolate << 24) | (color & 0xFFFFFF);
+        int newColor = ARGB.color(opacityInterpolate, color);
         guiGraphics.fill(0, 0, width, height, newColor);
         if(!isPaused) {
             t = Math.min((double) elapsedTime / endTime, 1.0);

@@ -19,6 +19,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.ARGB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -132,7 +133,7 @@ public class StorySave {
         }
 
         int alphaInt = (int) (alpha * 255) & 0xFF;
-        int color = (alphaInt << 24) | 0xFFFFFF;
+        int color = ARGB.color(alphaInt, 0xFFFFFF);
 
         Minecraft minecraft = Minecraft.getInstance();
         int width = minecraft.getWindow().getGuiScaledWidth();
