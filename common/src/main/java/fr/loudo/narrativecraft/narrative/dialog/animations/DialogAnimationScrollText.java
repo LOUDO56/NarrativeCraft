@@ -39,7 +39,7 @@ public class DialogAnimationScrollText {
     private boolean isPaused;
     private List<String> lines;
     private int currentLetter, totalLetters;
-    private String currentLetterString, text;
+    private String text;
     private float letterSpacing;
     private float gap, totalHeight, maxLineWidth;
     private final Map<Integer, Vector2f> letterOffsets = new HashMap<>();
@@ -64,7 +64,6 @@ public class DialogAnimationScrollText {
         this.maxWidth = maxWidth;
         this.lines = splitText(text);
         this.currentLetter = 0;
-        this.currentLetterString = "";
 
         this.dialogLetterEffect = new DialogLetterEffect(
                 DialogAnimationType.NONE,
@@ -124,7 +123,6 @@ public class DialogAnimationScrollText {
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                currentLetterString = character;
                 drawStringPoseStack(character, poseStack, bufferSource, startX + offset.x, currentY + offset.y);
 
                 startX += getLetterWidth(text.codePointAt(j)) + letterSpacing;
@@ -181,7 +179,6 @@ public class DialogAnimationScrollText {
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                currentLetterString = character;
                 poseStack.pushPose();
                 poseStack.scale(scale, scale, 1.0f);
                 drawStringGui(
@@ -208,7 +205,8 @@ public class DialogAnimationScrollText {
         long now = System.currentTimeMillis();
         Minecraft client = Minecraft.getInstance();
         if (currentLetter < totalLetters && now - lastTimeChar >= NarrativeCraftMod.getInstance().getNarrativeUserOptions().TEXT_SPEED && !client.isPaused()) {
-            if(!currentLetterString.equals(" ") && !currentLetterString.isEmpty()) {
+            char nextChar = getCharAtIndex(currentLetter);
+            if (nextChar != ' ') {
                 ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("sfx.dialog_sound");
                 SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
                 float pitch = 0.8F + new Random().nextFloat() * 0.4F;
@@ -217,6 +215,17 @@ public class DialogAnimationScrollText {
             currentLetter++;
             lastTimeChar = now;
         }
+    }
+
+    private char getCharAtIndex(int index) {
+        int count = 0;
+        for (String line : lines) {
+            if (index < count + line.length()) {
+                return line.charAt(index - count);
+            }
+            count += line.length();
+        }
+        return ' ';
     }
 
     private float getLetterWidth(int letterCode) {

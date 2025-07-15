@@ -58,6 +58,7 @@ public abstract class CameraMixin {
         LocalPlayer localPlayer = client.player;
 
         KeyframeCoordinate position = keyframePreview.getKeyframeCoordinate();
+        if(position == null) return;
         localPlayer.setPos(position.getX(), position.getY() - localPlayer.getEyeHeight(), position.getZ());
         localPlayer.setYRot(position.getYRot());
         localPlayer.setYHeadRot(position.getYRot());
