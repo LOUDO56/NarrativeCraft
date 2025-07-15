@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.Keyframe;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
@@ -227,10 +228,10 @@ public class CameraAngleController extends KeyframeControllerBase {
     public void removeCharacter(Entity entity) {
         CharacterStoryData characterStoryData = getCharacterPositionFromEntity(entity);
         cameraAngleGroup.getCharacterStoryDataList().remove(characterStoryData);
+        entity.remove(Entity.RemovalReason.KILLED);
         if(entity instanceof FakePlayer fakePlayer) {
+            ((PlayerListFields)NarrativeCraftMod.server.getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
             NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
-        } else {
-            entity.remove(Entity.RemovalReason.KILLED);
         }
         NarrativeCraftMod.server.getPlayerList().broadcastAll(new ClientboundRemoveEntitiesPacket(entity.getId()));
     }

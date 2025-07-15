@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.character;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
@@ -142,10 +143,10 @@ public class CharacterStory extends NarrativeEntry {
 
     public void kill() {
         if(entity != null) {
+            entity.remove(Entity.RemovalReason.KILLED);
             if(entity instanceof FakePlayer fakePlayer) {
                 NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
-            } else {
-                entity.remove(Entity.RemovalReason.KILLED);
+                ((PlayerListFields)NarrativeCraftMod.server.getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
             }
             entity = null;
         }

@@ -149,10 +149,10 @@ public class Playback {
 
     public void killMasterEntity() {
         PlaybackData playbackData = entityPlaybacks.getFirst();
+        masterEntity.remove(Entity.RemovalReason.KILLED);
         if(masterEntity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().remove(fakePlayer);
-        } else {
-            masterEntity.remove(Entity.RemovalReason.KILLED);
+            NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
+            ((PlayerListFields)serverLevel.getServer().getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
         }
         playbackData.setEntity(null);
     }
@@ -257,7 +257,6 @@ public class Playback {
         moveEntitySilent(masterEntity, loc);
 
         if (masterEntity instanceof FakePlayer fakePlayer) {
-            serverLevel.getServer().getPlayerList().getPlayers().add(fakePlayer);
             ((PlayerListFields) serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
             serverLevel.getServer().getPlayerList().broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(fakePlayer)));
             serverLevel.addNewPlayer(fakePlayer);
@@ -402,10 +401,10 @@ public class Playback {
 
         public void killEntity() {
             if(entity == null) return;
+            entity.remove(Entity.RemovalReason.KILLED);
             if(entity instanceof FakePlayer fakePlayer) {
                 NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
-            } else {
-                entity.remove(Entity.RemovalReason.KILLED);
+                ((PlayerListFields)NarrativeCraftMod.server.getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
             }
             entity = null;
         }

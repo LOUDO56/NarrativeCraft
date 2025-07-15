@@ -69,7 +69,7 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
         }).width(200).build());
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler == null || storyHandler.getStory() == null) {
+        if(storyHandler == null || !storyHandler.isRunning()) {
             linearlayout.addChild(Button.builder(Component.literal("Credits"), button -> {
                 CreditsScreen screen = new CreditsScreen(true, false);
                 minecraft.setScreen(screen);

@@ -8,12 +8,14 @@ import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
+import fr.loudo.narrativecraft.utils.FakePlayer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
 
 public class OnPlayerServerConnection {
 
     public static void playerJoin(ServerPlayer player) {
+        if(player instanceof FakePlayer) return;
         CutsceneEditItems.init(player.registryAccess());
         NarrativeCraftFile.getUserOptions();
         MainScreen mainScreen = new MainScreen(false, false);
@@ -21,6 +23,7 @@ public class OnPlayerServerConnection {
     }
 
     public static void playerLeave(ServerPlayer player) {
+        if(player instanceof FakePlayer) return;
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase != null) {

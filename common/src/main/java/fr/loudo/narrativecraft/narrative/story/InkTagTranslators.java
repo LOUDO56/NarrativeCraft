@@ -33,7 +33,7 @@ public class InkTagTranslators {
                     return false;
                 }
             }
-            if(storyHandler.getStory() != null) {
+            if(storyHandler.isRunning()) {
                 if(storyHandler.isFinished()) {
                     storyHandler.stop(false);
                 }
@@ -53,7 +53,7 @@ public class InkTagTranslators {
             }
         }
         tagsToExecuteLater.clear();
-        if(storyHandler.getStory() != null) {
+        if(storyHandler.isRunning()) {
             storyHandler.showDialog();
             if(storyHandler.isFinished()) {
                 storyHandler.stop(false);

@@ -6,6 +6,7 @@ import com.bladecoder.ink.runtime.StoryException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeCoordinate;
@@ -51,19 +52,17 @@ public class StoryHandler {
     private DialogImpl currentDialogBox;
     private List<Choice> currentChoices;
     private KeyframeCoordinate currentKeyframeCoordinate;
-    private boolean isRunning, isDebugMode, isLoading, OnCutscene, onChoice, isSaving;
+    private boolean isDebugMode, isLoading, isSaving;
     private DialogData globalDialogValue;
     private final List<InkAction> inkActionList;
 
     public StoryHandler() {
         playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         currentCharacters = new ArrayList<>();
-        isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
         currentChoices = new ArrayList<>();
-        onChoice = false;
         save = NarrativeCraftFile.getSave();
         isSaving = false;
     }
@@ -73,12 +72,10 @@ public class StoryHandler {
         playerSession.setChapter(chapter);
         playerSession.setScene(scene);
         currentCharacters = new ArrayList<>();
-        isRunning = true;
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
         currentChoices = new ArrayList<>();
-        onChoice = false;
         save = NarrativeCraftFile.getSave();
         isSaving = false;
     }
@@ -124,7 +121,6 @@ public class StoryHandler {
                 playerSession.setScene(loadScene);
                 save = null;
             }
-            isRunning = true;
             NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
             NarrativeCraftFile.writeSave(this, true);
@@ -142,7 +138,6 @@ public class StoryHandler {
                 Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(creditsScreen));
             }
         }
-        isRunning = false;
         for(CharacterStory characterStory : currentCharacters) {
             NarrativeCraftMod.server.execute(characterStory::kill);
         }
@@ -169,11 +164,9 @@ public class StoryHandler {
                 return false;
             }
             if(!currentChoices.isEmpty()) {
-                onChoice = true;
                 showChoices();
                 return false;
             }
-            onChoice = false;
             if(save != null) {
                 currentDialog = story.getCurrentText();
                 boolean isNewScene = story.getCurrentTags().contains("on enter") && !story.getCurrentTags().contains("save");
@@ -419,10 +412,10 @@ public class StoryHandler {
     public void removeCharacter(CharacterStory characterStory) {
         for(CharacterStory characterStory1 : currentCharacters) {
             if(characterStory.getName().equals(characterStory1.getName())) {
+                characterStory.getEntity().remove(Entity.RemovalReason.KILLED);
                 if(characterStory.getEntity() instanceof FakePlayer fakePlayer) {
                     NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
-                } else {
-                    characterStory.getEntity().remove(Entity.RemovalReason.KILLED);
+                    ((PlayerListFields)NarrativeCraftMod.server.getPlayerList()).getPlayersByUUID().remove(fakePlayer.getUUID());
                 }
             }
         }
@@ -593,7 +586,7 @@ public class StoryHandler {
     }
 
     public boolean isRunning() {
-        return isRunning;
+        return story != null;
     }
 
     public Story getStory() {

@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.events;
 
+import com.bladecoder.ink.runtime.Story;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
@@ -105,6 +106,7 @@ public class OnClientTick {
 
         // Open story manager screen trigger
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
+            if(storyHandler != null && storyHandler.isRunning()) return;
             Screen screen;
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if(playerSession == null || playerSession.getScene() == null) {

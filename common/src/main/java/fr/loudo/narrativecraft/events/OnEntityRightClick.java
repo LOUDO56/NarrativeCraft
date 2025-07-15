@@ -23,7 +23,7 @@ public class OnEntityRightClick {
     public static void entityRightClick(ServerPlayer player, Entity entity) {
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler != null && storyHandler.isRunning() && storyHandler.getStory() != null) return;
+        if(storyHandler != null && storyHandler.isRunning() && storyHandler.isRunning()) return;
 
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if(playerSession == null) return;

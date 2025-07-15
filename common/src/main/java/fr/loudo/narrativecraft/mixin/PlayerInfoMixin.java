@@ -59,7 +59,7 @@ public class PlayerInfoMixin {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         NarrativeCraftMod mod = NarrativeCraftMod.getInstance();
         StoryHandler storyHandler = mod.getStoryHandler();
-        if (storyHandler != null && storyHandler.getStory() != null) {
+        if (storyHandler != null && storyHandler.isRunning()) {
             return storyHandler.getCurrentCharacters();
         } else if (playerSession != null && playerSession.getKeyframeControllerBase() instanceof CameraAngleController cameraAngleController) {
             return cameraAngleController.getCharacters();
