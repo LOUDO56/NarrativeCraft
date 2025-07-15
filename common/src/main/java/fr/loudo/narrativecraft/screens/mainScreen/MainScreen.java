@@ -245,7 +245,7 @@ public class MainScreen extends Screen {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if(keyCode == InputConstants.KEY_LCONTROL) {
+        if(keyCode == InputConstants.KEY_LCONTROL && !pause) {
             showDevBtnCount++;
             if(showDevBtnCount == 5) {
                 this.addRenderableWidget(devButton);
@@ -255,6 +255,6 @@ public class MainScreen extends Screen {
             this.onClose();
             MainScreen.wasPaused = true;
         }
-        return super.keyReleased(keyCode, scanCode, modifiers);
+        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 }
