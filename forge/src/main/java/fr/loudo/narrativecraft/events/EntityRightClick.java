@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 public class EntityRightClick {
 
     @SubscribeEvent
-    public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
+    public static void onEntityRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
         if(event.getLevel().isClientSide && NarrativeCraftMod.server != null) {
             ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(event.getEntity().getUUID());
             OnEntityRightClick.entityRightClick(serverPlayer, event.getTarget());

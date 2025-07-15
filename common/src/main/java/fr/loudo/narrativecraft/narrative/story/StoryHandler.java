@@ -130,6 +130,7 @@ public class StoryHandler {
     }
 
     public void stop(boolean force) {
+        if(!isRunning()) return;
         if(!force) {
             if(!isDebugMode) {
                 CreditsScreen creditsScreen = new CreditsScreen(false, !NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY);

@@ -19,7 +19,7 @@ public abstract class MinecraftCommonMixin {
     @Redirect(method = "pauseGame", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;setScreen(Lnet/minecraft/client/gui/screens/Screen;)V"))
     private void narrativecraft$pauseGame(Minecraft instance, Screen old) {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler == null) {
+        if(storyHandler == null || !storyHandler.isRunning()) {
             instance.setScreen(old);
         } else {
             MainScreen mainScreen = new MainScreen(false, true);

@@ -35,6 +35,9 @@ public class CharactersScreen extends StoryElementScreen {
             EditInfoScreen screen = new EditCharacterInfoScreen(this);
             this.minecraft.setScreen(screen);
         }).width(25).build());
+        linearlayout.addChild(Button.builder(ImageFontConstants.FOLDER, button -> {
+            openFolder();
+        }).width(25).build());
     }
 
     @Override

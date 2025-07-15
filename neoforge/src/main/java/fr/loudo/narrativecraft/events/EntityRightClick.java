@@ -15,7 +15,7 @@ public class EntityRightClick {
         NeoForge.EVENT_BUS.addListener(EntityRightClick::onEntityRightClick);
     }
 
-    public static void onEntityRightClick(PlayerInteractEvent.EntityInteract event) {
+    public static void onEntityRightClick(PlayerInteractEvent.EntityInteractSpecific event) {
         if(event.getLevel().isClientSide) {
             ServerPlayer serverPlayer = NarrativeCraftMod.server.getPlayerList().getPlayer(event.getEntity().getUUID());
             OnEntityRightClick.entityRightClick(serverPlayer, event.getTarget());
