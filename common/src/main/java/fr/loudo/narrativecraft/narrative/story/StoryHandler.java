@@ -113,6 +113,7 @@ public class StoryHandler {
                     for(String tag : save.getTagList()) {
                         inkTagTranslators.executeTag(tag);
                     }
+                    inkActionList.clear();
                 }
             }
             if(loadScene != null) {
@@ -124,7 +125,7 @@ public class StoryHandler {
             isRunning = true;
             NarrativeCraftMod.getInstance().setStoryHandler(this);
             next();
-            NarrativeCraftFile.writeSave(this, false);
+            NarrativeCraftFile.writeSave(this, true);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

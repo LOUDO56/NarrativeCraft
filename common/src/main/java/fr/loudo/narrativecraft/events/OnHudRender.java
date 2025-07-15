@@ -44,8 +44,7 @@ public class OnHudRender {
         if(!storyHandler.isRunning()) return;
         if(storyHandler.isLoading()) return;
         List<InkAction> toRemove = new ArrayList<>();
-        List<InkAction> inkActionToLoop = List.copyOf(storyHandler.getInkActionList());
-        for(InkAction inkAction : inkActionToLoop) {
+        for(InkAction inkAction : storyHandler.getInkActionList()) {
             if(inkAction instanceof FadeScreenInkAction fadeScreenInkAction) {
                 fadeScreenInkAction.render(guiGraphics, deltaTracker);
                 if(fadeScreenInkAction.isDoneFading()) {
