@@ -13,15 +13,6 @@ import org.lwjgl.glfw.GLFW;
 @Mod.EventBusSubscriber(modid = NarrativeCraftMod.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class ClientSetupEvent {
     @SubscribeEvent
-    public static void onClientSetup(FMLClientSetupEvent event) {
-        Minecraft.getInstance().execute(() -> {
-            long window = Minecraft.getInstance().getWindow().getWindow();
-            GLFW.glfwSetWindowSize(window, 350, 200);
-            GLFW.glfwSetWindowPos(window, 1200, 900);
-        });
-    }
-
-    @SubscribeEvent
     public static void registerKeys(RegisterKeyMappingsEvent event) {
         event.register(ModKeys.START_ANIMATION_RECORDING);
         event.register(ModKeys.STOP_ANIMATION_RECORDING);

@@ -42,6 +42,40 @@ public class OnClientTick {
             testDialog.getDialogEntityBobbing().tick();
         }
 
+        // Recording
+        ModKeys.handleKeyPress(ModKeys.START_ANIMATION_RECORDING, () -> {
+            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+            if(!playerSession.sessionSet()) {
+                client.player.displayClientMessage(Translation.message("session.not_set"), false);
+                return;
+            }
+            Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(client.player);
+            if(recording == null) {
+                recording = new Recording(client.player);
+            }
+            if(!recording.isRecording()) {
+                client.player.displayClientMessage(Translation.message("record.start.success"), false);
+                recording.start();
+            } else {
+                client.player.displayClientMessage(Translation.message("record.start.already_recording"), false);
+            }
+        });
+
+        ModKeys.handleKeyPress(ModKeys.STOP_ANIMATION_RECORDING, () -> {
+            PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+            if(!playerSession.sessionSet()) {
+                client.player.displayClientMessage(Translation.message("session.not_set"), false);
+                return;
+            }
+            Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(client.player);
+            if(recording == null || !recording.isRecording()) {
+                client.player.displayClientMessage(Translation.message("record.stop.no_recording"), false);
+            } else {
+                recording.stop();
+                client.player.displayClientMessage(Translation.message("record.stop.success"), false);
+            }
+        });
+
         for(Recording recording : RECORDING_HANDLER.getRecordings()) {
             if(recording.isRecording()) {
                 recording.tick();

@@ -3,11 +3,13 @@ package fr.loudo.narrativecraft.narrative.recordings;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
+import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.recordings.actions.ActionsData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.GameModeAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.RidingAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
 import fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners.ModsListenerImpl;
+import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -26,8 +28,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Recording {
 
     private final RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
-
     private final AtomicInteger ids = new AtomicInteger();
+
+    private final int id;
     private final List<RecordingData> recordingDataList;
     private RecordingData entityRecorderData;
     private List<Entity> trackedEntities;
@@ -42,6 +45,7 @@ public class Recording {
         this.recordingDataList = new ArrayList<>();
         trackedEntities = new ArrayList<>();
         this.isRecording = false;
+        id = RecordingHandler.ids.incrementAndGet();
     }
 
     public void tick() {
@@ -88,6 +92,8 @@ public class Recording {
 
     public boolean start() {
         if(isRecording) return false;
+        recordingHandler.addRecording(this);
+        tick = 0;
         ids.set(0);
         entityRecorderData = new RecordingData(entityRecorderData.entity, this);
         entityRecorderData.savingTrack = true;
@@ -95,8 +101,6 @@ public class Recording {
         recordingDataList.clear();
         trackedEntities.clear();
         recordingDataList.add(entityRecorderData);
-        recordingHandler.removeRecording(this);
-        recordingHandler.addRecording(this);
         isRecording = true;
         if(entityRecorderData.entity instanceof ServerPlayer player) {
             GameModeAction gameModeAction = new GameModeAction(0, player.gameMode.getGameModeForPlayer(), player.gameMode.getGameModeForPlayer());
@@ -108,6 +112,11 @@ public class Recording {
     public boolean stop() {
         if(!isRecording) return false;
         isRecording = false;
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        for(Subscene subscene : playerSession.getSubscenesPlaying()) {
+            subscene.forceStop();
+        }
+        playerSession.getSubscenesPlaying().clear();
         for(RecordingData recordingData : recordingDataList) {
             if(!(recordingData.entity instanceof LivingEntity)) continue;
             recordingData.actionsData.reset(recordingData.entity);
@@ -127,8 +136,8 @@ public class Recording {
         animation.setActionsData(actionsDataList);
         if(NarrativeCraftFile.updateAnimationFile(animation)) {
             animation.getScene().addAnimation(animation);
-            recordingHandler.removeRecording(this);
             recordingDataList.clear();
+            recordingHandler.removeRecording(this);
             return true;
         }
         return false;
@@ -184,6 +193,9 @@ public class Recording {
        recordingData.actionsData.setSpawnTick(tickSpawn);
     }
 
+    public int getId() {
+        return id;
+    }
 
     public static class RecordingData {
 

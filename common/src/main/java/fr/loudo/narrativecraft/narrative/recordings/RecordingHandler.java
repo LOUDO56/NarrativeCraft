@@ -5,8 +5,12 @@ import net.minecraft.world.entity.player.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class RecordingHandler {
+
+    public static final AtomicInteger ids = new AtomicInteger();
+
     private List<Recording> recordings;
 
     public RecordingHandler() {
@@ -18,15 +22,17 @@ public class RecordingHandler {
     }
 
     public boolean addRecording(Recording recording) {
-        if(recordings.contains(recording)) return false;
+        for(Recording recording1 : recordings) {
+            if(recording.getId() == recording1.getId()) {
+                return false;
+            }
+        }
         recordings.add(recording);
         return true;
     }
 
     public boolean removeRecording(Recording recording) {
-        if(!recordings.contains(recording)) return false;
-        recordings.remove(recording);
-        return true;
+        return recordings.removeIf(recording1 -> recording1.getId() == recording.getId());
     }
 
     public Recording getRecordingOfPlayer(Player player) {

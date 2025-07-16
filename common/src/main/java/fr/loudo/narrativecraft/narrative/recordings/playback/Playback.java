@@ -48,10 +48,10 @@ public class Playback {
         this.isPlaying = false;
         this.hasEnded = false;
         this.isLooping = isLooping;
+        id = PlaybackHandler.ids.incrementAndGet();
     }
 
     public boolean start() {
-        if (character == null || isPlaying) return false;
 
         globalTick = 0;
         isPlaying = true;
@@ -62,19 +62,6 @@ public class Playback {
         PlaybackData playbackData = new PlaybackData(masterEntityData, this);
         playbackData.setEntity(masterEntity);
         entityPlaybacks.add(playbackData);
-        if(playbackType == PlaybackType.PRODUCTION) {
-            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-            for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-                if(characterStory.getEntity() == null) continue;
-                if(characterStory.getName().equals(character.getName())) {
-                    if(characterStory.getEntity().position().distanceTo(firstLoc.getVec3()) <= 0.8) {
-                        masterEntity = characterStory.getEntity();
-                    } else {
-                        characterStory.kill();
-                    }
-                }
-            }
-        }
         playbackData.setEntity(masterEntity);
         if(masterEntity == null) {
             spawnMasterEntity(firstLoc);
@@ -134,17 +121,26 @@ public class Playback {
 
             playbackData.actionsData.reset(playbackData.entity);
             ActionsData actionsData = playbackData.getActionsData();
-            List<MovementData> movementData = actionsData.getMovementData();
-            if (movementData.isEmpty()) continue;
-
-            MovementData firstLoc = movementData.getFirst();
-            MovementData lastLoc = movementData.getLast();
-
-            if (firstLoc.getVec3().distanceTo(lastLoc.getVec3()) >= 2) {
+            if(!isLooping) {
                 playbackData.killEntity();
+            } else {
+                List<MovementData> movementData = actionsData.getMovementData();
+                if (movementData.isEmpty()) continue;
+                playbackData.reset();
+                if(movementData.getFirst().getVec3().distanceTo(movementData.getLast().getVec3()) >= 0.8) {
+                    if(playbackData.entity.equals(masterEntity)) {
+                        playbackData.killEntity();
+                        spawnMasterEntity(movementData.getFirst());
+                    } else {
+                        playbackData.killEntity();
+                        playbackData.spawnEntity(movementData.getFirst());
+                    }
+                }
             }
         }
-        stop();
+        if(!isLooping) {
+            stop();
+        }
     }
 
     public void killMasterEntity() {

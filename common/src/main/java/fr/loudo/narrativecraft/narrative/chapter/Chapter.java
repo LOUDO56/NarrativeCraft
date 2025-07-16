@@ -34,6 +34,10 @@ public class Chapter extends NarrativeEntry {
     public boolean addScene(Scene scene) {
         if(NarrativeCraftFile.createSceneFolder(scene)) {
             sceneList.add(scene);
+            List<Scene> sortedScenes = getSortedSceneList();
+            for (int i = 0; i < sceneList.size(); i++) {
+                sortedScenes.get(i).setPlacement(i + 1);
+            }
             NarrativeCraftFile.updateMainInkFile();
             return true;
         }

@@ -54,7 +54,7 @@ public class RecordCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        if(playerSession.sessionSet()) {
+        if(!playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -83,7 +83,7 @@ public class RecordCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        if(playerSession.sessionSet()) {
+        if(!playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -94,6 +94,7 @@ public class RecordCommand {
         }
 
         List<Subscene> subsceneToPlay = new ArrayList<>();
+        subscenes = subscenes.replaceAll("\"", "");
         String[] subsceneNameList = subscenes.split(",");
         for(String subsceneName : subsceneNameList) {
             Subscene subscene = playerSession.getScene().getSubsceneByName(subsceneName);
@@ -122,7 +123,7 @@ public class RecordCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        if(playerSession.sessionSet()) {
+        if(!playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -130,10 +131,6 @@ public class RecordCommand {
         if(!NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {
             context.getSource().sendFailure(Translation.message("record.stop.no_recording"));
             return 0;
-        }
-
-        for(Subscene subscene : playerSession.getSubscenesPlaying()) {
-            subscene.stopAndKill();
         }
 
         Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(player);
@@ -146,7 +143,7 @@ public class RecordCommand {
 
     private static int saveRecording(CommandContext<CommandSourceStack> context, String newAnimationName) {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        if(playerSession.sessionSet()) {
+        if(!playerSession.sessionSet()) {
             context.getSource().sendFailure(Translation.message("session.not_set"));
             return 0;
         }
@@ -177,8 +174,6 @@ public class RecordCommand {
             animation = new Animation(playerSession.getScene(), newAnimationName, "");
             playerSession.setOverwriteState(false);
         }
-
-        animation.setCharacter(NarrativeCraftMod.getInstance().getCharacterManager().getCharacterStories().getFirst());
 
         if (recording.save(animation)) {
             Animation finalAnimation = animation;

@@ -30,8 +30,9 @@ public class SubscenePlayInkAction extends InkAction {
             name = InkAction.parseName(command, 2);
             isLooping = false;
             try {
-                if(command[command.length - 2].equals("true") || command[command.length - 2].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[command.length - 2]);
+                int boolIndex = command.length - 1;
+                if(command[boolIndex].equals("true") || command[boolIndex].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[boolIndex]);
                 }
             } catch (RuntimeException ignored) {}
             subscene = storyHandler.getPlayerSession().getScene().getSubsceneByName(name);

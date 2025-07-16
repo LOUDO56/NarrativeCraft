@@ -8,12 +8,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlaybackHandler {
 
-    private final AtomicInteger autoId;
+    public static final AtomicInteger ids = new AtomicInteger();
     private final List<Playback> playbacks;
 
     public PlaybackHandler() {
         this.playbacks = new ArrayList<>();
-        this.autoId = new AtomicInteger();
     }
 
     public List<Playback> getPlaybacks() {
@@ -21,10 +20,12 @@ public class PlaybackHandler {
     }
 
     public void addPlayback(Playback playback) {
-        playback.setId(autoId.incrementAndGet());
-        if(!playbacks.contains(playback)) {
-            playbacks.add(playback);
+        for(Playback playback1 : playbacks) {
+            if(playback1.getId() == playback.getId()) {
+                return;
+            }
         }
+        playbacks.add(playback);
     }
 
     public void removePlayback(Playback playback) {

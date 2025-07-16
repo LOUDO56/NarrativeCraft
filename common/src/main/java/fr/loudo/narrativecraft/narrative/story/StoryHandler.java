@@ -346,7 +346,7 @@ public class StoryHandler {
 
                     line = line.replaceFirst("^\\s+", "");
 
-                    if (i + 1 == 2 && !line.equals("# on enter") && !line.equals("#on enter")) {
+                    if (i + 1 == 2 && !line.startsWith("#") && !line.contains("on enter")) {
                         errorLineList.add(
                                 new InkAction.ErrorLine(
                                         i + 1,

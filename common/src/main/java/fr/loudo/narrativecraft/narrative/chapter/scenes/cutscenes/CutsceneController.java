@@ -149,11 +149,13 @@ public class CutsceneController extends KeyframeControllerBase {
             if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
                 playback.forceStop();
             } else if (playbackType == Playback.PlaybackType.PRODUCTION) {
-                playback.stop();
+                if(!playback.isLooping()) {
+                    playback.stop();
+                }
             }
         }
 
-        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
+        NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList.stream().filter(playback -> !playback.isLooping()).toList());
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             storyHandler.getInkActionList().clear();
@@ -196,16 +198,17 @@ public class CutsceneController extends KeyframeControllerBase {
 
     public void pause() {
         isPlaying = false;
-        for(InkAction inkAction : storyHandler.getInkActionList()) {
-            if(inkAction instanceof SubscenePlayInkAction subscenePlayInkAction) {
-                subscenePlayInkAction.getSubscene().forceStop();
-            }
-            if(inkAction instanceof AnimationPlayInkAction animationPlayInkAction) {
-                animationPlayInkAction.getPlayback().forceStop();
-                NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(animationPlayInkAction.getPlayback());
-            }
-        }
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            for(InkAction inkAction : storyHandler.getInkActionList()) {
+                if(inkAction instanceof SubscenePlayInkAction subscenePlayInkAction) {
+                    subscenePlayInkAction.getSubscene().forceStop();
+                    NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(subscenePlayInkAction.getSubscene().getPlaybackList());
+                }
+                if(inkAction instanceof AnimationPlayInkAction animationPlayInkAction) {
+                    animationPlayInkAction.getPlayback().forceStop();
+                    NarrativeCraftMod.getInstance().getPlaybackHandler().removePlayback(animationPlayInkAction.getPlayback());
+                }
+            }
             storyHandler.getInkActionList().clear();
             storyHandler.stopAllSound();
         }

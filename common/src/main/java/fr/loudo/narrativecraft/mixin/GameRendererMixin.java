@@ -66,6 +66,7 @@ public class GameRendererMixin {
         if(cutscenePlayback == null) return;
 
         KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
+        if(currentLoc == null) return;
         callbackInfo.setReturnValue((currentLoc.getFov()));
     }
 
