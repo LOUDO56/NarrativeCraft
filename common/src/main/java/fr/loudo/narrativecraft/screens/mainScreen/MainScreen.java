@@ -9,6 +9,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.mainScreen.options.MainScreenOptionsScreen;
 import fr.loudo.narrativecraft.screens.mainScreen.sceneSelection.ChapterSelectorScreen;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -75,6 +76,14 @@ public class MainScreen extends Screen {
             if(playerSession.getKeyframeControllerBase() != null) {
                 playerSession.getKeyframeControllerBase().stopSession(false);
             }
+        } else {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null && storyHandler.isRunning()) {
+                if(!storyHandler.getCurrentChoices().isEmpty()) {
+                    ChoicesScreen choicesScreen = new ChoicesScreen(storyHandler.getCurrentChoices(), false);
+                    minecraft.setScreen(choicesScreen);
+                }
+            }
         }
     }
 
@@ -119,7 +128,7 @@ public class MainScreen extends Screen {
         }
         Button playButton = Button.builder(playBtnComponent, button -> {
             if(pause) {
-                minecraft.setScreen(null);
+                onClose();
             } else {
                 playStory();
             }
@@ -229,20 +238,19 @@ public class MainScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if(pause) super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        else {
-            if(Utils.resourceExists(BACKGROUND_IMAGE)) {
-                guiGraphics.blit(
-                        RenderType::guiTextured,
-                        BACKGROUND_IMAGE,
-                        0, 0,
-                        0, 0,
-                        guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                        guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                        ARGB.colorFromFloat(1, 1, 1, 1)
-                );
-            } else {
-                guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
-            }
+        if(NarrativeCraftFile.getMainScreenBackgroundFile() != null) return;
+        if(Utils.resourceExists(BACKGROUND_IMAGE)) {
+            guiGraphics.blit(
+                    RenderType::guiTextured,
+                    BACKGROUND_IMAGE,
+                    0, 0,
+                    0, 0,
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
+                    ARGB.colorFromFloat(1, 1, 1, 1)
+            );
+        } else {
+            guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
         }
     }
 

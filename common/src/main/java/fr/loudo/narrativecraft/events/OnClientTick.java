@@ -1,25 +1,19 @@
 package fr.loudo.narrativecraft.events;
 
-import com.bladecoder.ink.runtime.Story;
+import com.mojang.blaze3d.platform.InputConstants;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeGroup;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.DialogImpl;
 import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.recordings.RecordingHandler;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
-import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.*;
-import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleControllerScreen;
-import fr.loudo.narrativecraft.screens.cameraAngles.CameraAngleInfoKeyframeScreen;
 import fr.loudo.narrativecraft.screens.cutscenes.CutsceneControllerScreen;
-import fr.loudo.narrativecraft.screens.mainScreen.MainScreenControllerScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.scenes.ScenesMenuScreen;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -153,25 +147,8 @@ public class OnClientTick {
 
 
         // Next dialog trigger
-        ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> {
-            if(storyHandler == null) return;
-            DialogImpl dialog = storyHandler.getCurrentDialogBox();
-            if(dialog == null) return;
-            if(dialog.isAnimating()) return;
-            if(dialog.isUnSkippable()) return;
-            if(!dialog.getDialogAnimationScrollText().isFinished()) {
-                dialog.getDialogAnimationScrollText().forceFinish();
-                return;
-            }
-            KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
-            if(keyframeControllerBase instanceof CutsceneController) {
-                return;
-            }
-            for(InkAction inkAction : storyHandler.getInkActionList()) {
-                if(inkAction instanceof WaitInkAction) return;
-            }
-            storyHandler.next();
-        });
+        ModKeys.handleKeyPress(ModKeys.NEXT_DIALOG, () -> nextDialog(storyHandler));
+        ModKeys.handleKeyPress(InputConstants.MOUSE_BUTTON_LEFT, client.mouseHandler.isLeftPressed(), () -> nextDialog(storyHandler));
 
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if(playerSession == null) return;
@@ -181,50 +158,31 @@ public class OnClientTick {
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
             if(cutsceneController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
-            ModKeys.handleKeyPress(ModKeys.CREATE_KEYFRAME_GROUP, () -> {
-                KeyframeGroup keyframeGroup = cutsceneController.createKeyframeGroup();
-                Minecraft.getInstance().player.displayClientMessage(Translation.message("cutscene.keyframegroup.created", keyframeGroup.getId()), false);
-            });
-            ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
-                if (cutsceneController.addKeyframe()) {
-                    client.player.displayClientMessage(
-                            Translation.message("cutscene.keyframe.added", cutsceneController.getSelectedKeyframeGroup().getId()),
-                            false
-                    );
-                } else {
-                    client.player.displayClientMessage(
-                            Translation.message("cutscene.keyframe.added.fail"),
-                            false
-                    );
-                }
-            });
             ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
                 CutsceneControllerScreen screen = new CutsceneControllerScreen(cutsceneController);
                 client.execute(() -> client.setScreen(screen));
             });
         }
+    }
 
-        if(keyframeControllerBase instanceof MainScreenController mainScreenController) {
-            if(mainScreenController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
-            ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
-                CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(mainScreenController);
-                client.execute(() -> client.setScreen(screen));
-            });
-            ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
-                MainScreenControllerScreen screen = new MainScreenControllerScreen(mainScreenController);
-                client.execute(() -> client.setScreen(screen));
-            });
-        } else if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-            if(cameraAngleController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
-            ModKeys.handleKeyPress(ModKeys.ADD_KEYFRAME, () -> {
-                CameraAngleInfoKeyframeScreen screen = new CameraAngleInfoKeyframeScreen(cameraAngleController);
-                client.execute(() -> client.setScreen(screen));
-            });
-            ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
-                CameraAngleControllerScreen screen = new CameraAngleControllerScreen(cameraAngleController);
-                client.execute(() -> client.setScreen(screen));
-            });
+    private static void nextDialog(StoryHandler storyHandler) {
+        if(storyHandler == null) return;
+        DialogImpl dialog = storyHandler.getCurrentDialogBox();
+        if(dialog == null) return;
+        if(dialog.isAnimating()) return;
+        if(dialog.isUnSkippable()) return;
+        if(!dialog.getDialogAnimationScrollText().isFinished()) {
+            dialog.getDialogAnimationScrollText().forceFinish();
+            return;
         }
+        KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
+        if(keyframeControllerBase instanceof CutsceneController) {
+            return;
+        }
+        for(InkAction inkAction : storyHandler.getInkActionList()) {
+            if(inkAction instanceof WaitInkAction) return;
+        }
+        storyHandler.next();
     }
 
 }

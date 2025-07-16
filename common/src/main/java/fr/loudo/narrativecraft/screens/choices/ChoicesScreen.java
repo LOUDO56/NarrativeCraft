@@ -1,6 +1,10 @@
 package fr.loudo.narrativecraft.screens.choices;
 
 import com.bladecoder.ink.runtime.Choice;
+import com.mojang.blaze3d.platform.InputConstants;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.keys.ModKeys;
+import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.components.ChoiceButtonWidget;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -25,11 +29,11 @@ public class ChoicesScreen extends Screen {
     private long startTime;
     private double t;
 
-    public ChoicesScreen(List<Choice> choiceList) {
+    public ChoicesScreen(List<Choice> choiceList, boolean animate) {
         super(Component.literal("Choice screen"));
         this.choiceList = choiceList;
         this.animatedChoices = new ArrayList<>();
-        initiated = false;
+        initiated = !animate;
     }
 
     public static ChoicesScreen fromStrings(List<String> stringChoiceList) {
@@ -40,7 +44,7 @@ public class ChoicesScreen extends Screen {
             choice.setText(choiceString);
             choices.add(choice);
         }
-        return new ChoicesScreen(choices);
+        return new ChoicesScreen(choices, true);
     }
 
     @Override
@@ -109,15 +113,46 @@ public class ChoicesScreen extends Screen {
             choiceButtonWidget.setX(currentX);
             choiceButtonWidget.setY(currentY);
             this.addRenderableWidget(choiceButtonWidget);
-            animatedChoices.add(new AnimatedChoice(choiceButtonWidget, offsetX, offsetY));
+            AnimatedChoice animatedChoice = new AnimatedChoice(choiceButtonWidget, offsetX, offsetY);
+            animatedChoices.add(animatedChoice);
         }
         if(!initiated) {
             t = 0;
             startTime = System.currentTimeMillis();
+            initiated = true;
+        } else {
+            t = 1;
         }
-        initiated = true;
     }
 
+    @Override
+    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(keyCode == InputConstants.KEY_ESCAPE) return false;
+        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+        minecraft.setScreen(null);
+        if(storyHandler == null) return super.keyPressed(keyCode, scanCode, modifiers);
+        boolean choiceSelected = false;
+        try {
+            if(keyCode == ModKeys.SELECT_CHOICE_1.getDefaultKey().getValue()) {
+                storyHandler.getStory().chooseChoiceIndex(0);
+                choiceSelected = true;
+            } else if (keyCode == ModKeys.SELECT_CHOICE_2.getDefaultKey().getValue()) {
+                storyHandler.getStory().chooseChoiceIndex(1);
+                choiceSelected = true;
+            } else if (keyCode == ModKeys.SELECT_CHOICE_3.getDefaultKey().getValue()) {
+                storyHandler.getStory().chooseChoiceIndex(2);
+                choiceSelected = true;
+            } else if (keyCode == ModKeys.SELECT_CHOICE_4.getDefaultKey().getValue()) {
+                storyHandler.getStory().chooseChoiceIndex(3);
+                choiceSelected = true;
+            }
+            if(choiceSelected) {
+                storyHandler.getCurrentChoices().clear();
+                storyHandler.next();
+            }
+        } catch (Exception ignored) {}
+        return super.keyPressed(keyCode, scanCode, modifiers);
+    }
 
     @Override
     public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -164,14 +199,6 @@ public class ChoicesScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    private static class AnimatedChoice {
-        final ChoiceButtonWidget widget;
-        final int offsetX, offsetY;
-
-        AnimatedChoice(ChoiceButtonWidget widget, int offsetX, int offsetY) {
-            this.widget = widget;
-            this.offsetX = offsetX;
-            this.offsetY = offsetY;
-        }
+    private record AnimatedChoice(ChoiceButtonWidget widget, int offsetX, int offsetY) {
     }
 }

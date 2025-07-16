@@ -1,12 +1,16 @@
 {
   "key.screen.story.open": "Open Story Manager",
-  "key.categories.narrativecraft": "Narrative Craft Animation",
+  "key.categories.narrativecraft": "NarrativeCraft",
   "key.animation.record.start": "Start Animation Recording",
   "key.animation.record.stop": "Stop Animation Recording",
   "key.cutscene.keyframes.create_group": "Create Keyframe Group",
   "key.cutscene.keyframes.add_keyframe": "Add Keyframe",
-  "key.cutscene.keyframes.cutscene_controller_screen": "Cutscene Controller Screen Toggle",
+  "key.screen.keyframe_controller": "Keyframe Controller Screen Toggle",
   "key.dialog.next": "Next Dialog",
+  "key.choice.1": "Select Choice 1",
+  "key.choice.2": "Select Choice 2",
+  "key.choice.3": "Select Choice 3",
+  "key.choice.4": "Select Choice 4",
 
   "narrativecraft.user.first_time": "Hello, and thank you for installing NarrativeCraft! Here's everything you need to know before getting started.\n- To open the story manager, press %s.\n- To open other managers, use /nc open {manager_name}.\n- To write your script, install %s.\nTo get fully started, visit the documentation: %s\nIf you have any questions, don't hesitate to join the %s server!",
 

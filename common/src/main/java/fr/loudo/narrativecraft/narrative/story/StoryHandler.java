@@ -262,7 +262,7 @@ public class StoryHandler {
             if(currentDialogBox != null) {
                 currentDialogBox.endDialogAndDontSkip();
             }
-            ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices);
+            ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices, true);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));
         }
     }
