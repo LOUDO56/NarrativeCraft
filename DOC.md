@@ -2,12 +2,14 @@
 
 ## Dialog
 
-## Speak
+### Speak
 ``<character_name>: <dialog>``
 
 e.g.
 
 ``Mark: Hello!``
+
+If no character is specified, it will be displayed in 2D on the screen.
 
 ### Note
 You need to spawn it in the world BEFORE making it talk with starting an animation, subscene, cutscene or camera angle where that character is linked.
@@ -32,7 +34,7 @@ Blocking command: Means that it will continue the story after this command ended
 
 ## Play sound
 
-Name is resource location from minecraft e.g. custom.piano
+Name is resource location from minecraft e.g. custom.piano, modid:custom.sand
 
 ### Song
 
@@ -89,6 +91,8 @@ Play animation or subscene on the scene linked to it.
 ``animation stop %animation_name%``
 
 ``subscene stop %subscene_name%``
+
+"block" means that it will wait the end of the animation/subscene before continuing the story.
 
 ## Change day time
 
