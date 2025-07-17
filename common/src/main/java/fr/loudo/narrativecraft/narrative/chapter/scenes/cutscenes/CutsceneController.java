@@ -84,13 +84,6 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
             subscene.start(player.serverLevel(), playbackType, false);
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                for(Playback playback : subscene.getPlaybackList()) {
-                    if(!storyHandler.getCurrentCharacters().contains(playback.getCharacter())) {
-                        storyHandler.getCurrentCharacters().add(playback.getCharacter());
-                    }
-                }
-            }
             playbackList.addAll(subscene.getPlaybackList());
         }
 
@@ -98,11 +91,6 @@ public class CutsceneController extends KeyframeControllerBase {
             Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
             playback.start();
             playbackList.add(playback);
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                if(!storyHandler.getCurrentCharacters().contains(playback.getCharacter())) {
-                    storyHandler.getCurrentCharacters().add(playback.getCharacter());
-                }
-            }
         }
 
 
@@ -137,7 +125,7 @@ public class CutsceneController extends KeyframeControllerBase {
         } else {
             int firstTick = keyframeGroups.getFirst().getKeyframeList().getFirst().getTick();
             if(firstTick > 0) {
-                changeTimePosition(firstTick, false);
+                NarrativeCraftMod.server.execute(() -> changeTimePosition(firstTick, false));
             }
         }
         totalTick = getTotalTick();

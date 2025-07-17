@@ -7,8 +7,10 @@ import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.components.ChoiceButtonWidget;
 import fr.loudo.narrativecraft.utils.MathUtils;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -52,7 +54,7 @@ public class ChoicesScreen extends Screen {
         if(!initiated) {
             ResourceLocation soundRes = ResourceLocation.withDefaultNamespace("sfx.choice_appear");
             SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
-            this.minecraft.player.playSound(sound, 1.0F, 1.0F);
+            this.minecraft.getSoundManager().play(SimpleSoundInstance.forUI(sound, 1.0f, 1.0f));
         }
         List<ChoiceButtonWidget> choiceButtonWidgetList = new ArrayList<>();
         for(Choice choice : choiceList) {
@@ -129,28 +131,17 @@ public class ChoicesScreen extends Screen {
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if(keyCode == InputConstants.KEY_ESCAPE) return false;
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        minecraft.setScreen(null);
-        if(storyHandler == null) return super.keyPressed(keyCode, scanCode, modifiers);
-        boolean choiceSelected = false;
-        try {
-            if(keyCode == ModKeys.SELECT_CHOICE_1.getDefaultKey().getValue()) {
-                storyHandler.getStory().chooseChoiceIndex(0);
-                choiceSelected = true;
-            } else if (keyCode == ModKeys.SELECT_CHOICE_2.getDefaultKey().getValue()) {
-                storyHandler.getStory().chooseChoiceIndex(1);
-                choiceSelected = true;
-            } else if (keyCode == ModKeys.SELECT_CHOICE_3.getDefaultKey().getValue()) {
-                storyHandler.getStory().chooseChoiceIndex(2);
-                choiceSelected = true;
-            } else if (keyCode == ModKeys.SELECT_CHOICE_4.getDefaultKey().getValue()) {
-                storyHandler.getStory().chooseChoiceIndex(3);
-                choiceSelected = true;
+        if(storyHandler == null) {
+            minecraft.setScreen(null);
+            return super.keyPressed(keyCode, scanCode, modifiers);
+        }
+        List<KeyMapping> choiceKeys = List.of(ModKeys.SELECT_CHOICE_1, ModKeys.SELECT_CHOICE_2, ModKeys.SELECT_CHOICE_3, ModKeys.SELECT_CHOICE_4);
+        for (int i = 0; i < storyHandler.getStory().getCurrentChoices().size(); i++) {
+            if(keyCode == choiceKeys.get(i).getDefaultKey().getValue()) {
+                minecraft.setScreen(null);
+                storyHandler.choiceChoiceIndex(i);
             }
-            if(choiceSelected) {
-                storyHandler.getCurrentChoices().clear();
-                storyHandler.next();
-            }
-        } catch (Exception ignored) {}
+        }
         return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
@@ -199,6 +190,5 @@ public class ChoicesScreen extends Screen {
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
-    private record AnimatedChoice(ChoiceButtonWidget widget, int offsetX, int offsetY) {
-    }
+    private record AnimatedChoice(ChoiceButtonWidget widget, int offsetX, int offsetY){}
 }

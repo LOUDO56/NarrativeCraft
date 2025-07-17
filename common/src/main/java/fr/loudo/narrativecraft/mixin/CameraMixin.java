@@ -79,6 +79,7 @@ public abstract class CameraMixin {
 
         LocalPlayer localPlayer = client.player;
         KeyframeCoordinate position = cutscenePlayback.next();
+        if(position == null) return;
         localPlayer.setPos(position.getX(), position.getY(), position.getZ());
         localPlayer.setYRot(position.getYRot());
         localPlayer.setXRot(position.getXRot());
@@ -95,18 +96,16 @@ public abstract class CameraMixin {
         if(storyHandler == null) return;
 
         KeyframeCoordinate position = storyHandler.getPlayerSession().getSoloCam();
+        if(position == null) return;
 
-        if(position != null) {
-            LocalPlayer localPlayer = client.player;
-            localPlayer.setPos(position.getX(), position.getY() - localPlayer.getEyeHeight(), position.getZ());
-            localPlayer.setYRot(position.getYRot());
-            localPlayer.setYHeadRot(position.getYRot());
-            localPlayer.setXRot(position.getXRot());
-            this.setPosition(position.getX(), position.getY(), position.getZ());
-            this.setRotation(position.getYRot(), position.getXRot());
-            this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
-
-        }
+        LocalPlayer localPlayer = client.player;
+        localPlayer.setPos(position.getX(), position.getY() - localPlayer.getEyeHeight(), position.getZ());
+        localPlayer.setYRot(position.getYRot());
+        localPlayer.setYHeadRot(position.getYRot());
+        localPlayer.setXRot(position.getXRot());
+        this.setPosition(position.getX(), position.getY(), position.getZ());
+        this.setRotation(position.getYRot(), position.getXRot());
+        this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
     }
 }

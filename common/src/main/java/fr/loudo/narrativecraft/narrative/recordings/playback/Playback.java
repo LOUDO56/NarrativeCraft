@@ -56,13 +56,13 @@ public class Playback {
         globalTick = 0;
         isPlaying = true;
         hasEnded = false;
+        entityPlaybacks.clear();
 
         ActionsData masterEntityData = animation.getActionsData().getFirst();
         MovementData firstLoc = masterEntityData.getMovementData().getFirst();
         PlaybackData playbackData = new PlaybackData(masterEntityData, this);
         playbackData.setEntity(masterEntity);
         entityPlaybacks.add(playbackData);
-        playbackData.setEntity(masterEntity);
         if(masterEntity == null) {
             spawnMasterEntity(firstLoc);
         }
@@ -241,27 +241,46 @@ public class Playback {
 
         GameProfile gameProfile = new GameProfile(UUID.randomUUID(), character.getName());
         loadSkin();
-
-        if (BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
-            masterEntity = new FakePlayer(serverLevel, gameProfile);
-            masterEntity.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
-        } else {
-            masterEntity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
-            if (masterEntity instanceof Mob mob) mob.setNoAi(true);
+        boolean alreadySpawned = false;
+        if(playbackType == PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null && storyHandler.isRunning()) {
+                if(storyHandler.characterInStory(character)) {
+                    alreadySpawned = character.getEntity() == null || character.getEntity().isAlive();
+                }
+            }
         }
 
-        moveEntitySilent(masterEntity, loc);
-
-        if (masterEntity instanceof FakePlayer fakePlayer) {
-            ((PlayerListFields) serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
-            serverLevel.getServer().getPlayerList().broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(fakePlayer)));
-            serverLevel.addNewPlayer(fakePlayer);
+        if(alreadySpawned) {
+            masterEntity = character.getEntity();
         } else {
-            serverLevel.addFreshEntity(masterEntity);
+            if (BuiltInRegistries.ENTITY_TYPE.getId(character.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
+                masterEntity = new FakePlayer(serverLevel, gameProfile);
+                masterEntity.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
+            } else {
+                masterEntity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+                if (masterEntity instanceof Mob mob) mob.setNoAi(true);
+            }
+
+            moveEntitySilent(masterEntity, loc);
+
+            if (masterEntity instanceof FakePlayer fakePlayer) {
+                ((PlayerListFields) serverLevel.getServer().getPlayerList()).getPlayersByUUID().put(fakePlayer.getUUID(), fakePlayer);
+                serverLevel.getServer().getPlayerList().broadcastAll(ClientboundPlayerInfoUpdatePacket.createPlayerInitializing(List.of(fakePlayer)));
+                serverLevel.addNewPlayer(fakePlayer);
+            } else {
+                serverLevel.addFreshEntity(masterEntity);
+            }
         }
 
         character.setEntity(masterEntity);
         entityPlaybacks.getFirst().setEntity(masterEntity);
+        if(playbackType == PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null && storyHandler.isRunning()) {
+                storyHandler.addCharacter(character);
+            }
+        }
     }
 
     public int getMaxTick() {
@@ -291,6 +310,12 @@ public class Playback {
         for(PlaybackData playbackData : entityPlaybacks) {
             playbackData.actionsData.reset(playbackData.entity);
             playbackData.killEntity();
+        }
+        if(playbackType == PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null && storyHandler.isRunning()) {
+                NarrativeCraftMod.server.execute(() -> storyHandler.removeCharacter(character));
+            }
         }
     }
 

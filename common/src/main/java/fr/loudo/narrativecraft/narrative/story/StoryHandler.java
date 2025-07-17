@@ -249,10 +249,8 @@ public class StoryHandler {
                 );
             }
             StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, playerSession.getSoloCam() != null || playerSession.getKeyframeControllerBase() != null);
-        } catch (StoryException e) {
-            throw new RuntimeException(e);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            System.out.println(e);
         }
         return true;
     }
@@ -265,6 +263,14 @@ public class StoryHandler {
             ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices, true);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));
         }
+    }
+
+    public void choiceChoiceIndex(int index) {
+        try {
+            story.chooseChoiceIndex(index);
+            currentChoices.clear();
+            next();
+        } catch (Exception ignored) {}
     }
 
     public boolean isFinished() {
@@ -406,13 +412,22 @@ public class StoryHandler {
         playerSession.setScene(scene);
     }
 
+    public boolean characterInStory(CharacterStory characterStory) {
+        for(CharacterStory characterStory1 : currentCharacters) {
+            if(characterStory.getName().equals(characterStory1.getName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void addCharacter(CharacterStory characterStory) {
-        currentCharacters.add(characterStory);
+        if(!characterInStory(characterStory)) currentCharacters.add(characterStory);
     }
 
     public void removeCharacter(CharacterStory characterStory) {
-        for(CharacterStory characterStory1 : currentCharacters) {
-            if(characterStory.getName().equals(characterStory1.getName())) {
+        if(characterInStory(characterStory)) {
+            if(characterStory.getEntity() != null) {
                 characterStory.getEntity().remove(Entity.RemovalReason.KILLED);
                 if(characterStory.getEntity() instanceof FakePlayer fakePlayer) {
                     NarrativeCraftMod.server.getPlayerList().remove(fakePlayer);
