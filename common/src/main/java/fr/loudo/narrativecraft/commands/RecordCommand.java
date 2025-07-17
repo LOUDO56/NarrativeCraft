@@ -24,7 +24,7 @@ import java.util.List;
 public class RecordCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("nc")
+        dispatcher.register(Commands.literal("nc").requires(commandSourceStack -> commandSourceStack.getPlayer().hasPermissions(2))
                 .then(Commands.literal("record")
                         .then(Commands.literal("start")
                                 .then(Commands.literal("with")

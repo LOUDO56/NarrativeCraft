@@ -55,7 +55,8 @@ public class KillCharacterInkAction extends InkAction {
                 line,
                 scene,
                 Translation.message("validation.missing_values").getString(),
-                lineText
+                lineText,
+                false
         );
         name = command[1];
         CharacterStory characterStory = NarrativeCraftMod.getInstance().getCharacterManager().getCharacter(name);
@@ -64,7 +65,7 @@ public class KillCharacterInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.character", name).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

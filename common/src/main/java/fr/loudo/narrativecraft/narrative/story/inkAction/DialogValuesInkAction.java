@@ -192,14 +192,14 @@ public class DialogValuesInkAction extends InkAction {
 
     @Override
     public ErrorLine validate(String[] command, int line, String lineText, Scene scene) {
-        if(command.length == 1) return new ErrorLine(line, scene, Translation.message("validation.missing_values").getString(), lineText);
+        if(command.length == 1) return new ErrorLine(line, scene, Translation.message("validation.missing_values").getString(), lineText, false);
         List<String> parameters = List.of("offset", "scale", "padding", "width", "textColor", "backgroundColor", "gap", "letterSpacing", "unSkippable", "autoSkip", "bobbing");
         if(!parameters.contains(command[1])) {
             return new ErrorLine(
                     line,
                     scene,
                     Translation.message("validation.dialog", command[1], parameters.toString()).getString(),
-                    lineText
+                    lineText, false
             );
         }
         List<String> values = Arrays.stream(command).toList().subList(2, command.length);
@@ -217,7 +217,8 @@ public class DialogValuesInkAction extends InkAction {
                                 line,
                                 scene,
                                 Translation.message("validation.number", value).getString(),
-                                lineText
+                                lineText,
+                                false
                         );
                     }
                 }

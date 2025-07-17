@@ -96,7 +96,8 @@ public class ShakeScreenInkAction extends InkAction {
                 line,
                 scene,
                 Translation.message("validation.missing_values").getString(),
-                lineText
+                lineText,
+                false
         );
         for (int i = 1; i < 4; i++) {
             try {
@@ -106,7 +107,8 @@ public class ShakeScreenInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[i]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }

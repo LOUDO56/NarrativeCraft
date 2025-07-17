@@ -88,7 +88,8 @@ public class BorderInkAction extends InkAction {
                 line,
                 scene,
                 Translation.message("validation.missing_values").getString(),
-                lineText
+                lineText,
+                false
         );
         for (int i = 1; i < 4; i++) {
             try {
@@ -98,7 +99,8 @@ public class BorderInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[i]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -110,7 +112,8 @@ public class BorderInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[5]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -122,7 +125,8 @@ public class BorderInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[6]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }

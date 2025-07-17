@@ -47,7 +47,7 @@ public class WeatherChangeInkAction extends InkAction{
                     line,
                     scene,
                     Translation.message("validation.missing_name").getString(),
-                    lineText
+                    lineText, false
             );
         }
         String name = command[2];
@@ -56,7 +56,7 @@ public class WeatherChangeInkAction extends InkAction{
                     line,
                     scene,
                     Translation.message("validation.weather.value", name).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

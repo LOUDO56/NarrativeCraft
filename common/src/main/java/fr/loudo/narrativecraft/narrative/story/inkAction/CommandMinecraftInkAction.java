@@ -72,7 +72,7 @@ public class CommandMinecraftInkAction extends InkAction {
                     line,
                     scene,
                     "validation.missing_minecraft_command",
-                    lineText
+                    lineText, false
             );
         }
         String commandMinecraft = String.join(" ", Arrays.stream(command).toList().subList(1, command.length));
@@ -86,7 +86,8 @@ public class CommandMinecraftInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.invalid_command", parse.getExceptions().values().iterator().next().getMessage()).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }

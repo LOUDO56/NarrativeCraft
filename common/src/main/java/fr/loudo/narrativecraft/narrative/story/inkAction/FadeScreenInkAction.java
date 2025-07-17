@@ -137,7 +137,8 @@ public class FadeScreenInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -149,7 +150,8 @@ public class FadeScreenInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", StoryHandler.FadeCurrentState.STAY.name()).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -161,7 +163,8 @@ public class FadeScreenInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -173,7 +176,8 @@ public class FadeScreenInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", Translation.message("global.color")).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }

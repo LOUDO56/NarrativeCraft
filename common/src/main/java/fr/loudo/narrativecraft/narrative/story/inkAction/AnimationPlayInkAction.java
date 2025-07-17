@@ -98,7 +98,8 @@ public class AnimationPlayInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.missing_name").getString(),
-                    lineText
+                    lineText,
+                    false
             );
         }
         name = InkAction.parseName(command, 2);
@@ -108,7 +109,8 @@ public class AnimationPlayInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.animation", name).getString(),
-                    lineText
+                    lineText,
+                    false
             );
         }
         return null;

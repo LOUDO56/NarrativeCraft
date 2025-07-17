@@ -58,7 +58,7 @@ public class CameraAngleInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.camera_angle_missing_parent").getString(),
-                    lineText
+                    lineText, false
             );
         }
         if(command.length < 4) {
@@ -66,7 +66,7 @@ public class CameraAngleInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.camera_angle_missing_child").getString(),
-                    lineText
+                    lineText, false
             );
         }
         String parent = InkAction.parseName(command, 2);
@@ -77,7 +77,7 @@ public class CameraAngleInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.camera_angle_parent", parent).getString(),
-                    lineText
+                    lineText, false
             );
         }
         CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(child);
@@ -86,7 +86,7 @@ public class CameraAngleInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.camera_angle_child", child, parent).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

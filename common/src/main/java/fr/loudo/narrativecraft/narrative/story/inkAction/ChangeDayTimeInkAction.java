@@ -134,7 +134,8 @@ public class ChangeDayTimeInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.number", command[2]).getString(),
-                    lineText
+                    lineText,
+                    false
             );
         }
         if(command.length > 3) {
@@ -143,7 +144,8 @@ public class ChangeDayTimeInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[4]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
             if(command.length == 5) {
@@ -151,7 +153,8 @@ public class ChangeDayTimeInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.change_time.missing_time").getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
             try {
@@ -161,7 +164,8 @@ public class ChangeDayTimeInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[6]).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
             if(command.length == 9) {
@@ -172,7 +176,8 @@ public class ChangeDayTimeInkAction extends InkAction {
                             line,
                             scene,
                             Translation.message("validation.easing", command[8], Easing.getEasingsString()).getString(),
-                            lineText
+                            lineText,
+                            false
                     );
                 }
             }

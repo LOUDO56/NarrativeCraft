@@ -158,13 +158,14 @@ public abstract class InkAction {
     }
 
     public static class ErrorLine {
+        private final boolean isWarn;
         private final int line;
         private final Scene scene;
         private String fileName;
         private final String message;
         private final String lineText;
 
-        public ErrorLine(int line, Scene scene, String message, String lineText) {
+        public ErrorLine(int line, Scene scene, String message, String lineText, boolean isWarn) {
             this.line = line;
             this.scene = scene;
             if(scene != null) {
@@ -172,11 +173,11 @@ public abstract class InkAction {
             }
             this.message = message;
             this.lineText = lineText;
+            this.isWarn = isWarn;
         }
 
         public Component toMessage() {
-            Component component = Component.empty();
-            if(scene != null) {
+            if(scene == null) {
                 return Component.empty()
                         .append(Component.literal(lineText)
                                 .withColor(ChatFormatting.GRAY.getColor())
@@ -229,7 +230,7 @@ public abstract class InkAction {
                         )
                         .append("\n")
                         .append(Component.literal("'" + message + "'")
-                                .withColor(ChatFormatting.RED.getColor())
+                                .withColor(isWarn ? ChatFormatting.YELLOW.getColor() : ChatFormatting.RED.getColor())
                                 .withStyle(style -> style.withBold(false))
                         )
                         .append("\n");
@@ -254,6 +255,10 @@ public abstract class InkAction {
 
         public String getLineText() {
             return lineText;
+        }
+
+        public boolean isWarn() {
+            return isWarn;
         }
     }
 

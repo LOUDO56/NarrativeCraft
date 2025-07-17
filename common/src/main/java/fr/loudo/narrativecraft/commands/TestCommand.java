@@ -18,6 +18,8 @@ import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
+import fr.loudo.narrativecraft.platform.Services;
+import fr.loudo.narrativecraft.platform.services.IPlatformHelper;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.keyframes.KeyframeOptionScreen;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
@@ -60,6 +62,7 @@ public class TestCommand {
     static ScheduledExecutorService scheduler;
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        if(!Services.PLATFORM.isDevelopmentEnvironment()) return;
         dispatcher.register(Commands.literal("test")
                 .then(Commands.literal("screen")
                         .then(Commands.literal("changeSecondValue")

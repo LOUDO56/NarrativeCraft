@@ -87,7 +87,7 @@ public class SubscenePlayInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.missing_name").getString(),
-                    lineText
+                    lineText, false
             );
         }
         name = InkAction.parseName(command, 2);
@@ -97,7 +97,7 @@ public class SubscenePlayInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.subscene", name).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

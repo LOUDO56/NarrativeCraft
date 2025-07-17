@@ -87,7 +87,6 @@ public class StoryHandler {
 
     public void start() {
         try {
-            currentDialogBox.getForcedEndTime();
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
             }
@@ -129,10 +128,12 @@ public class StoryHandler {
                 save = null;
             }
             if(next()) {
-                NarrativeCraftFile.writeSave(this, true);
+                if(!isDebugMode) {
+                    NarrativeCraftFile.writeSave(this, true);
+                }
             }
         } catch (Exception e) {
-            crash(e, true);
+            crash(e, false);
         }
     }
 
@@ -392,7 +393,8 @@ public class StoryHandler {
                                         i + 1,
                                         scene,
                                         Translation.message("validation.on_enter").getString(),
-                                        line
+                                        line,
+                                        false
                                 )
                         );
                         break;
@@ -415,7 +417,8 @@ public class StoryHandler {
                                             i + 1,
                                             scene,
                                             Translation.message("validation.emotecraft").getString(),
-                                            matcher.group()
+                                            matcher.group(),
+                                            false
                                     ));
                                 }
                             } else {

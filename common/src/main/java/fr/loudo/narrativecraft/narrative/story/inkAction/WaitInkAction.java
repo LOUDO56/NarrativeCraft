@@ -65,7 +65,7 @@ public class WaitInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.missing_wait_value").getString(),
-                    lineText
+                    lineText, false
             );
         }
         String unitTime = command[2];
@@ -74,7 +74,7 @@ public class WaitInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.wrong_unit").getString(),
-                    lineText
+                    lineText, false
             );
         }
         try {
@@ -84,7 +84,7 @@ public class WaitInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.number", unitTime.toUpperCase()).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

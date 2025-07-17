@@ -68,7 +68,8 @@ public class EmoteCraftInkAction extends InkAction {
                 line,
                 scene,
                 Translation.message("validation.missing_values").getString(),
-                lineText
+                lineText,
+                false
         );
         forced = false;
         characterName = InkAction.parseName(command, 2);
@@ -84,7 +85,8 @@ public class EmoteCraftInkAction extends InkAction {
                 line,
                 scene,
                 Translation.message("validation.character", characterName).getString(),
-                lineText
+                lineText,
+                false
         );
         if(command[1].equals("play")) {
             emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
@@ -93,7 +95,8 @@ public class EmoteCraftInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.emote", name).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }

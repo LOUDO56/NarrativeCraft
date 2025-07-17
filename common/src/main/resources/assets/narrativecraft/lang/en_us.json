@@ -249,6 +249,7 @@
   "narrativecraft.validation.wrong_unit": "Wrong unit value. Only use second, minute or hour",
   "narrativecraft.validation.on_enter": "Line 2 of a scene MUST BE \"# on enter\" in order to make the story working correctly.",
   "narrativecraft.validation.found_errors": "Found %d errors while validating full story",
+  "narrativecraft.validation.found_warns": "Found %d warns while validating full story",
   "narrativecraft.validation.no_errors": "The story successfully passed validation! :p",
   "narrativecraft.validation.quick_edit": "Click to quick edit",
   "narrativecraft.validation.change_time.missing_time": "You want to interpolate but you forgot to put a duration e.g. for 3 seconds",

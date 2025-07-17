@@ -73,7 +73,7 @@ public class CutsceneInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.missing_name").getString(),
-                    lineText
+                    lineText, false
             );
         }
         name = InkAction.parseName(command, 2);
@@ -83,7 +83,7 @@ public class CutsceneInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.cutscene", name).getString(),
-                    lineText
+                    lineText, false
             );
         }
         return null;

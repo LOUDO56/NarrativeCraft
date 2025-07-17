@@ -17,30 +17,26 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.commands.TeleportCommand;
+import net.minecraft.server.commands.TellRawCommand;
 
 import java.util.List;
 
 public class StoryCommand {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
-        dispatcher.register(Commands.literal("nc")
+        dispatcher.register(Commands.literal("nc").requires(commandSourceStack -> commandSourceStack.getPlayer().hasPermissions(2))
                 .then(Commands.literal("story")
                         .then(Commands.literal("validate")
                                 .executes(StoryCommand::executeValidateStory)
                         )
                         .then(Commands.literal("play")
                                 .executes(StoryCommand::playStory)
-                                .then(Commands.literal("debug")
-                                        .executes(StoryCommand::playStoryDebug)
-                                )
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
                                         .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
                                                 .suggests(NarrativeCraftMod.getInstance().getChapterManager().getSceneSuggestionsByChapter())
                                                 .executes(context -> playStoryChapterStory(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name"), false))
-                                                .then(Commands.literal("debug")
-                                                        .executes(context -> playStoryChapterStory(context, IntegerArgumentType.getInteger(context, "chapter_index"), StringArgumentType.getString(context, "scene_name"), true))
-                                                )
                                         )
                                 )
                         )
@@ -61,11 +57,16 @@ public class StoryCommand {
             localPlayer.displayClientMessage(errorLine.toMessage(), false);
         }
 
-        if(!errorLineList.isEmpty()) {
-            localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorLineList.size())).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.RED.getColor())), false);
+        int errorSize = errorLineList.stream().filter(errorLine -> !errorLine.isWarn()).toList().size();
+        int warnSize = errorLineList.stream().filter(InkAction.ErrorLine::isWarn).toList().size();
+        if(errorSize > 0) {
+            localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorSize)).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.RED.getColor())), false);
+        }
+        if(warnSize > 0) {
+            localPlayer.displayClientMessage((Translation.message("validation.found_warns", Component.literal(String.valueOf(warnSize)).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.YELLOW.getColor())), false);
         }
 
-        return errorLineList.isEmpty() ? Command.SINGLE_SUCCESS : 0;
+        return errorSize == 0 && warnSize == 0 ? Command.SINGLE_SUCCESS : 0;
     }
 
     private static int executeValidateStory(CommandContext<CommandSourceStack> context) {
@@ -82,6 +83,7 @@ public class StoryCommand {
         if(validateStory(context) == 0) return 0;
 
         StoryHandler storyHandler = new StoryHandler();
+        storyHandler.setDebugMode(true);
         storyHandler.start();
 
         return Command.SINGLE_SUCCESS;
@@ -94,23 +96,14 @@ public class StoryCommand {
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
         Scene scene = chapter.getSceneByName(sceneName);
         StoryHandler storyHandler = new StoryHandler(chapter, scene);
-        storyHandler.setDebugMode(debug);
-        storyHandler.start();
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-    private static int playStoryDebug(CommandContext<CommandSourceStack> context) {
-
-        if(validateStory(context) == 0) return 0;
-
-        StoryHandler storyHandler = new StoryHandler();
         storyHandler.setDebugMode(true);
         storyHandler.start();
+
         return Command.SINGLE_SUCCESS;
     }
 
     private static int stopStory(CommandContext<CommandSourceStack> context) {
+        if(!context.getSource().getPlayer().hasPermissions(2)) return 0;
 
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null || !storyHandler.isRunning()) {

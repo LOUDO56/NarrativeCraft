@@ -181,20 +181,7 @@ public class SongSfxInkAction extends InkAction {
                     line,
                     scene,
                     Translation.message("validation.missing_sound_name").getString(),
-                    lineText
-            );
-        }
-
-        String soundName = command[2];
-        ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(soundName);
-        WeighedSoundEvents registration = Minecraft.getInstance().getSoundManager().getSoundEvent(soundRes);
-
-        if(registration == null) {
-            return new ErrorLine(
-                    line,
-                    scene,
-                    Translation.message("validation.sound", soundName).getString(),
-                    lineText
+                    lineText, false
             );
         }
 
@@ -213,7 +200,8 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", Translation.message("global.volume")).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -226,7 +214,8 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", Translation.message("global.pitch")).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -236,7 +225,8 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.sound_loop").getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -246,7 +236,8 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.sound_start_fade_in").getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -256,7 +247,8 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.sound_start_fade_out").getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
@@ -269,11 +261,24 @@ public class SongSfxInkAction extends InkAction {
                         line,
                         scene,
                         Translation.message("validation.number", command[6].toUpperCase()).getString(),
-                        lineText
+                        lineText,
+                        false
                 );
             }
         }
 
+        String soundName = command[2];
+        ResourceLocation soundRes = ResourceLocation.withDefaultNamespace(soundName);
+        WeighedSoundEvents registration = Minecraft.getInstance().getSoundManager().getSoundEvent(soundRes);
+
+        if(registration == null) {
+            return new ErrorLine(
+                    line,
+                    scene,
+                    Translation.message("validation.sound", soundName).getString(),
+                    lineText, true
+            );
+        }
 
         return null;
     }
