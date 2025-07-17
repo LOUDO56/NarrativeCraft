@@ -24,7 +24,7 @@ ex: [shaking time=0.02, force=0.2]I'm angry![/effect]
 
 Blocking command: Means that it will continue the story after this command ended.
 
-``cutscene start <cutscene_name>``
+``cutscene start %cutscene_name%``
 
 ## Camera angle
 

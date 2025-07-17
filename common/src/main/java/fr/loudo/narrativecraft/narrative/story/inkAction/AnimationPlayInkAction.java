@@ -87,7 +87,7 @@ public class AnimationPlayInkAction extends InkAction {
     @Override
     void sendDebugDetails() {
         if(storyHandler.isDebugMode()) {
-            Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.animation", name), false);
+            Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.animation", name, isLooping), false);
         }
     }
 

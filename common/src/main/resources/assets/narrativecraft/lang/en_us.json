@@ -207,8 +207,8 @@
   "narrativecraft.main_screen.hud": "Currently in Main Screen Controller.",
 
   "narrativecraft.debug.cutscene": "Cutscene %s now playing.",
-  "narrativecraft.debug.animation": "Animation %s now playing.",
-  "narrativecraft.debug.subscene": "Subscene %s now playing.",
+  "narrativecraft.debug.animation": "Animation %s now playing. isLopping=%s",
+  "narrativecraft.debug.subscene": "Subscene %s now playing. isLopping=%s",
   "narrativecraft.debug.camera_angle": "Set to camera angle parent=%s child=%s",
   "narrativecraft.debug.song/sfx.start": "%s %s playing now volume=%d pitch=%d isLooping=%s fadeEffect=%s fadeTime=%d",
   "narrativecraft.debug.song/sfx.stop": "%s %s stop playing fadeEffect=%s fadeTime=%d",

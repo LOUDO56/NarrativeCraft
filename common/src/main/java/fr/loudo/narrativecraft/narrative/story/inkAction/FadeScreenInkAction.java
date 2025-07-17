@@ -33,7 +33,7 @@ public class FadeScreenInkAction extends InkAction {
         fadeIn = 2.0;
         stay = 1.0;
         fadeOut = 2.0;
-        color = 0x000000;
+        color = ARGB.colorFromFloat(1, 0, 0, 0);
         t = 0;
         if(command.length >= 2) {
             fadeIn = Double.parseDouble(command[1]);

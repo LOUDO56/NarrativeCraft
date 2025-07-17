@@ -118,7 +118,6 @@ public class StoryHandler {
                     for(String tag : save.getTagList()) {
                         inkTagTranslators.executeTag(tag);
                     }
-                    inkActionList.clear();
                 }
             }
             if(loadScene != null) {
@@ -439,6 +438,7 @@ public class StoryHandler {
     }
 
     public void initChapterSceneSession() {
+        if(story.getState().getCurrentKnot() == null) return;
         String[] chapterSceneName = story.getState().getCurrentKnot().split("_");
         int chapterIndex = Integer.parseInt(chapterSceneName[1]);
         List<String> splitSceneName = Arrays.stream(chapterSceneName).toList().subList(2, chapterSceneName.length);

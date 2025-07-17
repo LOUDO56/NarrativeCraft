@@ -76,7 +76,7 @@ public class SubscenePlayInkAction extends InkAction {
     @Override
     void sendDebugDetails() {
         if(storyHandler.isDebugMode()) {
-            Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.subscene", name), false);
+            Minecraft.getInstance().player.displayClientMessage(Translation.message("debug.subscene", name, isLooping), false);
         }
     }
 

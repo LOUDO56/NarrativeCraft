@@ -100,12 +100,6 @@ public class StorySave {
                         characterStoryDataList.add(new CharacterStoryData(characterStory));
                     }
                 }
-            } else {
-                for(InkAction inkAction : storyHandler.getInkActionList()) {
-                    if(!(inkAction instanceof SubscenePlayInkAction) && !(inkAction instanceof AnimationPlayInkAction)) {
-                        tagList.add(inkAction.getCommand());
-                    }
-                }
             }
         } catch (Exception e) {
             storyHandler.crash(e, false);
