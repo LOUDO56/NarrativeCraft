@@ -231,7 +231,7 @@ public class NarrativeCraftFile {
             new File(dataFolder.getAbsoluteFile(), CUTSCENES_FILE_NAME).createNewFile();
             new File(dataFolder.getAbsoluteFile(), SUBSCENES_FILE_NAME).createNewFile();
             new File(dataFolder.getAbsoluteFile(), CAMERA_ANGLES_FILE_NAME).createNewFile();
-            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\",\"placement\":%s}", scene.getName(), scene.getDescription());
+            String content = String.format("{\"name\":\"%s\",\"description\":\"%s\",\"placement\":%s}", scene.getName(), scene.getDescription(), scene.getPlacement());
             try(Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
                 writer.write(content);
             }
