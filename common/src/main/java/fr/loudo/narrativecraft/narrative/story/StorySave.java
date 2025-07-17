@@ -26,8 +26,8 @@ import java.util.List;
 
 public class StorySave {
 
-    private final int chapterIndex;
-    private final String sceneName;
+    private int chapterIndex;
+    private String sceneName;
     private KeyframeCoordinate soloCam;
     private String inkSave;
     private final List<CharacterStoryData> characterStoryDataList;
@@ -108,7 +108,7 @@ public class StorySave {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            storyHandler.crash(e, false);
         }
 
     }

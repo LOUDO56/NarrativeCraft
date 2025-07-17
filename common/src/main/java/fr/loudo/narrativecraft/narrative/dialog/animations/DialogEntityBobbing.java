@@ -31,8 +31,10 @@ public class DialogEntityBobbing {
 
     public DialogEntityBobbing(Dialog dialog, float noiseShakeSpeed, float noiseShakeStrength) {
         this.dialog = dialog;
-        lastXRot = dialog.getEntityServer().getXRot();
-        lastYRot = dialog.getEntityServer().getYRot();
+        if(dialog.getEntityServer() != null) {
+            lastXRot = dialog.getEntityServer().getXRot();
+            lastYRot = dialog.getEntityServer().getYRot();
+        }
         noise = new SimplexNoise(RandomSource.create());
         this.noiseShakeSpeed = noiseShakeSpeed;
         this.shakeDecayRate = 0;
@@ -60,6 +62,7 @@ public class DialogEntityBobbing {
 
     public void updateLookDirection(float partialTick) {
 
+        if(dialog.getEntityServer() == null) return;
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
             if(playback.getCharacter().getName().equals(dialog.getCharacterName())) {
                 if(playback.isPlaying()) {

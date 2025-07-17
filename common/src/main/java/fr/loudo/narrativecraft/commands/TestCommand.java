@@ -191,9 +191,7 @@ public class TestCommand {
                         ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "skin.png"),
                         texture
                 );
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+            } catch (IOException ignored) {}
         });
 
         return Command.SINGLE_SUCCESS;

@@ -12,6 +12,9 @@
   "key.choice.3": "Select Choice 3",
   "key.choice.4": "Select Choice 4",
 
+  "narrativecraft.user.crash.his-fault": "A Story Exception has been caught, hover text to know why.",
+  "narrativecraft.user.crash.not-his-fault": "An Exception occurred, please click the message and send the crash report to the discord server!",
+  "narrativecraft.user.crash.character_not_found": "Character \"%s\" was not found in the world. Check script chapter %s scene %s",
   "narrativecraft.user.first_time": "Hello, and thank you for installing NarrativeCraft! Here's everything you need to know before getting started.\n- To open the story manager, press %s.\n- To open other managers, use /nc open {manager_name}.\n- To write your script, install %s.\nTo get fully started, visit the documentation: %s\nIf you have any questions, don't hesitate to join the %s server!",
 
   "narrativecraft.global.animations": "Animations",
@@ -42,6 +45,12 @@
   "narrativecraft.toast.description.updated": "Updated Successfully!",
 
   "narrativecraft.playback.start.fail": "Can't start animation %s because no character is assigned.",
+
+  "narrativecraft.screen.crash.title": "Whoops! A crash occurred...",
+  "narrativecraft.screen.crash.from_mod": "Really sorry! This comes from the mod.\nPlease, report it to the discord server!",
+  "narrativecraft.screen.crash.from_story": "Really sorry! This comes from the story.\nSend it to the creator of the story.",
+  "narrativecraft.screen.crash.button.open_crash": "Open Crash File",
+
 
   "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
   "narrativecraft.screen.cutscenes_settings.time_skip": "Change Time Skip",

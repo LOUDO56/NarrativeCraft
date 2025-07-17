@@ -60,7 +60,7 @@ public class CameraAngleController extends KeyframeControllerBase {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase != null) {
-            keyframeControllerBase.stopSession(false);
+            NarrativeCraftMod.server.execute(() -> keyframeControllerBase.stopSession(false));
         }
         playerSession.setKeyframeControllerBase(this);
 

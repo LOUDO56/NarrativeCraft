@@ -23,7 +23,7 @@ public class OnEnterInkAction extends InkAction {
         if(currentKnot == null) return InkActionResult.PASS;
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSnakeCase(storyHandler.getPlayerSession().getScene()))) {
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
-                NarrativeCraftMod.server.execute(characterStory::kill);
+                characterStory.kill();
             }
             storyHandler.setGlobalDialogValue(new DialogData(DialogData.globalDialogData));
             storyHandler.getCurrentCharacters().clear();

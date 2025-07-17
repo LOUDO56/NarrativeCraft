@@ -65,7 +65,7 @@ public class OnPlayerServerConnection {
         }
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler != null) {
-            NarrativeCraftMod.server.execute(() -> storyHandler.stop(true));
+            storyHandler.stop(true);
         }
 
 

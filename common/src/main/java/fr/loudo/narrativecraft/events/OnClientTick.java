@@ -182,7 +182,7 @@ public class OnClientTick {
         for(InkAction inkAction : storyHandler.getInkActionList()) {
             if(inkAction instanceof WaitInkAction) return;
         }
-        storyHandler.next();
+        NarrativeCraftMod.server.execute(storyHandler::next);
     }
 
 }

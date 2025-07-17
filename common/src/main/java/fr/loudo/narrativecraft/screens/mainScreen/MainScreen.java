@@ -74,7 +74,7 @@ public class MainScreen extends Screen {
             minecraft.getSoundManager().stop(MUSIC_INSTANCE);
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if(playerSession.getKeyframeControllerBase() != null) {
-                playerSession.getKeyframeControllerBase().stopSession(false);
+                NarrativeCraftMod.server.execute(() -> playerSession.getKeyframeControllerBase().stopSession(false));
             }
         } else {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();

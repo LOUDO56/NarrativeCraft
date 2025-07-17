@@ -43,9 +43,7 @@ public class CharacterSkinController {
                             ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, path),
                             texture
                     );
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                } catch (IOException ignored) {}
             });
             cachedSkins.add(path);
         }

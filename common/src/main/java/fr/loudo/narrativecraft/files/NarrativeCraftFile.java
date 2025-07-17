@@ -65,8 +65,8 @@ public class NarrativeCraftFile {
 
     public static final String ANIMATIONS_FOLDER_NAME = "animations";
     public static final String NPC_FOLDER_NAME = "npc";
-    private static final String DATA_FOLDER_NAME = "data";
-    private static final String SKINS_FOLDER_NAME = "skins";
+    public static final String DATA_FOLDER_NAME = "data";
+    public static final String SKINS_FOLDER_NAME = "skins";
 
     public static File mainDirectory;
     public static File chaptersDirectory;
@@ -109,31 +109,28 @@ public class NarrativeCraftFile {
 
     public static void createGlobalDialogValues() {
         if(!dataDirectory.exists()) createDirectory(mainDirectory, DATA_FOLDER_NAME);
-        File dialogFile = new File(dataDirectory, DIALOG_FILE_NAME);
-        if(!dialogFile.exists()) {
-            createFile(dataDirectory, DIALOG_FILE_NAME);
-            DialogData dialogData = new DialogData(
-                    null,
-                    null,
-                    new Vec2(0, 0.8f),
-                    -1,
-                    0xFF000000,
-                    3,
-                    4,
-                    0.8f,
-                    0.1f,
-                    10,
-                    90,
-                    false,
-                    0,
-                    100,
-                    250
-            );
-            try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
-                new Gson().toJson(dialogData, writer);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        File dialogFile = createFile(dataDirectory, DIALOG_FILE_NAME);
+        DialogData dialogData = new DialogData(
+                null,
+                null,
+                new Vec2(0, 0.8f),
+                -1,
+                0xFF000000,
+                3,
+                4,
+                0.8f,
+                0.1f,
+                10,
+                90,
+                false,
+                0,
+                100,
+                250
+        );
+        try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
+            new Gson().toJson(dialogData, writer);
+        } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Couldn't create global dialog values! {}", e);
         }
     }
 
@@ -146,7 +143,7 @@ public class NarrativeCraftFile {
                 NarrativeCraftMod.LOG.error("Couldn't update dialog user values! ", e);
             }
         } catch (JsonIOException e) {
-            throw new RuntimeException(e);
+            NarrativeCraftMod.LOG.error("Couldn't update dialog user values! ", e);
         }
     }
 
@@ -755,20 +752,21 @@ public class NarrativeCraftFile {
             writer.write(stringBuilder.toString());
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Can't update main ink file! {}", e);
-            throw new RuntimeException("Can't update main ink file! ", e);
         }
     }
 
     public static boolean writeSave(StoryHandler storyHandler, boolean newScene) {
        try {
-           File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
+           File saveFile = createFile(savesDirectory, SAVE_FILE_NAME);
            StorySave save = new StorySave(storyHandler, newScene);
            try(Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
                new Gson().toJson(save, writer);
            }
            return true;
        } catch (Exception e) {
-           throw new RuntimeException(e);
+           storyHandler.crash(e, false);
+           NarrativeCraftMod.LOG.error("Can't write on save file!", e);
+           return false;
        }
     }
 
@@ -793,7 +791,8 @@ public class NarrativeCraftFile {
             }
             return save;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            NarrativeCraftMod.LOG.error("Can't read save file!", e);
+            return null;
         }
     }
 

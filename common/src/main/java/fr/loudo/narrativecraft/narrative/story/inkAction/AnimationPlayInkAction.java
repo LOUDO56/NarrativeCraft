@@ -42,13 +42,11 @@ public class AnimationPlayInkAction extends InkAction {
             } catch (RuntimeException ignored) {}
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);
             block = false;
-            PlayerSession playerSession = storyHandler.getPlayerSession();
             if(animation == null) return InkActionResult.ERROR;
             if(command[1].equals("start")) {
                 try {
                     if(command[command.length - 1].equals("block")) block = true;
                 } catch (RuntimeException ignored) {}
-                storyHandler.addCharacter(animation.getCharacter());
                 playback = new Playback(
                         animation,
                         Utils.getServerLevel(),

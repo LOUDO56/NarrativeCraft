@@ -65,7 +65,7 @@ public class SongSfxInkAction extends InkAction {
             try {
                 volume = Float.parseFloat(volValue);
             } catch (NumberFormatException e) {
-                throw new RuntimeException("Volume value is not a number:" + e);
+                return InkActionResult.ERROR;
             }
         }
         if(command.length >= 5 && isStart) {
@@ -73,7 +73,7 @@ public class SongSfxInkAction extends InkAction {
             try {
                 pitch = Float.parseFloat(pitchValue);
             } catch (NumberFormatException e) {
-                throw new RuntimeException("Pitch value is not a number:" + e);
+                return InkActionResult.ERROR;
             }
         }
         if(command.length >= 6 && isStart && (command[5].equals("true") || command[5].equals("false"))) {

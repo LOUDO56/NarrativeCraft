@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.screens.cameraAngles;
 
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.screens.components.AddCharacterListScreen;
 import fr.loudo.narrativecraft.utils.ImageFontConstants;
@@ -50,13 +51,13 @@ public class CameraAngleControllerScreen extends Screen {
         this.addRenderableWidget(recordMenu);
 
         Button saveButton = Button.builder(ImageFontConstants.SAVE, button -> {
-            cameraAngleController.stopSession(true);
+            NarrativeCraftMod.server.execute(() -> cameraAngleController.stopSession(true));
             this.onClose();
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 3, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(saveButton);
 
         Button closeButton = Button.builder(Component.literal("✖"), button -> {
-            cameraAngleController.stopSession(false);
+            NarrativeCraftMod.server.execute(() -> cameraAngleController.stopSession(false));
             this.onClose();
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 4, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         this.addRenderableWidget(closeButton);

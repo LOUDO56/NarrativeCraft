@@ -42,9 +42,6 @@ public class SubscenePlayInkAction extends InkAction {
                 try {
                     if(command[command.length - 1].equals("block")) block = true;
                 } catch (RuntimeException ignored) {}
-                for(Animation animation : subscene.getAnimationList()) {
-                    storyHandler.addCharacter(animation.getCharacter());
-                }
                 subscene.start(Utils.getServerLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();

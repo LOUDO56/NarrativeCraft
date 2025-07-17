@@ -20,14 +20,19 @@ import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
 import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
+import fr.loudo.narrativecraft.screens.components.CrashScreen;
 import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.ChatFormatting;
+import net.minecraft.CrashReport;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.server.Main;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -82,9 +87,11 @@ public class StoryHandler {
 
     public void start() {
         try {
+            currentDialogBox.getForcedEndTime();
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
             }
+            NarrativeCraftMod.getInstance().setStoryHandler(this);
             Minecraft.getInstance().options.hideGui = true;
             inkActionList.clear();
             globalDialogValue = new DialogData(DialogData.globalDialogData);
@@ -121,11 +128,11 @@ public class StoryHandler {
                 playerSession.setScene(loadScene);
                 save = null;
             }
-            NarrativeCraftMod.getInstance().setStoryHandler(this);
-            next();
-            NarrativeCraftFile.writeSave(this, true);
+            if(next()) {
+                NarrativeCraftFile.writeSave(this, true);
+            }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            crash(e, true);
         }
     }
 
@@ -140,10 +147,10 @@ public class StoryHandler {
             }
         }
         for(CharacterStory characterStory : currentCharacters) {
-            NarrativeCraftMod.server.execute(characterStory::kill);
+            characterStory.kill();
         }
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
-            NarrativeCraftMod.server.execute(playback::forceStop);
+            playback.forceStop();
         }
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().clear();
         StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, false);
@@ -240,19 +247,46 @@ public class StoryHandler {
             } else {
                 if(currentDialogBox != null) currentDialogBox.endDialogAndDontSkip();
             }
+            if(NarrativeCraftMod.getInstance().getStoryHandler() == null) return false;
             save = null;
             if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
                 stop(true);
                 Minecraft.getInstance().player.displayClientMessage(
-                        Component.literal("§c" + Translation.message("story.load.scene.fail").getString()),
+                        Component.literal(Translation.message("story.load.scene.fail").getString()).withStyle(ChatFormatting.RED),
                         false
                 );
             }
             StoryHandler.changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, playerSession.getSoloCam() != null || playerSession.getKeyframeControllerBase() != null);
+        } catch (StoryException e) {
+            crash(new Exception(e.getMessage() + String.format("\nCrash in Chapter %s Scene %s.", playerSession.getChapter().getIndex(), playerSession.getScene().getName())), true);
+            return false;
         } catch (Exception e) {
-            System.out.println(e);
+            crash(e, false);
+            return false;
         }
         return true;
+    }
+
+    public void crash(Exception exception, boolean userFault) {
+        stop(true);
+        Component message;
+        CrashReport report = new CrashReport(exception.getMessage(), exception);
+        Minecraft.saveReport(NarrativeCraftFile.mainDirectory, report);
+        if(!isDebugMode) {
+            CrashScreen crashScreen = new CrashScreen(userFault, report);
+            Minecraft minecraft = Minecraft.getInstance();
+            minecraft.execute(() -> minecraft.setScreen(crashScreen));
+        } else {
+            if(userFault) {
+                message = Translation.message("user.crash.his-fault").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal(exception.getMessage())))).withStyle(ChatFormatting.RED);
+            } else {
+                message = Translation.message("user.crash.not-his-fault").withStyle(style -> style.withClickEvent(new ClickEvent.OpenFile(report.getSaveFile()))).withStyle(ChatFormatting.RED);
+            }
+            Minecraft.getInstance().player.displayClientMessage(
+                    message,
+                    false
+            );
+        }
     }
 
     public void showChoices() {
@@ -295,7 +329,7 @@ public class StoryHandler {
                             .findFirst()
                             .orElse(null);
                     if(currentCharacter == null) {
-                        stop(true);
+                        crash(new Exception(Translation.message("user.crash.character_not_found", parsed.characterName, playerSession.getChapter().getIndex(), playerSession.getScene().getName()).getString()), true);
                         return;
                     }
                     currentDialogBox = new Dialog(
@@ -683,7 +717,9 @@ public class StoryHandler {
 
     public void save(boolean newScene) {
         if(!isDebugMode) {
-            NarrativeCraftFile.writeSave(this, newScene);
+            if(!NarrativeCraftFile.writeSave(this, newScene)) {
+                return;
+            }
         }
         isSaving = true;
         StorySave.startTimeSaveIcon = System.currentTimeMillis();

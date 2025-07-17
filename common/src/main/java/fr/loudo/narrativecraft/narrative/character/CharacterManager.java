@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.character;
 
 import com.google.gson.Gson;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,7 +37,7 @@ public class CharacterManager {
                     characterStory.setEntityType(entityType);
                     characterStories.add(characterStory);
                 } catch (IOException e) {
-                    throw new RuntimeException("Character " + characterFolder.getName()  + " couldn't be loaded!: " + e);
+                    NarrativeCraftMod.LOG.error("Character {} couldn't be loaded!: {}", characterFolder.getName(), e);
                 }
             }
         }

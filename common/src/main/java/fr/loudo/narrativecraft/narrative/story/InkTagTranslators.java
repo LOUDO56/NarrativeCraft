@@ -20,7 +20,8 @@ public class InkTagTranslators {
             List<String> tags = storyHandler.getStory().getCurrentTags();
             return executeTags(tags);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            storyHandler.crash(e, false);
+            return false;
         }
     }
 
@@ -40,7 +41,8 @@ public class InkTagTranslators {
             }
             return true;
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            storyHandler.crash(e, false);
+            return false;
         }
     }
 
