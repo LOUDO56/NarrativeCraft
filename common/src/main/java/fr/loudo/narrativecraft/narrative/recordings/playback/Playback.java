@@ -170,29 +170,31 @@ public class Playback {
                 } else {
                     killMasterEntity();
                     spawnMasterEntity(movementData);
+                    if(newTick == 0) {
+                        globalTick = 0;
+                        actionListener(playbackData);
+                    }
+                    for (int i = 0; i < newTick; i++) {
+                        globalTick = i;
+                        actionListener(playbackData);
+                    }
+                    globalTick = oldTick;
                 }
             } else {
                 playbackData.changeLocationByTick(newTick, seamless);
             }
         }
         for (PlaybackData playbackData : entityPlaybacks) {
-            if(seamless) {
-                int tickDiff = newTick - globalTick;
-                if(tickDiff > 0) {
-                    for (int i = globalTick; i < newTick; i++) {
-                        globalTick = i;
-                        actionListener(playbackData);
-                    }
-                } else {
-                    for (int i = globalTick; i > newTick; i--) {
-                        globalTick = i;
-                        actionListenerRewind(playbackData);
-                    }
-                }
-            } else {
-                for (int i = 0; i < newTick; i++) {
+            int tickDiff = newTick - globalTick;
+            if(tickDiff > 0) {
+                for (int i = globalTick; i < newTick; i++) {
                     globalTick = i;
                     actionListener(playbackData);
+                }
+            } else {
+                for (int i = globalTick; i > newTick; i--) {
+                    globalTick = i;
+                    actionListenerRewind(playbackData);
                 }
             }
             globalTick = oldTick;
