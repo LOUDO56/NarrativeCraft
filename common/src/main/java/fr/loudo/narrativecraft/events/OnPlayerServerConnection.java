@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.NarrativeUserOptions;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.items.CutsceneEditItems;
 import fr.loudo.narrativecraft.keys.ModKeys;
@@ -13,8 +14,9 @@ import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.*;
-import net.minecraft.server.commands.TellRawCommand;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
 import java.net.URI;
@@ -24,6 +26,13 @@ public class OnPlayerServerConnection {
     public static void playerJoin(ServerPlayer player) {
         if(player instanceof FakePlayer) return;
         CutsceneEditItems.init(player.registryAccess());
+        NarrativeUserOptions narrativeUserOptions = NarrativeCraftFile.loadUserOptions();
+        if(narrativeUserOptions != null) {
+            NarrativeCraftMod.getInstance().setNarrativeUserOptions(narrativeUserOptions);
+        } else {
+            NarrativeCraftMod.getInstance().setNarrativeUserOptions(new NarrativeUserOptions());
+            NarrativeCraftFile.updateUserOptions();
+        }
         if(NarrativeCraftMod.firstTime) {
             MutableComponent inkyLink = Component.literal("Inky").withStyle(style ->
                     style.withColor(ChatFormatting.YELLOW)
@@ -46,7 +55,6 @@ public class OnPlayerServerConnection {
                     discordLink
             ));
         } else {
-            NarrativeCraftFile.loadUserOptions();
             MainScreen mainScreen = new MainScreen(false, false);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
         }

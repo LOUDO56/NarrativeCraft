@@ -86,10 +86,6 @@ public class NarrativeCraftFile {
         buildDirectory = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
         dataDirectory = createDirectory(mainDirectory, DATA_FOLDER_NAME);
         mainInkFile = createFile(mainDirectory, MAIN_INK_NAME);
-        NarrativeUserOptions narrativeUserOptions = loadUserOptions();
-        if(narrativeUserOptions != null) {
-            NarrativeCraftMod.getInstance().setNarrativeUserOptions(narrativeUserOptions);
-        }
         createGlobalDialogValues();
     }
 
