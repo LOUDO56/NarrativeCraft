@@ -96,8 +96,10 @@ public class CutsceneController extends KeyframeControllerBase {
 
         for(Animation animation : cutscene.getAnimationList()) {
             Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
-            if(storyHandler.characterInStory(animation.getCharacter())) {
-                storyHandler.removeCharacter(animation.getCharacter());
+            if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                if(storyHandler.characterInStory(animation.getCharacter())) {
+                    storyHandler.removeCharacter(animation.getCharacter());
+                }
             }
             playback.start();
             playbackList.add(playback);
