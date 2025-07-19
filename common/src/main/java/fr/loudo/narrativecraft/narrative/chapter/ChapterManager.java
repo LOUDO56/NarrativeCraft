@@ -245,6 +245,12 @@ public class ChapterManager {
                 if(cameraAngleGroupList != null) {
                     for (CameraAngleGroup cameraAngleGroup : cameraAngleGroupList) {
                         cameraAngleGroup.setScene(scene);
+                        if(cameraAngleGroup.getCameraAngleList() == null) {
+                            cameraAngleGroup.setCameraAngleList(new ArrayList<>());
+                        }
+                        if(cameraAngleGroup.getKeyframeTriggerList() == null) {
+                            cameraAngleGroup.setKeyframeTriggerList(new ArrayList<>());
+                        }
                         for(CharacterStoryData characterStoryData : cameraAngleGroup.getCharacterStoryDataList()) {
                             CharacterStory characterStory = null;
                             if(characterStoryData.getCharacterStory().getCharacterType() == CharacterStory.CharacterType.MAIN) {

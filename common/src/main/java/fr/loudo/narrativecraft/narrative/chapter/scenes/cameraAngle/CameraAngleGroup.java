@@ -169,6 +169,10 @@ public class CameraAngleGroup extends NarrativeEntry {
         this.cameraAngleList = cameraAngleList;
     }
 
+    public void setKeyframeTriggerList(List<KeyframeTrigger> keyframeTriggerList) {
+        this.keyframeTriggerList = keyframeTriggerList;
+    }
+
     @Override
     public void update(String name, String description) {
         String oldName = this.name;

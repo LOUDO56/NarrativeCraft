@@ -31,7 +31,6 @@ public class StoryCommand {
                                 .executes(StoryCommand::executeValidateStory)
                         )
                         .then(Commands.literal("play")
-                                .executes(StoryCommand::playStory)
                                 .then(Commands.argument("chapter_index", IntegerArgumentType.integer())
                                         .suggests(NarrativeCraftMod.getInstance().getChapterManager().getChapterSuggestions())
                                         .then(Commands.argument("scene_name", StringArgumentType.string())
@@ -73,18 +72,6 @@ public class StoryCommand {
 
         if(validateStory(context) == 0) return 0;
         context.getSource().sendSystemMessage(Translation.message("validation.no_errors").withColor(ChatFormatting.GREEN.getColor()));
-
-        return Command.SINGLE_SUCCESS;
-    }
-
-
-    private static int playStory(CommandContext<CommandSourceStack> context) {
-
-        if(validateStory(context) == 0) return 0;
-
-        StoryHandler storyHandler = new StoryHandler();
-        storyHandler.setDebugMode(true);
-        storyHandler.start();
 
         return Command.SINGLE_SUCCESS;
     }
