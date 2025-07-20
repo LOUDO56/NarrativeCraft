@@ -20,7 +20,6 @@ In Minecraft, you already have the foundation: a 3D game world, characters, skin
 - Organized structure
 - Customizable (main screen, credits, dialogues...)
 - All-in-one system (player recording, cutscenes, multiple recordings at the same time)
-- Seamless integration with resource packs and shaders
 
 ## How does it work?
 
