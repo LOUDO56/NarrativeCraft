@@ -15,12 +15,9 @@ public class RidingAction extends Action {
 
     @Override
     public void execute(Playback.PlaybackData playbackData) {
-        Entity vehicle = null;
-        if(playbackData.getActionsData().getEntityIdRecording() == entityRecordingId) {
-            vehicle = playbackData.getEntity();
-        }
+        Entity vehicle = playbackData.getPlayback().getEntityByRecordId(entityRecordingId);
         if(vehicle != null) {
-            playbackData.getEntity() .startRiding(vehicle, true);
+            playbackData.getEntity().startRiding(vehicle, true);
         }
     }
 

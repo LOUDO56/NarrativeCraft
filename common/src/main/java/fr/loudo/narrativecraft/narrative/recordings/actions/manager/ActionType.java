@@ -22,7 +22,8 @@ public enum ActionType {
     ABSTRACT_BOAT_BUBBLE(AbstractBoatBubbleAction.class),
     ABSTRACT_BOAT_PADDLE(AbstractBoatPaddleAction.class),
     DEATH(DeathAction.class),
-    RESPAWN(RespawnAction.class);
+    RESPAWN(RespawnAction.class),
+    ITEM_PICKUP(ItemPickUpAction.class);
 
     private final Class<? extends Action> actionClass;
 

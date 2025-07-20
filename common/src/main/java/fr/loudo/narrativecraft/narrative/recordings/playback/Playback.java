@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
+import fr.loudo.narrativecraft.mixin.fields.LivingEntityFields;
 import fr.loudo.narrativecraft.mixin.fields.PlayerFields;
 import fr.loudo.narrativecraft.mixin.fields.PlayerListFields;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
@@ -20,6 +21,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.item.ItemEntity;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -321,6 +323,24 @@ public class Playback {
         return false;
     }
 
+    public Entity getEntityByRecordId(int recordingId) {
+        for(PlaybackData playbackData : entityPlaybacks) {
+            if(playbackData.actionsData.getEntityIdRecording() == recordingId) {
+                return playbackData.entity;
+            }
+        }
+        return null;
+    }
+
+    public PlaybackData getPlaybackDataByRecordId(int recordingId) {
+        for(PlaybackData playbackData : entityPlaybacks) {
+            if(playbackData.actionsData.getEntityIdRecording() == recordingId) {
+                return playbackData;
+            }
+        }
+        return null;
+    }
+
     public List<PlaybackData> getEntityPlaybacks() {
         return entityPlaybacks;
     }
@@ -427,6 +447,9 @@ public class Playback {
             }
             if (entity instanceof Mob mob) mob.setNoAi(true);
             moveEntity(location, location, true);
+            if(entity instanceof ItemEntity itemEntity) { // Drop
+                entity = ((LivingEntityFields)playback.getMasterEntity()).callCreateItemStackToDrop(itemEntity.getItem(), false, false);
+            }
             serverLevel.addFreshEntity(entity);
         }
 

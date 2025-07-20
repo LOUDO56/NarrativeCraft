@@ -62,12 +62,11 @@ public class Recording {
                     && !(entity instanceof ProjectileItem)
                     && !(entity instanceof EyeOfEnder)
                     && !(entity instanceof ThrowableItemProjectile)
-                    && !(entity instanceof ItemEntity)
             ) {
                 trackedEntities.add(entity);
                 RecordingData recordingData = new RecordingData(entity, this);
                 recordingDataList.add(recordingData);
-                if(entity instanceof VehicleEntity || entity instanceof AbstractHorse) {
+                if(entity instanceof VehicleEntity || entity instanceof AbstractHorse || entity instanceof ItemEntity) {
                     trackEntity(entity, tick);
                 }
             }
