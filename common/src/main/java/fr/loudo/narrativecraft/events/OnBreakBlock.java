@@ -12,8 +12,7 @@ public class OnBreakBlock {
     public static void breakBlock(BlockState blockState, BlockPos blockPos, ServerPlayer serverPlayer) {
         if (NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(serverPlayer)) {
             Recording recording = NarrativeCraftMod.getInstance().getRecordingHandler().getRecordingOfPlayer(serverPlayer);
-            boolean blockDropped = serverPlayer.gameMode().isSurvival();
-            BreakBlockAction breakBlockAction = new BreakBlockAction(recording.getTick(), blockPos, blockState, blockDropped);
+            BreakBlockAction breakBlockAction = new BreakBlockAction(recording.getTick(), blockPos, blockState);
             recording.getActionDataFromEntity(serverPlayer).addAction(breakBlockAction);
         }
 

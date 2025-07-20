@@ -18,15 +18,13 @@ import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 public class BreakBlockAction extends Action {
 
     private int x, y, z;
-    private boolean drop;
     private String data;
 
-    public BreakBlockAction(int tick, BlockPos blockPos, BlockState blockState, boolean drop) {
+    public BreakBlockAction(int tick, BlockPos blockPos, BlockState blockState) {
         super(tick, ActionType.BLOCK_BREAK);
         this.x = blockPos.getX();
         this.y = blockPos.getY();
         this.z = blockPos.getZ();
-        this.drop = drop;
         this.data = NbtUtils.writeBlockState(blockState).toString();
     }
 
@@ -55,7 +53,7 @@ public class BreakBlockAction extends Action {
                 }
             }
         }
-        serverLevel.destroyBlock(blockPos, drop);
+        serverLevel.destroyBlock(blockPos, false);
     }
 
     @Override

@@ -447,8 +447,10 @@ public class Playback {
             }
             if (entity instanceof Mob mob) mob.setNoAi(true);
             moveEntity(location, location, true);
-            if(entity instanceof ItemEntity itemEntity) { // Drop
-                entity = ((LivingEntityFields)playback.getMasterEntity()).callCreateItemStackToDrop(itemEntity.getItem(), false, false);
+            if(entity instanceof ItemEntity itemEntity) { // Drop Item
+                List<Action> actions = playback.getMasterEntityData().getActions().stream().filter(action -> action instanceof BreakBlockAction && action.getTick() == playback.getTick() - 1).toList();
+                boolean randomizeMotion = !actions.isEmpty();
+                entity = ((LivingEntityFields)playback.getMasterEntity()).callCreateItemStackToDrop(itemEntity.getItem(), randomizeMotion, false);
             }
             serverLevel.addFreshEntity(entity);
         }
