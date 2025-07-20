@@ -22,7 +22,6 @@ import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.components.CrashScreen;
 import fr.loudo.narrativecraft.screens.credits.CreditsScreen;
-import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -33,7 +32,6 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
-import net.minecraft.server.Main;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
@@ -86,6 +84,7 @@ public class StoryHandler {
     }
 
     public void start() {
+        if(NarrativeCraftMod.getInstance().getChapterManager().getChapters().isEmpty()) return;
         try {
             if(NarrativeCraftMod.getInstance().getStoryHandler() != null) {
                 NarrativeCraftMod.getInstance().getStoryHandler().stop(true);
@@ -106,7 +105,7 @@ public class StoryHandler {
                     }
                 }
             }
-            String content = NarrativeCraftFile.getStoryFile();
+            String content = NarrativeCraftFile.getStoryContent();
             story = new Story(content);
 
             if(save != null) {
@@ -125,6 +124,12 @@ public class StoryHandler {
                 playerSession.setChapter(loadChapter);
                 playerSession.setScene(loadScene);
                 save = null;
+            } else {
+                Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(1);
+                if(NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst().getSceneList().isEmpty()) return;
+                Scene firstScene = firstChapter.getSortedSceneList().getFirst();
+                playerSession.setChapter(firstChapter);
+                playerSession.setScene(firstScene);
             }
             if(next()) {
                 if(!isDebugMode) {

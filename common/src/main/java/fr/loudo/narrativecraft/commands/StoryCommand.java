@@ -6,6 +6,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
@@ -79,7 +80,10 @@ public class StoryCommand {
     private static int playStoryChapterStory(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, boolean debug) {
 
         if(validateStory(context) == 0) return 0;
-
+        if(!NarrativeCraftFile.getStoryFile().exists()) {
+            context.getSource().sendFailure(Translation.message("story.no_exists"));
+            return 0;
+        }
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
         Scene scene = chapter.getSceneByName(sceneName);
         StoryHandler storyHandler = new StoryHandler(chapter, scene);

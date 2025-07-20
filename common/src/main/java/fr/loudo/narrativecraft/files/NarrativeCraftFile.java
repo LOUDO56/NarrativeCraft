@@ -691,10 +691,13 @@ public class NarrativeCraftFile {
         return createDirectory(dataFolder, ANIMATIONS_FOLDER_NAME);
     }
 
-    public static String getStoryFile() throws IOException {
+    public static String getStoryContent() throws IOException {
+        return Files.readString(getStoryFile().toPath());
+    }
+
+    public static File getStoryFile() {
         File buildFolder = createDirectory(mainDirectory, BUILD_DIRECTORY_NAME);
-        File storyFile = createFile(buildFolder, STORY_FILE_NAME);
-        return Files.readString(storyFile.toPath());
+        return new File(buildFolder, STORY_FILE_NAME);
     }
 
     public static List<String> readSceneLines(Scene scene) {

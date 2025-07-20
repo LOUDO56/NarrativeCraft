@@ -41,6 +41,8 @@
 
   "narrativecraft.story.load.scene.fail": "It's impossible to start this scene on its own, as neither the characters nor the cameras have been initialized from the start. Please refer to the documentation.",
   "narrativecraft.story.load.no_story_playing": "No story is playing.",
+  "narrativecraft.story.no_exists": "Story file doesn't exist, you need to compile it from Inky. File -> Export to JSON -> name it story.json -> place it on build directory.",
+
 
   "narrativecraft.toast.description.updated": "Updated Successfully!",
 

@@ -39,9 +39,9 @@ public class OnPlayerServerConnection {
                             .withUnderlined(true)
                             .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://github.com/inkle/inky/releases/")))
             );
-            MutableComponent docLink = Component.literal("https://doc.com").withStyle(style ->
+            MutableComponent docLink = Component.literal("https://loudo56.github.io/NarrativeCraft-docs").withStyle(style ->
                     style.withUnderlined(true).
-                            withClickEvent(new ClickEvent.OpenUrl(URI.create("https://doc.com")))
+                            withClickEvent(new ClickEvent.OpenUrl(URI.create("https://loudo56.github.io/NarrativeCraft-docs")))
             );
             MutableComponent discordLink = Component.literal("discord").withStyle(style ->
                     style.withColor(ChatFormatting.BLUE)
@@ -55,6 +55,7 @@ public class OnPlayerServerConnection {
                     discordLink
             ));
         } else {
+            if(!NarrativeCraftFile.getStoryFile().exists()) return;
             MainScreen mainScreen = new MainScreen(false, false);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(mainScreen));
         }
