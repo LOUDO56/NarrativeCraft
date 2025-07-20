@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 
@@ -27,11 +28,13 @@ public class ActionsData {
         this.movementData = new ArrayList<>();
         this.actions = new ArrayList<>();
         this.entity = entity;
-        CompoundTag compoundTag = entity.saveWithoutId(new CompoundTag());
-        compoundTag.remove("UUID");
-        compoundTag.remove("Pos");
-        compoundTag.remove("Motion");
-        nbtData = compoundTag.toString();
+        if(!(entity instanceof ServerPlayer)) {
+            CompoundTag compoundTag = entity.saveWithoutId(new CompoundTag());
+            compoundTag.remove("UUID");
+            compoundTag.remove("Pos");
+            compoundTag.remove("Motion");
+            nbtData = compoundTag.toString();
+        }
         entityId = BuiltInRegistries.ENTITY_TYPE.getId(entity.getType());
         this.spawnTick = spawnTick;
         entityIdRecording = -1;
