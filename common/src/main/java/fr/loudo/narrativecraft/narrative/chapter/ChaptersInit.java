@@ -175,7 +175,7 @@ public class ChaptersInit {
 
         File dataFolder = new File(sceneFolder, "data");
         if (!dataFolder.exists() || !dataFolder.isDirectory()) {
-            return; // No data folder, which is fine
+            return; 
         }
 
         // Npcs

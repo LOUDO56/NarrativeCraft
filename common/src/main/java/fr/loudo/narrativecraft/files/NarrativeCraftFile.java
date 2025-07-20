@@ -109,7 +109,7 @@ public class NarrativeCraftFile {
         try (Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
             new Gson().toJson(DialogData.defaultValues(), writer);
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create global dialog values! {}", e);
+            NarrativeCraftMod.LOG.error("Couldn't create global dialog values! {}", e.getMessage());
         }
     }
 
@@ -153,15 +153,9 @@ public class NarrativeCraftFile {
 
     public static boolean createChapterDirectory(Chapter chapter) {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(chapter.getIndex()));
-        if (chapterFolder == null) return false; // createDirectory failed
         try {
-            File chapterDirectory = createDirectory(chapterFolder, SCENES_DIRECTORY_NAME);
-            if (chapterDirectory == null) return false; // createDirectory failed
-
             File chapterInkFile = createFile(chapterFolder, "chapter_" + chapter.getIndex() + EXTENSION_SCRIPT_FILE);
             File detailsFile = getDetailsFile(chapterFolder);
-
-            if (chapterInkFile == null || detailsFile == null) return false; // createFile failed
 
             String content = String.format("{\"name\":\"%s\",\"description\":\"%s\"}", chapter.getName(), chapter.getDescription());
             try (Writer writer = new BufferedWriter(new FileWriter(detailsFile))) {
@@ -172,7 +166,7 @@ public class NarrativeCraftFile {
             }
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create chapter!  " + e);
+            NarrativeCraftMod.LOG.error("Couldn't create chapter!  " + e.getMessage());
             return false;
         }
     }
@@ -194,22 +188,18 @@ public class NarrativeCraftFile {
 
     public static boolean createSceneFolder(Scene scene) {
         File chapterFolder = createDirectory(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
-        if (chapterFolder == null || !chapterFolder.exists()) {
+        if (!chapterFolder.exists()) {
             if (!createChapterDirectory(scene.getChapter())) return false;
             chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         }
         File scenesFolder = new File(chapterFolder.getAbsoluteFile(), SCENES_DIRECTORY_NAME);
         File sceneFolder = createDirectory(scenesFolder, getSnakeCaseName(scene.getName()));
-        if (sceneFolder == null) return false; // createDirectory failed
 
         File dataFolder = createDirectory(sceneFolder, DATA_FOLDER_NAME);
-        if (dataFolder == null) return false; // createDirectory failed
 
         try {
             File detailsFile = getDetailsFile(dataFolder);
             File sceneScriptFile = createFile(sceneFolder, getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
-
-            if (detailsFile == null || sceneScriptFile == null) return false; // createFile failed
 
             createDirectory(dataFolder, NPC_FOLDER_NAME);
             createDirectory(dataFolder, ANIMATIONS_FOLDER_NAME);
@@ -226,7 +216,7 @@ public class NarrativeCraftFile {
             }
             return true;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Couldn't create scene! {}", e);
+            NarrativeCraftMod.LOG.error("Couldn't create scene! {}", e.getMessage());
             return false;
         }
     }
@@ -247,15 +237,14 @@ public class NarrativeCraftFile {
                 writer.write(content);
             }
             File scriptFile = new File(sceneFolder, getSnakeCaseName(scene.getName()) + EXTENSION_SCRIPT_FILE);
-            scriptFile.renameTo(new File(sceneFolder, getSnakeCaseName(name) + EXTENSION_SCRIPT_FILE));
-            return true;
+            return scriptFile.renameTo(new File(sceneFolder, getSnakeCaseName(name) + EXTENSION_SCRIPT_FILE));
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update scene {} details file of chapter {}! {}", scene.getName(), scene.getChapter().getIndex(), e);
             return false;
         }
     }
 
-    public static boolean updateKnotSceneNameFromChapter(Chapter chapter, String oldName, String newName) {
+    public static void updateKnotSceneNameFromChapter(Chapter chapter, String oldName, String newName) {
         File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
         File scenesFolder = new File(chapterFolder, SCENES_DIRECTORY_NAME);
         try {
@@ -270,14 +259,12 @@ public class NarrativeCraftFile {
                     }
                 }
             }
-            return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update knot scene name file of chapter {} ! {}", chapter.getIndex(), e);
-            return false;
         }
     }
 
-    private static boolean updateCharacterSceneInkFile(String oldName, String newName) {
+    private static void updateCharacterSceneInkFile(String oldName, String newName) {
         List<Chapter> chapters = NarrativeCraftMod.getInstance().getChapterManager().getChapters();
         for (Chapter chapter : chapters) {
             File chapterFolder = new File(chaptersDirectory, String.valueOf(chapter.getIndex()));
@@ -304,11 +291,10 @@ public class NarrativeCraftFile {
                     }
                 } catch (IOException e) {
                     NarrativeCraftMod.LOG.error("Couldn't update character name on scene file {} of chapter {} ! {}", chapter.getIndex(), scene.getName(), e);
-                    return false;
+                    return;
                 }
             }
         }
-        return true;
     }
 
     public static boolean updateCutsceneFile(Scene scene) {
@@ -363,28 +349,20 @@ public class NarrativeCraftFile {
         }
     }
 
-    public static boolean updateMainScreenBackgroundFile(CameraAngleGroup cameraAngleGroup) {
+    public static void updateMainScreenBackgroundFile(CameraAngleGroup cameraAngleGroup) {
         File mainScreenFile = createFile(dataDirectory, MAIN_SCREEN_BACKGROUND_FILE_NAME);
-        if (mainScreenFile == null) return false; // createFile failed
-
         Gson gson = new GsonBuilder().create();
         try (Writer writer = new BufferedWriter(new FileWriter(mainScreenFile))) {
             gson.toJson(cameraAngleGroup, writer);
-            return true;
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't update main screen background file ! ", e);
-            return false;
         }
     }
 
     public static boolean updateAnimationFile(Animation animation) {
         File dataFolder = getDataFolderOfScene(animation.getScene());
         File animationFolder = createDirectory(dataFolder, ANIMATIONS_FOLDER_NAME);
-        if (animationFolder == null) return false; // createDirectory failed
-
         File animationFile = createFile(animationFolder, getSnakeCaseName(animation.getName()) + EXTENSION_DATA_FILE);
-        if (animationFile == null) return false; // createFile failed
-
         Gson gson = new GsonBuilder().registerTypeAdapter(Action.class, new ActionGsonParser()).create();
         try (Writer writer = new BufferedWriter(new FileWriter(animationFile))) {
             gson.toJson(animation, writer);
@@ -679,13 +657,6 @@ public class NarrativeCraftFile {
         return animationFile.exists();
     }
 
-    public static boolean animationFileExist(Scene scene, String animationName) {
-        File dataFolder = getDataFolderOfScene(scene);
-        File animationsFolder = createDirectory(dataFolder, ANIMATIONS_FOLDER_NAME);
-        File animationFile = createFile(animationsFolder, getSnakeCaseName(animationName) + EXTENSION_DATA_FILE);
-        return animationFile.exists();
-    }
-
     public static File animationFolder(Scene scene) {
         File dataFolder = getDataFolderOfScene(scene);
         return createDirectory(dataFolder, ANIMATIONS_FOLDER_NAME);
@@ -753,7 +724,7 @@ public class NarrativeCraftFile {
         try (Writer writer = new BufferedWriter(new FileWriter(mainInkFile))) {
             writer.write(stringBuilder.toString());
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Can't update main ink file! {}", e);
+            NarrativeCraftMod.LOG.error("Can't update main ink file! {}", e.getMessage());
         }
     }
 
