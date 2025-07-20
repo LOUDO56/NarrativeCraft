@@ -1,38 +1,57 @@
 # NarrativeCraft
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/5e90e895-a5a2-4e84-a9f9-9afa3355e1b0" alt="mod under construction meme" width="300">
-</p>
+<div align="center">
+    Create your own stories, easily and freely, in Minecraft.
+</div>
+<div align="center">
+    <a href="https://discord.gg/E3zzNv79DN">Join the discord</a>
+</div>
 
-NarrativeCraft is an open-source minecraft mod that allows you to create interactive stories in Minecraft (Yes, like Minecraft Story Mode).
-This mod is aimed to have a user-friendly way to create stories, from player animation to cutscene and creating dialogues.
+## Concept
 
-Here's a prototype I made 1.5 years ago
-https://www.youtube.com/watch?v=OZl5FM3JZmA (note that it's not a mod, but made with skript with 3 plugins, but everything expect script dialogue is made from scracth here)
+Minecraft is a great game for creating cinematic shots, as you can customize everything—resource packs, shaders, mods... And since Minecraft is a sandbox game, why not have the possibility to create an interactive story within it?
+
+In Minecraft, you already have the foundation: a 3D game world, characters, skins, resource packs, mods, shaders. The only limit is your imagination. This mod is aimed at people who can't make video games themselves but want to tell powerful stories, or map makers who want to add more storytelling.
+
+## Features
+
+- Ink integration
+- Support for custom triggers and commands
+- Made to be accessible to anybody
+- Organized structure
+- Customizable (main screen, credits, dialogues...)
+- All-in-one system (player recording, cutscenes, multiple recordings at the same time)
+- Seamless integration with resource packs and shaders
+
+## How does it work?
+
+NarrativeCraft uses a narrative scripting language called [Ink](https://www.inklestudios.com/ink/), which is open-source and highly scalable for integration into other projects. The Java integration was made by [bladecoder](https://github.com/bladecoder/).
+
+Ink is a great narrative scripting language because:
+- It's easy to learn.
+- Dialogues come first, logic later.
+- It has enough advanced features to create complex stories.
+
+NarrativeCraft is the middleman that interprets your dialogues and events as in-game actions.  
+By events, I mean custom lines you can write to trigger in-game actions. For example, changing the time, weather, playing cutscenes...
+
+## What does it look like in-game?
+
+I'm glad you asked! I made a small showcase to demonstrate what this mod is capable of:  
 
 
-**Note:** The dialog display mode will be replaced by progressive text accompanied by a small sound when a letter appears, as well as manual interaction via input to move on to the next dialog.
 
-# First demo so far
-
-
-
-https://github.com/user-attachments/assets/5df41d12-713a-4cc7-8545-5b61c3732d53
+https://github.com/user-attachments/assets/bfdaf12e-a0ef-4918-ac9b-37c470b16040
 
 
 
 
 
-# Ink support
-This mod will have [ink](https://www.inklestudios.com/ink/) as a support to create dialogues!
-Ink is a powerful scripting tool to create story driven games, with multiple choices and logic added to it, it's designed to be easy to understand!
+## I want to start making stories
 
-# What this mod will be capable of
-The goal of this mod is to add more emotions to your minecraft adventure map, adding characters, choices and cutscenes.
-## Record
-To make your story more immersive, characters in your story will **move like a real player**, that you pre-recorded yourself.
-EmoteCraft is planned to be supported, to have more vivid characters.
-## Cutscenes
-You'll have the ability to create cutscenes directly in the game, as well as adding triggers e.g command, sound, changing time...
-## Dialogues
-Ink will do most of the work to handle dialogues, based players's choice. Moreover, custom commands will be added to perfectly sync records and cutscenes that you will write in your `.ink` file.
+You can start learning from the NarrativeCraft [documentation](https://loudo56.github.io/NarrativeCraft-docs/getting-started/introduction-to-narrativecraft.html).
 
+## Contribution
+
+This mod is meant to be developed and used with the community. My goal is to make story creation easily accessible to as many people as possible.
+
+If you're experienced in Minecraft modding, any suggestions to refactor or improve the code are greatly appreciated.
