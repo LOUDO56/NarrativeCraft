@@ -60,6 +60,26 @@ public class DialogData {
         this.bobbingNoiseShakeStrength = dialogData.bobbingNoiseShakeStrength;
     }
 
+    public static DialogData defaultValues() {
+        return new DialogData(
+                null,
+                null,
+                new Vec2(0, 0.8f),
+                -1,
+                0xFF000000,
+                3,
+                4,
+                0.8f,
+                0.1f,
+                10,
+                90,
+                false,
+                0,
+                100,
+                250
+        );
+    }
+
     public String getCharacterName() { return characterName; }
     public void setCharacterName(String characterName) { this.characterName = characterName; }
 

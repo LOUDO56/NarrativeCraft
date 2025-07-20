@@ -106,25 +106,8 @@ public class NarrativeCraftFile {
     public static void createGlobalDialogValues() {
         if(!dataDirectory.exists()) createDirectory(mainDirectory, DATA_FOLDER_NAME);
         File dialogFile = createFile(dataDirectory, DIALOG_FILE_NAME);
-        DialogData dialogData = new DialogData(
-                null,
-                null,
-                new Vec2(0, 0.8f),
-                -1,
-                0xFF000000,
-                3,
-                4,
-                0.8f,
-                0.1f,
-                10,
-                90,
-                false,
-                0,
-                100,
-                250
-        );
         try(Writer writer = new BufferedWriter(new FileWriter(dialogFile))) {
-            new Gson().toJson(dialogData, writer);
+            new Gson().toJson(DialogData.defaultValues(), writer);
         } catch (IOException e) {
             NarrativeCraftMod.LOG.error("Couldn't create global dialog values! {}", e);
         }
