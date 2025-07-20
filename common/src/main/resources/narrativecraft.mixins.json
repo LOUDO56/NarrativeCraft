@@ -11,6 +11,7 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "LivingEntityRendererMixin",
+    "PlayerListMixin",
     "ServerLevelMixin",
     "ServerPlayerCommonMixin",
     "fields.AbstractBoatFields",
