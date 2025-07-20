@@ -12,6 +12,7 @@ public class CommandsRegister {
             TestCommand.register(commandDispatcher);
             StoryCommand.register(commandDispatcher);
             OpenScreenCommand.register(commandDispatcher);
+            LinkCommand.register(commandDispatcher);
         });
     }
 

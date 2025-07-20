@@ -10,6 +10,7 @@ import fr.loudo.narrativecraft.narrative.recordings.Recording;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
+import fr.loudo.narrativecraft.utils.ConstantsLink;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.ChatFormatting;
@@ -37,16 +38,16 @@ public class OnPlayerServerConnection {
             MutableComponent inkyLink = Component.literal("Inky").withStyle(style ->
                     style.withColor(ChatFormatting.YELLOW)
                             .withUnderlined(true)
-                            .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://github.com/inkle/inky/releases/")))
+                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.INKY)))
             );
-            MutableComponent docLink = Component.literal("https://loudo56.github.io/NarrativeCraft-docs").withStyle(style ->
+            MutableComponent docLink = Component.literal(ConstantsLink.DOCS).withStyle(style ->
                     style.withUnderlined(true).
-                            withClickEvent(new ClickEvent.OpenUrl(URI.create("https://loudo56.github.io/NarrativeCraft-docs")))
+                            withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.DOCS)))
             );
             MutableComponent discordLink = Component.literal("discord").withStyle(style ->
                     style.withColor(ChatFormatting.BLUE)
                             .withUnderlined(true)
-                            .withClickEvent(new ClickEvent.OpenUrl(URI.create("https://discord.gg/E3zzNv79DN")))
+                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.DISCORD)))
             );
             player.sendSystemMessage(Translation.message("user.first_time",
                     ModKeys.OPEN_STORY_MANAGER.getDefaultKey().getDisplayName(),
