@@ -102,11 +102,6 @@ public class Playback {
                     stopAndKill();
                     return;
                 }
-            } else {
-                if (character.getCharacterType() == CharacterStory.CharacterType.NPC) {
-                    stopAndKill();
-                    return;
-                }
             }
             stop();
         }
