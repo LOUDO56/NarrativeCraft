@@ -18,8 +18,6 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.commands.TeleportCommand;
-import net.minecraft.server.commands.TellRawCommand;
 
 import java.util.List;
 

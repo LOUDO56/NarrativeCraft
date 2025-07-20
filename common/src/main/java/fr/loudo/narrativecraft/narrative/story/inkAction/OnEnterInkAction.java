@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import com.bladecoder.ink.runtime.StoryState;
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
