@@ -770,11 +770,12 @@ public class NarrativeCraftFile {
     }
 
     public static StorySave getSave() {
-        File saveFile = createFile(savesDirectory, SAVE_FILE_NAME);
+        File saveFile = new File(savesDirectory, SAVE_FILE_NAME);
         try {
             String saveContent = Files.readString(saveFile.toPath());
             Gson gson = new GsonBuilder().create();
             StorySave save = gson.fromJson(saveContent, StorySave.class);
+            if(save == null) return null;
             Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(save.getChapterIndex());
             Scene scene = chapter.getSceneByName(save.getSceneName());
             for (CharacterStoryData characterStoryData : save.getCharacterStoryDataList()) {
