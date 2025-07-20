@@ -8,9 +8,9 @@
 
 ## Concept
 
-Minecraft is a great game for creating cinematic shots, as you can customize everything—resource packs, shaders, mods... And since Minecraft is a sandbox game, why not have the possibility to create an interactive story within it?
+Minecraft is a great game for creating cinematic shots, as you can customize everything, resource packs, shaders, mods... And since Minecraft is a sandbox game, why not have the possibility to create an interactive story within it?
 
-In Minecraft, you already have the foundation: a 3D game world, characters, skins, resource packs, mods, shaders. The only limit is your imagination. This mod is aimed at people who can't make video games themselves but want to tell powerful stories, or map makers who want to add more storytelling.
+In Minecraft, you already have the foundation: a 3D game world, characters, skins, resource packs, mods, shaders. The only limit is your imagination. This mod is aimed at people who find it hard to make video games themselves but want to tell powerful stories, or map makers who want to add more storytelling.
 
 ## Features
 
