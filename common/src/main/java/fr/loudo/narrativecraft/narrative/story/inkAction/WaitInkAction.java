@@ -20,15 +20,22 @@ public class WaitInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        double timeValue = Double.parseDouble(command[1]);
-        unitTime = command[2];
-        if(unitTime.contains("second")) {
-            secondsToWait = (long) timeValue * 1000L;
-        } else if(unitTime.contains("minute")) {
-            secondsToWait = (long) timeValue * 60 * 1000L;
-        } else if (unitTime.contains("hour")) {
-            secondsToWait = (long) timeValue * 60 * 60 * 1000L;
+        if(command.length < 2) return InkActionResult.ERROR;
+        double timeValue;
+        try {
+            timeValue = Double.parseDouble(command[1]);
+        } catch (NumberFormatException e) {
+            return InkActionResult.ERROR;
         }
+        unitTime = command[2];
+        if (unitTime.contains("second")) {
+            secondsToWait = (long) (timeValue * 1000);
+        } else if (unitTime.contains("minute")) {
+            secondsToWait = (long) (timeValue * 60 * 1000);
+        } else if (unitTime.contains("hour")) {
+            secondsToWait = (long) (timeValue * 60 * 60 * 1000);
+        }
+
         startTime = System.currentTimeMillis();
         storyHandler.getInkActionList().add(this);
         if(storyHandler.getCurrentDialogBox() != null) {
