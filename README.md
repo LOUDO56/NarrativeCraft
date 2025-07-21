@@ -20,7 +20,6 @@ In Minecraft, you already have the foundation: a 3D game world, characters, skin
 - Organized structure
 - Customizable (main screen, credits, dialogues...)
 - All-in-one system (player recording, cutscenes, multiple recordings at the same time)
-- Seamless integration with resource packs and shaders
 
 ## How does it work?
 
@@ -38,12 +37,9 @@ By events, I mean custom lines you can write to trigger in-game actions. For exa
 
 I'm glad you asked! I made a small showcase to demonstrate what this mod is capable of:  
 
-
-
-https://github.com/user-attachments/assets/bfdaf12e-a0ef-4918-ac9b-37c470b16040
-
-
-
+<a href="https://youtu.be/4VunlM_XCms">
+<img src="https://github.com/user-attachments/assets/a1c5a664-dbf4-4782-aa4e-d18ca1462579"/>
+</a>
 
 
 ## I want to start making stories
