@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.commands;
 import com.mojang.brigadier.Command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
+import fr.loudo.narrativecraft.screens.mainScreen.MainScreen;
 import fr.loudo.narrativecraft.screens.storyManager.chapters.ChaptersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.characters.CharactersScreen;
 import fr.loudo.narrativecraft.screens.storyManager.options.StoryOptionsScreen;
@@ -24,6 +25,9 @@ public class OpenScreenCommand {
                         .then(Commands.literal("story_options")
                                 .executes(OpenScreenCommand::openStoryOptions)
                         )
+                        .then(Commands.literal("main_screen")
+                                .executes(OpenScreenCommand::openMainScreen)
+                        )
                 )
         );
     }
@@ -42,6 +46,12 @@ public class OpenScreenCommand {
 
     private static int openCharacterManager(CommandContext<CommandSourceStack> context) {
         CharactersScreen screen = new CharactersScreen();
+        Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
+        return Command.SINGLE_SUCCESS;
+    }
+
+    private static int openMainScreen(CommandContext<CommandSourceStack> context) {
+        MainScreen screen = new MainScreen(false, false);
         Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(screen));
         return Command.SINGLE_SUCCESS;
     }
