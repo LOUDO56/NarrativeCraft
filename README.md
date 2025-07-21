@@ -21,6 +21,9 @@ In Minecraft, you already have the foundation: a 3D game world, characters, skin
 - Customizable (main screen, credits, dialogues...)
 - All-in-one system (player recording, cutscenes, multiple recordings at the same time)
 
+## Mod compatability
+- EmoteCraft: Emotes will be recorded, and you can play them from ink script.
+
 ## How does it work?
 
 NarrativeCraft uses a narrative scripting language called [Ink](https://www.inklestudios.com/ink/), which is open-source and highly scalable for integration into other projects. The Java integration was made by [bladecoder](https://github.com/bladecoder/).
