@@ -104,6 +104,12 @@ public class CharacterManager {
                     characterStory.getCharacterSkinController().getSkins().add(skin);
                 }
                 characterStory.getCharacterSkinController().cacheSkins();
+                File mainSkinFile = new File(skins, "main.png");
+                if(characterStory.getCharacterSkinController().getCurrentSkin() == null) {
+                    if(mainSkinFile.exists()) {
+                        characterStory.getCharacterSkinController().setCurrentSkin(mainSkinFile);
+                    }
+                }
             }
         } else if (characterStory.getCharacterType() == CharacterStory.CharacterType.NPC) {
             if(characterStory.getScene() == null) return;
@@ -115,6 +121,9 @@ public class CharacterManager {
             characterStory.getCharacterSkinController().getSkins().clear();
             if(mainSkinFile.exists()) {
                 characterStory.getCharacterSkinController().getSkins().add(mainSkinFile);
+                if(characterStory.getCharacterSkinController().getCurrentSkin() == null) {
+                    characterStory.getCharacterSkinController().setCurrentSkin(mainSkinFile);
+                }
             }
             characterStory.getCharacterSkinController().cacheSkins();
         }

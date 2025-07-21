@@ -20,6 +20,8 @@ import net.minecraft.world.damagesource.DamageSource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.UUID;
+
 // FakePlayer class from https://github.com/mt1006/mc-mocap-mod/blob/1.21.1/common/src/main/java/net/mt1006/mocap/utils/FakePlayer.java
 public class FakePlayer extends ServerPlayer
 {
@@ -30,6 +32,11 @@ public class FakePlayer extends ServerPlayer
         super(level.getServer(), level, profile, DEFAULT_CLIENT_INFO);
         this.connection = new FakePlayerNetHandler(level.getServer(), this, profile);
         setInvulnerable(true);
+    }
+
+    public static FakePlayer createRandom() {
+        UUID uuid = UUID.randomUUID();
+        return new FakePlayer(Utils.getServerLevel(), new GameProfile(uuid, uuid.toString()));
     }
 
     @Override public void displayClientMessage(@NotNull Component chatComponent, boolean actionBar) { }
