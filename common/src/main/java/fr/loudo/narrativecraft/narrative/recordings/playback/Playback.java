@@ -104,8 +104,9 @@ public class Playback {
                     stopAndKill();
                     return;
                 }
+            } else {
+                stopAndKill();
             }
-            stop();
         }
         for(PlaybackData playbackData : entityPlaybacks) {
             actionListener(playbackData);
@@ -123,7 +124,7 @@ public class Playback {
             } else {
                 List<MovementData> movementData = actionsData.getMovementData();
                 if (movementData.isEmpty()) continue;
-                playbackData.reset();
+                reset();
                 if(movementData.getFirst().getVec3().distanceTo(movementData.getLast().getVec3()) >= 0.8) {
                     if(playbackData.entity.equals(masterEntity)) {
                         playbackData.killEntity();
@@ -138,6 +139,13 @@ public class Playback {
         if(!isLooping) {
             stop();
         }
+    }
+
+    private void reset() {
+        for(PlaybackData playbackData : entityPlaybacks) {
+            playbackData.reset();
+        }
+        globalTick = 0;
     }
 
     public void killMasterEntity() {
@@ -469,6 +477,7 @@ public class Playback {
 
         public void reset() {
             this.localTick = 0;
+            actionsData.reset(entity);
         }
 
         public boolean hasEnded() {

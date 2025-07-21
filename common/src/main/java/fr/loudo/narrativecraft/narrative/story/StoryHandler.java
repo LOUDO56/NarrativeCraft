@@ -242,7 +242,6 @@ public class StoryHandler {
             if(playerSession.getChapter() == null || playerSession.getScene() == null) {
                 initChapterSceneSession();
             }
-            currentChoices = story.getCurrentChoices();
             if(inkTagTranslators.executeCurrentTags()) {
                 if(!currentChoices.isEmpty()) {
                     showChoices();
@@ -252,6 +251,7 @@ public class StoryHandler {
             } else {
                 if(currentDialogBox != null) currentDialogBox.endDialogAndDontSkip();
             }
+            currentChoices = story.getCurrentChoices();
             if(NarrativeCraftMod.getInstance().getStoryHandler() == null) return false;
             save = null;
             if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {

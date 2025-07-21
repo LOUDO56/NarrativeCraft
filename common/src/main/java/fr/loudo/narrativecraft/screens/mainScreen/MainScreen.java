@@ -35,7 +35,7 @@ public class MainScreen extends Screen {
     public static final ResourceLocation BACKGROUND_IMAGE = ResourceLocation.withDefaultNamespace("textures/narrativecraft_mainscreen/background.png");
     public static final ResourceLocation MUSIC = ResourceLocation.withDefaultNamespace("narrativecraft_mainscreen.music");
 
-    public static final SimpleSoundInstance MUSIC_INSTANCE = new SimpleSoundInstance(SoundEvent.createVariableRangeEvent(MainScreen.MUSIC).location(), SoundSource.MASTER, 0.7f, 1, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, 0.0F, 0.0F, 0.0F, true);
+    public static final SimpleSoundInstance MUSIC_INSTANCE = new SimpleSoundInstance(MainScreen.MUSIC, SoundSource.MASTER, 0.7f, 1, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, 0.0F, 0.0F, 0.0F, true);
 
     private final NarrativeCraftLogoRenderer narrativeCraftLogo = NarrativeCraftMod.getInstance().getNarrativeCraftLogoRenderer();
     private final int buttonWidth = 100;
