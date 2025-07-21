@@ -55,6 +55,13 @@ public class Playback {
 
     public boolean start() {
 
+        if(playbackType == PlaybackType.PRODUCTION) {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler.characterInStory(character)) {
+                storyHandler.removeCharacter(character);
+            }
+        }
+
         globalTick = 0;
         isPlaying = true;
         hasEnded = false;

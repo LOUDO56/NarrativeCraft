@@ -64,7 +64,7 @@ public class StoryCommand {
             localPlayer.displayClientMessage((Translation.message("validation.found_warns", Component.literal(String.valueOf(warnSize)).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.YELLOW.getColor())), false);
         }
 
-        return errorSize == 0 && warnSize == 0 ? Command.SINGLE_SUCCESS : 0;
+        return errorSize > 0 ? 0 : Command.SINGLE_SUCCESS;
     }
 
     private static int executeValidateStory(CommandContext<CommandSourceStack> context) {

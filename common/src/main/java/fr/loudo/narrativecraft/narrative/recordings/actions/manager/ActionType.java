@@ -6,7 +6,7 @@ public enum ActionType {
     SWING(SwingAction.class),
     POSE(PoseAction.class),
     ENTITY_BYTE(EntityByteAction.class),
-    LIVING_ENTITY_BYTE(EntityByteAction.class),
+    LIVING_ENTITY_BYTE(LivingEntityByteAction.class),
     ITEM_CHANGE(ItemChangeAction.class),
     HURT(HurtAction.class),
     BLOCK_PLACE(PlaceBlockAction.class),

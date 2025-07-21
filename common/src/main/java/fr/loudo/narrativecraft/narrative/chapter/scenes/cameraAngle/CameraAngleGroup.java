@@ -46,6 +46,12 @@ public class CameraAngleGroup extends NarrativeEntry {
         for(CharacterStoryData characterStoryData : characterStoryDataList) {
             if(characterStoryData.isOnlyTemplate() && playbackType == Playback.PlaybackType.PRODUCTION) continue;
             CharacterStory characterStory = characterStoryData.getCharacterStory();
+            if(playbackType == Playback.PlaybackType.PRODUCTION) {
+                StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+                if(storyHandler.characterInStory(characterStory)) {
+                    storyHandler.removeCharacter(characterStory);
+                }
+            }
             spawnCharacter(characterStoryData, playbackType);
             if(playbackType == Playback.PlaybackType.PRODUCTION) {
                 StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();

@@ -83,24 +83,12 @@ public class CutsceneController extends KeyframeControllerBase {
         }
 
         for(Subscene subscene : cutscene.getSubsceneList()) {
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                for(Animation animation : subscene.getAnimationList()) {
-                    if(storyHandler.characterInStory(animation.getCharacter())) {
-                        storyHandler.removeCharacter(animation.getCharacter());
-                    }
-                }
-            }
             subscene.start(player.serverLevel(), playbackType, false);
             playbackList.addAll(subscene.getPlaybackList());
         }
 
         for(Animation animation : cutscene.getAnimationList()) {
             Playback playback = new Playback(animation, player.serverLevel(), animation.getCharacter(), playbackType, false);
-            if(playbackType == Playback.PlaybackType.PRODUCTION) {
-                if(storyHandler.characterInStory(animation.getCharacter())) {
-                    storyHandler.removeCharacter(animation.getCharacter());
-                }
-            }
             playback.start();
             playbackList.add(playback);
         }

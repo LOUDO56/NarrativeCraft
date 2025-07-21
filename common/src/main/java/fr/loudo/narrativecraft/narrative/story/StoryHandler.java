@@ -242,6 +242,9 @@ public class StoryHandler {
             if(playerSession.getChapter() == null || playerSession.getScene() == null) {
                 initChapterSceneSession();
             }
+            if(!story.getCurrentTags().contains("on enter")) {
+                currentChoices = story.getCurrentChoices();
+            }
             if(inkTagTranslators.executeCurrentTags()) {
                 if(!currentChoices.isEmpty()) {
                     showChoices();
@@ -252,6 +255,7 @@ public class StoryHandler {
                 if(currentDialogBox != null) currentDialogBox.endDialogAndDontSkip();
             }
             currentChoices = story.getCurrentChoices();
+            // Need to check two times if the story has choices, weird behavior of ink
             if(NarrativeCraftMod.getInstance().getStoryHandler() == null) return false;
             save = null;
             if(story.canContinue() && currentCharacters.isEmpty() && playerSession.getSoloCam() == null && playerSession.getKeyframeControllerBase() == null) {
