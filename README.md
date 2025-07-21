@@ -50,4 +50,4 @@ You can start learning from the NarrativeCraft [documentation](https://loudo56.g
 
 This mod is meant to be developed and used with the community. My goal is to make story creation easily accessible to as many people as possible.
 
-If you're experienced in Minecraft modding, any suggestions to refactor or improve the code are greatly appreciated.
+If you're experienced in Minecraft modding or Java in general, any suggestions to refactor or improve the code are greatly appreciated.
