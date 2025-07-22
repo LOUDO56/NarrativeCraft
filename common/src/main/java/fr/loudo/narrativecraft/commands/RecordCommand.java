@@ -60,7 +60,7 @@ public class RecordCommand {
         }
 
         for(Subscene subscene : playerSession.getSubscenesPlaying()) {
-            subscene.stopAndKill();
+            subscene.finalizePlaybackCycle();
         }
 
         if(NarrativeCraftMod.getInstance().getRecordingHandler().isPlayerRecording(player)) {

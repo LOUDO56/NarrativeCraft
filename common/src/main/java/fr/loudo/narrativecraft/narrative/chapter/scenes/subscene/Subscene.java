@@ -45,9 +45,9 @@ public class Subscene extends NarrativeEntry {
         }
     }
 
-    public void stopAndKill() {
+    public void finalizePlaybackCycle() {
         for(Playback playback : playbackList) {
-            playback.stopAndKill();
+            playback.finalizePlaybackCycle();
         }
         NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks().removeAll(playbackList);
         playbackList.clear();

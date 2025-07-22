@@ -128,7 +128,7 @@ public class CutsceneController extends KeyframeControllerBase {
                 changeTimePosition(firstTick, false);
             }
         }
-        totalTick = getTotalTick();
+        totalTick = calculateTotalTick();
     }
 
     public void stopSession(boolean save) {
@@ -203,9 +203,11 @@ public class CutsceneController extends KeyframeControllerBase {
         changePlayingPlaybackState();
     }
 
-    public void resume() {
+    public boolean resume() {
+        if(currentTick >= totalTick) return false;
         isPlaying = true;
         changePlayingPlaybackState();
+        return true;
     }
 
     public KeyframeGroup createKeyframeGroup() {
@@ -363,7 +365,7 @@ public class CutsceneController extends KeyframeControllerBase {
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
-        currentTick = Math.min(newTick, getTotalTick());
+        currentTick = Math.min(newTick, calculateTotalTick());
         for(Playback playback : playbackList) {
             playback.changeLocationByTick(newTick, seamless);
         }
@@ -394,7 +396,7 @@ public class CutsceneController extends KeyframeControllerBase {
                 }
             }
             currentTick++;
-            if(currentTick >= getTotalTick()) {
+            if(currentTick >= totalTick) {
                 if(Minecraft.getInstance().screen instanceof CutsceneControllerScreen cutsceneControllerScreen) {
                     cutsceneControllerScreen.getControllerButton().setMessage(cutsceneControllerScreen.getPlayText());
                 }
@@ -429,7 +431,7 @@ public class CutsceneController extends KeyframeControllerBase {
         }
     }
 
-    public int getTotalTick() {
+    private int calculateTotalTick() {
         if (totalTick == 0) {
             int total = 0;
             int count = 0;
@@ -449,6 +451,10 @@ public class CutsceneController extends KeyframeControllerBase {
             if (count == 0) return 0;
             totalTick = total / count;
         }
+        return totalTick;
+    }
+
+    public int getTotalTick() {
         return totalTick;
     }
 

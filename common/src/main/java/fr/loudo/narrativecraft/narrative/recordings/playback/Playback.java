@@ -108,11 +108,11 @@ public class Playback {
             if (playbackType == PlaybackType.DEVELOPMENT) {
                 PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
                 if (!(playerSession.getKeyframeControllerBase() instanceof CutsceneController)) {
-                    stopAndKill();
+                    finalizePlaybackCycle();
                     return;
                 }
             } else {
-                stopAndKill();
+                finalizePlaybackCycle();
             }
         }
         for(PlaybackData playbackData : entityPlaybacks) {
@@ -120,18 +120,16 @@ public class Playback {
         }
     }
 
-    public void stopAndKill() {
+    public void finalizePlaybackCycle() {
+        reset();
         for (PlaybackData playbackData : entityPlaybacks) {
             if (playbackData.getEntity() == null) continue;
 
             playbackData.actionsData.reset(playbackData.entity);
             ActionsData actionsData = playbackData.getActionsData();
-            if(!isLooping) {
-                playbackData.killEntity();
-            } else {
+            if(isLooping) {
                 List<MovementData> movementData = actionsData.getMovementData();
                 if (movementData.isEmpty()) continue;
-                reset();
                 if(movementData.getFirst().getVec3().distanceTo(movementData.getLast().getVec3()) >= 0.8) {
                     if(playbackData.entity.equals(masterEntity)) {
                         playbackData.killEntity();

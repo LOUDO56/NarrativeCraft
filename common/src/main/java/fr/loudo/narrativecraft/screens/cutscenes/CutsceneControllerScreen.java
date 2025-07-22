@@ -144,8 +144,9 @@ public class CutsceneControllerScreen extends Screen {
             cutsceneController.pause();
             controllerButton.setMessage(playText);
         } else {
-            cutsceneController.resume();
-            controllerButton.setMessage(pauseText);
+            if(cutsceneController.resume()) {
+                controllerButton.setMessage(pauseText);
+            }
         }
     }
 
