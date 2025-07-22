@@ -192,7 +192,7 @@ public class NarrativeCraftFile {
             if (!createChapterDirectory(scene.getChapter())) return false;
             chapterFolder = new File(chaptersDirectory, String.valueOf(scene.getChapter().getIndex()));
         }
-        File scenesFolder = new File(chapterFolder.getAbsoluteFile(), SCENES_DIRECTORY_NAME);
+        File scenesFolder = createDirectory(chapterFolder.getAbsoluteFile(), SCENES_DIRECTORY_NAME);
         File sceneFolder = createDirectory(scenesFolder, getSnakeCaseName(scene.getName()));
 
         File dataFolder = createDirectory(sceneFolder, DATA_FOLDER_NAME);

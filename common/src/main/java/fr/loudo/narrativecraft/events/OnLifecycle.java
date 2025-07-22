@@ -8,8 +8,8 @@ public class OnLifecycle {
 
     public static void execute(MinecraftServer server) {
         if(server != null) {
-            NarrativeCraftFile.init(server);
             NarrativeCraftMod.server = server;
+            NarrativeCraftFile.init(server);
             NarrativeCraftMod.getInstance().getCharacterManager().init();
             NarrativeCraftMod.getInstance().getChapterManager().init();
         }
