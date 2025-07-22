@@ -14,3 +14,11 @@ Icons:
     Eye Closed:
          Author: Solar Icons
          Licence: https://creativecommons.org/licenses/by/4.0/
+
+Open Source Project:
+Ink:
+    Author: Inkle
+    Repo: https://github.com/inkle/ink
+blade-ink-java:
+    Author: bladecoder
+    Repo: https://github.com/bladecoder/blade-ink-java

@@ -8,8 +8,9 @@
     "${mod_author}"
   ],
   "contact": {
-    "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "homepage": "https://modrinth.com/project/narrativecraft",
+    "sources": "https://github.com/LOUDO56/NarrativeCraft",
+    "issues": "https://github.com/LOUDO56/NarrativeCraft/issues"
   },
   "license": "${license}",
   "icon": "narrativecraft.png",
