@@ -174,7 +174,7 @@ public class StoryHandler {
                 stop(false);
                 return false;
             }
-            if(!story.getCurrentChoices().isEmpty()) {
+            if(!story.getCurrentChoices().isEmpty() && save == null) {
                 showChoices();
                 return false;
             }
