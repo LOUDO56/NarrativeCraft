@@ -21,7 +21,7 @@ In Minecraft, you already have the foundation: a 3D game world, characters, skin
 - Customizable (main screen, credits, dialogues...)
 - All-in-one system (player recording, cutscenes, multiple recordings at the same time)
 
-## Mod compatability
+## Mod compatibility
 - EmoteCraft: Emotes will be recorded, and you can play them from ink script.
 
 ## How does it work?
