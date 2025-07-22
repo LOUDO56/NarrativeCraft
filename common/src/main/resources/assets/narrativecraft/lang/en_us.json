@@ -43,16 +43,17 @@
   "narrativecraft.story.load.no_story_playing": "No story is playing.",
   "narrativecraft.story.no_exists": "Story file doesn't exist, you need to compile it from Inky. File -> Export to JSON -> name it story.json -> place it on build directory.",
 
-
   "narrativecraft.toast.description.updated": "Updated Successfully!",
 
   "narrativecraft.playback.start.fail": "Can't start animation %s because no character is assigned.",
+
+  "narrativecraft.chapter.no_exists": "Chapter %s does not exists.",
+  "narrativecraft.scene.no_exists": "Scene %s from chapter %s does not exists.",
 
   "narrativecraft.screen.crash.title": "Whoops! A crash occurred...",
   "narrativecraft.screen.crash.from_mod": "Really sorry! This comes from the mod.\nPlease, report it to the discord server!",
   "narrativecraft.screen.crash.from_story": "Really sorry! This comes from the story.\nSend it to the creator of the story.",
   "narrativecraft.screen.crash.button.open_crash": "Open Crash File",
-
 
   "narrativecraft.screen.cutscenes_settings.name": "Cutscenes Settings",
   "narrativecraft.screen.cutscenes_settings.time_skip": "Change Time Skip",

@@ -16,6 +16,8 @@ import net.minecraft.client.gui.screens.options.OptionsScreen;
 import net.minecraft.client.gui.screens.options.OptionsSubScreen;
 import net.minecraft.network.chat.Component;
 
+import java.util.Locale;
+
 public class MainScreenOptionsScreen extends OptionsSubScreen {
 
     private final NarrativeUserOptions narrativeUserOptions = NarrativeCraftMod.getInstance().getNarrativeUserOptions();
@@ -43,7 +45,7 @@ public class MainScreenOptionsScreen extends OptionsSubScreen {
                 20,
                 200,
                 20,
-                Translation.message("screen.main_screen.options.dialog_speed", String.format("%.2f", narrativeUserOptions.TEXT_SPEED / 1000.0)),
+                Translation.message("screen.main_screen.options.dialog_speed", String.format(Locale.US, "%.2f", narrativeUserOptions.TEXT_SPEED / 1000.0)),
                 (400.0 - narrativeUserOptions.TEXT_SPEED) / 400.0
         ) {
             @Override

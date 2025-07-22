@@ -118,6 +118,9 @@ public class CutsceneController extends KeyframeControllerBase {
                 LocalPlayer localPlayer = Minecraft.getInstance().player;
                 localPlayer.setPos(keyframeCoordinate.getVec3());
                 keyframeCounter.set(cutscene.getKeyframeGroupList().getLast().getKeyframeList().getLast().getId());
+            } else if(!playbackList.isEmpty()) {
+                LocalPlayer localPlayer = Minecraft.getInstance().player;
+                localPlayer.setPos(playbackList.getFirst().getMasterEntity().position());
             }
 
             pause();

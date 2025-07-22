@@ -77,13 +77,21 @@ public class StoryCommand {
 
     private static int playStoryChapterStory(CommandContext<CommandSourceStack> context, int chapterIndex, String sceneName, boolean debug) {
 
-        if(validateStory(context) == 0) return 0;
         if(!NarrativeCraftFile.getStoryFile().exists()) {
             context.getSource().sendFailure(Translation.message("story.no_exists"));
             return 0;
         }
         Chapter chapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(chapterIndex);
+        if(chapter == null) {
+            context.getSource().sendFailure(Translation.message("chapter.no_exists", chapterIndex));
+            return 0;
+        }
         Scene scene = chapter.getSceneByName(sceneName);
+        if(scene == null) {
+            context.getSource().sendFailure(Translation.message("scene.no_exists", sceneName, chapterIndex));
+            return 0;
+        }
+        if(validateStory(context) == 0) return 0;
         StoryHandler storyHandler = new StoryHandler(chapter, scene);
         storyHandler.setDebugMode(true);
         storyHandler.start();
