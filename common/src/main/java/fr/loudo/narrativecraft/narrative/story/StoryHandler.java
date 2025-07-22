@@ -65,7 +65,6 @@ public class StoryHandler {
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
-        currentChoices = new ArrayList<>();
         save = NarrativeCraftFile.getSave();
         isSaving = false;
     }
@@ -78,7 +77,6 @@ public class StoryHandler {
         inkTagTranslators = new InkTagTranslators(this);
         typedSoundInstanceList = new ArrayList<>();
         inkActionList = new ArrayList<>();
-        currentChoices = new ArrayList<>();
         save = NarrativeCraftFile.getSave();
         isSaving = false;
     }
@@ -172,11 +170,11 @@ public class StoryHandler {
 
     public boolean next() {
         try {
-            if(!story.canContinue() && currentChoices.isEmpty() && save == null) {
+            if(!story.canContinue() && story.getCurrentChoices().isEmpty() && save == null) {
                 stop(false);
                 return false;
             }
-            if(!currentChoices.isEmpty()) {
+            if(!story.getCurrentChoices().isEmpty()) {
                 showChoices();
                 return false;
             }
@@ -243,16 +241,13 @@ public class StoryHandler {
                 initChapterSceneSession();
             }
             if(inkTagTranslators.executeCurrentTags()) {
-                if(!currentChoices.isEmpty()) {
+                if(!story.getCurrentChoices().isEmpty() && currentDialog.isEmpty()) {
                     showChoices();
                 } else {
                     showDialog();
                 }
             } else {
                 if(currentDialogBox != null) currentDialogBox.endDialogAndDontSkip();
-            }
-            if(!story.canContinue()) {
-                currentChoices = story.getCurrentChoices();
             }
             if(NarrativeCraftMod.getInstance().getStoryHandler() == null) return false;
             save = null;
@@ -297,11 +292,11 @@ public class StoryHandler {
     }
 
     public void showChoices() {
-        if(!currentChoices.isEmpty()) {
+        if(!story.getCurrentChoices().isEmpty()) {
             if(currentDialogBox != null) {
                 currentDialogBox.endDialogAndDontSkip();
             }
-            ChoicesScreen choicesScreen = new ChoicesScreen(currentChoices, true);
+            ChoicesScreen choicesScreen = new ChoicesScreen(story.getCurrentChoices(), true);
             Minecraft.getInstance().execute(() -> Minecraft.getInstance().setScreen(choicesScreen));
         }
     }
@@ -309,13 +304,13 @@ public class StoryHandler {
     public void choiceChoiceIndex(int index) {
         try {
             story.chooseChoiceIndex(index);
-            currentChoices.clear();
+            story.getCurrentChoices().clear();
             next();
         } catch (Exception ignored) {}
     }
 
     public boolean isFinished() {
-        return !story.canContinue() && currentChoices.isEmpty() && currentDialog.isEmpty();
+        return !story.canContinue() && story.getCurrentChoices().isEmpty() && currentDialog.isEmpty();
     }
 
     public void showDialog() {
@@ -691,10 +686,6 @@ public class StoryHandler {
 
     public List<InkAction> getInkActionList() {
         return inkActionList;
-    }
-
-    public List<Choice> getCurrentChoices() {
-        return currentChoices;
     }
 
     public boolean isSaving() {

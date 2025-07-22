@@ -78,8 +78,8 @@ public class MainScreen extends Screen {
         } else {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler != null && storyHandler.isRunning()) {
-                if(!storyHandler.getCurrentChoices().isEmpty()) {
-                    ChoicesScreen choicesScreen = new ChoicesScreen(storyHandler.getCurrentChoices(), false);
+                if(!storyHandler.getStory().getCurrentChoices().isEmpty()) {
+                    ChoicesScreen choicesScreen = new ChoicesScreen(storyHandler.getStory().getCurrentChoices(), false);
                     minecraft.setScreen(choicesScreen);
                 }
             }
