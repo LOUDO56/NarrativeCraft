@@ -38,7 +38,7 @@ public class Playback {
     private ServerLevel serverLevel;
     private PlaybackType playbackType;
     private Entity lastRideEntity;
-    private boolean isPlaying, hasEnded;
+    private boolean isPlaying, hasEnded, isUnique;
     private int globalTick;
     private final List<PlaybackData> entityPlaybacks = new ArrayList<>();
 
@@ -50,6 +50,7 @@ public class Playback {
         this.isPlaying = false;
         this.hasEnded = false;
         this.isLooping = isLooping;
+        this.isUnique = false;
         id = PlaybackHandler.ids.incrementAndGet();
     }
 
@@ -126,6 +127,11 @@ public class Playback {
             if (playbackData.getEntity() == null) continue;
 
             playbackData.actionsData.reset(playbackData.entity);
+            if(isUnique) {
+                playbackData.killEntity();
+                stop();
+                continue;
+            }
             ActionsData actionsData = playbackData.getActionsData();
             if(isLooping) {
                 List<MovementData> movementData = actionsData.getMovementData();
@@ -378,6 +384,8 @@ public class Playback {
     public PlaybackType getPlaybackType() { return playbackType; }
     public ServerLevel getServerLevel() { return serverLevel; }
     public boolean isLooping() { return isLooping; }
+    public boolean isUnique() { return isUnique; }
+    public void setUnique(boolean unique) { isUnique = unique; }
 
     public enum PlaybackType {
         DEVELOPMENT,

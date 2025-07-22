@@ -16,7 +16,7 @@ import java.util.List;
 public class SubscenePlayInkAction extends InkAction {
 
     private Subscene subscene;
-    private boolean isLooping, block;
+    private boolean isLooping, block, unique;
 
     public SubscenePlayInkAction() {}
 
@@ -28,11 +28,11 @@ public class SubscenePlayInkAction extends InkAction {
     public InkActionResult execute() {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
+            int newIndex = InkAction.getIndexFromName(command, 2);
             isLooping = false;
             try {
-                int boolIndex = command.length - 1;
-                if(command[boolIndex].equals("true") || command[boolIndex].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[boolIndex]);
+                if(command[newIndex + 1].equals("true") || command[newIndex + 1].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[newIndex + 1]);
                 }
             } catch (RuntimeException ignored) {}
             subscene = storyHandler.getPlayerSession().getScene().getSubsceneByName(name);
@@ -40,9 +40,19 @@ public class SubscenePlayInkAction extends InkAction {
             block = false;
             if(command[1].equals("start")) {
                 try {
-                    if(command[command.length - 1].equals("block")) block = true;
+                    if(command[newIndex + 2].equals("true") || command[newIndex + 2].equals("false")) {
+                        unique = Boolean.parseBoolean(command[newIndex + 2]);
+                    }
+                } catch (RuntimeException ignored) {}
+                try {
+                    if(command[newIndex + 3].equals("true") || command[newIndex + 3].equals("false")) {
+                        block = Boolean.parseBoolean(command[newIndex + 3]);
+                    }
                 } catch (RuntimeException ignored) {}
                 subscene.start(Utils.getServerLevel(), Playback.PlaybackType.PRODUCTION, isLooping);
+                for(Playback playback : subscene.getPlaybackList()) {
+                    playback.setUnique(unique);
+                }
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();
             } else if(command[1].equals("stop")) {

@@ -236,7 +236,10 @@ public class MainScreen extends Screen {
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if(pause) super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+        if(pause) {
+            super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+            return;
+        }
         if(NarrativeCraftFile.getMainScreenBackgroundFile() != null) return;
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
             guiGraphics.blit(

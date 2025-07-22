@@ -107,6 +107,18 @@ public abstract class InkAction {
         return name;
     }
 
+    public static int getIndexFromName(String[] command, int index) {
+        String name = command[index];
+        if (name.startsWith("\"")) {
+            for (int i = index; i < command.length; i++) {
+                if (command[i].endsWith("\"")) {
+                    return i;
+                }
+            }
+        }
+        return index;
+    }
+
     public static @Nullable InkAction getInkAction(InkAction.InkTagType tagType) {
         InkAction inkAction = null;
         switch (tagType) {

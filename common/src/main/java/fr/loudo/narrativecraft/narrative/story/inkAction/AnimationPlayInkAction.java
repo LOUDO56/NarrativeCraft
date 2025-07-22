@@ -17,7 +17,7 @@ public class AnimationPlayInkAction extends InkAction {
 
     private Animation animation;
     private Playback playback;
-    private boolean isLooping, block;
+    private boolean isLooping, block, unique;
 
     public AnimationPlayInkAction() {}
 
@@ -29,22 +29,27 @@ public class AnimationPlayInkAction extends InkAction {
     public InkActionResult execute() {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
+            int newIndex = InkAction.getIndexFromName(command, 2);
             isLooping = false;
             try {
-                int boolIndex = command.length - 1;
-                if(command.length > 4) {
-                    boolIndex--;
-                }
-                if(command[boolIndex].equals("true") || command[boolIndex].equals("false")) {
-                    isLooping = Boolean.parseBoolean(command[boolIndex]);
+                if(command[newIndex + 1].equals("true") || command[newIndex + 1].equals("false")) {
+                    isLooping = Boolean.parseBoolean(command[newIndex + 1]);
                 }
             } catch (RuntimeException ignored) {}
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);
             block = false;
+            unique = false;
             if(animation == null) return InkActionResult.ERROR;
             if(command[1].equals("start")) {
                 try {
-                    if(command[command.length - 1].equals("block")) block = true;
+                    if(command[newIndex + 2].equals("true") || command[newIndex + 2].equals("false")) {
+                        unique = Boolean.parseBoolean(command[newIndex + 2]);
+                    }
+                } catch (RuntimeException ignored) {}
+                try {
+                    if(command[newIndex + 3].equals("true") || command[newIndex + 3].equals("false")) {
+                        block = Boolean.parseBoolean(command[newIndex + 3]);
+                    }
                 } catch (RuntimeException ignored) {}
                 playback = new Playback(
                         animation,
@@ -53,6 +58,7 @@ public class AnimationPlayInkAction extends InkAction {
                         Playback.PlaybackType.PRODUCTION,
                         isLooping
                 );
+                playback.setUnique(unique);
                 playback.start();
                 storyHandler.getInkActionList().add(this);
                 sendDebugDetails();
