@@ -3,6 +3,9 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.TypedSoundInstance;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -20,8 +23,6 @@ public class SongSfxInkAction extends InkAction {
     private StoryHandler.FadeCurrentState fadeCurrentState;
     private long startTime, pauseStartTime;
     private TypedSoundInstance soundInstance;
-
-    public SongSfxInkAction() {}
 
     public SongSfxInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, null, command);

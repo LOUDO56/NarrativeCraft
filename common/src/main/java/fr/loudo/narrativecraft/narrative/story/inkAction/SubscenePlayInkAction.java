@@ -6,6 +6,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -17,8 +20,6 @@ public class SubscenePlayInkAction extends InkAction {
 
     private Subscene subscene;
     private boolean isLooping, block, unique;
-
-    public SubscenePlayInkAction() {}
 
     public SubscenePlayInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.SUBSCENE, command);

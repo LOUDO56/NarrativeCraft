@@ -3,6 +3,9 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
@@ -18,8 +21,6 @@ public class ChangeDayTimeInkAction extends InkAction {
     private double t;
     private String subCommand;
     private Easing easing;
-
-    public ChangeDayTimeInkAction() {}
 
     public ChangeDayTimeInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.DAYTIME, command);

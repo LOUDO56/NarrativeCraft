@@ -6,6 +6,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -18,8 +21,6 @@ public class AnimationPlayInkAction extends InkAction {
     private Animation animation;
     private Playback playback;
     private boolean isLooping, block, unique;
-
-    public AnimationPlayInkAction() {}
 
     public AnimationPlayInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.ANIMATION, command);

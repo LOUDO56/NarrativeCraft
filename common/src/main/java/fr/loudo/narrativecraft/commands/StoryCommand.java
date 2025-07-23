@@ -10,7 +10,7 @@ import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -50,13 +50,13 @@ public class StoryCommand {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer localPlayer = minecraft.player;
 
-        List<InkAction.ErrorLine> errorLineList = StoryHandler.validateStory();
-        for(InkAction.ErrorLine errorLine : errorLineList) {
+        List<ErrorLine> errorLineList = StoryHandler.validateStory();
+        for(ErrorLine errorLine : errorLineList) {
             localPlayer.displayClientMessage(errorLine.toMessage(), false);
         }
 
         int errorSize = errorLineList.stream().filter(errorLine -> !errorLine.isWarn()).toList().size();
-        int warnSize = errorLineList.stream().filter(InkAction.ErrorLine::isWarn).toList().size();
+        int warnSize = errorLineList.stream().filter(ErrorLine::isWarn).toList().size();
         if(errorSize > 0) {
             localPlayer.displayClientMessage((Translation.message("validation.found_errors", Component.literal(String.valueOf(errorSize)).withColor(ChatFormatting.GOLD.getColor())).withColor(ChatFormatting.RED.getColor())), false);
         }

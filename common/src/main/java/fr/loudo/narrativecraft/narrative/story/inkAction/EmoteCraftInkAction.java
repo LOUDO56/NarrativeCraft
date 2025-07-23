@@ -5,6 +5,9 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import io.github.kosmx.emotes.api.events.client.ClientEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
@@ -19,8 +22,6 @@ public class EmoteCraftInkAction extends InkAction {
     private boolean forced;
     private KeyframeAnimation emote;
     private String action;
-
-    public EmoteCraftInkAction() {}
 
     public EmoteCraftInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.EMOTE, command);

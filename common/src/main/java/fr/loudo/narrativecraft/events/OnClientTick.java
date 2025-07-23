@@ -96,12 +96,12 @@ public class OnClientTick {
                         toRemove.add(inkAction);
                     }
                 }
-                if (inkAction instanceof WaitInkAction waitInkAction) {
+                if (inkAction instanceof CooldownInkAction cooldownInkAction) {
                     long now = System.currentTimeMillis();
-                    long elapsedTime = now - waitInkAction.getStartTime();
-                    waitInkAction.checkForPause();
-                    if (!waitInkAction.isPaused()) {
-                        if (elapsedTime >= waitInkAction.getSecondsToWait()) {
+                    long elapsedTime = now - cooldownInkAction.getStartTime();
+                    cooldownInkAction.checkForPause();
+                    if (!cooldownInkAction.isPaused()) {
+                        if (elapsedTime >= cooldownInkAction.getSecondsToWait()) {
                             storyHandler.getInkTagTranslators().executeLaterTags();
                             toRemove.add(inkAction);
                         }
@@ -196,7 +196,7 @@ public class OnClientTick {
             return;
         }
         for(InkAction inkAction : storyHandler.getInkActionList()) {
-            if(inkAction instanceof WaitInkAction) return;
+            if(inkAction instanceof CooldownInkAction) return;
         }
         NarrativeCraftMod.server.execute(storyHandler::next);
     }

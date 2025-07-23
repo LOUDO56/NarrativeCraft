@@ -5,6 +5,9 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.phys.Vec2;
@@ -19,8 +22,6 @@ public class DialogValuesInkAction extends InkAction {
     public DialogValuesInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.DIALOG_VALUES, command);
     }
-
-    public DialogValuesInkAction() {}
 
     @Override
     public InkActionResult execute() {

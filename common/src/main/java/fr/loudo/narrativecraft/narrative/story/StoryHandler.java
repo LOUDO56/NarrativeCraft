@@ -18,6 +18,8 @@ import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.SongSfxInkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.screens.choices.ChoicesScreen;
 import fr.loudo.narrativecraft.screens.components.CrashScreen;
@@ -269,17 +271,17 @@ public class StoryHandler {
         return true;
     }
 
-    public void crash(Exception exception, boolean userFault) {
+    public void crash(Exception exception, boolean creatorFault) {
         stop(true);
         Component message;
         CrashReport report = new CrashReport(exception.getMessage(), exception);
         Minecraft.saveReport(NarrativeCraftFile.mainDirectory, report);
         if(!isDebugMode) {
-            CrashScreen crashScreen = new CrashScreen(userFault, report);
+            CrashScreen crashScreen = new CrashScreen(creatorFault, report);
             Minecraft minecraft = Minecraft.getInstance();
             minecraft.execute(() -> minecraft.setScreen(crashScreen));
         } else {
-            if(userFault) {
+            if(creatorFault) {
                 message = Translation.message("user.crash.his-fault").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal(exception.getMessage())))).withStyle(ChatFormatting.RED);
             } else {
                 message = Translation.message("user.crash.not-his-fault").withStyle(style -> style.withClickEvent(new ClickEvent.OpenFile(report.getSaveFile()))).withStyle(ChatFormatting.RED);
@@ -372,8 +374,8 @@ public class StoryHandler {
         applyTextEffects(parsed.effects);
     }
 
-    public static List<InkAction.ErrorLine> validateStory() {
-        List<InkAction.ErrorLine> errorLineList = new ArrayList<>();
+    public static List<ErrorLine> validateStory() {
+        List<ErrorLine> errorLineList = new ArrayList<>();
         Pattern inlineTagPattern = Pattern.compile("#[^#]*?(?=\\s*#|$)");
         Pattern commentPattern = Pattern.compile("^\\s*//");
 
@@ -390,7 +392,7 @@ public class StoryHandler {
 
                     if (i + 1 == 2 && !line.startsWith("#") && !line.contains("on enter")) {
                         errorLineList.add(
-                                new InkAction.ErrorLine(
+                                new ErrorLine(
                                         i + 1,
                                         scene,
                                         Translation.message("validation.on_enter").getString(),
@@ -409,12 +411,12 @@ public class StoryHandler {
                         }
 
                         String[] command = tag.split(" ");
-                        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
+                        InkTagType tagType = InkTagType.resolveType(tag);
                         if (tagType != null) {
                             InkAction inkAction = null;
-                            if(tagType == InkAction.InkTagType.EMOTE) {
+                            if(tagType == InkTagType.EMOTE) {
                                 if(!Services.PLATFORM.isModLoaded("emotecraft")) {
-                                    errorLineList.add(new InkAction.ErrorLine(
+                                    errorLineList.add(new ErrorLine(
                                             i + 1,
                                             scene,
                                             Translation.message("validation.emotecraft").getString(),
@@ -423,10 +425,10 @@ public class StoryHandler {
                                     ));
                                 }
                             } else {
-                                inkAction = InkAction.getInkAction(tagType);
+                                inkAction = tagType.getDefaultInstance();
                             }
                             if (inkAction != null) {
-                                InkAction.ErrorLine errorLine = inkAction.validate(command, i + 1, matcher.group(), scene);
+                                ErrorLine errorLine = inkAction.validate(command, i + 1, matcher.group(), scene);
                                 if (errorLine != null) {
                                     errorLineList.add(errorLine);
                                 }

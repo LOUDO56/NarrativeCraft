@@ -2,6 +2,9 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
@@ -18,8 +21,6 @@ public class FadeScreenInkAction extends InkAction {
     private long startTime, pauseStartTime;
     private boolean isPaused, isDoneFading;
     private StoryHandler.FadeCurrentState fadeCurrentState;
-
-    public FadeScreenInkAction() {}
 
     public FadeScreenInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.FADE, command);

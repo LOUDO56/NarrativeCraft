@@ -6,6 +6,8 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.keyframes.KeyframeTrigger;
 import fr.loudo.narrativecraft.narrative.story.MainScreenController;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.ScreenUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.gui.components.Button;
@@ -116,15 +118,15 @@ public class KeyframeTriggerScreen extends Screen {
                     );
                     return;
                 }
-                InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
+                InkTagType tagType = InkTagType.resolveType(tag);
                 Scene scene = null;
                 if(keyframeControllerBase instanceof CutsceneController cutsceneController) {
                     scene = cutsceneController.getCutscene().getScene();
                 }
                 if(tagType != null) {
-                    InkAction inkAction = InkAction.getInkAction(tagType);
+                    InkAction inkAction = tagType.getDefaultInstance();
                     if(inkAction != null) {
-                        InkAction.ErrorLine errorLine = inkAction.validate(tag.split(" "), i + 1, tag, scene);
+                        ErrorLine errorLine = inkAction.validate(tag.split(" "), i + 1, tag, scene);
                         if(errorLine != null) {
                             String lineText = errorLine.getLineText();
                             if(lineText.length() >= 40) {

@@ -1,6 +1,8 @@
 package fr.loudo.narrativecraft.narrative.story;
 
-import fr.loudo.narrativecraft.narrative.story.inkAction.*;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +31,7 @@ public class InkTagTranslators {
         try {
             for (int i = 0; i < tags.size(); i++) {
                 String tag = tags.get(i);
-                if(executeTag(tag) == InkAction.InkActionResult.BLOCK) {
+                if(executeTag(tag) == InkActionResult.BLOCK) {
                     tagsToExecuteLater = tags.subList(i + 1, tags.size());
                     return false;
                 }
@@ -49,7 +51,7 @@ public class InkTagTranslators {
     public void executeLaterTags() {
         for (int i = 0; i < tagsToExecuteLater.size(); i++) {
             String tag = tagsToExecuteLater.get(i);
-            if(executeTag(tag) == InkAction.InkActionResult.BLOCK) {
+            if(executeTag(tag) == InkActionResult.BLOCK) {
                 tagsToExecuteLater = tagsToExecuteLater.subList(i + 1, tagsToExecuteLater.size());
                 return;
             }
@@ -61,35 +63,21 @@ public class InkTagTranslators {
                 storyHandler.stop(false);
             }
         }
-
     }
 
-    public InkAction.InkActionResult executeTag(String tag) {
-        InkAction inkAction = null;
-        InkAction.InkTagType tagType = InkAction.getInkActionTypeByTag(tag);
-        switch (tagType) {
-            case ON_ENTER -> inkAction = new OnEnterInkAction(storyHandler, tag);
-            case CUTSCENE -> inkAction = new CutsceneInkAction(storyHandler, tag);
-            case CAMERA_ANGLE ->  inkAction = new CameraAngleInkAction(storyHandler, tag);
-            case SONG_SFX_START, SONG_SFX_STOP -> inkAction = new SongSfxInkAction(storyHandler, tag);
-            case SOUND_STOP_ALL -> storyHandler.stopAllSound();
-            case FADE -> inkAction = new FadeScreenInkAction(storyHandler, tag);
-            case WAIT -> inkAction = new WaitInkAction(storyHandler, tag);
-            case SAVE -> inkAction = new SaveInkAction(storyHandler, tag);
-            case SUBSCENE -> inkAction = new SubscenePlayInkAction(storyHandler, tag);
-            case ANIMATION -> inkAction = new AnimationPlayInkAction(storyHandler, tag);
-            case DAYTIME -> inkAction = new ChangeDayTimeInkAction(storyHandler, tag);
-            case WEATHER -> inkAction = new WeatherChangeInkAction(storyHandler, tag);
-            case MINECRAFT_COMMAND -> inkAction = new CommandMinecraftInkAction(storyHandler, tag);
-            case DIALOG_VALUES -> inkAction = new DialogValuesInkAction(storyHandler, tag);
-            case SHAKE -> inkAction = new ShakeScreenInkAction(storyHandler, tag);
-            case EMOTE -> inkAction = new EmoteCraftInkAction(storyHandler, tag);
-            case KILL_CHARACTER -> inkAction = new KillCharacterInkAction(storyHandler, tag);
-            case BORDER -> inkAction = new BorderInkAction(storyHandler, tag);
-            case null -> {}
+    public InkActionResult executeTag(String tag) {
+        InkTagType tagType = InkTagType.resolveType(tag);
+        if(tagType == null) {
+            storyHandler.crash(new Exception(String.format("Tag \"%s\" cannot be recognized.", tag)), true);
+            return InkActionResult.ERROR;
         }
-        if(inkAction == null) return InkAction.InkActionResult.PASS; // If there's no action, then continue story
-        return inkAction.execute(); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
+        try {
+            InkAction inkAction = tagType.instantiate(storyHandler, tag);
+            return inkAction.execute(); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
+        } catch (Exception e) {
+            storyHandler.crash(e, false);
+        }
+        return InkActionResult.PASS;
     }
     public List<String> getTagsToExecuteLater() {
         return tagsToExecuteLater;

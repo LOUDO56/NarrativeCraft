@@ -6,6 +6,9 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -13,8 +16,6 @@ import net.minecraft.client.Minecraft;
 public class CameraAngleInkAction extends InkAction {
 
     private String child;
-
-    public CameraAngleInkAction() {}
 
     public CameraAngleInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.CAMERA_ANGLE, command);

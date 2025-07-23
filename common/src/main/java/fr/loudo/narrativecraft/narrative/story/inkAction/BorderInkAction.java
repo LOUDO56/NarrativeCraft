@@ -2,6 +2,9 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -12,8 +15,6 @@ public class BorderInkAction extends InkAction {
 
     private int up, right, down, left, color;
     private double opacity;
-
-    public BorderInkAction() {}
 
     public BorderInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.BORDER, command);

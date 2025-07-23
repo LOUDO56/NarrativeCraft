@@ -6,6 +6,9 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
@@ -18,8 +21,6 @@ import java.util.Arrays;
 public class CommandMinecraftInkAction extends InkAction {
 
     private String commandMinecraft;
-
-    public CommandMinecraftInkAction() {}
 
     public CommandMinecraftInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.MINECRAFT_COMMAND, command);

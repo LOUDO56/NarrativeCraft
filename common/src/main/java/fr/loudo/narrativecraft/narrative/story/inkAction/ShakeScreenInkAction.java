@@ -3,6 +3,9 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
@@ -25,8 +28,6 @@ public class ShakeScreenInkAction extends InkAction {
     private float lastOffsetY = 0.0f;
     private float currentOffsetX = 0.0f;
     private float currentOffsetY = 0.0f;
-
-    public ShakeScreenInkAction() {}
 
     public ShakeScreenInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.SHAKE, command);
