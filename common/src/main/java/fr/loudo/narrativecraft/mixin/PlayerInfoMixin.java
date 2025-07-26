@@ -28,31 +28,33 @@ public class PlayerInfoMixin {
 
     @Inject(method = "getSkin", at = @At("RETURN"), cancellable = true)
     public void getSkin(CallbackInfoReturnable<PlayerSkin> cir) {
-        List<CharacterStory> characters = getRelevantCharacters();
+        try {
+            List<CharacterStory> characters = getRelevantCharacters();
 
-        for (CharacterStory character : characters) {
-            if(character.getCharacterSkinController() == null) continue;
-            if (character.getEntity() == null || character.getCharacterSkinController().getCurrentSkin() == null) continue;
-            if (!(character.getEntity() instanceof FakePlayer)) continue;
-            if (!this.profile.getName().equals(character.getName())) continue;
+            for (CharacterStory character : characters) {
+                if(character.getCharacterSkinController() == null) continue;
+                if (character.getEntity() == null || character.getCharacterSkinController().getCurrentSkin() == null) continue;
+                if (!(character.getEntity() instanceof FakePlayer)) continue;
+                if (!this.profile.getName().equals(character.getName())) continue;
 
-            PlayerSkin.Model model = character.getModel();
-            ResourceLocation skinLocation = ResourceLocation.fromNamespaceAndPath(
-                    NarrativeCraftMod.MOD_ID,
-                    "character/" + Utils.getSnakeCase(character.getName()) + "/" + Utils.getSnakeCase(character.getCharacterSkinController().getCurrentSkin().getName())
-            );
+                PlayerSkin.Model model = character.getModel();
+                ResourceLocation skinLocation = ResourceLocation.fromNamespaceAndPath(
+                        NarrativeCraftMod.MOD_ID,
+                        "character/" + Utils.getSnakeCase(character.getName()) + "/" + Utils.getSnakeCase(character.getCharacterSkinController().getCurrentSkin().getName())
+                );
 
-            PlayerSkin playerSkin = new PlayerSkin(
-                    skinLocation,
-                    null,
-                    null,
-                    null,
-                    model == null ? PlayerSkin.Model.WIDE : model,
-                    true
-            );
+                PlayerSkin playerSkin = new PlayerSkin(
+                        skinLocation,
+                        null,
+                        null,
+                        null,
+                        model == null ? PlayerSkin.Model.WIDE : model,
+                        true
+                );
 
-            cir.setReturnValue(playerSkin);
-        }
+                cir.setReturnValue(playerSkin);
+            }
+        } catch (Exception ignored) {}
     }
 
     private List<CharacterStory> getRelevantCharacters() {
