@@ -318,6 +318,11 @@ public class StoryHandler {
     public void showDialog() {
 
         ParsedDialog parsed = parseDialogContent(currentDialog);
+        if(currentDialogBox instanceof Dialog dialog) {
+            if(dialog.getEntityClient() == null) {
+                currentDialogBox = null;
+            }
+        }
 
         if (parsed.characterName.equalsIgnoreCase(currentCharacterTalking) && currentDialogBox != null) {
             currentDialogBox.getDialogAnimationScrollText().setText(parsed.cleanedText);
