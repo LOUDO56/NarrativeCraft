@@ -125,11 +125,13 @@ public class StoryHandler {
                 playerSession.setScene(loadScene);
                 save = null;
             } else {
-                Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(1);
-                if(NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst().getSceneList().isEmpty()) return;
-                Scene firstScene = firstChapter.getSortedSceneList().getFirst();
-                playerSession.setChapter(firstChapter);
-                playerSession.setScene(firstScene);
+                if(save == null) {
+                    Chapter firstChapter = NarrativeCraftMod.getInstance().getChapterManager().getChapterByIndex(1);
+                    if(NarrativeCraftMod.getInstance().getChapterManager().getChapters().getFirst().getSceneList().isEmpty()) return;
+                    Scene firstScene = firstChapter.getSortedSceneList().getFirst();
+                    playerSession.setChapter(firstChapter);
+                    playerSession.setScene(firstScene);
+                }
             }
             if(next()) {
                 if(!isDebugMode) {
