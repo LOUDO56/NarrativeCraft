@@ -82,7 +82,7 @@ public class OnClientTick {
 
         // Handle ink action currently playing.
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if (storyHandler != null && storyHandler.isRunning()) {
+        if (storyHandler != null) {
             List<InkAction> toRemove = new ArrayList<>();
             List<InkAction> inkActionToLoop = List.copyOf(storyHandler.getInkActionList());
             for (InkAction inkAction : inkActionToLoop) {

@@ -41,7 +41,6 @@ public class OnHudRender {
     public static void fadeRender(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) return;
-        if(!storyHandler.isRunning()) return;
         if(storyHandler.isLoading()) return;
         List<InkAction> toRemove = new ArrayList<>();
         for(InkAction inkAction : storyHandler.getInkActionList()) {
