@@ -319,7 +319,7 @@ public class StoryHandler {
 
         ParsedDialog parsed = parseDialogContent(currentDialog);
         if(currentDialogBox instanceof Dialog dialog) {
-            if(dialog.getEntityClient() == null) {
+            if(!dialog.getEntityServer().isAlive()) {
                 currentDialogBox = null;
             }
         }

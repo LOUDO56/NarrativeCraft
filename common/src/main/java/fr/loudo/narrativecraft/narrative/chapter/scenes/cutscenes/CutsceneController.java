@@ -395,7 +395,9 @@ public class CutsceneController extends KeyframeControllerBase {
             if(currentPreviewKeyframe != null || playbackType == Playback.PlaybackType.PRODUCTION) {
                 List<KeyframeTrigger> keyframeTriggerList = cutscene.getKeyframeTriggerList().stream().filter(keyframeTrigger -> keyframeTrigger.getTick() == currentTick).toList();
                 for(KeyframeTrigger keyframeTrigger : keyframeTriggerList) {
-                    storyHandler.getInkTagTranslators().executeTags(keyframeTrigger.getCommandsToList());
+                    for(String tag : keyframeTrigger.getCommandsToList()) {
+                        storyHandler.getInkTagTranslators().executeTag(tag);
+                    }
                 }
             }
             currentTick++;
