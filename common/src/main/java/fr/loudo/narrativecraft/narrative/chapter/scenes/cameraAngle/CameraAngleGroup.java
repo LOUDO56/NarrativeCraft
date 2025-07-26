@@ -65,7 +65,7 @@ public class CameraAngleGroup extends NarrativeEntry {
 
     public void killCharacters() {
         for(CharacterStoryData characterStoryData : characterStoryDataList) {
-            if(characterStoryData.getCharacterStory().getEntity() != null) {
+            if(characterStoryData.getCharacterStory().getEntity() != null && !characterStoryData.isOnlyTemplate()) {
                 LivingEntity entity = characterStoryData.getCharacterStory().getEntity();
                 characterStoryData.getCharacterStory().getEntity().remove(Entity.RemovalReason.KILLED);
                 if(entity instanceof FakePlayer fakePlayer) {
