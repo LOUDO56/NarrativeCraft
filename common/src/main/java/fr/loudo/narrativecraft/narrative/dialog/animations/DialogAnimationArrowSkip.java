@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.utils.Easing;
@@ -57,7 +58,7 @@ public class DialogAnimationArrowSkip {
         t = 0;
     }
 
-    public void render(PoseStack poseStack, Minecraft minecraft, MultiBufferSource bufferSource) {
+    public void render(PoseStack poseStack, Minecraft minecraft, MultiBufferSource.BufferSource bufferSource) {
         poseStack.pushPose();
         long now = System.currentTimeMillis();
         if(startTime == 0) startTime = now;
@@ -86,7 +87,7 @@ public class DialogAnimationArrowSkip {
         int newColor = ColorUtils.AHEX(newOpacity, color);
         Matrix4f matrix4f = poseStack.last().pose();
 
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(NarrativeCraftMod.dialogBackgroundRenderType);
 
         float dialogWidth;
         if(dialog != null) {
@@ -101,6 +102,8 @@ public class DialogAnimationArrowSkip {
         vertexConsumer.addVertex(matrix4f, dialogWidth - width - offsetX, -height, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
 
         poseStack.popPose();
+
+        bufferSource.endBatch();
 
     }
 

@@ -5,8 +5,8 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
-    "BoatMixin",
     "AbstractHorseMixin",
+    "BoatMixin",
     "EntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
@@ -27,7 +27,6 @@
   "client": [
     "CameraMixin",
     "GameRendererMixin",
-    "LevelRendererMixin",
     "MinecraftCommonMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",

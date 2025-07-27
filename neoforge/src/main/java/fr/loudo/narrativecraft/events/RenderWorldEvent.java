@@ -23,8 +23,12 @@ public class RenderWorldEvent {
            matrix4fstack.pushMatrix();
            matrix4fstack.mul(event.getModelViewMatrix());
            RenderSystem.applyModelViewMatrix();
+           RenderSystem.depthMask(false);
+           RenderSystem.disableDepthTest();
            OnRenderWorld.renderWorld(new PoseStack());
            matrix4fstack.popMatrix();
+           RenderSystem.depthMask(true);
+           RenderSystem.enableDepthTest();
        }
     }
 }
