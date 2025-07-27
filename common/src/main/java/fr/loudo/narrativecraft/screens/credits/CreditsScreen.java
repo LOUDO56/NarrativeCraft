@@ -68,18 +68,18 @@ public class CreditsScreen extends WinScreen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics p_282239_, int p_294762_, int p_295473_, float p_296441_) {
+    public void renderBackground(GuiGraphics guiGraphics, int p_294762_, int p_295473_, float p_296441_) {
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
-            p_282239_.blit(
+            guiGraphics.blit(
                     BACKGROUND_IMAGE,
                     0, 0,
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
                     0, 0,
-                    p_282239_.guiWidth(), p_282239_.guiHeight(),
-                    p_282239_.guiWidth(), p_282239_.guiHeight(),
-                    ColorUtils.ARGB(1, 1, 1, 1)
+                    0, 0,
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight()
             );
         } else {
-            p_282239_.fill(0, 0,  p_282239_.guiWidth(), p_282239_.guiHeight(), ColorUtils.ARGB(1, 0, 0, 0));
+            guiGraphics.fill(0, 0, guiGraphics.guiWidth(), guiGraphics.guiHeight(), 0xFF000000);
         }
     }
 }

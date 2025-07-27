@@ -31,7 +31,7 @@ public class WinScreenMixin {
     private void narrativecraft$creditSpeed(CallbackInfo ci) {
         WinScreen winScreen = (WinScreen) (Object) this;
         if(winScreen instanceof CreditsScreen) {
-            this.unmodifiedScrollSpeed = 1.4F;
+            this.unmodifiedScrollSpeed = 1.1F;
             this.scrollSpeed = this.unmodifiedScrollSpeed;
         }
     }

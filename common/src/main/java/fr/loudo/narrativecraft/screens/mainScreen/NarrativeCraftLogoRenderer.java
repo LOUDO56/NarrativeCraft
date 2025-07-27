@@ -33,10 +33,9 @@ public class NarrativeCraftLogoRenderer {
         guiGraphics.blit(
                 LOGO,
                 x, y,
-                0, 0,
+                0f, 0f,
                 256, imageHeight,
-                256, imageHeight,
-                ColorUtils.ARGB(1, 1, 1, 1)
+                256, imageHeight
         );
     }
 

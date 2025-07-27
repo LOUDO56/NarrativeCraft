@@ -228,7 +228,7 @@ public class MainScreen extends Screen {
                     Translation.message("screen.main_screen.dev_tip").getString(),
                     guiGraphics.guiWidth() / 2 - minecraft.font.width(Translation.message("screen.main_screen.dev_tip")) / 2,
                     20,
-                    ColorUtils.ARGB(1, 1, 1, 1)
+                    0xFFFFFF
             );
         }
 
@@ -245,10 +245,10 @@ public class MainScreen extends Screen {
             guiGraphics.blit(
                     BACKGROUND_IMAGE,
                     0, 0,
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
                     0, 0,
-                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                    guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                    ColorUtils.ARGB(1, 1, 1, 1)
+                    0, 0,
+                    guiGraphics.guiWidth(), guiGraphics.guiHeight()
             );
         } else {
             guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ColorUtils.ARGB(1, 0, 0, 0));
