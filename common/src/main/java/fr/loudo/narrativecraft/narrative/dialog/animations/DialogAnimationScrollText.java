@@ -101,7 +101,7 @@ public class DialogAnimationScrollText {
         }
     }
 
-    public void render(PoseStack poseStack, MultiBufferSource bufferSource) {
+    public void render(PoseStack poseStack, MultiBufferSource.BufferSource bufferSource) {
         Minecraft client = Minecraft.getInstance();
         int shownLetters = 0;
         totalLetters = lines.stream().mapToInt(String::length).sum();
@@ -138,6 +138,7 @@ public class DialogAnimationScrollText {
 
         dialog.getDialogEntityBobbing().updateLookDirection(client.getDeltaTracker().getGameTimeDeltaPartialTick(true));
 
+        bufferSource.endBatch();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, float scale) {

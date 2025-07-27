@@ -15,5 +15,7 @@ public class NarrativeCraftNeoForge {
         // Use NeoForge to bootstrap the Common mod.
         NarrativeCraftMod.LOG.info("Hello NeoForge world!");
         CommonClass.init();
+
+
     }
 }

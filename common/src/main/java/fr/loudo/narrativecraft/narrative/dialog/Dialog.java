@@ -155,7 +155,7 @@ public class Dialog extends DialogImpl {
             dialogAnimationScrollText.render(poseStack, bufferSource);
         }
 
-        bufferSource.endBatch(RenderType.textBackgroundSeeThrough());
+        bufferSource.endBatch(NarrativeCraftMod.dialogBackgroundRenderType);
         if(dialogAnimationScrollText.isFinished() && !endDialog && !unSkippable) {
             dialogAnimationArrowSkip.render(poseStack, minecraft, bufferSource);
         }
@@ -175,7 +175,7 @@ public class Dialog extends DialogImpl {
     private void drawDialogBackground(PoseStack poseStack, MultiBufferSource bufferSource, DialogOffsetSide dialogOffsetSide) {
 
         Minecraft minecraft = Minecraft.getInstance();
-        VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(NarrativeCraftMod.dialogBackgroundRenderType);
         Matrix4f matrix4f = poseStack.last().pose();
 
         if(minecraft.isPaused() && !isPaused) {

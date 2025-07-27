@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.registers;
 import fr.loudo.narrativecraft.events.*;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -29,6 +30,7 @@ public class EventsRegister {
         HudLayerRegistrationCallback.EVENT.register(HudRender::fadeHUDRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::saveIconRender);
         HudLayerRegistrationCallback.EVENT.register(HudRender::loadingRender);
+        WorldRenderEvents.LAST.register(RenderWorldEvent::renderWorld);
     }
 
 }

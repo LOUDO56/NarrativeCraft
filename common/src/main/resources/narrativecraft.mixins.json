@@ -28,7 +28,6 @@
   "client": [
     "CameraMixin",
     "GameRendererMixin",
-    "LevelRendererMixin",
     "MinecraftCommonMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",
