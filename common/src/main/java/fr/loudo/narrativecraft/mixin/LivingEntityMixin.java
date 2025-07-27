@@ -50,9 +50,9 @@ public abstract class LivingEntityMixin {
         }
     }
 
-    @Inject(method = "hurtServer", at = @At("HEAD"))
-    private void narrativecraft$hurtServer(ServerLevel serverLevel, DamageSource damageSource, float damageHit, CallbackInfoReturnable<Boolean> cir) {
-        if(damageSource.getEntity() instanceof ServerPlayer player) {
+    @Inject(method = "hurt", at = @At("HEAD"))
+    private void narrativecraft$hurtServer(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+        if(source.getEntity() instanceof ServerPlayer player) {
             RecordingHandler recordingHandler = NarrativeCraftMod.getInstance().getRecordingHandler();
             Recording recording = recordingHandler.getRecordingOfPlayer(player);
             if(recording != null) {

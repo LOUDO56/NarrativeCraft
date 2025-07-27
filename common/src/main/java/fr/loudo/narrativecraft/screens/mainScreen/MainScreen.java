@@ -26,7 +26,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import net.minecraft.world.level.GameType;
 
 public class MainScreen extends Screen {
@@ -228,7 +228,7 @@ public class MainScreen extends Screen {
                     Translation.message("screen.main_screen.dev_tip").getString(),
                     guiGraphics.guiWidth() / 2 - minecraft.font.width(Translation.message("screen.main_screen.dev_tip")) / 2,
                     20,
-                    ARGB.colorFromFloat(1, 1, 1, 1)
+                    ColorUtils.ARGB(1, 1, 1, 1)
             );
         }
 
@@ -243,21 +243,20 @@ public class MainScreen extends Screen {
         if(NarrativeCraftFile.getMainScreenBackgroundFile() != null) return;
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
             guiGraphics.blit(
-                    RenderType::guiTextured,
                     BACKGROUND_IMAGE,
                     0, 0,
                     0, 0,
                     guiGraphics.guiWidth(), guiGraphics.guiHeight(),
                     guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                    ARGB.colorFromFloat(1, 1, 1, 1)
+                    ColorUtils.ARGB(1, 1, 1, 1)
             );
         } else {
-            guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
+            guiGraphics.fill(0, 0,  guiGraphics.guiWidth(), guiGraphics.guiHeight(), ColorUtils.ARGB(1, 0, 0, 0));
         }
     }
 
     @Override
-    protected void renderBlurredBackground() {}
+    protected void renderBlurredBackground(float partialTick) {}
 
     @Override
     public boolean isPauseScreen() {

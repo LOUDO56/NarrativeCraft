@@ -63,10 +63,8 @@ public class ErrorLine {
                     .append(Component.literal("(" + fileName + ")")
                             .withColor(ChatFormatting.GRAY.getColor())
                             .withStyle(style -> style.withBold(false)
-                                    .withClickEvent(new ClickEvent.OpenFile(
-                                            NarrativeCraftFile.getSceneInkFile(scene)
-                                    ))
-                                    .withHoverEvent(new HoverEvent.ShowText(Translation.message("validation.quick_edit")))
+                                    .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, NarrativeCraftFile.getSceneInkFile(scene).getAbsolutePath()))
+                                    .withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Translation.message("validation.quick_edit")))
                             )
                     )
                     .append("\n")

@@ -136,7 +136,7 @@ public class DialogAnimationScrollText {
 
         playScrollSound();
 
-        dialog.getDialogEntityBobbing().updateLookDirection(client.getDeltaTracker().getGameTimeDeltaPartialTick(true));
+        dialog.getDialogEntityBobbing().updateLookDirection(client.getTimer().getGameTimeDeltaPartialTick(true));
 
     }
 

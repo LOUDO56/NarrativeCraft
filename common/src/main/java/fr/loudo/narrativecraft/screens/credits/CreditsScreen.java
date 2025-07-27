@@ -13,7 +13,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class CreditsScreen extends WinScreen {
 
@@ -71,16 +71,15 @@ public class CreditsScreen extends WinScreen {
     public void renderBackground(GuiGraphics p_282239_, int p_294762_, int p_295473_, float p_296441_) {
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
             p_282239_.blit(
-                    RenderType::guiTextured,
                     BACKGROUND_IMAGE,
                     0, 0,
                     0, 0,
                     p_282239_.guiWidth(), p_282239_.guiHeight(),
                     p_282239_.guiWidth(), p_282239_.guiHeight(),
-                    ARGB.colorFromFloat(1, 1, 1, 1)
+                    ColorUtils.ARGB(1, 1, 1, 1)
             );
         } else {
-            p_282239_.fill(0, 0,  p_282239_.guiWidth(), p_282239_.guiHeight(), ARGB.colorFromFloat(1, 0, 0, 0));
+            p_282239_.fill(0, 0,  p_282239_.guiWidth(), p_282239_.guiHeight(), ColorUtils.ARGB(1, 0, 0, 0));
         }
     }
 }

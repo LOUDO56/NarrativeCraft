@@ -188,7 +188,7 @@ public class TestCommand {
                 File file = new File(NarrativeCraftFile.mainDirectory, "skin.png");
                 byte[] array = Files.toByteArray(file);
                 NativeImage nativeImage = NativeImage.read(array);
-                DynamicTexture texture = new DynamicTexture(() -> "skin_texture", nativeImage);
+                DynamicTexture texture = new DynamicTexture(nativeImage);
                 Minecraft.getInstance().getTextureManager().register(
                         ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "skin.png"),
                         texture
@@ -203,7 +203,7 @@ public class TestCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), name));
-        fakePlayer.snapTo(context.getSource().getPosition());
+        fakePlayer.setPos(context.getSource().getPosition());
         context.getSource().getLevel().getServer().getPlayerList().broadcastAll(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addFreshEntity(fakePlayer);
         return Command.SINGLE_SUCCESS;
@@ -258,7 +258,7 @@ public class TestCommand {
 
         ServerPlayer player = context.getSource().getPlayer();
         FakePlayer fakePlayer = new FakePlayer(context.getSource().getLevel(), new GameProfile(UUID.randomUUID(), "fakeP"));
-        fakePlayer.snapTo(context.getSource().getPosition());
+        fakePlayer.setPose(context.getSource().getPlayer().getPose());
         player.connection.send(new ClientboundPlayerInfoUpdatePacket(ClientboundPlayerInfoUpdatePacket.Action.ADD_PLAYER, fakePlayer));
         context.getSource().getLevel().addNewPlayer(fakePlayer);
         NarrativeCraftMod.getInstance().setTestDialog(new Dialog(fakePlayer, text, textColor, bcColor, paddingX, paddingY, scale, letterSpacing, gap, maxWidth, new Vec2(0, -0.8f)));
@@ -273,7 +273,7 @@ public class TestCommand {
         ResourceLocation resourceLocation = ResourceLocation.withDefaultNamespace("custom.distant_memory");
         SoundEvent sound = SoundEvent.createVariableRangeEvent(resourceLocation);
         context.getSource().sendSuccess(() -> Component.literal("Played sound, current volume to 0.5F!"), false);
-        SimpleSoundInstance simpleSoundInstance = new SimpleSoundInstance(sound.location(), SoundSource.MASTER, 1.0F, 1.0F, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, (double)0.0F, (double)0.0F, (double)0.0F, true);
+        SimpleSoundInstance simpleSoundInstance = new SimpleSoundInstance(sound.getLocation(), SoundSource.MASTER, 1.0F, 1.0F, SoundInstance.createUnseededRandom(), true, 0, SoundInstance.Attenuation.NONE, (double)0.0F, (double)0.0F, (double)0.0F, true);
         Minecraft.getInstance().getSoundManager().play(simpleSoundInstance);
 
         scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -281,7 +281,7 @@ public class TestCommand {
             long elapsedTime = System.currentTimeMillis() - startTime;
             t = Math.min((double) elapsedTime / endTime, 1.0);
             float newVolume = (float) MathUtils.lerp(1, 0, t);
-            Minecraft.getInstance().getSoundManager().setVolume(simpleSoundInstance, newVolume);
+            Minecraft.getInstance().getSoundManager().updateSourceVolume(simpleSoundInstance.getSource(), newVolume);
             context.getSource().sendSuccess(() -> Component.literal(String.format("New volume set to: %.2f", newVolume)), false);
             if(t >= 1.0) {
                 scheduler.shutdown();
@@ -318,7 +318,7 @@ public class TestCommand {
         ((ItemDisplayFields)itemDisplay).callSetItemStack(new ItemStack(Items.ENDER_EYE));
         ((DisplayFields)itemDisplay).callSetBillboardConstraints(Display.BillboardConstraints.CENTER);
         ((DisplayFields)itemDisplay).callSetTransformation(transformation);
-        itemDisplay.snapTo(player.position());
+        itemDisplay.setPos(player.position());
         player.level().addFreshEntity(itemDisplay);
         context.getSource().getPlayer().sendSystemMessage(Component.literal("Spawned"));
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();

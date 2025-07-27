@@ -25,7 +25,7 @@ public class ScreenUtils {
     }
 
     public static void sendToast(Component name, Component description) {
-        Minecraft.getInstance().getToastManager().addToast(
+        Minecraft.getInstance().getToasts().addToast(
                 new SystemToast(
                         SystemToast.SystemToastId.NARRATOR_TOGGLE,
                         name,

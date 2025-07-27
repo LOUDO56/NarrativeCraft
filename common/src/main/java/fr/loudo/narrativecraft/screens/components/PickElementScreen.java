@@ -67,8 +67,6 @@ public class PickElementScreen extends Screen {
                 selectedList.setSelected(null);
                 moveButton.setMessage(Component.literal("▶"));
             }
-            availableList.refreshScrollAmount();
-            selectedList.refreshScrollAmount();
             moveButton.active = availableList.getSelected() != null || selectedList.getSelected() != null;
 
         }).width(20).build());
@@ -116,12 +114,6 @@ public class PickElementScreen extends Screen {
 
         public void setOtherList(TransferableStorySelectionList otherList) {
             this.otherList = otherList;
-        }
-
-
-        @Override
-        protected int scrollBarX() {
-            return this.getX() + this.width - 6;
         }
 
         @Override

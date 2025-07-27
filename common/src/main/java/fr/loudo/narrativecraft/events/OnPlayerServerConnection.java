@@ -38,16 +38,16 @@ public class OnPlayerServerConnection {
             MutableComponent inkyLink = Component.literal("Inky").withStyle(style ->
                     style.withColor(ChatFormatting.YELLOW)
                             .withUnderlined(true)
-                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.INKY)))
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ConstantsLink.INKY))
             );
             MutableComponent docLink = Component.literal(ConstantsLink.DOCS).withStyle(style ->
-                    style.withUnderlined(true).
-                            withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.DOCS)))
+                    style.withUnderlined(true)
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ConstantsLink.DOCS))
             );
             MutableComponent discordLink = Component.literal("discord").withStyle(style ->
                     style.withColor(ChatFormatting.BLUE)
                             .withUnderlined(true)
-                            .withClickEvent(new ClickEvent.OpenUrl(URI.create(ConstantsLink.DISCORD)))
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, ConstantsLink.DISCORD))
             );
             player.sendSystemMessage(Translation.message("user.first_time",
                     ModKeys.OPEN_STORY_MANAGER.getDefaultKey().getDisplayName(),

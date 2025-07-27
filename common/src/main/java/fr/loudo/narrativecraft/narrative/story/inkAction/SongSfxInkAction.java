@@ -108,7 +108,7 @@ public class SongSfxInkAction extends InkAction {
         if(isStart) {
             soundInstance = storyHandler.playSound(sound, volume, pitch, loop, soundType);
             if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_IN) {
-                Minecraft.getInstance().getSoundManager().setVolume(soundInstance, 0);
+                Minecraft.getInstance().getSoundManager().updateSourceVolume(soundInstance.getSource(), 0);
             }
         } else {
             if(fadeCurrentState == null && fadeTime == 0) {
@@ -151,7 +151,7 @@ public class SongSfxInkAction extends InkAction {
             } else if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
                 newVolume = MathUtils.lerp(volume, 0, t);
             }
-            Minecraft.getInstance().getSoundManager().setVolume(soundInstance, (float) newVolume);
+            Minecraft.getInstance().getSoundManager().updateSourceVolume(soundInstance.getSource(), (float) newVolume);
             if(t >= 1.0 && fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
                 Minecraft.getInstance().getSoundManager().stop(soundInstance);
             }

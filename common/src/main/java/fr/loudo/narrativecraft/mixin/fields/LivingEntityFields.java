@@ -11,6 +11,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(LivingEntity.class)
 public interface LivingEntityFields
 {
-    @Invoker ItemEntity callCreateItemStackToDrop(ItemStack stack, boolean randomizeMotion, boolean includeThrower);
     @Accessor static EntityDataAccessor<Byte> getDATA_LIVING_ENTITY_FLAGS() { return null; }
 }

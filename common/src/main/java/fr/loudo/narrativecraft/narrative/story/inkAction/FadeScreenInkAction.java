@@ -10,7 +10,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 
 import java.util.List;
 
@@ -34,7 +34,7 @@ public class FadeScreenInkAction extends InkAction {
         fadeIn = 2.0;
         stay = 1.0;
         fadeOut = 2.0;
-        color = ARGB.colorFromFloat(1, 0, 0, 0);
+        color = ColorUtils.ARGB(1, 0, 0, 0);
         t = 0;
         if(command.length >= 2) {
             fadeIn = Double.parseDouble(command[1]);
@@ -90,7 +90,7 @@ public class FadeScreenInkAction extends InkAction {
             startTime += now - pauseStartTime;
         }
         long elapsedTime = now - startTime;
-        int newColor = ARGB.color(opacityInterpolate, color);
+        int newColor = ColorUtils.AHEX(opacityInterpolate, color);
         guiGraphics.fill(0, 0, width, height, newColor);
         if(!isPaused) {
             t = Math.min((double) elapsedTime / endTime, 1.0);

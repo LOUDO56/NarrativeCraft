@@ -26,7 +26,7 @@ public class GameRendererMixin {
     @Shadow @Final private Minecraft minecraft;
 
     @Inject(method = "getFov", at = @At("RETURN"), cancellable = true)
-    public void getZoomLevel(CallbackInfoReturnable<Float> callbackInfo) {
+    public void getZoomLevel(CallbackInfoReturnable<Double> callbackInfo) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
         if (localPlayer == null) return;
 
@@ -50,7 +50,7 @@ public class GameRendererMixin {
         }
     }
 
-    private void keyframeControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
+    private void keyframeControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Double> callbackInfo) {
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if (keyframeControllerBase == null) return;
 
@@ -58,26 +58,26 @@ public class GameRendererMixin {
 
         if (keyframePreview == null) return;
 
-        callbackInfo.setReturnValue(keyframePreview.getKeyframeCoordinate().getFov());
+        callbackInfo.setReturnValue((double)keyframePreview.getKeyframeCoordinate().getFov());
     }
 
-    private void cutscenePlayingFov(PlayerSession playerSession, CallbackInfoReturnable<Float> callbackInfo) {
+    private void cutscenePlayingFov(PlayerSession playerSession, CallbackInfoReturnable<Double> callbackInfo) {
         CutscenePlayback cutscenePlayback = playerSession.getCutscenePlayback();
         if(cutscenePlayback == null) return;
 
         KeyframeCoordinate currentLoc = cutscenePlayback.getCurrentLoc();
         if(currentLoc == null) return;
-        callbackInfo.setReturnValue((currentLoc.getFov()));
+        callbackInfo.setReturnValue((double)(currentLoc.getFov()));
     }
 
-    private void storyCurrentCamera(CallbackInfoReturnable<Float> callbackInfo) {
+    private void storyCurrentCamera(CallbackInfoReturnable<Double> callbackInfo) {
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
         if(storyHandler == null) return;
 
         KeyframeCoordinate position = storyHandler.getPlayerSession().getSoloCam();
 
         if(position != null) {
-            callbackInfo.setReturnValue(position.getFov());
+            callbackInfo.setReturnValue((double)position.getFov());
         }
 
     }

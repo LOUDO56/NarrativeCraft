@@ -14,7 +14,7 @@ public class EmoteCraftListeners extends ModsListenerImpl {
 
     public EmoteCraftListeners(ActionDifferenceListener actionDifferenceListener) {
         super(actionDifferenceListener);
-        emotePlayEvent = (emoteData, tick, userID) -> {
+        emotePlayEvent = (emoteData, userID) -> {
             if(actionDifferenceListener.getActionsData().getEntity().getUUID().equals(userID)) {
                 EmoteAction emoteAction = new EmoteAction(actionDifferenceListener.getRecording().getTick(), emoteData.getUuid());
                 actionDifferenceListener.getActionsData().addAction(emoteAction);

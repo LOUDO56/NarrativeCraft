@@ -15,7 +15,7 @@ import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,7 @@ public class OnHudRender {
                 0,
                 guiGraphics.guiWidth(),
                 guiGraphics.guiHeight(),
-                ARGB.colorFromFloat(1, 0, 0, 0)
+                ColorUtils.ARGB(1, 0, 0, 0)
         );
         Component loadingComp = Translation.message("screen.main_screen.loading");
         guiGraphics.drawString(
@@ -102,7 +102,7 @@ public class OnHudRender {
                 loadingComp,
                 guiGraphics.guiWidth() - minecraft.font.width(loadingComp) - 10,
                 guiGraphics.guiHeight() - minecraft.font.lineHeight - 10,
-                ARGB.colorFromFloat(1, 1, 1, 1)
+                ColorUtils.ARGB(1, 1, 1, 1)
         );
     }
 }

@@ -26,6 +26,7 @@ import net.minecraft.world.item.Items;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class CharacterStoryData {
@@ -127,14 +128,16 @@ public class CharacterStoryData {
         if(BuiltInRegistries.ENTITY_TYPE.getId(characterStory.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
             livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
         } else {
-            livingEntity = (LivingEntity) characterStory.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            Optional<Entity> entity = EntityType.create(new CompoundTag(), serverLevel);
+            if(entity.isEmpty()) return;
+            livingEntity = (LivingEntity) entity.get();
             if(livingEntity instanceof Mob mob) {
                 mob.setNoAi(true);
                 mob.setSilent(true);
                 mob.setInvulnerable(true);
             }
         }
-        livingEntity.snapTo(x, y, z);
+        livingEntity.setPos(x, y, z);
         livingEntity.setXRot(pitch);
         livingEntity.setYRot(yaw);
         livingEntity.setYHeadRot(yaw);

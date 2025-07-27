@@ -8,7 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.LogoRenderer;
 import net.minecraft.client.gui.screens.WinScreen;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -43,13 +43,12 @@ public class WinScreenMixin {
             if (Utils.resourceExists(CreditsScreen.LOGO)) {
                 NarrativeCraftLogoRenderer narrativeCraftLogoRenderer = NarrativeCraftMod.getInstance().getNarrativeCraftLogoRenderer();
                 guiGraphics.blit(
-                        RenderType::guiTextured,
                         CreditsScreen.LOGO,
                         creditsScreen.width / 2 - 128, creditsScreen.height + 50 - narrativeCraftLogoRenderer.getImageHeight() / 2,
                         0, 0,
                         256, narrativeCraftLogoRenderer.getImageHeight(),
                         256, narrativeCraftLogoRenderer.getImageHeight(),
-                        ARGB.colorFromFloat(1, 1, 1, 1)
+                        ColorUtils.ARGB(1, 1, 1, 1)
                 );
             }
         } else {

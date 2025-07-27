@@ -40,6 +40,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.GameType;
 
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -277,16 +278,16 @@ public class StoryHandler {
         stop(true);
         Component message;
         CrashReport report = new CrashReport(exception.getMessage(), exception);
-        Minecraft.saveReport(NarrativeCraftFile.mainDirectory, report);
+        Minecraft minecraft = Minecraft.getInstance();
+        NarrativeCraftFile.createCrashFile(report);
         if(!isDebugMode) {
             CrashScreen crashScreen = new CrashScreen(creatorFault, report);
-            Minecraft minecraft = Minecraft.getInstance();
             minecraft.execute(() -> minecraft.setScreen(crashScreen));
         } else {
             if(creatorFault) {
-                message = Translation.message("user.crash.his-fault").withStyle(style -> style.withHoverEvent(new HoverEvent.ShowText(Component.literal(exception.getMessage())))).withStyle(ChatFormatting.RED);
+                message = Translation.message("user.crash.his-fault").withStyle(style -> style.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(exception.getMessage())))).withStyle(ChatFormatting.RED);
             } else {
-                message = Translation.message("user.crash.not-his-fault").withStyle(style -> style.withClickEvent(new ClickEvent.OpenFile(report.getSaveFile()))).withStyle(ChatFormatting.RED);
+                message = Translation.message("user.crash.not-his-fault").withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, report.getSaveFile().toFile().getAbsolutePath()))).withStyle(ChatFormatting.RED);
             }
             Minecraft.getInstance().player.displayClientMessage(
                     message,
@@ -587,7 +588,7 @@ public class StoryHandler {
     }
 
     public TypedSoundInstance playSound(SoundEvent sound, float volume, float pitch, boolean loop, SongSfxInkAction.SoundType soundType) {
-        TypedSoundInstance soundInstance = new TypedSoundInstance(sound.location(), SoundSource.MASTER, volume, pitch, loop, soundType);
+        TypedSoundInstance soundInstance = new TypedSoundInstance(sound.getLocation(), SoundSource.MASTER, volume, pitch, loop, soundType);
         typedSoundInstanceList.add(soundInstance);
         Minecraft.getInstance().getSoundManager().play(soundInstance);
         return soundInstance;
@@ -596,7 +597,7 @@ public class StoryHandler {
     public void stopSound(SoundEvent sound) {
         for(SimpleSoundInstance simpleSoundInstance : typedSoundInstanceList) {
             String soundInstancePath = simpleSoundInstance.getSound().getLocation().getPath().replace("/", ".");
-            if(soundInstancePath.equals(sound.location().getPath())) {
+            if(soundInstancePath.equals(sound.getLocation().getPath())) {
                 Minecraft.getInstance().getSoundManager().stop(simpleSoundInstance);
             }
         }

@@ -20,15 +20,20 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionGsonPa
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.utils.Utils;
+import net.minecraft.CrashReport;
+import net.minecraft.ReportType;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.server.Bootstrap;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,6 +50,7 @@ public class NarrativeCraftFile {
     private static final String DIRECTORY_NAME = NarrativeCraftMod.MOD_ID;
 
     private static final String BUILD_DIRECTORY_NAME = "build";
+    private static final String CRASH_DIRECTORY_NAME = "crash-reports";
     private static final String CHAPTERS_DIRECTORY_NAME = "chapters";
     private static final String SCENES_DIRECTORY_NAME = "scenes";
     private static final String CHARACTERS_DIRECTORY_NAME = "characters";
@@ -68,6 +74,7 @@ public class NarrativeCraftFile {
     public static final String SKINS_FOLDER_NAME = "skins";
 
     public static File mainDirectory;
+    public static File crashDirectory;
     public static File chaptersDirectory;
     public static File characterDirectory;
     public static File savesDirectory;
@@ -79,6 +86,7 @@ public class NarrativeCraftFile {
         File mainDirectoryCheck = new File(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
         NarrativeCraftMod.firstTime = !mainDirectoryCheck.exists();
         mainDirectory = createDirectory(server.getWorldPath(LevelResource.ROOT).toFile(), DIRECTORY_NAME);
+        crashDirectory = createDirectory(mainDirectory, CRASH_DIRECTORY_NAME);
         chaptersDirectory = createDirectory(mainDirectory, CHAPTERS_DIRECTORY_NAME);
         characterDirectory = createDirectory(mainDirectory, CHARACTERS_DIRECTORY_NAME);
         savesDirectory = createDirectory(mainDirectory, SAVES_DIRECTORY_NAME);
@@ -764,7 +772,6 @@ public class NarrativeCraftFile {
             }
             return save;
         } catch (IOException e) {
-            NarrativeCraftMod.LOG.error("Can't read save file!", e);
             return null;
         }
     }
@@ -881,5 +888,11 @@ public class NarrativeCraftFile {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    public static void createCrashFile(CrashReport report) {
+        File crashFile = createFile(crashDirectory, "crash-" + Util.getFilenameFormattedDateTime() + "-client.txt");
+        Bootstrap.realStdoutPrintln(report.getFriendlyReport(ReportType.CRASH));
+        report.saveToFile(crashFile.toPath(), ReportType.CRASH);
     }
 }

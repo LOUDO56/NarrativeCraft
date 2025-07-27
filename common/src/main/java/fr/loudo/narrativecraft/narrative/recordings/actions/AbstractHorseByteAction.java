@@ -22,7 +22,7 @@ public class AbstractHorseByteAction extends Action {
         if(playbackData.getEntity() instanceof AbstractHorse abstractHorse) {
             playbackData.getEntity().getEntityData().set(AbstractHorseFields.getDATA_ID_FLAGS(), currentByte);
             if(currentByte >= AbstractHorseFields.getFLAG_STANDING()) {
-                if(abstractHorse.getItemBySlot(EquipmentSlot.SADDLE).isEmpty()) {
+                if(!abstractHorse.isSaddled()) {
                     abstractHorse.ejectPassengers();
                 }
             }

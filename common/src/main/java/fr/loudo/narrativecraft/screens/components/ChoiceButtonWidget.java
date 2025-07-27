@@ -9,7 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class ChoiceButtonWidget extends AbstractButton {
 
@@ -95,9 +95,9 @@ public class ChoiceButtonWidget extends AbstractButton {
     }
 
     public void setOpacity(int opacity) {
-        backgroundColor = ARGB.color(opacity, backgroundColor);
-        textColor = ARGB.color(opacity, textColor);
-        hoverColor = ARGB.color(opacity, hoverColor);
+        backgroundColor = ColorUtils.AHEX(opacity, backgroundColor);
+        textColor = ColorUtils.AHEX(opacity, textColor);
+        hoverColor = ColorUtils.AHEX(opacity, hoverColor);
     }
 
     public boolean isCanPress() {

@@ -12,7 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.vehicle.AbstractBoat;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -30,8 +30,7 @@ public class ActionDifferenceListener {
             EquipmentSlot.CHEST,
             EquipmentSlot.BODY,
             EquipmentSlot.LEGS,
-            EquipmentSlot.FEET,
-            EquipmentSlot.SADDLE
+            EquipmentSlot.FEET
     );
 
     private final ActionsData actionsData;
@@ -123,7 +122,7 @@ public class ActionDifferenceListener {
     }
 
     public void abstractBoatEntityBubbleListener(int abstractBoatCurrentBubble) {
-        if(actionsData.getEntity() instanceof AbstractBoat) {
+        if(actionsData.getEntity() instanceof Boat) {
             if(abstractBoatEntityBubbleState != abstractBoatCurrentBubble) {
                 AbstractBoatBubbleAction action = new AbstractBoatBubbleAction(recording.getTick(), abstractBoatCurrentBubble, abstractBoatEntityBubbleState);
                 abstractBoatEntityBubbleState = abstractBoatCurrentBubble;
@@ -133,7 +132,7 @@ public class ActionDifferenceListener {
     }
 
     public void abstractBoatEntityPaddleListener(boolean left, boolean right) {
-        if(actionsData.getEntity() instanceof AbstractBoat) {
+        if(actionsData.getEntity() instanceof Boat) {
             if(abstractBoatEntityLeftPaddleState != left || abstractBoatEntityRightPaddleState != right) {
                 AbstractBoatPaddleAction action = new AbstractBoatPaddleAction(
                         recording.getTick(),

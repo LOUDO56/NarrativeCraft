@@ -11,6 +11,7 @@ import fr.loudo.narrativecraft.narrative.dialog.geometrics.DialogueTail;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -372,7 +373,8 @@ public class Dialog extends DialogImpl {
         Vec3 camPos = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         Vec3 lastPos = new Vec3(entityClient.xOld, entityClient.yOld, entityClient.zOld);
         Vec3 newPos = entityClient.position();
-        Vec3 interpolatedPos = Mth.lerp(Minecraft.getInstance().getDeltaTracker().getGameTimeDeltaPartialTick(true), lastPos, newPos);
+        DeltaTracker deltaTracker = Minecraft.getInstance().getTimer();
+        Vec3 interpolatedPos = MathUtils.lerp(deltaTracker.getGameTimeDeltaPartialTick(true), lastPos, newPos);
         double offsetX = 0;
         double offsetZ = 0;
 

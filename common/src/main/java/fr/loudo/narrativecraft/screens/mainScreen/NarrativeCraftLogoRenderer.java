@@ -4,7 +4,7 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class NarrativeCraftLogoRenderer {
 
@@ -31,13 +31,12 @@ public class NarrativeCraftLogoRenderer {
 
     public void render(GuiGraphics guiGraphics, int x, int y) {
         guiGraphics.blit(
-                RenderType::guiTextured,
                 LOGO,
                 x, y,
                 0, 0,
                 256, imageHeight,
                 256, imageHeight,
-                ARGB.colorFromFloat(1, 1, 1, 1)
+                ColorUtils.ARGB(1, 1, 1, 1)
         );
     }
 

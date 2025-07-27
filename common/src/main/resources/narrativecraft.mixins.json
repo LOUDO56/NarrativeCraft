@@ -5,12 +5,11 @@
   "refmap": "${mod_id}.refmap.json",
   "compatibilityLevel": "JAVA_18",
   "mixins": [
-    "AbstractBoatMixin",
+    "BoatMixin",
     "AbstractHorseMixin",
     "EntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "LivingEntityRendererMixin",
     "PlayerListMixin",
     "ServerLevelMixin",
     "ServerPlayerCommonMixin",
@@ -34,7 +33,6 @@
     "Utf8StringMixin",
     "WinScreenMixin",
     "fields.FontFields",
-    "fields.GameRendererFields",
     "fields.WinScreenFields"
   ],
   "server": [],

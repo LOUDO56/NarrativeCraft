@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.util.ARGB;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import org.joml.Matrix4f;
 
 public class DialogAnimationArrowSkip {
@@ -83,7 +83,7 @@ public class DialogAnimationArrowSkip {
         } else {
             startTime = 0;
         }
-        int newColor = ARGB.color(newOpacity, color);
+        int newColor = ColorUtils.AHEX(newOpacity, color);
         Matrix4f matrix4f = poseStack.last().pose();
 
         VertexConsumer vertexConsumer = bufferSource.getBuffer(RenderType.textBackgroundSeeThrough());

@@ -28,13 +28,7 @@ dependencies {
     // fabric and neoforge both bundle mixinextras, so it is safe to use it in common
     compileOnly group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
     annotationProcessor group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.5'
-    compileOnly (group: 'io.github.kosmx.emotes', name: 'emotesAPI', version: '2.6.1') {
-        exclude group: 'dev.kosmx.player-anim', module: 'player-animation-lib'
-        exclude group: 'dev.kosmx.player-anim', module: 'anim-core'
-        exclude group: 'net.raphimc', module: 'NoteBlockLib'
-    }
-    compileOnly group: 'dev.kosmx.player-anim', name: 'player-animation-lib', version: '2.0.2+1.21.5'
-    compileOnly group: 'dev.kosmx.player-anim', name: 'anim-core', version: '2.0.2+1.21.5'
+    compileOnly (group: 'io.github.kosmx.emotes', name: 'emotesAPI', version: "${emotesAPI_version}")
     implementation "com.bladecoder.ink:blade-ink:1.2.0+nc"
 }
 

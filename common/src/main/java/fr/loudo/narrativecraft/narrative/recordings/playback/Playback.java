@@ -18,6 +18,7 @@ import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
@@ -26,6 +27,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class Playback {
@@ -264,7 +266,9 @@ public class Playback {
             masterEntity = new FakePlayer(serverLevel, gameProfile);
             masterEntity.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
         } else {
-            masterEntity = (LivingEntity) character.getEntityType().create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            Optional<Entity> entity = EntityType.create(new CompoundTag(), serverLevel);
+            if(entity.isEmpty()) return;
+            masterEntity = (LivingEntity) entity.get();
             if (masterEntity instanceof Mob mob) mob.setNoAi(true);
         }
 
@@ -459,7 +463,9 @@ public class Playback {
             ServerLevel serverLevel = Utils.getServerLevel();
             if(actionsData.getEntityId() == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) return;
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(actionsData.getEntityId());
-            entity = entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
+            Optional<Entity> entity1 = entityType.create(new CompoundTag(), serverLevel);
+            if(entity1.isEmpty()) return;
+            entity = entity1.get();
             if(entity == null) return;
             try {
                 entity.load(Utils.nbtFromString(actionsData.getNbtData()));
@@ -471,7 +477,9 @@ public class Playback {
             if(entity instanceof ItemEntity itemEntity) { // Drop Item
                 List<Action> actions = playback.getMasterEntityData().getActions().stream().filter(action -> action instanceof BreakBlockAction && action.getTick() == playback.getTick() - 1).toList();
                 boolean randomizeMotion = !actions.isEmpty();
-                entity = ((LivingEntityFields)playback.getMasterEntity()).callCreateItemStackToDrop(itemEntity.getItem(), randomizeMotion, false);
+                if(playback.getMasterEntity() instanceof FakePlayer fakePlayer) {
+                    fakePlayer.drop(itemEntity.getItem(), randomizeMotion, false);
+                }
             }
             serverLevel.addFreshEntity(entity);
         }

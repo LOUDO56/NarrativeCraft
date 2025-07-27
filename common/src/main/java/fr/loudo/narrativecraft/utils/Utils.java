@@ -50,7 +50,7 @@ public class Utils {
     // https://github.com/mt1006/mc-mocap-mod/blob/1.21.1/common/src/main/java/net/mt1006/mocap/utils/Utils.java#L61
     public static CompoundTag nbtFromString(String nbtString) throws CommandSyntaxException
     {
-        return TagParser.parseCompoundAsArgument(new StringReader(nbtString));
+        return TagParser.parseTag(nbtString);
     }
 
     public static BlockState getBlockStateFromData(String data, RegistryAccess registry) {
