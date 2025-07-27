@@ -1,11 +1,8 @@
 package fr.loudo.narrativecraft.narrative.recordings.actions.modsListeners;
 
-import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.recordings.actions.EmoteAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionDifferenceListener;
-import io.github.kosmx.emotes.api.events.client.ClientEmoteEvents;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteEvents;
-import net.minecraft.server.level.ServerPlayer;
 
 public class EmoteCraftListeners extends ModsListenerImpl {
 

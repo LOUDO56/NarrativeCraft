@@ -21,8 +21,8 @@
     "fields.ItemDisplayFields",
     "fields.LivingEntityFields",
     "fields.PlayerFields",
-    "fields.TextDisplayFields",
-    "fields.PlayerListFields"
+    "fields.PlayerListFields",
+    "fields.TextDisplayFields"
   ],
   "client": [
     "CameraMixin",

@@ -20,8 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.net.URI;
-
 public class OnPlayerServerConnection {
 
     public static void playerJoin(ServerPlayer player) {

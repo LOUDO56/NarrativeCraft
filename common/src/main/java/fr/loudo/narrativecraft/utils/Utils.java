@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.utils;
 
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.realmsclient.RealmsMainScreen;
 import fr.loudo.narrativecraft.NarrativeCraftMod;

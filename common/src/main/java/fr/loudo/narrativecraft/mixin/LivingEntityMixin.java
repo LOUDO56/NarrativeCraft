@@ -8,7 +8,6 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.HurtAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.SleepAction;
 import fr.loudo.narrativecraft.narrative.recordings.actions.SwingAction;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;

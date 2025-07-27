@@ -2,10 +2,10 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
-import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class DialogAppearAnimation2d {
 

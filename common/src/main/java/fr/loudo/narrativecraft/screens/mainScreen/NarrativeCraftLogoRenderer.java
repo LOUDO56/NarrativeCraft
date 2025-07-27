@@ -2,9 +2,7 @@ package fr.loudo.narrativecraft.screens.mainScreen;
 
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
-import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class NarrativeCraftLogoRenderer {
 

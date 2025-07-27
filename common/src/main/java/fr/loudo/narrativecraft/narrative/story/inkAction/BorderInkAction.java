@@ -5,11 +5,11 @@ import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class BorderInkAction extends InkAction {
 

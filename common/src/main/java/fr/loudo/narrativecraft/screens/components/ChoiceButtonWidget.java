@@ -3,13 +3,13 @@ package fr.loudo.narrativecraft.screens.components;
 import com.bladecoder.ink.runtime.Choice;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
-import fr.loudo.narrativecraft.utils.ColorUtils;
 
 public class ChoiceButtonWidget extends AbstractButton {
 

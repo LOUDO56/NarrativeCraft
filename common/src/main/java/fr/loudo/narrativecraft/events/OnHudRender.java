@@ -10,12 +10,12 @@ import fr.loudo.narrativecraft.narrative.story.StorySave;
 import fr.loudo.narrativecraft.narrative.story.inkAction.BorderInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.FadeScreenInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
+import fr.loudo.narrativecraft.utils.ColorUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import fr.loudo.narrativecraft.utils.ColorUtils;
 
 import java.util.ArrayList;
 import java.util.List;
