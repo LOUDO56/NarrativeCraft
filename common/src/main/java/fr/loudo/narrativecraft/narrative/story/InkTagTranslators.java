@@ -1,8 +1,10 @@
 package fr.loudo.narrativecraft.narrative.story;
 
+import fr.loudo.narrativecraft.narrative.story.inkAction.EmoteCraftInkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.InkAction;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
+import fr.loudo.narrativecraft.platform.Services;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,6 +75,7 @@ public class InkTagTranslators {
         }
         try {
             InkAction inkAction = tagType.instantiate(storyHandler, tag);
+            if(inkAction instanceof EmoteCraftInkAction && !Services.PLATFORM.isModLoaded("emotecraft")) return InkActionResult.PASS;
             return inkAction.execute(); // If action return false, then it's a blocking command e.g. cutscene (it will wait for the cutscene to end before continuing)
         } catch (Exception e) {
             storyHandler.crash(e, false);

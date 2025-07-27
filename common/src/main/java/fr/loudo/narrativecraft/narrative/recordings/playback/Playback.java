@@ -14,6 +14,7 @@ import fr.loudo.narrativecraft.narrative.recordings.MovementData;
 import fr.loudo.narrativecraft.narrative.recordings.actions.*;
 import fr.loudo.narrativecraft.narrative.session.PlayerSession;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.platform.Services;
 import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Utils;
@@ -223,6 +224,7 @@ public class Playback {
         if(playbackData.getEntity() == null) return;
         List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         for(Action action : actionToBePlayed) {
+            if(action instanceof EmoteAction && !Services.PLATFORM.isModLoaded("emotecraft")) continue;
             action.execute(playbackData);
         }
     }
@@ -231,6 +233,7 @@ public class Playback {
         List<Action> actionToBePlayed = playbackData.getActionsData().getActions().stream().filter(action -> globalTick == action.getTick()).toList();
         actionToBePlayed = actionToBePlayed.reversed();
         for(Action action : actionToBePlayed) {
+            if(action instanceof EmoteAction && !Services.PLATFORM.isModLoaded("emotecraft")) continue;
             if(!(action instanceof DeathAction) && playbackData.getEntity() == null) continue;
             if (action instanceof PoseAction poseAction) {
                 poseAction.rewind(playbackData);
