@@ -32,9 +32,13 @@ public class GameRendererMixin {
 
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
 
-        keyframeControllerFov(playerSession, callbackInfo);
-        cutscenePlayingFov(playerSession, callbackInfo);
-        storyCurrentCamera(callbackInfo);
+        try {
+            keyframeControllerFov(playerSession, callbackInfo);
+            cutscenePlayingFov(playerSession, callbackInfo);
+            storyCurrentCamera(callbackInfo);
+        } catch (Exception ignored) {
+
+        }
 
     }
 
