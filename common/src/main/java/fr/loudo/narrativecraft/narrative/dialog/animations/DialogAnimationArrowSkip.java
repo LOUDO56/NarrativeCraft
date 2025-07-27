@@ -100,6 +100,7 @@ public class DialogAnimationArrowSkip {
         vertexConsumer.addVertex(matrix4f, dialogWidth + width - offsetX, 0, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
         vertexConsumer.addVertex(matrix4f, dialogWidth - width - offsetX, -height, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
 
+        bufferSource.endBatch();
         poseStack.popPose();
 
         bufferSource.endBatch();

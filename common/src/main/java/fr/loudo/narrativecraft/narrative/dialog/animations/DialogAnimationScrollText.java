@@ -140,6 +140,7 @@ public class DialogAnimationScrollText {
 
         bufferSource.endBatch();
 
+        bufferSource.endBatch();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker, float scale) {
