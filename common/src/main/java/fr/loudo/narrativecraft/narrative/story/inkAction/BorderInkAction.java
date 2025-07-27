@@ -57,7 +57,10 @@ public class BorderInkAction extends InkAction {
         Minecraft minecraft = Minecraft.getInstance();
         int widthScreen = minecraft.getWindow().getGuiScaledWidth();
         int heightScreen = minecraft.getWindow().getGuiScaledHeight();
-        int guiScale = Math.max(1, minecraft.options.guiScale().get());
+        int guiScale = minecraft.options.guiScale().get();
+        if(minecraft.options.guiScale().get() == 0) {
+            guiScale = 3;
+        }
         // UP
         guiGraphics.fill(0, 0, widthScreen, up / guiScale, color);
 
