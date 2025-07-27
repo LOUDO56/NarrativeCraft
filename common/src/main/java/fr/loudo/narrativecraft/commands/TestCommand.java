@@ -12,6 +12,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.math.Transformation;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.audio.VolumeAudio;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
 import fr.loudo.narrativecraft.mixin.fields.DisplayFields;
 import fr.loudo.narrativecraft.mixin.fields.ItemDisplayFields;
@@ -29,6 +30,7 @@ import net.minecraft.client.gui.screens.WinScreen;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -281,7 +283,8 @@ public class TestCommand {
             long elapsedTime = System.currentTimeMillis() - startTime;
             t = Math.min((double) elapsedTime / endTime, 1.0);
             float newVolume = (float) MathUtils.lerp(1, 0, t);
-            Minecraft.getInstance().getSoundManager().updateSourceVolume(simpleSoundInstance.getSource(), newVolume);
+            SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+            ((VolumeAudio)soundManager).setVolume(simpleSoundInstance, newVolume);
             context.getSource().sendSuccess(() -> Component.literal(String.format("New volume set to: %.2f", newVolume)), false);
             if(t >= 1.0) {
                 scheduler.shutdown();

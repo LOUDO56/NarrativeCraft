@@ -1,5 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
+import fr.loudo.narrativecraft.audio.VolumeAudio;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.TypedSoundInstance;
@@ -10,6 +11,7 @@ import fr.loudo.narrativecraft.utils.MathUtils;
 import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.client.sounds.WeighedSoundEvents;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
@@ -108,7 +110,8 @@ public class SongSfxInkAction extends InkAction {
         if(isStart) {
             soundInstance = storyHandler.playSound(sound, volume, pitch, loop, soundType);
             if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_IN) {
-                Minecraft.getInstance().getSoundManager().updateSourceVolume(soundInstance.getSource(), 0);
+                SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+                ((VolumeAudio)soundManager).setVolume(soundInstance, 0);
             }
         } else {
             if(fadeCurrentState == null && fadeTime == 0) {
@@ -151,7 +154,8 @@ public class SongSfxInkAction extends InkAction {
             } else if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
                 newVolume = MathUtils.lerp(volume, 0, t);
             }
-            Minecraft.getInstance().getSoundManager().updateSourceVolume(soundInstance.getSource(), (float) newVolume);
+            SoundManager soundManager = Minecraft.getInstance().getSoundManager();
+            ((VolumeAudio)soundManager).setVolume(soundInstance, (float) newVolume);
             if(t >= 1.0 && fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
                 Minecraft.getInstance().getSoundManager().stop(soundInstance);
             }

@@ -21,14 +21,16 @@
     "fields.ItemDisplayFields",
     "fields.LivingEntityFields",
     "fields.PlayerFields",
-    "fields.PlayerListFields",
-    "fields.TextDisplayFields"
+    "fields.TextDisplayFields",
+    "fields.PlayerListFields"
   ],
   "client": [
     "CameraMixin",
     "GameRendererMixin",
     "MinecraftCommonMixin",
     "PlayerInfoMixin",
+    "SoundEngineMixin",
+    "SoundManagerMixin",
     "Utf8StringMixin",
     "WinScreenMixin",
     "fields.FontFields",
