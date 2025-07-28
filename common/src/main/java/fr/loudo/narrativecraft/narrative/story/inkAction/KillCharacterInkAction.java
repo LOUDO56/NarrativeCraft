@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -20,10 +20,10 @@ public class KillCharacterInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 1) return InkActionResult.ERROR;
+        if(command.length < 1) return InkActionResult.error(this.getClass(), Translation.message("validation.missing_values").getString());
         name = command[1];
         CharacterStory characterStory = storyHandler.getCharacter(name);
-        if(characterStory == null) return InkActionResult.ERROR;
+        if(characterStory == null) return InkActionResult.error(this.getClass(),  Translation.message("validation.character", name).getString());
         for(Playback playback : NarrativeCraftMod.getInstance().getPlaybackHandler().getPlaybacks()) {
             if(playback.getCharacter().getName().equals(characterStory.getName())) {
                 playback.forceStop();
@@ -36,7 +36,7 @@ public class KillCharacterInkAction extends InkAction {
             }
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

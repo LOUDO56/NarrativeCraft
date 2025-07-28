@@ -148,7 +148,9 @@ public class StoryHandler {
         stop(true);
 
         CrashReport report = new CrashReport(exception.getMessage(), exception);
-        Minecraft.saveReport(NarrativeCraftFile.mainDirectory, report);
+        if(!creatorFault) {
+            Minecraft.saveReport(NarrativeCraftFile.mainDirectory, report);
+        }
 
         if (isDebugMode) {
             handleDebugModeCrash(exception, creatorFault, report);
@@ -340,7 +342,7 @@ public class StoryHandler {
     }
 
     private void loadStoryState() throws Exception {
-        if (save != null) {
+        if (save != null && !playerSession.sessionSet()) {
             loadFromSave();
         } else {
             loadFromSession();
@@ -527,7 +529,7 @@ public class StoryHandler {
         }
     }
 
-    private void executeInkTags() {
+    private void executeInkTags() throws Exception {
         if (inkTagTranslators.executeCurrentTags()) {
             if (!story.getCurrentChoices().isEmpty() && currentDialog.isEmpty()) {
                 showChoices();
@@ -562,10 +564,10 @@ public class StoryHandler {
     }
 
     private Exception createStoryException(StoryException e) {
-        return new Exception(String.format("%s\nCrash in Chapter %s Scene %s.",
-                e.getMessage(),
+        return new Exception(String.format("Chapter %s Scene %s\n%s",
                 playerSession.getChapter().getIndex(),
-                playerSession.getScene().getName()));
+                playerSession.getScene().getName(),
+                e.getMessage()));
     }
 
     private void showCreditsScreen() {
@@ -605,6 +607,7 @@ public class StoryHandler {
     private void resetState() {
         changePlayerCutsceneMode(Playback.PlaybackType.PRODUCTION, false);
         currentKeyframeCoordinate = null;
+        story = null;
         inkActionList.clear();
         playerSession.reset();
         Minecraft.getInstance().options.hideGui = false;

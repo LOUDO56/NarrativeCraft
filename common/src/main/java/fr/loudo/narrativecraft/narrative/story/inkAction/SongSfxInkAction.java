@@ -4,7 +4,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.TypedSoundInstance;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.FadeCurrentState;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -41,7 +41,7 @@ public class SongSfxInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 3) return InkActionResult.ERROR;
+        if(command.length < 3) return InkActionResult.error(this.getClass(), Translation.message("validation.missing_sound_name").getString());
         fadeTime = 0;
         name = command[2];
         if(name.equals("all")) {
@@ -50,7 +50,7 @@ public class SongSfxInkAction extends InkAction {
             } else {
                 storyHandler.stopAllSoundByType(soundType);
             }
-            return InkActionResult.PASS;
+            return InkActionResult.pass();
         }
         if(inkTagType == InkTagType.SONG_SFX_START) {
             loop = false;
@@ -67,7 +67,7 @@ public class SongSfxInkAction extends InkAction {
             try {
                 volume = Float.parseFloat(volValue);
             } catch (NumberFormatException e) {
-                return InkActionResult.ERROR;
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
             }
         }
         if(command.length >= 5 && isStart) {
@@ -75,7 +75,7 @@ public class SongSfxInkAction extends InkAction {
             try {
                 pitch = Float.parseFloat(pitchValue);
             } catch (NumberFormatException e) {
-                return InkActionResult.ERROR;
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[4]).getString());
             }
         }
         if(command.length >= 6 && isStart && (command[5].equals("true") || command[5].equals("false"))) {
@@ -114,14 +114,14 @@ public class SongSfxInkAction extends InkAction {
         } else {
             if(fadeCurrentState == null && fadeTime == 0) {
                 storyHandler.stopSound(sound);
-                return InkActionResult.PASS;
+                return InkActionResult.pass();
             }
             SongSfxInkAction currentSfxSong = storyHandler.getInkActionList().stream()
                     .filter(inkAction -> inkAction instanceof SongSfxInkAction && inkAction.getName().equals(this.name))
                     .map(inkAction -> (SongSfxInkAction) inkAction)
                     .findFirst()
                     .orElse(null);
-            if(currentSfxSong == null) return InkActionResult.PASS;
+            if(currentSfxSong == null) return InkActionResult.pass();
             this.soundInstance = currentSfxSong.soundInstance;
             this.volume = currentSfxSong.volume;
             this.pitch = currentSfxSong.pitch;
@@ -129,7 +129,7 @@ public class SongSfxInkAction extends InkAction {
         }
         sendDebugDetails();
         storyHandler.getInkActionList().add(this);
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     public void applyFade() {

@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -17,18 +17,18 @@ public class WeatherChangeInkAction extends InkAction{
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 2) return InkActionResult.ERROR;
+        if(command.length < 2) return InkActionResult.error(this.getClass(), Translation.message("validation.missing_name").getString());
         name = command[2];
         switch (name) {
             case "clear" -> NarrativeCraftMod.server.overworld().setWeatherParameters(999999, 0, false, false);
             case "rain" -> NarrativeCraftMod.server.overworld().setWeatherParameters(0, 999999, true, false);
             case "thunder" -> NarrativeCraftMod.server.overworld().setWeatherParameters(0, 999999, true, true);
             case null, default -> {
-                return InkActionResult.ERROR;
+                return InkActionResult.error(this.getClass(), Translation.message("validation.weather.value", name).getString());
             }
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

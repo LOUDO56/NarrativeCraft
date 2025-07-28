@@ -14,6 +14,10 @@ import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class CrashScreen extends Screen {
 
     private boolean crashFromStory;
@@ -36,7 +40,9 @@ public class CrashScreen extends Screen {
     @Override
     protected void init() {
         LinearLayout linearLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(4));
-        linearLayout.addChild(Button.builder(Translation.message("screen.crash.button.open_crash"), (p_331557_) -> Util.getPlatform().openPath(crashReport.getSaveFile())).width(130).build());
+        if(!crashFromStory) {
+            linearLayout.addChild(Button.builder(Translation.message("screen.crash.button.open_crash"), (p_331557_) -> Util.getPlatform().openPath(crashReport.getSaveFile())).width(130).build());
+        }
         linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, (p_331557_) -> this.onClose()).width(130).build());
         this.layout.visitWidgets(this::addRenderableWidget);
         this.repositionElements();
@@ -59,13 +65,16 @@ public class CrashScreen extends Screen {
     private void renderInside(GuiGraphics guiGraphics, int mouseX, int mouseY, int offsetX, int offsetY) {
         int i = offsetX + 9 + 117;
         guiGraphics.fill(offsetX + 9, offsetY + 18, offsetX + 9 + 234, offsetY + 18 + 113, -16777216);
-        String[] lines;
+        List<String> lines;
         if(crashFromStory) {
-            lines = Translation.message("screen.crash.from_story").getString().split("\n");
+            lines = new ArrayList<>(List.of(Translation.message("screen.crash.from_story").getString().split("\n")));
+            lines.add(" ");
+            String[] messageLines = crashReport.getTitle().split("\n");
+            lines.addAll(Arrays.asList(messageLines));
         } else {
-            lines = Translation.message("screen.crash.from_mod").getString().split("\n");
+            lines = List.of(Translation.message("screen.crash.from_mod").getString().split("\n"));
         }
-        int textPosY = offsetY + 18 + 56 - 4 - (minecraft.font.lineHeight * lines.length + 2) / 2;
+        int textPosY = offsetY + 18 + 56 - 4 - (minecraft.font.lineHeight * lines.size() + 2) / 2;
         guiGraphics.drawCenteredString(this.font, Translation.message("screen.crash.title").getString(), i, textPosY, -1);
         for (String line : lines) {
             textPosY += minecraft.font.lineHeight;
@@ -77,8 +86,4 @@ public class CrashScreen extends Screen {
         guiGraphics.blit(RenderType::guiTextured, WINDOW_LOCATION, offsetX, offsetY, 0.0F, 0.0F, 252, 140, 256, 256);
     }
 
-    @Override
-    public boolean isPauseScreen() {
-        return false;
-    }
 }

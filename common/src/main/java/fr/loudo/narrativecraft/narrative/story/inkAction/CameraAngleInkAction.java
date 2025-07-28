@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleC
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleGroup;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -23,16 +23,23 @@ public class CameraAngleInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
+        if(command.length < 3) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.camera_angle_missing_parent").getString());
+        }
         storyHandler.getPlayerSession().setSoloCam(null);
         name = InkAction.parseName(command, 2);
         child = InkAction.parseName(command, command.length - 1);
         CameraAngleGroup cameraAngleGroup = storyHandler.getPlayerSession().getScene().getCameraAnglesGroupByName(name);
-        CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(child);
-        if(cameraAngle != null) {
-            executeCameraAngle(cameraAngleGroup, cameraAngle);
-            sendDebugDetails();
+        if(cameraAngleGroup == null) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.camera_angle_parent", name).getString());
         }
-        return InkActionResult.PASS;
+        CameraAngle cameraAngle = cameraAngleGroup.getCameraAngleByName(child);
+        if(cameraAngle == null) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.camera_angle_child", child, name).getString());
+        }
+        executeCameraAngle(cameraAngleGroup, cameraAngle);
+        sendDebugDetails();
+        return InkActionResult.pass();
     }
 
     private void executeCameraAngle(CameraAngleGroup cameraAngleGroup, CameraAngle cameraAngle) {

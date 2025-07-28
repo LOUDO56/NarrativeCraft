@@ -5,7 +5,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -29,7 +29,7 @@ public class EmoteCraftInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 3) return InkActionResult.ERROR;
+        if(command.length < 3) return InkActionResult.error(this.getClass(),  Translation.message("validation.missing_values").getString());
         forced = false;
         characterName = InkAction.parseName(command, 2);
         name = "";
@@ -41,16 +41,16 @@ public class EmoteCraftInkAction extends InkAction {
             forced = Boolean.parseBoolean(command[command.length - 1]);
         } catch (RuntimeException ignored) {}
         CharacterStory characterStory = storyHandler.getCharacter(characterName);
-        if(characterStory == null) return InkActionResult.ERROR;
+        if(characterStory == null) return InkActionResult.error(this.getClass(), Translation.message("validation.character", characterName).getString());
         if(action.equals("play")) {
             emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
-            if(emote == null) return InkActionResult.ERROR;
+            if(emote == null) return InkActionResult.error(this.getClass(), Translation.message("validation.emote", name).getString());
             ServerEmoteAPI.playEmote(characterStory.getEntity().getUUID(), emote, forced);
         } else if(action.equals("stop")) {
             ServerEmoteAPI.playEmote(characterStory.getEntity().getUUID(), null, false);
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

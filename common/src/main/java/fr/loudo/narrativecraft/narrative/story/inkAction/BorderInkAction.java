@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -22,7 +22,7 @@ public class BorderInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 5) return InkActionResult.ERROR;
+        if(command.length < 5) return InkActionResult.error(this.getClass(), Translation.message("validation.missing_values").getString());
         up = 0;
         right = 0;
         down = 0;
@@ -31,18 +31,31 @@ public class BorderInkAction extends InkAction {
         color = 0;
         try {
             up = Integer.parseInt(command[1]) * 3;
-            right = Integer.parseInt(command[2]) * 3;
-            down = Integer.parseInt(command[3]) * 3;
-            left = Integer.parseInt(command[4]) * 3;
-            if(command.length > 5) {
-                color = Integer.parseInt(command[5], 16);
-            }
-            if(command.length > 6) {
-                opacity = Math.clamp(Double.parseDouble(command[6]), 0, 1);
-            }
-        } catch (RuntimeException e) {
-            return InkActionResult.ERROR;
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[1]).getString());
         }
+        try {
+            right = Integer.parseInt(command[2]) * 3;
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
+        }
+        try {
+            down = Integer.parseInt(command[3]) * 3;
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
+        }
+        try {
+            left = Integer.parseInt(command[4]) * 3;
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[4]).getString());
+        }
+        if(command.length > 5) {
+            color = Integer.parseInt(command[5], 16);
+        }
+        if(command.length > 6) {
+            opacity = Math.clamp(Double.parseDouble(command[6]), 0, 1);
+        }
+
         color = ARGB.color((int)(opacity * 255), color);
         if(up == 0 && right == 0 && down == 0 && left == 0) {
             storyHandler.getInkActionList().removeIf(inkAction -> inkAction instanceof BorderInkAction);
@@ -50,7 +63,7 @@ public class BorderInkAction extends InkAction {
             storyHandler.getInkActionList().add(this);
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

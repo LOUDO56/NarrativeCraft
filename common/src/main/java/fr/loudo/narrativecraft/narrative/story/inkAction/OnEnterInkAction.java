@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -22,7 +22,7 @@ public class OnEnterInkAction extends InkAction {
     public InkActionResult execute() {
         StoryState state = storyHandler.getStory().getState();
         String currentKnot = state.getCurrentKnot();
-        if(currentKnot == null) return InkActionResult.PASS;
+        if(currentKnot == null) return InkActionResult.pass();
         if(!currentKnot.equals(NarrativeCraftFile.getChapterSceneSnakeCase(storyHandler.getPlayerSession().getScene()))) {
             for(CharacterStory characterStory : storyHandler.getCurrentCharacters()) {
                 characterStory.kill();
@@ -37,7 +37,7 @@ public class OnEnterInkAction extends InkAction {
             storyHandler.save(true);
             sendDebugDetails();
         }
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

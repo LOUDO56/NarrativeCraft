@@ -8,7 +8,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneContro
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -24,14 +24,17 @@ public class CutsceneInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
+        if(command.length < 3) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.missing_name").getString());
+        }
         storyHandler.getPlayerSession().setSoloCam(null);
         name = InkAction.parseName(command, 2);
         Cutscene cutscene = storyHandler.getPlayerSession().getScene().getCutsceneByName(name);
-        if(cutscene != null) {
-            executeCutscene(cutscene);
-            return InkActionResult.BLOCK;
+        if(cutscene == null) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.cutscene", name).getString());
         }
-        return InkActionResult.PASS;
+        executeCutscene(cutscene);
+        return InkActionResult.block();
     }
 
     private void executeCutscene(Cutscene cutscene) {

@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.FadeCurrentState;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.MathUtils;
@@ -37,18 +37,39 @@ public class FadeScreenInkAction extends InkAction {
         fadeOut = 2.0;
         color = ARGB.colorFromFloat(1, 0, 0, 0);
         t = 0;
+
         if(command.length >= 2) {
-            fadeIn = Double.parseDouble(command[1]);
+            try {
+                fadeIn = Double.parseDouble(command[1]);
+            } catch (NumberFormatException e) {
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[1]).getString());
+            }
         }
+
         if(command.length >= 3) {
-            stay = Double.parseDouble(command[2]);
+            try {
+                stay = Double.parseDouble(command[2]);
+            } catch (NumberFormatException e) {
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
+            }
         }
+
         if(command.length >= 4) {
-            fadeOut = Double.parseDouble(command[3]);
+            try {
+                fadeOut = Double.parseDouble(command[3]);
+            } catch (NumberFormatException e) {
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
+            }
         }
+
         if(command.length >= 5) {
-            color = Integer.parseInt(command[4], 16);
+            try {
+                color = Integer.parseInt(command[4], 16);
+            } catch (NumberFormatException e) {
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[4]).getString());
+            }
         }
+
         if(fadeIn == 0 && stay == 0 && fadeOut == 0) {
             List<InkAction> inkActions = storyHandler.getInkActionList().stream().filter(inkAction -> inkAction instanceof FadeScreenInkAction).toList();
             storyHandler.getInkActionList().removeAll(inkActions);
@@ -56,7 +77,7 @@ public class FadeScreenInkAction extends InkAction {
             storyHandler.getInkActionList().add(this);
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {

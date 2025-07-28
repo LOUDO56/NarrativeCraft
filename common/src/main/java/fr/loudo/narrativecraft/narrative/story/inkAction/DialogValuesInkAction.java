@@ -5,7 +5,7 @@ import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogData;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -25,7 +25,7 @@ public class DialogValuesInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length == 1) return InkActionResult.ERROR;
+        if(command.length == 1) return InkActionResult.error(this.getClass(),  Translation.message("validation.missing_values").getString());
         name = command[1];
         DialogData dialogData = storyHandler.getGlobalDialogValue();
         switch (name) {
@@ -35,15 +35,19 @@ public class DialogValuesInkAction extends InkAction {
                 float offsetY = currentOffset.y;
                 try {
                     offsetX = Float.parseFloat(command[2]);
-                    if(command.length > 3) {
-                        offsetY = Float.parseFloat(command[3]);
-                    }
-                    value = offsetX + " " + offsetY;
-                    dialogData.setOffset(new Vec2(offsetX, offsetY));
-                    storyHandler.getGlobalDialogValue().setOffset(new Vec2(offsetX, offsetY));
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
+                if(command.length > 3) {
+                    try {
+                        offsetY = Float.parseFloat(command[3]);
+                    } catch (NumberFormatException e) {
+                        return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
+                    }
+                }
+                value = offsetX + " " + offsetY;
+                dialogData.setOffset(new Vec2(offsetX, offsetY));
+                storyHandler.getGlobalDialogValue().setOffset(new Vec2(offsetX, offsetY));
             }
             case "scale" -> {
                 try {
@@ -52,7 +56,7 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setScale(scale);
                     storyHandler.getGlobalDialogValue().setScale(scale);
                 } catch (NumberFormatException e) {
-                    return InkActionResult.ERROR;
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "padding" -> {
@@ -60,17 +64,21 @@ public class DialogValuesInkAction extends InkAction {
                 float paddingY = dialogData.getPaddingY();
                 try {
                     paddingX = Float.parseFloat(command[2]);
-                    if(command.length > 3) {
-                        paddingY = Float.parseFloat(command[3]);
-                    }
-                    value = paddingX + " " + paddingY;
-                    dialogData.setPaddingX(paddingX);
-                    dialogData.setPaddingY(paddingY);
-                    storyHandler.getGlobalDialogValue().setPaddingX(paddingX);
-                    storyHandler.getGlobalDialogValue().setPaddingY(paddingY);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
+                if(command.length > 3) {
+                    try {
+                        paddingY = Float.parseFloat(command[3]);
+                    } catch (NumberFormatException e) {
+                        return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
+                    }
+                }
+                value = paddingX + " " + paddingY;
+                dialogData.setPaddingX(paddingX);
+                dialogData.setPaddingY(paddingY);
+                storyHandler.getGlobalDialogValue().setPaddingX(paddingX);
+                storyHandler.getGlobalDialogValue().setPaddingY(paddingY);
             }
             case "width" -> {
                 try {
@@ -79,8 +87,8 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setText(storyHandler.getCurrentDialog());
                     value = String.valueOf(width);
                     storyHandler.getGlobalDialogValue().setMaxWidth(width);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "textColor" -> {
@@ -89,8 +97,8 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setTextColor(textColor);
                     value = String.valueOf(textColor);
                     storyHandler.getGlobalDialogValue().setTextColor(textColor);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "backgroundColor" -> {
@@ -99,8 +107,8 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setBackgroundColor(bcColor);
                     value = String.valueOf(bcColor);
                     storyHandler.getGlobalDialogValue().setBackgroundColor((bcColor));
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "gap" -> {
@@ -109,8 +117,8 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setGap(gap);
                     value = String.valueOf(gap);
                     storyHandler.getGlobalDialogValue().setGap(gap);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "letterSpacing" -> {
@@ -119,8 +127,8 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setLetterSpacing(letterSpacing);
                     value = String.valueOf(letterSpacing);
                     storyHandler.getGlobalDialogValue().setLetterSpacing(letterSpacing);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "unSkippable" -> {
@@ -129,7 +137,7 @@ public class DialogValuesInkAction extends InkAction {
                     dialogData.setUnSkippable(unSkippable);
                     value = command[2];
                 } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "autoSkip" -> {
@@ -137,19 +145,19 @@ public class DialogValuesInkAction extends InkAction {
                     double forceTimeEnd = Double.parseDouble(command[2]);
                     dialogData.setEndForceEndTime((long) (forceTimeEnd * 1000L));
                     value = String.valueOf(forceTimeEnd);
-                } catch (RuntimeException e) {
-                    return InkActionResult.ERROR;
+                } catch (NumberFormatException e) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
             case "bobbing" -> {
-                if(command.length < 4) return InkActionResult.ERROR;
+                if(command.length < 4) return InkActionResult.error(this.getClass(), "");
                 try {
                     float noiseShakeSpeed = Float.parseFloat(command[2]);
                     float noiseShakeStrength = Float.parseFloat(command[3]);
                     dialogData.setBobbingNoiseShakeSpeed(noiseShakeSpeed);
                     dialogData.setBobbingNoiseShakeStrength(noiseShakeStrength);
                 } catch (NumberFormatException e) {
-                    return InkActionResult.ERROR;
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
                 }
             }
         }
@@ -178,7 +186,7 @@ public class DialogValuesInkAction extends InkAction {
             dialog2d.setBackgroundColor(dialogData.getBackgroundColor());
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override
