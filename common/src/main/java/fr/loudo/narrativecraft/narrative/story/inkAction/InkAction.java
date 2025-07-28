@@ -57,7 +57,7 @@ public abstract class InkAction {
         return name;
     }
 
-    public static int getIndexFromName(String[] command, int index) {
+    public static int getNewIndexFromName(String[] command, int index) {
         String name = command[index];
         if (name.startsWith("\"")) {
             for (int i = index; i < command.length; i++) {

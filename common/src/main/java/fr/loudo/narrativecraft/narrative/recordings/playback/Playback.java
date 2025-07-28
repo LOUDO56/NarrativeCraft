@@ -310,6 +310,9 @@ public class Playback {
     public void stop() {
         isPlaying = false;
         hasEnded = true;
+        if(playbackType == PlaybackType.RECORDING) {
+            forceStop();
+        }
     }
 
     public void forceStop() {
@@ -393,6 +396,7 @@ public class Playback {
     public enum PlaybackType {
         DEVELOPMENT,
         PRODUCTION,
+        RECORDING
     }
 
     public static class PlaybackData {

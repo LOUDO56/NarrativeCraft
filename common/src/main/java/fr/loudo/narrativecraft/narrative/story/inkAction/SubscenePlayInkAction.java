@@ -29,7 +29,7 @@ public class SubscenePlayInkAction extends InkAction {
     public InkActionResult execute() {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
-            int newIndex = InkAction.getIndexFromName(command, 2);
+            int newIndex = InkAction.getNewIndexFromName(command, 2);
             isLooping = false;
             try {
                 if(command[newIndex + 1].equals("true") || command[newIndex + 1].equals("false")) {
