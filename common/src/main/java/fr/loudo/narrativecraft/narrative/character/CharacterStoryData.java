@@ -128,9 +128,7 @@ public class CharacterStoryData {
         if(BuiltInRegistries.ENTITY_TYPE.getId(characterStory.getEntityType()) == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) {
             livingEntity = new FakePlayer(serverLevel, new GameProfile(UUID.randomUUID(), characterStory.getName()));
         } else {
-            Optional<Entity> entity = EntityType.create(new CompoundTag(), serverLevel);
-            if(entity.isEmpty()) return;
-            livingEntity = (LivingEntity) entity.get();
+            livingEntity = (LivingEntity) Utils.createEntityFromKey(characterStory.getEntityType(), serverLevel);
             if(livingEntity instanceof Mob mob) {
                 mob.setNoAi(true);
                 mob.setSilent(true);

@@ -18,6 +18,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -50,6 +52,13 @@ public class Utils {
     public static CompoundTag nbtFromString(String nbtString) throws CommandSyntaxException
     {
         return TagParser.parseTag(nbtString);
+    }
+
+    public static Entity createEntityFromKey(EntityType<?> entityType, ServerLevel serverLevel) {
+        CompoundTag compoundTag = new CompoundTag();
+        compoundTag.putString("id", BuiltInRegistries.ENTITY_TYPE.getKey(entityType).toString());
+        Optional<Entity> entity = EntityType.create(compoundTag, serverLevel);
+        return entity.orElse(null);
     }
 
     public static BlockState getBlockStateFromData(String data, RegistryAccess registry) {

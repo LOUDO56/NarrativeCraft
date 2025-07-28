@@ -1,6 +1,7 @@
 package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
+import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
@@ -19,6 +20,8 @@ import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.TagParser;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
@@ -268,9 +271,7 @@ public class Playback {
             masterEntity = new FakePlayer(serverLevel, gameProfile);
             masterEntity.getEntityData().set(PlayerFields.getDATA_PLAYER_MODE_CUSTOMISATION(), (byte) 0b01111111);
         } else {
-            Optional<Entity> entity = EntityType.create(new CompoundTag(), serverLevel);
-            if(entity.isEmpty()) return;
-            masterEntity = (LivingEntity) entity.get();
+            masterEntity = (LivingEntity) Utils.createEntityFromKey(character.getEntityType(), serverLevel);
             if (masterEntity instanceof Mob mob) mob.setNoAi(true);
         }
 
@@ -465,9 +466,7 @@ public class Playback {
             ServerLevel serverLevel = Utils.getServerLevel();
             if(actionsData.getEntityId() == BuiltInRegistries.ENTITY_TYPE.getId(EntityType.PLAYER)) return;
             EntityType<?> entityType = BuiltInRegistries.ENTITY_TYPE.byId(actionsData.getEntityId());
-            Optional<Entity> entity1 = entityType.create(new CompoundTag(), serverLevel);
-            if(entity1.isEmpty()) return;
-            entity = entity1.get();
+            entity = Utils.createEntityFromKey(entityType, serverLevel);
             if(entity == null) return;
             try {
                 entity.load(Utils.nbtFromString(actionsData.getNbtData()));
