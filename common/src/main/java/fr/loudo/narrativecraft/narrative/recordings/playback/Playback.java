@@ -1,7 +1,6 @@
 package fr.loudo.narrativecraft.narrative.recordings.playback;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFile;
@@ -19,9 +18,6 @@ import fr.loudo.narrativecraft.utils.FakePlayer;
 import fr.loudo.narrativecraft.utils.MovementUtils;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.Tag;
-import net.minecraft.nbt.TagParser;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
@@ -30,7 +26,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public class Playback {
@@ -479,7 +474,7 @@ public class Playback {
                 List<Action> actions = playback.getMasterEntityData().getActions().stream().filter(action -> action instanceof BreakBlockAction && action.getTick() == playback.getTick() - 1).toList();
                 boolean randomizeMotion = !actions.isEmpty();
                 if(playback.getMasterEntity() instanceof FakePlayer fakePlayer) {
-                    fakePlayer.drop(itemEntity.getItem(), randomizeMotion, false);
+                    entity = fakePlayer.drop(itemEntity.getItem(), randomizeMotion, false);
                 }
             }
             serverLevel.addFreshEntity(entity);
