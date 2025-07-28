@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.FadeCurrentState;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
@@ -20,7 +21,7 @@ public class FadeScreenInkAction extends InkAction {
     private int color;
     private long startTime, pauseStartTime;
     private boolean isPaused, isDoneFading;
-    private StoryHandler.FadeCurrentState fadeCurrentState;
+    private FadeCurrentState fadeCurrentState;
 
     public FadeScreenInkAction(StoryHandler storyHandler, String command) {
         super(storyHandler, InkTagType.FADE, command);
@@ -29,7 +30,7 @@ public class FadeScreenInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        fadeCurrentState = StoryHandler.FadeCurrentState.FADE_IN;
+        fadeCurrentState = FadeCurrentState.FADE_IN;
         startTime = System.currentTimeMillis();
         fadeIn = 2.0;
         stay = 1.0;
@@ -98,8 +99,8 @@ public class FadeScreenInkAction extends InkAction {
                 t = 0.0;
                 startTime = System.currentTimeMillis();
                 switch (fadeCurrentState) {
-                    case FADE_IN -> fadeCurrentState = StoryHandler.FadeCurrentState.STAY;
-                    case STAY -> fadeCurrentState = StoryHandler.FadeCurrentState.FADE_OUT;
+                    case FADE_IN -> fadeCurrentState = FadeCurrentState.STAY;
+                    case STAY -> fadeCurrentState = FadeCurrentState.FADE_OUT;
                     case FADE_OUT -> {
                         isDoneFading = true;
                         return;
@@ -137,7 +138,7 @@ public class FadeScreenInkAction extends InkAction {
                 return new ErrorLine(
                         line,
                         scene,
-                        Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
+                        Translation.message("validation.number", FadeCurrentState.FADE_OUT.name()).getString(),
                         lineText,
                         false
                 );
@@ -150,7 +151,7 @@ public class FadeScreenInkAction extends InkAction {
                 return new ErrorLine(
                         line,
                         scene,
-                        Translation.message("validation.number", StoryHandler.FadeCurrentState.STAY.name()).getString(),
+                        Translation.message("validation.number", FadeCurrentState.STAY.name()).getString(),
                         lineText,
                         false
                 );
@@ -163,7 +164,7 @@ public class FadeScreenInkAction extends InkAction {
                 return new ErrorLine(
                         line,
                         scene,
-                        Translation.message("validation.number", StoryHandler.FadeCurrentState.FADE_OUT.name()).getString(),
+                        Translation.message("validation.number", FadeCurrentState.FADE_OUT.name()).getString(),
                         lineText,
                         false
                 );

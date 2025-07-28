@@ -3,6 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.TypedSoundInstance;
+import fr.loudo.narrativecraft.narrative.story.inkAction.enums.FadeCurrentState;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
@@ -20,7 +21,7 @@ public class SongSfxInkAction extends InkAction {
     private boolean loop, isStart, isPaused;
     private float volume, pitch;
     private double fadeTime, t;
-    private StoryHandler.FadeCurrentState fadeCurrentState;
+    private FadeCurrentState fadeCurrentState;
     private long startTime, pauseStartTime;
     private TypedSoundInstance soundInstance;
 
@@ -82,13 +83,13 @@ public class SongSfxInkAction extends InkAction {
         }
         if(command.length >= 8) {
             if(isStart && command[6].equals("fadein")) {
-                fadeCurrentState = StoryHandler.FadeCurrentState.FADE_IN;
+                fadeCurrentState = FadeCurrentState.FADE_IN;
                 fadeTime = Double.parseDouble(command[7]);
             }
         }
         if(command.length >= 3 && !isStart) {
             if(command.length >= 4 && command[3].equals("fadeout")) {
-                fadeCurrentState = StoryHandler.FadeCurrentState.FADE_OUT;
+                fadeCurrentState = FadeCurrentState.FADE_OUT;
                 fadeTime = Double.parseDouble(command[4]);
             } else {
                 fadeCurrentState = null;
@@ -107,7 +108,7 @@ public class SongSfxInkAction extends InkAction {
         SoundEvent sound = SoundEvent.createVariableRangeEvent(soundRes);
         if(isStart) {
             soundInstance = storyHandler.playSound(sound, volume, pitch, loop, soundType);
-            if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_IN) {
+            if(fadeCurrentState == FadeCurrentState.FADE_IN) {
                 Minecraft.getInstance().getSoundManager().setVolume(soundInstance, 0);
             }
         } else {
@@ -146,13 +147,13 @@ public class SongSfxInkAction extends InkAction {
         if(!isPaused) {
             t = Math.min((double) elapsedTime / endTime, 1.0);
             double newVolume = 0;
-            if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_IN) {
+            if(fadeCurrentState == FadeCurrentState.FADE_IN) {
                 newVolume = MathUtils.lerp(0, volume, t);
-            } else if(fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
+            } else if(fadeCurrentState == FadeCurrentState.FADE_OUT) {
                 newVolume = MathUtils.lerp(volume, 0, t);
             }
             Minecraft.getInstance().getSoundManager().setVolume(soundInstance, (float) newVolume);
-            if(t >= 1.0 && fadeCurrentState == StoryHandler.FadeCurrentState.FADE_OUT) {
+            if(t >= 1.0 && fadeCurrentState == FadeCurrentState.FADE_OUT) {
                 Minecraft.getInstance().getSoundManager().stop(soundInstance);
             }
         }
@@ -288,7 +289,7 @@ public class SongSfxInkAction extends InkAction {
         return soundInstance;
     }
 
-    public StoryHandler.FadeCurrentState getFadeCurrentState() {
+    public FadeCurrentState getFadeCurrentState() {
         return fadeCurrentState;
     }
 
