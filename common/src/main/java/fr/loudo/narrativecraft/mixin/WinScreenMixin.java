@@ -30,7 +30,7 @@ public class WinScreenMixin {
     private void narrativecraft$creditSpeed(CallbackInfo ci) {
         WinScreen winScreen = (WinScreen) (Object) this;
         if(winScreen instanceof CreditsScreen) {
-            this.unmodifiedScrollSpeed = 1.1F;
+            this.unmodifiedScrollSpeed = 0.8F;
             this.scrollSpeed = this.unmodifiedScrollSpeed;
         }
     }
@@ -43,12 +43,14 @@ public class WinScreenMixin {
                 NarrativeCraftLogoRenderer narrativeCraftLogoRenderer = NarrativeCraftMod.getInstance().getNarrativeCraftLogoRenderer();
                 guiGraphics.blit(
                         CreditsScreen.LOGO,
-                        creditsScreen.width / 2 - 128, creditsScreen.height + 50 - narrativeCraftLogoRenderer.getImageHeight() / 2,
-                        0, 0,
+                        creditsScreen.width / 2 - 128,
+                        creditsScreen.height + 50 - narrativeCraftLogoRenderer.getImageHeight() / 2,
                         256, narrativeCraftLogoRenderer.getImageHeight(),
+                        0f, 0f,
                         256, narrativeCraftLogoRenderer.getImageHeight(),
-                        ColorUtils.ARGB(1, 1, 1, 1)
+                        256, narrativeCraftLogoRenderer.getImageHeight()
                 );
+
             }
         } else {
             instance.renderLogo(guiGraphics, winScreen.width, 1.0F, winScreen.height + 50);

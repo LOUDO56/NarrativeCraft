@@ -71,9 +71,8 @@ public class CreditsScreen extends WinScreen {
             guiGraphics.blit(
                     BACKGROUND_IMAGE,
                     0, 0,
+                    0f, 0f,
                     guiGraphics.guiWidth(), guiGraphics.guiHeight(),
-                    0, 0,
-                    0, 0,
                     guiGraphics.guiWidth(), guiGraphics.guiHeight()
             );
         } else {
