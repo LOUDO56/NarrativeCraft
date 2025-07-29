@@ -1,6 +1,7 @@
 plugins {
     id 'multiloader-loader'
     id 'net.neoforged.moddev'
+    id 'com.hypherionmc.modutils.modpublisher'
 }
 
 neoForge {
@@ -60,3 +61,29 @@ dependencies {
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+publisher {
+    apiKeys {
+        modrinth System.getenv("MODRINTH_TOKEN")
+        curseforge System.getenv("CURSE_TOKEN")
+        github System.getenv("GITHUB_TOKEN")
+    }
+
+    setCurseID(curse_forge_id)
+    setModrinthID(modrinth_id)
+
+    setVersionType(version_type)
+    setChangelog(changelog_file)
+    setVersion("${project.version}-neoforge-${minecraft_version}")
+    setDisplayName("${mod_name} - NeoForge - ${project.version}")
+    setGameVersions(minecraft_version)
+    setCurseEnvironment(curse_environment)
+
+    setLoaders("neoforge")
+    setArtifact("build/libs/${mod_id}-neoforge-${minecraft_version}-${project.version}.jar")
+
+    setJavaVersions(List.of("Java " + java_version))
+    setDisableMalwareScanner(true)
+    setDisableEmptyJarCheck(true)
+
+}
