@@ -51,7 +51,6 @@ publisher {
     apiKeys {
         modrinth System.getenv("MODRINTH_TOKEN")
         curseforge System.getenv("CURSE_TOKEN")
-        github System.getenv("GITHUB_TOKEN")
     }
 
     setCurseID(curse_forge_id)
@@ -67,7 +66,7 @@ publisher {
     setLoaders("fabric")
     setArtifact("build/libs/${mod_id}-fabric-${minecraft_version}-${project.version}.jar")
 
-    setJavaVersions(List.of("Java " + java_version))
+    setJavaVersions("Java 21", "Java 21")
     setDisableMalwareScanner(true)
     setDisableEmptyJarCheck(true)
 
