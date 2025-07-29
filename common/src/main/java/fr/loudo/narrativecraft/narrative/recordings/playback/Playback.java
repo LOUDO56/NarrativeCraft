@@ -60,7 +60,7 @@ public class Playback {
         if(playbackType == PlaybackType.PRODUCTION) {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler.characterInStory(character)) {
-                storyHandler.removeCharacter(character);
+                masterEntity = character.getEntity();
             }
         }
 
