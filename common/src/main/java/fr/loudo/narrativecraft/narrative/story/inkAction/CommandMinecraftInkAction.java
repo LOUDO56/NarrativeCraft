@@ -6,7 +6,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -28,16 +28,16 @@ public class CommandMinecraftInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length == 1) return InkActionResult.ERROR;
+        if(command.length == 1) return InkActionResult.error(this.getClass(), "");
         commandMinecraft = String.join(" ", Arrays.stream(command).toList().subList(1, command.length));
         CommandSourceStack commandSourceStack = getCommandSourceStack();
         try {
             NarrativeCraftMod.server.getCommands().getDispatcher().execute(commandMinecraft, commandSourceStack);
         } catch (CommandSyntaxException e) {
-            return InkActionResult.ERROR;
+            return InkActionResult.error(this.getClass(), Translation.message("validation.invalid_command", e.getMessage()).getString());
         }
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     private CommandSourceStack getCommandSourceStack() {

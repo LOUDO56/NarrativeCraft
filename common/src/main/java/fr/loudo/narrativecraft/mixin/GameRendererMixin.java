@@ -21,6 +21,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.ConcurrentModificationException;
+
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
     @Shadow @Final private Minecraft minecraft;
@@ -36,22 +38,22 @@ public class GameRendererMixin {
             keyframeControllerFov(playerSession, callbackInfo);
             cutscenePlayingFov(playerSession, callbackInfo);
             storyCurrentCamera(callbackInfo);
-        } catch (Exception ignored) {
-
-        }
+        } catch (ConcurrentModificationException ignored) {}
 
     }
 
     @Inject(method = "bobHurt", at = @At(value = "HEAD"))
     private void applyCameraShake(PoseStack poseStack, float partialTicks, CallbackInfo ci) {
-        StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
-        if(storyHandler != null) {
-            for(InkAction inkAction : storyHandler.getInkActionList()) {
-                if(inkAction instanceof ShakeScreenInkAction shakeScreenInkAction) {
-                    shakeScreenInkAction.shake(poseStack, partialTicks);
+        try {
+            StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
+            if(storyHandler != null) {
+                for(InkAction inkAction : storyHandler.getInkActionList()) {
+                    if(inkAction instanceof ShakeScreenInkAction shakeScreenInkAction) {
+                        shakeScreenInkAction.shake(poseStack, partialTicks);
+                    }
                 }
             }
-        }
+        } catch (ConcurrentModificationException ignored) {}
     }
 
     private void keyframeControllerFov(PlayerSession playerSession, CallbackInfoReturnable<Double> callbackInfo) {

@@ -771,6 +771,7 @@ public class NarrativeCraftFile {
             }
             return save;
         } catch (IOException e) {
+            NarrativeCraftMod.LOG.error("Can't read save file!", e);
             return null;
         }
     }

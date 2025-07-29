@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Easing;
@@ -38,6 +38,9 @@ public class ChangeDayTimeInkAction extends InkAction {
         if(command.length > 2) {
             String firstTickString = command[2];
             firstTick = getTickFromString(firstTickString);
+            if(firstTick == -1) {
+                return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
+            }
             if(command.length >= 8 &&  subCommand.equals("set")) {
                 String secondTickString = command[4];
                 secondTick = getTickFromString(secondTickString);
@@ -49,19 +52,19 @@ public class ChangeDayTimeInkAction extends InkAction {
                         waitSeconds *= 60 * 60;
                     }
                 } catch (NumberFormatException e) {
-                    return InkActionResult.ERROR;
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[6]).getString());
                 }
                 if(command.length >= 9 && !command[command.length - 1].equals("times")) {
                     try {
                         easing = Easing.valueOf(command[8].toUpperCase());
                     } catch (IllegalArgumentException e) {
-                        return InkActionResult.ERROR;
+                        return InkActionResult.error(this.getClass(), Translation.message("validation.easing", command[8], Easing.getEasingsString()).getString());
                     }
                 }
                 startTime = System.currentTimeMillis();
                 storyHandler.getInkActionList().add(this);
-                if(firstTick == -1 && secondTick == -1) {
-                    return InkActionResult.ERROR;
+                if(secondTick == -1) {
+                    return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[4]).getString());
                 }
             }
             if(command.length == 3) {
@@ -78,7 +81,7 @@ public class ChangeDayTimeInkAction extends InkAction {
             }
             sendDebugDetails();
         }
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     public void interpolateTime() {

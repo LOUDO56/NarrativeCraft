@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 
@@ -57,7 +57,7 @@ public abstract class InkAction {
         return name;
     }
 
-    public static int getIndexFromName(String[] command, int index) {
+    public static int getNewIndexFromName(String[] command, int index) {
         String name = command[index];
         if (name.startsWith("\"")) {
             for (int i = index; i < command.length; i++) {

@@ -6,7 +6,7 @@ import fr.loudo.narrativecraft.narrative.chapter.scenes.animations.Animation;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -30,7 +30,7 @@ public class AnimationPlayInkAction extends InkAction {
     public InkActionResult execute() {
         if(command.length >= 3) {
             name = InkAction.parseName(command, 2);
-            int newIndex = InkAction.getIndexFromName(command, 2);
+            int newIndex = InkAction.getNewIndexFromName(command, 2);
             isLooping = false;
             try {
                 if(command[newIndex + 1].equals("true") || command[newIndex + 1].equals("false")) {
@@ -40,7 +40,7 @@ public class AnimationPlayInkAction extends InkAction {
             animation = storyHandler.getPlayerSession().getScene().getAnimationByName(name);
             block = false;
             unique = false;
-            if(animation == null) return InkActionResult.ERROR;
+            if(animation == null) return InkActionResult.error(this.getClass(), Translation.message("validation.animation", name).getString());
             if(command[1].equals("start")) {
                 try {
                     if(command[newIndex + 2].equals("true") || command[newIndex + 2].equals("false")) {
@@ -84,9 +84,9 @@ public class AnimationPlayInkAction extends InkAction {
             }
         }
         if(block) {
-            return InkActionResult.BLOCK;
+            return InkActionResult.block();
         } else {
-            return InkActionResult.PASS;
+            return InkActionResult.pass();
         }
     }
 

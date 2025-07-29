@@ -3,7 +3,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -64,21 +64,33 @@ public class ShakeScreenInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 4) return InkActionResult.ERROR;
+        if(command.length < 4) return InkActionResult.error(this.getClass(), "");
         noise = new SimplexNoise(RandomSource.create());
+
         try {
             noiseShakeStrength = Float.parseFloat(command[1]);
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[1]).getString());
+        }
+
+        try {
             shakeDecayRate = Float.parseFloat(command[2]);
+        } catch (NumberFormatException e) {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[2]).getString());
+        }
+
+        try {
             noiseShakeSpeed = Float.parseFloat(command[3]);
         } catch (NumberFormatException e) {
-            return InkActionResult.ERROR;
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[3]).getString());
         }
+
         shakeStrength = noiseShakeStrength * PIXEL;
         shaking = true;
         storyHandler.getInkActionList().removeIf(inkAction -> inkAction instanceof ShakeScreenInkAction);
         storyHandler.getInkActionList().add(this);
         sendDebugDetails();
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

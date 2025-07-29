@@ -108,7 +108,7 @@ public class RecordCommand {
         if(subsceneNameList.length == subsceneToPlay.size()) {
             startRecording(context);
             for(Subscene subscene : subsceneToPlay) {
-                subscene.start(player.serverLevel(), Playback.PlaybackType.DEVELOPMENT, false);
+                subscene.start(player.serverLevel(), Playback.PlaybackType.RECORDING, false);
                 playerSession.getSubscenesPlaying().add(subscene);
             }
             context.getSource().sendSuccess(() -> Translation.message("record.start.with_subscenes", Arrays.toString(subsceneNameList)), true);

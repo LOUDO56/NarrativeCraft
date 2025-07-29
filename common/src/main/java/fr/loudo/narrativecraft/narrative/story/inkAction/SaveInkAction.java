@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 
@@ -15,7 +15,7 @@ public class SaveInkAction extends InkAction {
     @Override
     public InkActionResult execute() {
         storyHandler.save(false);
-        return InkActionResult.PASS;
+        return InkActionResult.pass();
     }
 
     @Override

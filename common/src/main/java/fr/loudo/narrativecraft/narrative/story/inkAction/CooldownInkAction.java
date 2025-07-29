@@ -2,7 +2,7 @@ package fr.loudo.narrativecraft.narrative.story.inkAction;
 
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkActionResult;
+import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -21,12 +21,12 @@ public class CooldownInkAction extends InkAction {
 
     @Override
     public InkActionResult execute() {
-        if(command.length < 2) return InkActionResult.ERROR;
+        if(command.length < 2) return InkActionResult.error(this.getClass(), Translation.message("validation.missing_wait_value").getString());
         double timeValue;
         try {
             timeValue = Double.parseDouble(command[1]);
         } catch (NumberFormatException e) {
-            return InkActionResult.ERROR;
+            return InkActionResult.error(this.getClass(), Translation.message("validation.number", command[1]).getString());
         }
         unitTime = command[2];
         if (unitTime.contains("second")) {
@@ -35,6 +35,8 @@ public class CooldownInkAction extends InkAction {
             secondsToWait = (long) (timeValue * 60 * 1000);
         } else if (unitTime.contains("hour")) {
             secondsToWait = (long) (timeValue * 60 * 60 * 1000);
+        } else {
+            return InkActionResult.error(this.getClass(), Translation.message("validation.wrong_unit").getString());
         }
 
         startTime = System.currentTimeMillis();
@@ -43,7 +45,7 @@ public class CooldownInkAction extends InkAction {
             storyHandler.getCurrentDialogBox().endDialogAndDontSkip();
         }
         sendDebugDetails();
-        return InkActionResult.BLOCK;
+        return InkActionResult.block();
     }
 
     public void checkForPause() {
