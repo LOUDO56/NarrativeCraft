@@ -7,7 +7,30 @@ plugins {
     id "com.hypherionmc.modutils.modpublisher" version "2.1.7"
 }
 
-tasks.register("publishAllMods") {
+tasks.register("publishAll") {
     group "publishing"
-    dependsOn(":fabric:publishMod", ":neoforge:publishMod")
+    dependsOn(
+            ":fabric:publishModrinth",
+            ":fabric:publishCurseforge",
+            ":neoforge:publishModrinth",
+            ":neoforge:publishCurseforge"
+    )
 }
+
+tasks.register("publishAllCurseforge") {
+    group "publishing"
+    dependsOn(
+            ":fabric:publishCurseforge",
+            ":neoforge:publishCurseforge"
+    )
+}
+
+tasks.register("publishAllModrinth") {
+    group "publishing"
+    dependsOn(
+            ":fabric:publishModrinth",
+            ":neoforge:publishModrinth"
+    )
+}
+
+
