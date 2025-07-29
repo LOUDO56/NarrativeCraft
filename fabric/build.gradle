@@ -63,7 +63,7 @@ publisher {
     setModrinthID(modrinth_id)
 
     setVersionType(version_type)
-    setChangelog(changelog_file)
+    setChangelog(file(changelog_file))
     setVersion("${project.version}-fabric-${minecraft_version}")
     setDisplayName("${mod_name} - Fabric - ${project.version}")
     setGameVersions(minecraft_version)
