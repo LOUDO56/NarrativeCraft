@@ -17,6 +17,7 @@ public class LinkCommand {
                 .then(Commands.literal("link")
                         .then(Commands.literal("discord").executes(commandContext -> openLink(ConstantsLink.DISCORD)))
                         .then(Commands.literal("docs").executes(commandContext -> openLink(ConstantsLink.DOCS)))
+                        .then(Commands.literal("github").executes(commandContext -> openLink(ConstantsLink.GITHUB)))
 
                 )
         );
