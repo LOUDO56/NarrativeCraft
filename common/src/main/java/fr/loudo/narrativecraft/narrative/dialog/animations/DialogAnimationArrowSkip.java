@@ -10,7 +10,6 @@ import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.util.ARGB;
 import org.joml.Matrix4f;
 
