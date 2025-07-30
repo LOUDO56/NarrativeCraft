@@ -339,25 +339,14 @@ public class CutsceneController extends KeyframeControllerBase {
         this.currentPreviewKeyframe = currentPreviewKeyframe;
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             currentPreviewKeyframe.openScreenOption(player);
-            for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-                for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
-                    keyframeFromGroup.removeKeyframeFromClient(player);
-                }
-            }
+            hideKeyframes();
             NarrativeCraftMod.server.execute(() -> changeTimePosition(currentPreviewKeyframe.getTick(), seamless));
         }
         StoryHandler.changePlayerCutsceneMode(playbackType, true);
     }
 
     public void clearCurrentPreviewKeyframe() {
-        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
-            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
-                keyframeFromGroup.showKeyframeToClient(player);
-                if(keyframeFromGroup.isParentGroup()) {
-                    keyframeFromGroup.showStartGroupText(player, keyframeGroup.getId());
-                }
-            }
-        }
+        revealKeyframes();
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
         StoryHandler.changePlayerCutsceneMode(playbackType, false);
@@ -404,6 +393,33 @@ public class CutsceneController extends KeyframeControllerBase {
                 }
                 isPlaying = false;
             }
+        }
+    }
+
+    @Override
+    protected void hideKeyframes() {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                keyframeFromGroup.removeKeyframeFromClient(player);
+            }
+        }
+        for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
+            keyframeTrigger.removeKeyframeFromClient(player);
+        }
+    }
+
+    @Override
+    protected void revealKeyframes() {
+        for(KeyframeGroup keyframeGroup : cutscene.getKeyframeGroupList()) {
+            for (Keyframe keyframeFromGroup : keyframeGroup.getKeyframeList()) {
+                keyframeFromGroup.showKeyframeToClient(player);
+                if(keyframeFromGroup.isParentGroup()) {
+                    keyframeFromGroup.showStartGroupText(player, keyframeGroup.getId());
+                }
+            }
+        }
+        for(KeyframeTrigger keyframeTrigger : cutscene.getKeyframeTriggerList()) {
+            keyframeTrigger.showKeyframeToClient(player);
         }
     }
 
