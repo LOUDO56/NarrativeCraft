@@ -90,6 +90,7 @@ public class MainScreen extends Screen {
     protected void init() {
         boolean storyFinished = NarrativeCraftMod.getInstance().getNarrativeUserOptions().FINISHED_STORY;
         showDevBtnCount = 0;
+        boolean firstGame = NarrativeCraftFile.getSave() == null;
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         minecraft.options.hideGui = true;
         if((playerSession == null || playerSession.getKeyframeControllerBase() == null) && !pause) {
@@ -112,15 +113,15 @@ public class MainScreen extends Screen {
             }
         }
 
-        int n = storyFinished ? 5 : 3;
-        if(pause) n = 5;
-        int totalHeight = buttonHeight * n + gap * (n - 1);
+        int totalButtons = storyFinished ? 5 : 4;
+        if(pause) totalButtons = 5;
+        int totalHeight = buttonHeight * totalButtons + gap * (totalButtons - 1);
         initialY = height / 2 - totalHeight / 2;
         if(narrativeCraftLogo.logoExists()) initialY += narrativeCraftLogo.getImageHeight() / 2 + gap;
         int startY = initialY;
 
         Component playBtnComponent;
-        if(NarrativeCraftFile.getSave() == null && !pause) {
+        if(firstGame && !pause) {
             playBtnComponent = Translation.message("screen.main_screen.play");
         } else {
             playBtnComponent = Translation.message("screen.main_screen.continue");
@@ -135,7 +136,7 @@ public class MainScreen extends Screen {
         playButton.active = !NarrativeCraftMod.getInstance().getChapterManager().getChapters().isEmpty();
         this.addRenderableWidget(playButton);
 
-        if(storyFinished && !pause) {
+        if(!firstGame && !pause) {
             startY += buttonHeight + gap;
             Button startNewGame = Button.builder(Translation.message("screen.main_screen.new_game"), button -> {
                 ConfirmScreen confirmScreen = new ConfirmScreen(b -> {
@@ -152,6 +153,9 @@ public class MainScreen extends Screen {
                 minecraft.setScreen(confirmScreen);
             }).bounds(initialX, startY, buttonWidth, buttonHeight).build();
             this.addRenderableWidget(startNewGame);
+        }
+
+        if(storyFinished && !pause) {
             startY += buttonHeight + gap;
             Button selectSceneButton = Button.builder(Translation.message("screen.main_screen.select_screen"), button -> {
                 ChapterSelectorScreen screen = new ChapterSelectorScreen(this);
