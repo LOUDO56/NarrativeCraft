@@ -307,6 +307,7 @@ public class StoryHandler {
 
     private void initializeStory() throws Exception {
         stopExistingStoryHandler();
+        stopExistingKeyframeBase();
         NarrativeCraftMod.getInstance().setStoryHandler(this);
         Minecraft.getInstance().options.hideGui = true;
 
@@ -323,6 +324,13 @@ public class StoryHandler {
             existingHandler.stop(true);
         }
     }
+
+    private void stopExistingKeyframeBase() {
+        if(playerSession.getKeyframeControllerBase() != null) {
+            playerSession.getKeyframeControllerBase().stopSession(false);
+        }
+    }
+
 
     private void reloadCharacterSkins() {
         NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
