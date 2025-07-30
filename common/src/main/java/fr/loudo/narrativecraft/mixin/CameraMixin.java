@@ -69,6 +69,7 @@ public abstract class CameraMixin {
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
 
         client.options.setCameraType(CameraType.FIRST_PERSON);
+        client.options.hideGui = true;
 
     }
 
@@ -87,6 +88,8 @@ public abstract class CameraMixin {
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
+        client.options.setCameraType(CameraType.FIRST_PERSON);
+        client.options.hideGui = true;
 
     }
 
@@ -106,6 +109,9 @@ public abstract class CameraMixin {
         this.setPosition(position.getX(), position.getY(), position.getZ());
         this.setRotation(position.getYRot(), position.getXRot());
         this.rotation.rotateZ(-(float) Math.toRadians(position.getZRot()));
+
+        client.options.setCameraType(CameraType.FIRST_PERSON);
+        client.options.hideGui = true;
 
     }
 }

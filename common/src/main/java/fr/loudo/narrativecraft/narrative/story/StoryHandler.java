@@ -28,6 +28,7 @@ import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.CrashReport;
+import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.ClickEvent;
@@ -270,7 +271,6 @@ public class StoryHandler {
     }
 
     public static void changePlayerCutsceneMode(Playback.PlaybackType playbackType, boolean state) {
-        NarrativeCraftMod.getInstance().setCutsceneMode(state);
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
 
         if (state) {
@@ -280,6 +280,7 @@ public class StoryHandler {
                     ? GameType.CREATIVE
                     : GameType.ADVENTURE;
             serverPlayer.setGameMode(gameMode);
+            Minecraft.getInstance().options.hideGui = false;
         }
     }
 
@@ -307,8 +308,8 @@ public class StoryHandler {
 
     private void initializeStory() throws Exception {
         stopExistingStoryHandler();
+        stopExistingKeyframeBase();
         NarrativeCraftMod.getInstance().setStoryHandler(this);
-        Minecraft.getInstance().options.hideGui = true;
 
         inkActionList.clear();
         globalDialogValue = new DialogData(DialogData.globalDialogData);
@@ -323,6 +324,13 @@ public class StoryHandler {
             existingHandler.stop(true);
         }
     }
+
+    private void stopExistingKeyframeBase() {
+        if(playerSession.getKeyframeControllerBase() != null) {
+            playerSession.getKeyframeControllerBase().stopSession(false);
+        }
+    }
+
 
     private void reloadCharacterSkins() {
         NarrativeCraftMod.getInstance().getCharacterManager().reloadSkins();
@@ -610,7 +618,6 @@ public class StoryHandler {
         story = null;
         inkActionList.clear();
         playerSession.reset();
-        Minecraft.getInstance().options.hideGui = false;
         NarrativeCraftMod.getInstance().setStoryHandler(null);
     }
 

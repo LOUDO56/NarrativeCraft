@@ -1,14 +1,11 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import fr.loudo.narrativecraft.narrative.chapter.scenes.KeyframeControllerBase;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
-import fr.loudo.narrativecraft.narrative.chapter.scenes.cameraAngle.CameraAngleController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.Cutscene;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutsceneController;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.cutscenes.CutscenePlayback;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
-import fr.loudo.narrativecraft.narrative.story.inkAction.InkActionResult;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
@@ -38,10 +35,6 @@ public class CutsceneInkAction extends InkAction {
     }
 
     private void executeCutscene(Cutscene cutscene) {
-        KeyframeControllerBase keyframeControllerBase = storyHandler.getPlayerSession().getKeyframeControllerBase();
-        if(keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
-            cameraAngleController.stopSession(false);
-        }
         storyHandler.setCurrentDialogBox(null);
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(Minecraft.getInstance().player.getUUID());
         CutsceneController cutsceneController = new CutsceneController(cutscene, serverPlayer, Playback.PlaybackType.PRODUCTION);

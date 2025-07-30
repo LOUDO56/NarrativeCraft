@@ -51,7 +51,7 @@
   "narrativecraft.scene.no_exists": "Scene %s from chapter %s does not exists.",
 
   "narrativecraft.screen.crash.title": "Whoops! A crash occurred...",
-  "narrativecraft.screen.crash.from_mod": "Really sorry! This comes from the mod.\nPlease, report it to the discord server!",
+  "narrativecraft.screen.crash.from_mod": "Really sorry! This comes from the mod.\nPlease, create an issue on github!",
   "narrativecraft.screen.crash.from_story": "Really sorry! This comes from the story.\nSend it to the creator of the story.",
   "narrativecraft.screen.crash.button.open_crash": "Open Crash File",
 

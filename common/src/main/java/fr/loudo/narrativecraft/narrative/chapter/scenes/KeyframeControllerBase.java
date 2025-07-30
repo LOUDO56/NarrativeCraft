@@ -40,6 +40,9 @@ public abstract class KeyframeControllerBase {
     public abstract boolean removeKeyframe(Keyframe keyframe);
     public abstract void renderHUDInfo(GuiGraphics guiGraphics);
 
+    protected abstract void hideKeyframes();
+    protected abstract void revealKeyframes();
+
     public Keyframe getNextKeyframe(Keyframe current) {
         for (int i = 0; i < keyframeGroups.size(); i++) {
             KeyframeGroup group = keyframeGroups.get(i);
