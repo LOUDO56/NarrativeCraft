@@ -10,7 +10,6 @@
     "EntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
-    "LivingEntityRendererMixin",
     "PlayerListMixin",
     "ServerLevelMixin",
     "ServerPlayerCommonMixin",

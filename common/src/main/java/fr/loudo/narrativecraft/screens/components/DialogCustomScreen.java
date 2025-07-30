@@ -57,7 +57,6 @@ public class DialogCustomScreen extends Screen {
     @Override
     public void onClose() {
         LocalPlayer player = minecraft.player;
-        minecraft.options.hideGui = false;
         ServerPlayer serverPlayer = Utils.getServerPlayerByUUID(minecraft.player.getUUID());
         fakePlayer.remove(Entity.RemovalReason.KILLED);
         player.setPos(lastPos);
@@ -76,7 +75,6 @@ public class DialogCustomScreen extends Screen {
         DialogData dialogData = DialogData.globalDialogData;
         if(fakePlayer == null) {
             LocalPlayer player = minecraft.player;
-            minecraft.options.hideGui = true;
             Vec3 localPos = player.position();
             lastPos = localPos;
             lastXRot = player.getXRot();

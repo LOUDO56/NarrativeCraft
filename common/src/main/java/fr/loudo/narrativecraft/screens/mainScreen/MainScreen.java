@@ -69,12 +69,12 @@ public class MainScreen extends Screen {
     public void onClose() {
         super.onClose();
         if(!pause) {
-            minecraft.options.hideGui = false;
             minecraft.getSoundManager().stop(MUSIC_INSTANCE);
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if(playerSession.getKeyframeControllerBase() != null) {
                 NarrativeCraftMod.server.execute(() -> playerSession.getKeyframeControllerBase().stopSession(false));
             }
+            minecraft.options.hideGui = false;
         } else {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler != null && storyHandler.isRunning()) {
@@ -92,7 +92,6 @@ public class MainScreen extends Screen {
         showDevBtnCount = 0;
         boolean firstGame = NarrativeCraftFile.getSave() == null;
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        minecraft.options.hideGui = true;
         if((playerSession == null || playerSession.getKeyframeControllerBase() == null) && !pause) {
             CameraAngleGroup cameraAngleGroup = NarrativeCraftFile.getMainScreenBackgroundFile();
             if(cameraAngleGroup != null) {

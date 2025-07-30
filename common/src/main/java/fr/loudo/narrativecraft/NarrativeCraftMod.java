@@ -27,7 +27,6 @@ public class NarrativeCraftMod {
     public static MinecraftServer server;
 
     private StoryHandler storyHandler;
-    private boolean isCutsceneMode;
     private final ChapterManager chapterManager;
     private final CharacterManager characterManager;
     private final RecordingHandler recordingHandler;
@@ -46,7 +45,6 @@ public class NarrativeCraftMod {
         playerSession = new PlayerSession();
         narrativeCraftLogoRenderer = new NarrativeCraftLogoRenderer(ResourceLocation.withDefaultNamespace("textures/narrativecraft_logo.png"));
         narrativeUserOptions = new NarrativeUserOptions();
-        isCutsceneMode = false;
     }
 
     public static NarrativeCraftMod getInstance() {
@@ -67,14 +65,6 @@ public class NarrativeCraftMod {
 
     public PlaybackHandler getPlaybackHandler() {
         return playbackHandler;
-    }
-
-    public boolean isCutsceneMode() {
-        return isCutsceneMode;
-    }
-
-    public void setCutsceneMode(boolean cutsceneMode) {
-        isCutsceneMode = cutsceneMode;
     }
 
     public StoryHandler getStoryHandler() {

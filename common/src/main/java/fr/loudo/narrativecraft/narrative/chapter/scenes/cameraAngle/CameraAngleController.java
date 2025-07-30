@@ -298,7 +298,6 @@ public class CameraAngleController extends KeyframeControllerBase {
         revealKeyframes();
         currentPreviewKeyframe = null;
         StoryHandler.changePlayerCutsceneMode(playbackType, false);
-        Minecraft.getInstance().options.hideGui = false;
 
     }
 

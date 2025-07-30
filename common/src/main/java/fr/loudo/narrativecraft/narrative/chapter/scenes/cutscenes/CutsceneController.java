@@ -350,7 +350,6 @@ public class CutsceneController extends KeyframeControllerBase {
         selectedKeyframeGroup.showGlow(player);
         currentPreviewKeyframe = null;
         StoryHandler.changePlayerCutsceneMode(playbackType, false);
-        Minecraft.getInstance().options.hideGui = false;
     }
 
     public void changeTimePosition(int newTick, boolean seamless) {
