@@ -21,13 +21,13 @@ public class PickElementScreen extends Screen {
 
     private static final Component AVAILABLE_TITLE = Component.translatable("pack.available.title");
     private static final Component SELECTED_TITLE = Component.translatable("pack.selected.title");
-    private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this);
     private final Screen lastScreen;
     private final List<? extends NarrativeEntry> narrativeEntry1, narrativeEntry2;
     private Button moveButton, doneButton;
     private TransferableStorySelectionList availableList, selectedList;
     private StringWidget availableString, selectedString, headTitle;
     private Component availableMessage, selectedMessage, selector;
+    private int initialY;
     Consumer<List<TransferableStorySelectionList.Entry>> onDone;
 
     public PickElementScreen(Screen lastScreen,
@@ -82,6 +82,7 @@ public class PickElementScreen extends Screen {
             onDone.accept(selectedList.children());
         }).width(200).build());
         headTitle = this.addRenderableWidget(ScreenUtils.text(title, this.font, 0, 0));
+        initialY = availableList.getY() + 15;
         repositionElements();
     }
 
@@ -93,9 +94,9 @@ public class PickElementScreen extends Screen {
     protected void repositionElements() {
         headTitle.setPosition(this.width / 2 - this.font.width(title) / 2, 12);
         availableList.setX(this.width / 2 - 15 - 200);
-        availableList.setY(availableList.getY() + 15);
+        availableList.setY(initialY);
         selectedList.setX(this.width / 2 + 15);
-        selectedList.setY(selectedList.getY() + 15);
+        selectedList.setY(initialY);
         moveButton.setPosition(this.width / 2 - moveButton.getWidth() / 2, selectedList.getY() + selectedList.getHeight() / 2 - moveButton.getHeight() / 2);
         availableString.setPosition(availableList.getX() + availableList.getWidth() / 2 - this.font.width(availableMessage) / 2, availableList.getY() - 15);
         selectedString.setPosition(selectedList.getX() + selectedList.getWidth() / 2 - this.font.width(selectedMessage) / 2, selectedList.getY() - 15);
