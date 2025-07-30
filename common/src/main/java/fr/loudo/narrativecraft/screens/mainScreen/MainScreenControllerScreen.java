@@ -47,7 +47,7 @@ public class MainScreenControllerScreen extends Screen {
                 KeyframeTriggerScreen screen = new KeyframeTriggerScreen(mainScreenController, 0);
                 minecraft.setScreen(screen);
             } else {
-                minecraft.player.displayClientMessage(Component.literal("Only one keyframe trigger"), false);
+                minecraft.player.displayClientMessage(Translation.message("main_screen_controller.keyframe_trigger.only_one"), false);
             }
         }).bounds(startX + (BUTTON_WIDTH + spacing) * 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build();
         addTriggerKeyframeButton.setTooltip(Tooltip.create(Translation.message("screen.cutscene_controller.tooltip.keyframe_trigger")));

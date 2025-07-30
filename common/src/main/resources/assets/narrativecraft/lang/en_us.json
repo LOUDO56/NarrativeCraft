@@ -201,8 +201,10 @@
   "narrativecraft.cutscene.keyframe-trigger.save.unsupported": "§cSave tag not supported.",
   "narrativecraft.cutscene.keyframe-trigger.on-enter.unsupported": "§cOn enter tag is only for script file.",
   "narrativecraft.cutscene.hud": "Currently in Cutscene Controller.",
-
   "narrativecraft.cutscene.changed_time_skip_value": "Skip value now set to %d seconds",
+
+  "narrativecraft.main_screen_controller.keyframe.only_one": "Only one keyframe is allowed.",
+  "narrativecraft.main_screen_controller.keyframe_trigger.only_one": "Only one keyframe trigger is allowed.",
 
   "narrativecraft.character.spawn.fail": "§cImpossible to spawn an entity because no character is linked to animation §c§b%s.",
 
