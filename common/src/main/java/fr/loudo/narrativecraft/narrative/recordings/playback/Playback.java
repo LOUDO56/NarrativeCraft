@@ -23,6 +23,7 @@ import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.phys.Vec3;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -60,7 +61,11 @@ public class Playback {
         if(playbackType == PlaybackType.PRODUCTION) {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler.characterInStory(character)) {
-                masterEntity = character.getEntity();
+                if(needToRespawn(character.getEntity().position(), animation.getActionsData().getFirst().getMovementData().getFirst().getVec3())) {
+                    storyHandler.removeCharacter(character);
+                } else {
+                    masterEntity = character.getEntity();
+                }
             }
         }
 
@@ -137,7 +142,7 @@ public class Playback {
             if(isLooping) {
                 List<MovementData> movementData = actionsData.getMovementData();
                 if (movementData.isEmpty()) continue;
-                if(movementData.getFirst().getVec3().distanceTo(movementData.getLast().getVec3()) >= 0.8) {
+                if(needToRespawn(movementData.getFirst().getVec3(), movementData.getLast().getVec3())) {
                     if(playbackData.entity.equals(masterEntity)) {
                         playbackData.killEntity();
                         spawnMasterEntity(movementData.getFirst());
@@ -151,6 +156,10 @@ public class Playback {
         if(!isLooping) {
             stop();
         }
+    }
+
+    private boolean needToRespawn(Vec3 firstPos, Vec3 secondPos) {
+        return firstPos.distanceTo(secondPos) >= 0.8;
     }
 
     private void reset() {
