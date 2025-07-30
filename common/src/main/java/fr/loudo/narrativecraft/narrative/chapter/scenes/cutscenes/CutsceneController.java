@@ -96,6 +96,7 @@ public class CutsceneController extends KeyframeControllerBase {
 
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
 
+            // To make keyframe trigger working.
             this.storyHandler = new StoryHandler();
             storyHandler.setDebugMode(true);
             NarrativeCraftMod.getInstance().setStoryHandler(storyHandler);
@@ -160,11 +161,6 @@ public class CutsceneController extends KeyframeControllerBase {
                 keyframe.removeKeyframeFromClient(player);
             }
             player.setGameMode(GameType.CREATIVE);
-        }
-
-        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
-        playerSession.setKeyframeControllerBase(null);
-        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             if(save) {
                 NarrativeCraftFile.updateCutsceneFile(cutscene.getScene());
             } else {
@@ -178,10 +174,11 @@ public class CutsceneController extends KeyframeControllerBase {
                     cutscene.getKeyframeTriggerList().addAll(oldKeyframeTriggers);
                 }
             }
-        }
-        if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
             StoryHandler.changePlayerCutsceneMode(playbackType, false);
         }
+
+        PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
+        playerSession.setKeyframeControllerBase(null);
         playbackList.clear();
         isPlaying = false;
 

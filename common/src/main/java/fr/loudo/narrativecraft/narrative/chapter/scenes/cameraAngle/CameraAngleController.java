@@ -60,7 +60,7 @@ public class CameraAngleController extends KeyframeControllerBase {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if(keyframeControllerBase != null) {
-            NarrativeCraftMod.server.execute(() -> keyframeControllerBase.stopSession(false));
+            keyframeControllerBase.stopSession(false);
         }
         playerSession.setKeyframeControllerBase(this);
 
@@ -96,15 +96,14 @@ public class CameraAngleController extends KeyframeControllerBase {
 
     @Override
     public void stopSession(boolean save) {
-        cameraAngleGroup.killCharacters();
         if(playbackType == Playback.PlaybackType.DEVELOPMENT) {
+            cameraAngleGroup.killCharacters();
             for(CameraAngle cameraAngle : cameraAngleGroup.getCameraAngleList()) {
                 cameraAngle.removeKeyframeFromClient(player);
             }
             for(KeyframeTrigger keyframeTrigger : cameraAngleGroup.getKeyframeTriggerList()) {
                 keyframeTrigger.removeKeyframeFromClient(player);
             }
-            player.setGameMode(GameType.CREATIVE);
             if(save) {
                 NarrativeCraftFile.updateCameraAnglesFile(cameraAngleGroup.getScene());
             } else {
@@ -117,10 +116,10 @@ public class CameraAngleController extends KeyframeControllerBase {
                     cameraAngleGroup.getCharacterStoryDataList().addAll(oldCharacterStoryDataList);
                 }
             }
+            player.setGameMode(GameType.CREATIVE);
         }
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         playerSession.setKeyframeControllerBase(null);
-        StoryHandler.changePlayerCutsceneMode(playbackType, false);
     }
 
     @Override
