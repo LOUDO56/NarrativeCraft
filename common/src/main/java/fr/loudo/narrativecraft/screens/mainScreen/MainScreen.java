@@ -74,7 +74,10 @@ public class MainScreen extends Screen {
             if(playerSession.getKeyframeControllerBase() != null) {
                 NarrativeCraftMod.server.execute(() -> playerSession.getKeyframeControllerBase().stopSession(false));
             }
-            minecraft.options.hideGui = false;
+            // Force remove hide gui because sometimes it does not.
+            for (int i = 0; i < 50; i++) {
+                minecraft.options.hideGui = false;
+            }
         } else {
             StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
             if(storyHandler != null && storyHandler.isRunning()) {

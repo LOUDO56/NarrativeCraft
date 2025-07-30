@@ -43,6 +43,7 @@ public class OnClientTick {
 
         // Recording
         ModKeys.handleKeyPress(ModKeys.START_ANIMATION_RECORDING, () -> {
+            if(!client.player.hasPermissions(2)) return;
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if (!playerSession.sessionSet()) {
                 client.player.displayClientMessage(Translation.message("session.not_set"), false);
@@ -61,6 +62,7 @@ public class OnClientTick {
         });
 
         ModKeys.handleKeyPress(ModKeys.STOP_ANIMATION_RECORDING, () -> {
+            if(!client.player.hasPermissions(2)) return;
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
             if (!playerSession.sessionSet()) {
                 client.player.displayClientMessage(Translation.message("session.not_set"), false);
@@ -74,12 +76,6 @@ public class OnClientTick {
                 client.player.displayClientMessage(Translation.message("record.stop.success"), false);
             }
         });
-
-        for (Recording recording : RECORDING_HANDLER.getRecordings()) {
-            if (recording.isRecording()) {
-                recording.tick();
-            }
-        }
 
         // Handle ink action currently playing.
         StoryHandler storyHandler = NarrativeCraftMod.getInstance().getStoryHandler();
@@ -139,6 +135,7 @@ public class OnClientTick {
 
         // Open story manager screen trigger
         ModKeys.handleKeyPress(ModKeys.OPEN_STORY_MANAGER, () -> {
+            if(!client.player.hasPermissions(2)) return;
             if (storyHandler != null && storyHandler.isRunning()) return;
             Screen screen;
             PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
@@ -158,24 +155,26 @@ public class OnClientTick {
         PlayerSession playerSession = NarrativeCraftMod.getInstance().getPlayerSession();
         if (playerSession == null) return;
 
-
         // KeyframeControllerBase verification
         KeyframeControllerBase keyframeControllerBase = playerSession.getKeyframeControllerBase();
         if (keyframeControllerBase instanceof CutsceneController cutsceneController) {
             if (cutsceneController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                if(!client.player.hasPermissions(2)) return;
                 CutsceneControllerScreen screen = new CutsceneControllerScreen(cutsceneController);
                 client.execute(() -> client.setScreen(screen));
             });
         } else if (keyframeControllerBase instanceof MainScreenController mainScreenController) {
             if (mainScreenController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                if(!client.player.hasPermissions(2)) return;
                 MainScreenControllerScreen screen = new MainScreenControllerScreen(mainScreenController);
                 client.execute(() -> client.setScreen(screen));
             });
         } else if (keyframeControllerBase instanceof CameraAngleController cameraAngleController) {
             if (cameraAngleController.getPlaybackType() == Playback.PlaybackType.PRODUCTION) return;
             ModKeys.handleKeyPress(ModKeys.OPEN_KEYFRAME_EDIT_SCREEN, () -> {
+                if(!client.player.hasPermissions(2)) return;
                 CameraAngleControllerScreen screen = new CameraAngleControllerScreen(cameraAngleController);
                 client.execute(() -> client.setScreen(screen));
             });
