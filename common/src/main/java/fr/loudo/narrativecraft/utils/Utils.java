@@ -5,6 +5,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.DynamicOps;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.PauseScreen;
 import net.minecraft.client.gui.screens.TitleScreen;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.RegistryAccess;
@@ -98,8 +99,7 @@ public class Utils {
     }
     
     public static void disconnectPlayer(Minecraft minecraft) {
-        minecraft.level.disconnect(ClientLevel.DEFAULT_QUIT_MESSAGE);
-        minecraft.setScreen(new TitleScreen());
+        PauseScreen.disconnectFromWorld(minecraft, ClientLevel.DEFAULT_QUIT_MESSAGE);
     }
 
     public static int[] getImageResolution(ResourceLocation resourceLocation) {
