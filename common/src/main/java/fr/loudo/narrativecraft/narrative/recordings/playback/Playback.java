@@ -21,8 +21,11 @@ import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.level.storage.TagValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.phys.Vec3;
 
 import java.io.File;
@@ -478,7 +481,7 @@ public class Playback {
             entity = entityType.create(serverLevel, EntitySpawnReason.MOB_SUMMONED);
             if(entity == null) return;
             try {
-                entity.load(Utils.nbtFromString(actionsData.getNbtData()));
+                entity.load(Utils.valueInputFromCompoundTag(entity.registryAccess(), actionsData.getNbtData()));
             } catch (CommandSyntaxException e) {
                 NarrativeCraftMod.LOG.error("Unexpected error when trying to load nbt entity data! ", e);
             }

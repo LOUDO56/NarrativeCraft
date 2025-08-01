@@ -18,15 +18,14 @@
     "fields.ArmorStandFields",
     "fields.DisplayFields",
     "fields.EntityFields",
-    "fields.ItemDisplayFields",
     "fields.LivingEntityFields",
     "fields.PlayerFields",
-    "fields.PlayerListFields",
-    "fields.TextDisplayFields"
+    "fields.PlayerListFields"
   ],
   "client": [
     "CameraMixin",
     "GameRendererMixin",
+    "GuiTextRenderStateMixin",
     "MinecraftCommonMixin",
     "PlayerInfoMixin",
     "Utf8StringMixin",

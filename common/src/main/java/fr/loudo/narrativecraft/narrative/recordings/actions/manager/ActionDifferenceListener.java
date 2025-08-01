@@ -162,7 +162,7 @@ public class ActionDifferenceListener {
 }
 
     private void onItemChange(ItemStack itemStack, ItemStack oldItemStack, EquipmentSlot equipmentSlot, int tick) {
-        ItemChangeAction itemChangeAction = new ItemChangeAction(tick, equipmentSlot.name(), itemStack, oldItemStack);
+        ItemChangeAction itemChangeAction = new ItemChangeAction(tick, equipmentSlot.name(), itemStack, oldItemStack, actionsData.getEntity().registryAccess());
         actionsData.addAction(itemChangeAction);
     }
 

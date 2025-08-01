@@ -5,6 +5,7 @@ import fr.loudo.narrativecraft.narrative.recordings.actions.manager.ActionType;
 import fr.loudo.narrativecraft.narrative.recordings.playback.Playback;
 import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
@@ -25,18 +26,18 @@ public class ItemChangeAction extends Action {
     private final String oldData;
     private final String equipmentSlot;
 
-    public ItemChangeAction(int waitTick, String equipmentSlot, ItemStack itemStack, ItemStack oldItemStack) {
+    public ItemChangeAction(int waitTick, String equipmentSlot, ItemStack itemStack, ItemStack oldItemStack, RegistryAccess registryAccess) {
         super(waitTick, ActionType.ITEM_CHANGE);
         this.itemId = BuiltInRegistries.ITEM.getId(itemStack.getItem());
         this.oldItemId = BuiltInRegistries.ITEM.getId(oldItemStack.getItem());
         this.equipmentSlot = equipmentSlot;
-        this.data = getItemComponents(itemStack);
-        this.oldData = getItemComponents(oldItemStack);
+        this.data = getItemComponents(itemStack, registryAccess);
+        this.oldData = getItemComponents(oldItemStack, registryAccess);
     }
 
-    private String getItemComponents(ItemStack itemStack) {
+    private String getItemComponents(ItemStack itemStack, RegistryAccess registryAccess) {
         if(itemStack.isEmpty()) return null;
-        Tag tag = itemStack.save(Minecraft.getInstance().player.registryAccess());
+        Tag tag = Utils.getItemTag(itemStack, registryAccess);
         Tag componentsTag = ((CompoundTag)tag).get("components");
         if(componentsTag != null) {
             return componentsTag.toString();
@@ -64,7 +65,7 @@ public class ItemChangeAction extends Action {
         if(data != null) {
             CompoundTag tag = Utils.tagFromIdAndComponents(item, data);
             if (tag != null) {
-                itemStack = ItemStack.parse(entity.registryAccess(), tag).orElse(ItemStack.EMPTY);
+                itemStack = Utils.generateItemStackFromNBT(tag, entity.registryAccess());
             }
         }
         entity.getServer().getPlayerList().broadcastAll(new ClientboundSetEquipmentPacket(

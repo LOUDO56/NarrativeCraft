@@ -4,6 +4,7 @@ import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.DepthTestFunction;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import fr.loudo.narrativecraft.events.HudRender;
 import fr.loudo.narrativecraft.registers.CommandsRegister;
 import fr.loudo.narrativecraft.registers.EventsRegister;
 import fr.loudo.narrativecraft.registers.ModKeysRegister;

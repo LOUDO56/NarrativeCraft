@@ -9,7 +9,6 @@ public class CommandsRegister {
         CommandRegistrationCallback.EVENT.register((commandDispatcher, commandBuildContext, commandSelection) -> {
             PlayerSessionCommand.register(commandDispatcher);
             RecordCommand.register(commandDispatcher);
-            TestCommand.register(commandDispatcher);
             StoryCommand.register(commandDispatcher);
             OpenScreenCommand.register(commandDispatcher);
             LinkCommand.register(commandDispatcher);

@@ -64,7 +64,7 @@ public class KeyframeCutsceneOptionScreen extends KeyframeOptionScreen {
     }
 
     @Override
-    protected void renderBlurredBackground() {}
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {}
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}

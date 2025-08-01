@@ -6,8 +6,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.ProblemReporter;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.storage.TagValueOutput;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,15 +31,21 @@ public class ActionsData {
         this.actions = new ArrayList<>();
         this.entity = entity;
         if(!(entity instanceof ServerPlayer)) {
-            CompoundTag compoundTag = entity.saveWithoutId(new CompoundTag());
-            compoundTag.remove("UUID");
-            compoundTag.remove("Pos");
-            compoundTag.remove("Motion");
-            nbtData = compoundTag.toString();
+            nbtData = String.valueOf(serializeNBT());
         }
         entityId = BuiltInRegistries.ENTITY_TYPE.getId(entity.getType());
         this.spawnTick = spawnTick;
         entityIdRecording = -1;
+    }
+
+    private CompoundTag serializeNBT() {
+        TagValueOutput nbt = TagValueOutput.createWithContext(ProblemReporter.DISCARDING, entity.registryAccess());
+        entity.saveWithoutId(nbt);
+        CompoundTag compoundTag = nbt.buildResult();
+        compoundTag.remove("UUID");
+        compoundTag.remove("Pos");
+        compoundTag.remove("Motion");
+        return compoundTag;
     }
 
     public void addMovement() {

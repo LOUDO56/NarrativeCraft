@@ -46,11 +46,11 @@ public class CommandMinecraftInkAction extends InkAction {
                 commandSource,
                 serverPlayer.position(),
                 serverPlayer.getRotationVector(),
-                serverPlayer.serverLevel(),
+                serverPlayer.level(),
                 4,
                 serverPlayer.getName().getString(),
                 serverPlayer.getDisplayName(),
-                serverPlayer.server,
+                serverPlayer.getServer(),
                 serverPlayer
         );
     }

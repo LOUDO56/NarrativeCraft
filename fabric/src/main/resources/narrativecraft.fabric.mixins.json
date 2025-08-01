@@ -13,6 +13,8 @@
     "ServerPlayerMixin"
   ],
   "client": [
+    "GuiGraphicsFabricMixin",
+    "GuiMixin",
     "MinecraftFabricMixin"
   ],
   "server": [],

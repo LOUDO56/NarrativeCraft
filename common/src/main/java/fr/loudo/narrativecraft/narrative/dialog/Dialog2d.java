@@ -2,6 +2,7 @@ package fr.loudo.narrativecraft.narrative.dialog;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.gui.ICustomGuiRender;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationScrollText;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAppearAnimation2d;
@@ -10,6 +11,7 @@ import fr.loudo.narrativecraft.utils.Easing;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import org.joml.Matrix3x2fStack;
 
 public class Dialog2d extends DialogImpl {
 
@@ -46,6 +48,16 @@ public class Dialog2d extends DialogImpl {
 
     public void render(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         Minecraft minecraft = Minecraft.getInstance();
+        // Init skip arrow instance BEFORE background,
+        // or else when drawing dialog background AFTER dialog ended,
+        // arrow is behind background, then above
+        ((ICustomGuiRender)guiGraphics).drawnDialogSkip(
+                0,
+                0,
+                0,
+                0,
+                0
+        );
         int windowWidth = minecraft.getWindow().getGuiScaledWidth();
         int windowHeight = minecraft.getWindow().getGuiScaledHeight();
 
@@ -67,28 +79,28 @@ public class Dialog2d extends DialogImpl {
             }
         }
 
-        PoseStack poseStack = guiGraphics.pose();
-        poseStack.pushPose();
+        Matrix3x2fStack poseStack = guiGraphics.pose();
+        poseStack.pushMatrix();
 
         int dialogWidth = width + paddingX * 2;
         int dialogHeight = height + paddingY * 2;
         int centerX = windowWidth / 2;
         int centerY = windowHeight - offsetDialog - dialogHeight / 2;
 
-        poseStack.translate(centerX, centerY, 0);
+        poseStack.translate(centerX, centerY);
         dialogAppearAnimation2d.render(poseStack, minecraft, acceptNewDialog ? DialogAppearAnimation2d.AppearType.DISAPPEAR : DialogAppearAnimation2d.AppearType.APPEAR);
-        poseStack.translate(-dialogWidth / 2.0f, -dialogHeight / 2.0f, 0);
+        poseStack.translate(-dialogWidth / 2.0f, -dialogHeight / 2.0f);
 
         guiGraphics.fill(0, 0, dialogWidth, dialogHeight, backgroundColor);
 
         if(dialogAnimationScrollText.isFinished() && !endDialog) {
-            poseStack.translate(0, dialogHeight - dialogAnimationArrowSkip.getHeight() - 5, 0);
+            poseStack.translate(0, dialogHeight - dialogAnimationArrowSkip.getHeight() - 5);
             if(!unSkippable) {
-                dialogAnimationArrowSkip.render(poseStack, minecraft, minecraft.renderBuffers().bufferSource());
+                dialogAnimationArrowSkip.render(guiGraphics, minecraft);
             }
             acceptNewDialog = true;
         }
-        poseStack.popPose();
+        poseStack.popMatrix();
 
         if(!dialogAppearAnimation2d.isAnimating() && !endDialog) {
             dialogAnimationScrollText.render(guiGraphics, deltaTracker, scale);

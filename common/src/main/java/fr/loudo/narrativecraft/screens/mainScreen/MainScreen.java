@@ -18,6 +18,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.ConfirmScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
@@ -249,7 +250,7 @@ public class MainScreen extends Screen {
         if(NarrativeCraftFile.getMainScreenBackgroundFile() != null) return;
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
             guiGraphics.blit(
-                    RenderType::guiTextured,
+                    RenderPipelines.GUI_TEXTURED,
                     BACKGROUND_IMAGE,
                     0, 0,
                     0, 0,
@@ -263,7 +264,7 @@ public class MainScreen extends Screen {
     }
 
     @Override
-    protected void renderBlurredBackground() {}
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {}
 
     @Override
     public boolean isPauseScreen() {

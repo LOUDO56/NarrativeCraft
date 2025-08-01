@@ -24,7 +24,7 @@ public class CutsceneEditItems {
 
         CompoundTag tag = Utils.tagFromIdAndComponents(item, "{\"minecraft:custom_name\":\"" + name + "\"}");
 
-        return ItemStack.parse(registryAccess, tag).get();
+        return Utils.generateItemStackFromNBT(tag, registryAccess);
 
     }
 
@@ -32,7 +32,7 @@ public class CutsceneEditItems {
 
         CompoundTag tag = Utils.tagFromIdAndComponents(item, "{\"minecraft:custom_name\":\"" + name + "\", \"minecraft:profile\":{properties:[{name: \"" + textures.name() + "\", value: \"" + textures.value() + "\"}]}}");
 
-        return ItemStack.parse(registryAccess, tag).get();
+        return Utils.generateItemStackFromNBT(tag, registryAccess);
 
     }
 

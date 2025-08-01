@@ -47,7 +47,7 @@ public class RightClickBlockAction extends Action {
                 || itemStack.getItem() instanceof BlockItem
         ) return;
         itemStack.setCount(2);
-        BlockState blockState = player.serverLevel().getBlockState(blockPos);
+        BlockState blockState = player.level().getBlockState(blockPos);
         BlockHitResult blockHitResult = new BlockHitResult(
                 new Vec3(x, y, z),
                 Direction.valueOf(directionName),
@@ -61,7 +61,7 @@ public class RightClickBlockAction extends Action {
         );
         InteractionResult result = itemStack.getItem().useOn(useOnContext);
         if(!result.consumesAction()) {
-            blockState.useWithoutItem(player.serverLevel(), player, blockHitResult);
+            blockState.useWithoutItem(player.level(), player, blockHitResult);
         }
 
     }

@@ -3,11 +3,13 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 import com.mojang.blaze3d.font.GlyphInfo;
 import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.gui.ICustomGuiRender;
 import fr.loudo.narrativecraft.mixin.fields.FontFields;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.narrative.dialog.DialogAnimationType;
 import fr.loudo.narrativecraft.utils.MathUtils;
+import fr.loudo.narrativecraft.utils.Utils;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -20,9 +22,9 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.util.FormattedCharSequence;
-import org.joml.Random;
-import org.joml.Vector2f;
+import org.joml.*;
 
+import java.lang.Math;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -164,7 +166,7 @@ public class DialogAnimationScrollText {
 
         int globalCharIndex = 0;
 
-        PoseStack poseStack = guiGraphics.pose();
+        Matrix3x2fStack poseStack = guiGraphics.pose();
 
         for (int i = 0; i < lines.size(); i++) {
             String text = lines.get(i);
@@ -180,8 +182,8 @@ public class DialogAnimationScrollText {
             for (int j = 0; j < lineVisibleLetters; j++) {
                 Vector2f offset = letterOffsets.getOrDefault(globalCharIndex, new Vector2f(0, 0));
                 String character = String.valueOf(text.charAt(j));
-                poseStack.pushPose();
-                poseStack.scale(scale, scale, 1.0f);
+                poseStack.pushMatrix();
+                poseStack.scale(scale, scale);
                 drawStringGui(
                         guiGraphics,
                         deltaTracker,
@@ -190,7 +192,7 @@ public class DialogAnimationScrollText {
                         (currentY + offset.y) / scale,
                         dialog2d.getTextColor()
                 );
-                poseStack.popPose();
+                poseStack.popMatrix();
                 startX += (getLetterWidth(text.codePointAt(j)) + letterSpacing) * scale;
 
                 globalCharIndex++;
@@ -284,18 +286,13 @@ public class DialogAnimationScrollText {
 
     private void drawStringGui(GuiGraphics guiGraphics, DeltaTracker deltaTracker, String text, float x, float y, int color) {
         Minecraft client = Minecraft.getInstance();
-        PoseStack poseStack = guiGraphics.pose();
-        client.font.drawInBatch(
+        ((ICustomGuiRender)guiGraphics).drawStringFloat(
                 text,
+                client.font,
                 x,
                 y,
                 color,
-                false,
-                poseStack.last().pose(),
-                client.renderBuffers().bufferSource(),
-                Font.DisplayMode.NORMAL,
-                0,
-                LightTexture.FULL_BRIGHT
+                false
         );
     }
 

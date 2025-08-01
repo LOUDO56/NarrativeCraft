@@ -100,7 +100,7 @@ public class CharacterStoryData {
         for(EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
             ItemStack itemStack = entity.getItemBySlot(equipmentSlot);
             if(!itemStack.isEmpty()) {
-                Tag tag = itemStack.save(entity.registryAccess());
+                Tag tag = Utils.getItemTag(itemStack, entity.registryAccess());
                 Tag componentsTag = ((CompoundTag)tag).get("components");
                 String itemData = componentsTag == null ? "" : componentsTag.toString();
                 itemSlotDataList.add(
@@ -276,7 +276,7 @@ public class CharacterStoryData {
                 ItemStack itemStack = new ItemStack(item);
                 CompoundTag tag = Utils.tagFromIdAndComponents(item, data);
                 if (tag != null) {
-                    itemStack = ItemStack.parse(registryAccess, tag).orElse(ItemStack.EMPTY);
+                    itemStack = Utils.generateItemStackFromNBT(tag, registryAccess);
                 }
                 return itemStack;
             }

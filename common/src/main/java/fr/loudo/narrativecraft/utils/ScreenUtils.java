@@ -92,14 +92,15 @@ public class ScreenUtils {
 
         public MultilineLabelBox(Component text, Font font, int width, int height, int x, int y, Component placeholder) {
             stringWidget = ScreenUtils.text(text, font, x, y);
-            multiLineEditBox = new MultiLineEditBox(
-                    font,
-                    x,
-                    y + stringWidget.getHeight() + 5,
-                    width,
-                    height,
-                    placeholder,
-                    Component.literal("")
+            multiLineEditBox = MultiLineEditBox.builder()
+                    .setPlaceholder(placeholder)
+                    .setX(x)
+                    .setY(y)
+                    .build(
+                        font,
+                        width,
+                        height,
+                        Component.literal("")
             );
         }
 

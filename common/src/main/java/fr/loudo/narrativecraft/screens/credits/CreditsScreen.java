@@ -8,6 +8,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.WinScreen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.network.chat.Component;
@@ -50,11 +51,11 @@ public class CreditsScreen extends WinScreen {
             minecraft.getSoundManager().stop();
             minecraft.getSoundManager().play(MUSIC_INSTANCE);
         }
-        ((WinScreenFields)this).callAddCreditsLine(Component.literal("Tool Used").withStyle(ChatFormatting.GRAY), false);
-        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("Ink - Narrative Script Language by Inkle").withStyle(ChatFormatting.WHITE), false);
-        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("Blade-ink-java - Ink java adaptation by BladeCoder").withStyle(ChatFormatting.WHITE), false);
-        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("NarrativeCraft - Mod used to create this story by LOUDO").withStyle(ChatFormatting.WHITE), false);
-        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           "), false);
+        ((WinScreenFields)this).callAddCreditsLine(Component.literal("Tool Used").withStyle(ChatFormatting.GRAY), false, false);
+        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("Ink - Narrative Script Language by Inkle").withStyle(ChatFormatting.WHITE), false, false);
+        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("Blade-ink-java - Ink java adaptation by BladeCoder").withStyle(ChatFormatting.WHITE), false, false);
+        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           ").append("NarrativeCraft - Mod used to create this story by LOUDO").withStyle(ChatFormatting.WHITE), false, false);
+        ((WinScreenFields)this).callAddCreditsLine(Component.literal("           "), false, false);
 
     }
 
@@ -71,7 +72,7 @@ public class CreditsScreen extends WinScreen {
     public void renderBackground(GuiGraphics p_282239_, int p_294762_, int p_295473_, float p_296441_) {
         if(Utils.resourceExists(BACKGROUND_IMAGE)) {
             p_282239_.blit(
-                    RenderType::guiTextured,
+                    RenderPipelines.GUI_TEXTURED,
                     BACKGROUND_IMAGE,
                     0, 0,
                     0, 0,

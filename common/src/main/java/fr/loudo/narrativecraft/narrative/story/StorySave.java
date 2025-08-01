@@ -134,8 +134,8 @@ public class StorySave {
         Component text = ImageFontConstants.SAVE;
         int textWidth = minecraft.font.width(text);
 
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 300);
+        guiGraphics.pose().pushMatrix();
+        guiGraphics.pose().translate(0, 0);
 
         guiGraphics.drawString(
                 minecraft.font,
@@ -146,7 +146,7 @@ public class StorySave {
                 false
         );
 
-        guiGraphics.pose().popPose();
+        guiGraphics.pose().popMatrix();
 
         if (elapsed >= totalDuration) {
             NarrativeCraftMod.getInstance().getStoryHandler().setSaving(false);

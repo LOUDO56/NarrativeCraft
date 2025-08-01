@@ -3,14 +3,17 @@ package fr.loudo.narrativecraft.narrative.dialog.animations;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.gui.ICustomGuiRender;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog;
 import fr.loudo.narrativecraft.narrative.dialog.Dialog2d;
 import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.util.ARGB;
+import org.joml.Matrix3x2fStack;
 import org.joml.Matrix4f;
 
 public class DialogAnimationArrowSkip {
@@ -84,9 +87,9 @@ public class DialogAnimationArrowSkip {
             startTime = 0;
         }
         int newColor = ARGB.color(newOpacity, color);
-        Matrix4f matrix4f = poseStack.last().pose();
 
         VertexConsumer vertexConsumer = bufferSource.getBuffer(NarrativeCraftMod.dialogBackgroundRenderType);
+        Matrix4f matrix4f = poseStack.last().pose();
 
         float dialogWidth;
         if(dialog != null) {
@@ -102,6 +105,52 @@ public class DialogAnimationArrowSkip {
 
         bufferSource.endBatch();
         poseStack.popPose();
+
+    }
+
+    public void render(GuiGraphics guiGraphics, Minecraft minecraft) {
+        Matrix3x2fStack poseStack = guiGraphics.pose();
+        poseStack.pushMatrix();
+        long now = System.currentTimeMillis();
+        if(startTime == 0) startTime = now;
+        if (minecraft.isPaused() && !isPaused) {
+            isPaused = true;
+            pauseStartTime = now;
+        } else if (!minecraft.isPaused() && isPaused) {
+            isPaused = false;
+            startTime += now - pauseStartTime;
+        }
+        int newOpacity = opacity;
+        if(t < 1.0) {
+            float newTranslateX = (float) MathUtils.lerp(translateXStart, 0, t);
+            poseStack.translate(
+                    newTranslateX,
+                    0
+            );
+            newOpacity = (int) MathUtils.lerp(0, opacity, t);
+            if(!isPaused) {
+                t = Easing.getInterpolation(easing, Math.min((double) (now - startTime) / totalTime, 1.0));
+            }
+        } else {
+            startTime = 0;
+        }
+        int newColor = ARGB.color(newOpacity, color);
+        float dialogWidth;
+        if(dialog != null) {
+            dialogWidth = dialog.getWidth();
+        } else {
+            dialogWidth = dialog2d.getWidth();
+        }
+
+        ((ICustomGuiRender)guiGraphics).drawnDialogSkip(
+                dialogWidth,
+                width,
+                height,
+                offsetX,
+                newColor
+        );
+
+        poseStack.popMatrix();
 
     }
 

@@ -80,5 +80,7 @@ public class CameraAngleChangePoseScreen extends Screen {
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
 
     @Override
-    protected void renderBlurredBackground() {}
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {
+        super.renderBlurredBackground(guiGraphics);
+    }
 }

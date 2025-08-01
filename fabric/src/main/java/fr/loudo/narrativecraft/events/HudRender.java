@@ -1,8 +1,8 @@
 package fr.loudo.narrativecraft.events;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
-import net.fabricmc.fabric.api.client.rendering.v1.LayeredDrawerWrapper;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.impl.client.rendering.hud.HudElementRegistryImpl;
 import net.minecraft.resources.ResourceLocation;
 
 public class HudRender {
@@ -14,27 +14,14 @@ public class HudRender {
     private static final ResourceLocation BORDER_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "border-hud");
     private static final ResourceLocation LOADING_HUD = ResourceLocation.fromNamespaceAndPath(NarrativeCraftMod.MOD_ID, "loading-hud");
 
-    public static void fadeHUDRender(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(FADE_HUD, OnHudRender::fadeRender));
+    // Does not work for some reason?
+    public static void register() {
+        HudElementRegistry.addLast(FADE_HUD, OnHudRender::fadeRender);
+        HudElementRegistry.addLast(SAVE_ICON_HUD, OnHudRender::saveIconRender);
+        HudElementRegistry.addLast(DIALOG_HUD, OnHudRender::dialogHud);
+        HudElementRegistry.addLast(KEYFRAME_CONTROLLER_BASE_INFO, OnHudRender::keyframeControllerBaseRender);
+        HudElementRegistry.addLast(BORDER_HUD, OnHudRender::borderHud);
+        HudElementRegistry.addLast(LOADING_HUD, OnHudRender::loadingHud);
     }
 
-    public static void saveIconRender(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(SAVE_ICON_HUD, OnHudRender::saveIconRender));
-    }
-
-    public static void dialogHud(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(DIALOG_HUD, OnHudRender::dialogHud));
-    }
-
-    public static void keyframeControllerBaseHUDRender(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(KEYFRAME_CONTROLLER_BASE_INFO, OnHudRender::keyframeControllerBaseRender));
-    }
-
-    public static void borderHud(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(BORDER_HUD, OnHudRender::borderHud));
-    }
-
-    public static void loadingRender(LayeredDrawerWrapper layeredDrawerWrapper) {
-        layeredDrawerWrapper.addLayer(IdentifiedLayer.of(LOADING_HUD, OnHudRender::loadingHud));
-    }
 }

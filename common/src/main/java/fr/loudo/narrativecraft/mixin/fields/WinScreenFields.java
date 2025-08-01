@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 @Mixin(WinScreen.class)
 public interface WinScreenFields {
 
-    @Invoker void callAddCreditsLine(Component creditsLine, boolean centered);
+    @Invoker void callAddCreditsLine(Component text, boolean centered, boolean narrate);
     @Accessor float getUnmodifiedScrollSpeed();
 
 }

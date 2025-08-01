@@ -6,6 +6,7 @@ import fr.loudo.narrativecraft.utils.Easing;
 import fr.loudo.narrativecraft.utils.MathUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ARGB;
+import org.joml.Matrix3x2fStack;
 
 public class DialogAppearAnimation2d {
 
@@ -24,7 +25,7 @@ public class DialogAppearAnimation2d {
         isPaused = false;
     }
 
-    public void render(PoseStack poseStack, Minecraft minecraft, AppearType appearType) {
+    public void render(Matrix3x2fStack poseStack, Minecraft minecraft, AppearType appearType) {
         if(!isAnimating()) return;
         long currentTime = System.currentTimeMillis();
 
@@ -45,7 +46,7 @@ public class DialogAppearAnimation2d {
             scale = (float) MathUtils.lerp(1, 0.75f, t);
             opacity = (float) Math.max(0,  MathUtils.lerp(1, 0, t));
         }
-        poseStack.scale(scale, scale, 1.0F);
+        poseStack.scale(scale, scale);
         int alpha = (int) (opacity * 255.0F);
 
         int dialogBcColor = dialog2d.getBackgroundColor();

@@ -151,17 +151,16 @@ public class ChoicesScreen extends Screen {
         long elapsedTime = now - startTime;
         for (AnimatedChoice ac : animatedChoices) {
             int newOpacity = (int) MathUtils.lerp(5, 255, t);
-            guiGraphics.pose().pushPose();
+            guiGraphics.pose().pushMatrix();
             if(choiceList.size() > 1) {
                 guiGraphics.pose().translate(
-                        MathUtils.lerp(ac.offsetX, 0, t),
-                        MathUtils.lerp(ac.offsetY, 0, t),
-                        0
+                        (float) MathUtils.lerp(ac.offsetX, 0, t),
+                        (float) MathUtils.lerp(ac.offsetY, 0, t)
                 );
             }
             ac.widget.setOpacity(newOpacity);
             ac.widget.render(guiGraphics, mouseX, mouseY, partialTick);
-            guiGraphics.pose().popPose();
+            guiGraphics.pose().popMatrix();
             if(t >= 1.0) {
                 ac.widget.setCanPress(true);
             }
@@ -185,7 +184,7 @@ public class ChoicesScreen extends Screen {
     }
 
     @Override
-    protected void renderBlurredBackground() {}
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {}
 
     @Override
     public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {}
