@@ -72,7 +72,7 @@ publisher {
     setModrinthID(modrinth_id)
 
     setVersionType(version_type)
-    setChangelog(file(changelog_file))
+    setChangelog(System.getenv("CHANGELOG_TEXT"))
     setVersion("${project.version}-neoforge-${minecraft_version}")
     setDisplayName("${mod_name} - NeoForge - ${project.version}")
     setGameVersions(minecraft_version)

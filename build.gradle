@@ -1,36 +1,8 @@
 plugins {
     // see https://fabricmc.net/develop/ for new versions
-    id 'fabric-loom' version '1.10-SNAPSHOT' apply false
+    id 'fabric-loom' version '1.11-SNAPSHOT' apply false
     // see https://projects.neoforged.net/neoforged/moddevgradle for new versions
-    id 'net.neoforged.moddev' version '2.0.62-beta' apply false
+    id 'net.neoforged.moddev' version '2.0.105' apply false
     // ModPublisher
     id "com.hypherionmc.modutils.modpublisher" version "2.1.7"
 }
-
-tasks.register("publishAll") {
-    group "publishing"
-    dependsOn(
-            ":fabric:publishModrinth",
-            ":fabric:publishCurseforge",
-            ":neoforge:publishModrinth",
-            ":neoforge:publishCurseforge"
-    )
-}
-
-tasks.register("publishAllCurseforge") {
-    group "publishing"
-    dependsOn(
-            ":fabric:publishCurseforge",
-            ":neoforge:publishCurseforge"
-    )
-}
-
-tasks.register("publishAllModrinth") {
-    group "publishing"
-    dependsOn(
-            ":fabric:publishModrinth",
-            ":neoforge:publishModrinth"
-    )
-}
-
-
