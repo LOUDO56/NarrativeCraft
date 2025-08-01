@@ -9,6 +9,7 @@ repositories {
     maven {
         url 'https://maven.kosmx.dev/'
     }
+    maven { url = "https://repo.redlance.org/public" }
 }
 
 dependencies {
@@ -19,13 +20,12 @@ dependencies {
     }
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    compileOnly (group: 'io.github.kosmx.emotes', name: 'emotesAPI', version: '2.6.1') {
-        exclude group: 'dev.kosmx.player-anim', module: 'player-animation-lib'
-        exclude group: 'dev.kosmx.player-anim', module: 'anim-core'
-        exclude group: 'net.raphimc', module: 'NoteBlockLib'
+    compileOnly("io.github.kosmx.emotes:emotesAPI:${emotesAPI_version}") {
+        exclude group: 'com.google.guava', module: 'guava'
     }
-    compileOnly group: 'dev.kosmx.player-anim', name: 'player-animation-lib', version: '2.0.2+1.21.5'
-    compileOnly group: 'dev.kosmx.player-anim', name: 'anim-core', version: '2.0.2+1.21.5'
+    compileOnly("io.github.kosmx.emotes:emotesServer:${emotesAPI_version}") {
+        exclude group: 'com.google.guava', module: 'guava'
+    }
     include(implementation "com.bladecoder.ink:blade-ink:1.2.0+nc")
 }
 

@@ -1,6 +1,6 @@
 package fr.loudo.narrativecraft.narrative.story.inkAction;
 
-import dev.kosmx.playerAnim.core.data.KeyframeAnimation;
+import com.zigythebird.playeranimcore.animation.Animation;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.narrative.chapter.scenes.Scene;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
@@ -8,18 +8,18 @@ import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.inkAction.enums.InkTagType;
 import fr.loudo.narrativecraft.narrative.story.inkAction.validation.ErrorLine;
 import fr.loudo.narrativecraft.utils.Translation;
-import io.github.kosmx.emotes.api.events.client.ClientEmoteAPI;
 import io.github.kosmx.emotes.api.events.server.ServerEmoteAPI;
+import io.github.kosmx.emotes.common.tools.UUIDMap;
+import io.github.kosmx.emotes.server.serializer.UniversalEmoteSerializer;
 import net.minecraft.client.Minecraft;
 
-import java.util.Collection;
 import java.util.UUID;
 
 public class EmoteCraftInkAction extends InkAction {
 
     private String characterName;
     private boolean forced;
-    private KeyframeAnimation emote;
+    private Animation emote;
     private String action;
 
     public EmoteCraftInkAction(StoryHandler storyHandler, String command) {
@@ -42,7 +42,7 @@ public class EmoteCraftInkAction extends InkAction {
         CharacterStory characterStory = storyHandler.getCharacter(characterName);
         if(characterStory == null) return InkActionResult.error(this.getClass(), Translation.message("validation.character", characterName).getString());
         if(action.equals("play")) {
-            emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
+            emote = getEmote(name, UniversalEmoteSerializer.getLoadedEmotes());
             if(emote == null) return InkActionResult.error(this.getClass(), Translation.message("validation.emote", name).getString());
             ServerEmoteAPI.playEmote(characterStory.getEntity().getUUID(), emote, forced);
         } else if(action.equals("stop")) {
@@ -89,7 +89,7 @@ public class EmoteCraftInkAction extends InkAction {
                 false
         );
         if(command[1].equals("play")) {
-            emote = getEmote(name, ClientEmoteAPI.clientEmoteList());
+            emote = getEmote(name, UniversalEmoteSerializer.getLoadedEmotes());
             if(emote == null) {
                 return new ErrorLine(
                         line,
@@ -103,21 +103,21 @@ public class EmoteCraftInkAction extends InkAction {
         return null;
     }
 
-    private KeyframeAnimation getEmote(String id, Collection<KeyframeAnimation> emotes) {
+    private Animation getEmote(String id, UUIDMap<Animation> emotes) {
         try {
             UUID emoteID = UUID.fromString(id);
-            for (KeyframeAnimation keyframeAnimation : emotes) {
-                if(keyframeAnimation.getUuid().equals(emoteID)) {
+            for (Animation keyframeAnimation : emotes) {
+                if(keyframeAnimation.get().equals(emoteID)) {
                     return keyframeAnimation;
                 }
             }
         } catch(IllegalArgumentException ignore) {} //Not a UUID
 
-        for (KeyframeAnimation keyframeAnimation : emotes) {
-            String emoteName = keyframeAnimation.getName();
+        for (Animation animation : emotes) {
+            String emoteName = animation.data().name();
             emoteName = emoteName.replace("\"", "");
             if(emoteName.equalsIgnoreCase(id)) {
-                return keyframeAnimation;
+                return animation;
             }
         }
         return null;
