@@ -1,6 +1,5 @@
 package fr.loudo.narrativecraft.narrative.dialog;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.gui.ICustomGuiRender;
 import fr.loudo.narrativecraft.narrative.dialog.animations.DialogAnimationArrowSkip;

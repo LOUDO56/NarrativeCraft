@@ -4,9 +4,7 @@ import fr.loudo.narrativecraft.gui.IGuiTextAccessor;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.render.state.GuiTextRenderState;
 import net.minecraft.util.FormattedCharSequence;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
