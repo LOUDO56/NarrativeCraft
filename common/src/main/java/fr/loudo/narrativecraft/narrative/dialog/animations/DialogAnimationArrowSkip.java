@@ -62,87 +62,43 @@ public class DialogAnimationArrowSkip {
 
     public void render(PoseStack poseStack, Minecraft minecraft, MultiBufferSource.BufferSource bufferSource) {
         poseStack.pushPose();
-        long now = System.currentTimeMillis();
-        if(startTime == 0) startTime = now;
-        if (minecraft.isPaused() && !isPaused) {
-            isPaused = true;
-            pauseStartTime = now;
-        } else if (!minecraft.isPaused() && isPaused) {
-            isPaused = false;
-            startTime += now - pauseStartTime;
+        updateAnimationState(minecraft);
+
+        float translatedX = (float) MathUtils.lerp(translateXStart, 0, t);
+        int newOpacity = (int) MathUtils.lerp(0, opacity, t);
+        int newColor = ARGB.color(t < 1.0 ? newOpacity : opacity, color);
+
+        if (t < 1.0) {
+            poseStack.translate(translatedX, 0, 0);
         }
-        int newOpacity = opacity;
-        if(t < 1.0) {
-            float newTranslateX = (float) MathUtils.lerp(translateXStart, 0, t);
-            poseStack.translate(
-                    newTranslateX,
-                    0,
-                    0
-            );
-            newOpacity = (int) MathUtils.lerp(0, opacity, t);
-            if(!isPaused) {
-                t = Easing.getInterpolation(easing, Math.min((double) (now - startTime) / totalTime, 1.0));
-            }
-        } else {
-            startTime = 0;
-        }
-        int newColor = ARGB.color(newOpacity, color);
 
         VertexConsumer vertexConsumer = bufferSource.getBuffer(NarrativeCraftMod.dialogBackgroundRenderType);
         Matrix4f matrix4f = poseStack.last().pose();
 
-        float dialogWidth;
-        if(dialog != null) {
-            dialogWidth = dialog.getWidth();
-        } else {
-            dialogWidth = dialog2d.getWidth();
-        }
+        float dialogWidth = getDialogWidth();
 
-        vertexConsumer.addVertex(matrix4f, dialogWidth - width - offsetX, -height, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, dialogWidth - width - offsetX, height, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, dialogWidth + width - offsetX, 0, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
-        vertexConsumer.addVertex(matrix4f, dialogWidth - width - offsetX, -height, 0.01f).setColor(newColor).setLight(LightTexture.FULL_BRIGHT);
+        drawQuad(vertexConsumer, matrix4f, dialogWidth, newColor);
 
         bufferSource.endBatch();
         poseStack.popPose();
-
     }
 
     public void render(GuiGraphics guiGraphics, Minecraft minecraft) {
         Matrix3x2fStack poseStack = guiGraphics.pose();
         poseStack.pushMatrix();
-        long now = System.currentTimeMillis();
-        if(startTime == 0) startTime = now;
-        if (minecraft.isPaused() && !isPaused) {
-            isPaused = true;
-            pauseStartTime = now;
-        } else if (!minecraft.isPaused() && isPaused) {
-            isPaused = false;
-            startTime += now - pauseStartTime;
-        }
-        int newOpacity = opacity;
-        if(t < 1.0) {
-            float newTranslateX = (float) MathUtils.lerp(translateXStart, 0, t);
-            poseStack.translate(
-                    newTranslateX,
-                    0
-            );
-            newOpacity = (int) MathUtils.lerp(0, opacity, t);
-            if(!isPaused) {
-                t = Easing.getInterpolation(easing, Math.min((double) (now - startTime) / totalTime, 1.0));
-            }
-        } else {
-            startTime = 0;
-        }
-        int newColor = ARGB.color(newOpacity, color);
-        float dialogWidth;
-        if(dialog != null) {
-            dialogWidth = dialog.getWidth();
-        } else {
-            dialogWidth = dialog2d.getWidth();
+        updateAnimationState(minecraft);
+
+        float translatedX = (float) MathUtils.lerp(translateXStart, 0, t);
+        int newOpacity = (int) MathUtils.lerp(0, opacity, t);
+        int newColor = ARGB.color(t < 1.0 ? newOpacity : opacity, color);
+
+        if (t < 1.0) {
+            poseStack.translate(translatedX, 0);
         }
 
-        ((ICustomGuiRender)guiGraphics).drawnDialogSkip(
+        float dialogWidth = getDialogWidth();
+
+        ((ICustomGuiRender) guiGraphics).drawnDialogSkip(
                 dialogWidth,
                 width,
                 height,
@@ -151,8 +107,46 @@ public class DialogAnimationArrowSkip {
         );
 
         poseStack.popMatrix();
-
     }
+
+    private void updateAnimationState(Minecraft minecraft) {
+        long now = System.currentTimeMillis();
+        if (startTime == 0) startTime = now;
+
+        if (minecraft.isPaused()) {
+            if (!isPaused) {
+                isPaused = true;
+                pauseStartTime = now;
+            }
+        } else if (isPaused) {
+            isPaused = false;
+            startTime += now - pauseStartTime;
+        }
+
+        if (!isPaused && t < 1.0) {
+            double progress = (double) (now - startTime) / totalTime;
+            t = Easing.getInterpolation(easing, Math.min(progress, 1.0));
+        }
+
+        if (t >= 1.0) {
+            startTime = 0;
+        }
+    }
+
+    private float getDialogWidth() {
+        return dialog != null ? dialog.getWidth() : dialog2d.getWidth();
+    }
+
+    private void drawQuad(VertexConsumer consumer, Matrix4f matrix, float dialogWidth, int color) {
+        float xStart = dialogWidth - width - offsetX;
+        float xEnd = dialogWidth + width - offsetX;
+
+        consumer.addVertex(matrix, xStart, -height, 0.01f).setColor(color).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(matrix, xStart, height, 0.01f).setColor(color).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(matrix, xEnd, 0, 0.01f).setColor(color).setLight(LightTexture.FULL_BRIGHT);
+        consumer.addVertex(matrix, xStart, -height, 0.01f).setColor(color).setLight(LightTexture.FULL_BRIGHT);
+    }
+
 
     public void setStartTime(long startTime) {
         this.startTime = startTime;
