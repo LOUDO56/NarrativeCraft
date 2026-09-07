@@ -23,6 +23,7 @@
 
 package fr.loudo.narrativecraft.client.editors.cutscene;
 
+import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.client.session.ClientPlayerSession;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ import net.minecraft.client.Minecraft;
 
 public class CutsceneEditorPlayback {
 
-    private final List<CutsceneMakerEditorLayer> editorLayers;
+    private final List<CutsceneLayer> layers;
     private final ClientPlayerSession playerSession;
 
     private float currentTick = 0f;
@@ -40,9 +41,8 @@ public class CutsceneEditorPlayback {
     private boolean playing = false;
     private boolean dragPause = false;
 
-    public CutsceneEditorPlayback(
-            List<CutsceneMakerEditorLayer> editorLayers, ClientPlayerSession playerSession, int totalTick) {
-        this.editorLayers = editorLayers;
+    public CutsceneEditorPlayback(List<CutsceneLayer> layers, ClientPlayerSession playerSession, int totalTick) {
+        this.layers = layers;
         this.playerSession = playerSession;
         this.totalTick = totalTick;
     }
@@ -56,8 +56,8 @@ public class CutsceneEditorPlayback {
         playing = false;
         playerSession.getCutsceneDataSession().setFov(-1f);
         playerSession.getCutsceneDataSession().setKeyframePosition(null);
-        for (CutsceneMakerEditorLayer editorLayer : editorLayers) {
-            editorLayer.getLayer().stop();
+        for (CutsceneLayer layer : layers) {
+            layer.stop();
         }
     }
 
@@ -77,10 +77,10 @@ public class CutsceneEditorPlayback {
 
     private void executeKeyframes() {
         Set<String> executedTypes = new HashSet<>();
-        for (CutsceneMakerEditorLayer editorLayer : editorLayers) {
-            String typeId = editorLayer.getLayer().getTypeId();
+        for (CutsceneLayer layer : layers) {
+            String typeId = layer.getTypeId();
             if (executedTypes.contains(typeId)) continue;
-            if (editorLayer.getLayer().execute(currentTick)) {
+            if (layer.execute(currentTick)) {
                 executedTypes.add(typeId);
             }
         }

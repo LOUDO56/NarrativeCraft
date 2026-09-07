@@ -33,7 +33,6 @@ import fr.loudo.narrativecraft.managers.CharacterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryPayload;
 import fr.loudo.narrativecraft.utils.Utils;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -54,7 +53,6 @@ public class ClientCharacterEditor implements ClientNarrativeEntryEditor<Charact
     public void add(UUID entryId, CharacterStoryPayload payload) {
         CharacterStory character = buildFromPayload(entryId, payload);
         characterManager.add(character);
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -78,14 +76,12 @@ public class ClientCharacterEditor implements ClientNarrativeEntryEditor<Charact
             } catch (Exception ignored) {
             }
         }
-        UtilsClient.reloadListScreen();
     }
 
     @Override
     public void delete(UUID entryId, CharacterStoryPayload payload) {
         CharacterStory character = resolve(entryId, payload);
         characterManager.remove(character);
-        UtilsClient.reloadListScreen();
     }
 
     private CharacterStory buildFromPayload(UUID entryId, CharacterStoryPayload payload) {

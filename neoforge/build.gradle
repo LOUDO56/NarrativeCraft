@@ -23,6 +23,7 @@ dependencies {
     implementation "com.bladecoder.ink:blade-ink-compiler:${blade_ink_version}"
     implementation "org.yaml:snakeyaml:${snakeyaml_version}"
     implementation project(':api')
+    implementation project(':widgets')
 }
 
 neoForge {
@@ -58,6 +59,7 @@ neoForge {
         "${mod_id}" {
             sourceSet sourceSets.main
             sourceSet project(':api').sourceSets.main
+            sourceSet project(':widgets').sourceSets.main
         }
     }
 }
@@ -66,6 +68,7 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 jar {
     from project(':api').sourceSets.main.output
+    from project(':widgets').sourceSets.main.output
 }
 
 def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)

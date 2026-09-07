@@ -28,47 +28,19 @@ import fr.loudo.narrativecraft.client.ClientNarrativeCraftMod;
 import fr.loudo.narrativecraft.client.editors.cameraangle.ClientCameraAngleMakerEditorMaker;
 import fr.loudo.narrativecraft.client.editors.cutscene.ClientCutsceneMakerEditorMaker;
 import fr.loudo.narrativecraft.client.editors.interaction.ClientInteractionMakerEditorMaker;
-import fr.loudo.narrativecraft.client.narrative.ui.ClientNarrativeUIActionRegistry;
-import fr.loudo.narrativecraft.client.screens.NarrativeEntryListScreen;
-import fr.loudo.narrativecraft.client.screens.narrative.scene.SceneMenuScreen;
 import fr.loudo.narrativecraft.client.session.ClientPlayerSession;
 import fr.loudo.narrativecraft.dialog.DialogRenderer;
 import fr.loudo.narrativecraft.editors.EditorMaker;
-import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
 import fr.loudo.narrativecraft.narrative.NarrativeEnvironment;
-import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.interaction.InteractionPoint;
 import fr.loudo.narrativecraft.network.story.C2SPlayStitchStory;
 import fr.loudo.narrativecraft.platform.Services;
-import fr.loudo.narrativecraft.utils.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.server.permissions.Permissions;
 
 public class PressKeyListener {
 
     public static void onKeyPressed(Minecraft minecraft) {
-        if (ModKeys.STORY_MANAGER.consumeClick()) {
-            ClientPlayerSession session = ClientNarrativeCraftMod.getInstance().getPlayerSession();
-            if (session.isInStory()) return;
-            if (!minecraft.player.permissions().hasPermission(Permissions.COMMANDS_MODERATOR)) return;
-            NarrativeEntryListScreen<Chapter> entryListScreen = new NarrativeEntryListScreen<>(
-                    Translation.message("chapter"),
-                    ClientNarrativeCraftMod.getInstance().getChapterManager().getList(),
-                    Chapter.class,
-                    NarrativeCraftFileUtil.getChaptersFolder(),
-                    "");
-            if (session.sessionSet()) {
-                SceneMenuScreen screen = new SceneMenuScreen(
-                        session.getScene(),
-                        ClientNarrativeUIActionRegistry.getInstance()
-                                .showListSubScreen(session.getChapter(), entryListScreen));
-                minecraft.gui.setScreen(screen);
-            } else {
-                minecraft.gui.setScreen(entryListScreen);
-            }
-        }
-
         if (ModKeys.HIDE_EDITOR_MAKER_HUD.consumeClick()) {
             EditorMaker editor =
                     ClientNarrativeCraftMod.getInstance().getPlayerSession().getEditor();
@@ -79,14 +51,6 @@ public class PressKeyListener {
             if (editor instanceof ClientCameraAngleMakerEditorMaker cameraAngleMakerEditorMaker) {
                 cameraAngleMakerEditorMaker.toggleHud();
             }
-        }
-
-        if (ModKeys.TOGGLE_CAMERA_ROLL.consumeClick()) {
-            ClientCutsceneMakerEditorMaker editor =
-                    ClientNarrativeCraftMod.getInstance().getCutsceneMakerEditor();
-            if (editor == null) return;
-
-            editor.getRollWidget().toggle();
         }
 
         if (ModKeys.START_RECORDING.consumeClick()) {

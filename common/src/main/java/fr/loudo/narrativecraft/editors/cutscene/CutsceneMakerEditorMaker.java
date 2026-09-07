@@ -23,8 +23,8 @@
 
 package fr.loudo.narrativecraft.editors.cutscene;
 
+import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.ICutsceneLayer;
-import fr.loudo.narrativecraft.client.editors.cutscene.CutsceneMakerEditorLayer;
 import fr.loudo.narrativecraft.client.editors.cutscene.layers.camera.CameraLayer;
 import fr.loudo.narrativecraft.editors.EditorMaker;
 import fr.loudo.narrativecraft.editors.cutscene.keyframes.CameraKeyframe;
@@ -111,9 +111,8 @@ public class CutsceneMakerEditorMaker implements EditorMaker {
         totalTick = cutscene.getMaxTick();
         teleportToEditorOrigin();
 
-        List<CutsceneMakerEditorLayer> editorLayers = cutscene.getEditorLayers();
-        String layersJson =
-                CutsceneSerializer.serializeLayers(editorLayers == null ? Collections.emptyList() : editorLayers);
+        List<CutsceneLayer> layers = cutscene.getLayers();
+        String layersJson = CutsceneSerializer.serializeLayers(layers == null ? Collections.emptyList() : layers);
         Services.PACKET.sendToPlayer(
                 playerSession.getPlayer(),
                 new S2CCutsceneEditorData(cutscene.getId(), layersJson, cutscene.getManualMaxTick()));
@@ -127,9 +126,8 @@ public class CutsceneMakerEditorMaker implements EditorMaker {
         if (!playbacks.isEmpty()) {
             Playback playback = playbacks.get(0);
             position = playback.getFirstPosition();
-        } else if (cutscene.getEditorLayers() != null) {
-            for (CutsceneMakerEditorLayer editorLayer : cutscene.getEditorLayers()) {
-                ICutsceneLayer layer = editorLayer.getLayer();
+        } else if (cutscene.getLayers() != null) {
+            for (ICutsceneLayer layer : cutscene.getLayers()) {
                 if (layer instanceof CameraLayer cameraLayer) {
                     List<CameraKeyframe> cameraKeyframes = cameraLayer.getSortedCameraKeyframes();
                     if (cameraKeyframes.isEmpty()) continue;

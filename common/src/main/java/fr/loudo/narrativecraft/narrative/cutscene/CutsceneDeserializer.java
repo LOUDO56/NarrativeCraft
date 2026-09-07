@@ -33,7 +33,6 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.ICutsceneLayerType;
-import fr.loudo.narrativecraft.client.editors.cutscene.CutsceneMakerEditorLayer;
 import fr.loudo.narrativecraft.narrative.NarrativeDeserializer;
 import fr.loudo.narrativecraft.narrative.animation.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
@@ -91,7 +90,7 @@ public class CutsceneDeserializer extends NarrativeDeserializer<Cutscene> {
         }
 
         if (obj.has("layers")) {
-            List<CutsceneMakerEditorLayer> editorLayers = new ArrayList<>();
+            List<CutsceneLayer> cutsceneLayers = new ArrayList<>();
             for (JsonElement layerElement : obj.getAsJsonArray("layers")) {
                 JsonObject layerObject = layerElement.getAsJsonObject();
                 if (!layerObject.has("type")) continue;
@@ -116,11 +115,10 @@ public class CutsceneDeserializer extends NarrativeDeserializer<Cutscene> {
                     }
                 }
 
-                editorLayers.add(new CutsceneMakerEditorLayer(layer, 85));
+                cutsceneLayers.add(layer);
             }
-            editorLayers.sort(Comparator.comparingInt(
-                    editorLayer -> editorLayer.getLayer().getSortIndex()));
-            cutscene.setEditorLayers(editorLayers);
+            cutsceneLayers.sort(Comparator.comparingInt(CutsceneLayer::getSortIndex));
+            cutscene.setLayers(cutsceneLayers);
         }
 
         return cutscene;
@@ -128,7 +126,7 @@ public class CutsceneDeserializer extends NarrativeDeserializer<Cutscene> {
 
     public static void deserializeLayers(String layersJson, Cutscene cutscene) {
         JsonArray layersArray = JsonParser.parseString(layersJson).getAsJsonArray();
-        List<CutsceneMakerEditorLayer> editorLayers = new ArrayList<>();
+        List<CutsceneLayer> cutsceneLayers = new ArrayList<>();
 
         for (JsonElement layerElement : layersArray) {
             JsonObject layerObject = layerElement.getAsJsonObject();
@@ -152,11 +150,10 @@ public class CutsceneDeserializer extends NarrativeDeserializer<Cutscene> {
                 }
             }
 
-            editorLayers.add(new CutsceneMakerEditorLayer(layer, 85));
+            cutsceneLayers.add(layer);
         }
 
-        editorLayers.sort(
-                Comparator.comparingInt(editorLayer -> editorLayer.getLayer().getSortIndex()));
-        cutscene.setEditorLayers(editorLayers);
+        cutsceneLayers.sort(Comparator.comparingInt(CutsceneLayer::getSortIndex));
+        cutscene.setLayers(cutsceneLayers);
     }
 }

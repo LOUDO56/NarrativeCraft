@@ -23,20 +23,13 @@
 
 package fr.loudo.narrativecraft.client.editors.cameraangle;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.client.ClientNarrativeCraftMod;
-import fr.loudo.narrativecraft.client.editors.widgets.*;
-import fr.loudo.narrativecraft.client.screens.ClearScreen;
-import fr.loudo.narrativecraft.client.screens.narrative.cameraangle.CameraAngleCameraNameScreen;
-import fr.loudo.narrativecraft.client.screens.narrative.cameraangle.CameraAngleCharacterPickerScreen;
-import fr.loudo.narrativecraft.client.screens.narrative.cameraangle.CameraAngleEditorMenuScreen;
-import fr.loudo.narrativecraft.client.screens.narrative.cameraangle.CameraAngleTemplatePickerScreen;
+import fr.loudo.narrativecraft.client.editors.widgets.DialogPreviewEntry;
 import fr.loudo.narrativecraft.client.session.ClientPlayerSession;
 import fr.loudo.narrativecraft.dialog.DialogData;
 import fr.loudo.narrativecraft.dialog.DialogRenderer3D;
 import fr.loudo.narrativecraft.editors.EditorMaker;
-import fr.loudo.narrativecraft.keys.ModKeys;
 import fr.loudo.narrativecraft.narrative.NarrativeEnvironment;
 import fr.loudo.narrativecraft.narrative.cameraangle.*;
 import fr.loudo.narrativecraft.narrative.character.CharacterType;
@@ -45,22 +38,11 @@ import fr.loudo.narrativecraft.network.mainScreen.C2SMainScreenCaptureCharacter;
 import fr.loudo.narrativecraft.network.mainScreen.C2SMainScreenRemovePlacement;
 import fr.loudo.narrativecraft.network.mainScreen.C2SMainScreenSave;
 import fr.loudo.narrativecraft.platform.Services;
-import fr.loudo.narrativecraft.utils.CustomFont;
 import fr.loudo.narrativecraft.utils.Translation;
 import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.*;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.SubmitNodeCollector;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ServerboundChangeGameModePacket;
 import net.minecraft.network.protocol.game.ServerboundMovePlayerPacket;
 import net.minecraft.world.entity.Entity;
@@ -69,18 +51,12 @@ import net.minecraft.world.phys.Vec3;
 
 public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
 
-    private static final int BUTTON_WIDTH = 20;
-    private static final int BUTTON_HEIGHT = 20;
-    private static final int BUTTON_GAP = 10;
     public static final String DEFAULT_DIALOG_TEXT = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
     private final Minecraft minecraft = Minecraft.getInstance();
     private final CameraAngle cameraAngle;
     private final ClientPlayerSession playerSession =
             ClientNarrativeCraftMod.getInstance().getPlayerSession();
-    private final List<Button> buttons = new ArrayList<>();
-    private final RollSliderWidget rollWidget = new RollSliderWidget();
-    private final FovSliderWidget fovWidget = new FovSliderWidget();
     private final NarrativeEnvironment environment;
 
     public enum PreviewMode {
@@ -94,16 +70,8 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
     private boolean editingCameraViewPosition = false;
     private final Map<UUID, Integer> placementEntityIds = new HashMap<>();
     private DialogRenderer3D activeDialogRenderer;
-    private final DialogPreviewPanel dialogPreviewPanel =
-            new DialogPreviewPanel(this::toggleAdvancedPanel, DEFAULT_DIALOG_TEXT);
-    private final DialogSetupAdvancedPanel advancedPanel = new DialogSetupAdvancedPanel(dialogPreviewPanel);
 
-    {
-        dialogPreviewPanel.setFieldSet(DialogFieldSet.CAMERA_VIEW);
-        advancedPanel.setFieldSet(DialogFieldSet.CAMERA_VIEW);
-        dialogPreviewPanel.setOnSelectionChanged(this::onDialogSelectionChanged);
-    }
-
+    private final List<DialogPreviewEntry> dialogPreviewEntries = new ArrayList<>();
     private final Set<DialogRenderer3D> stoppingRenderers = new HashSet<>();
     private final List<CharacterPlacement> characterPlacements = new ArrayList<>();
     private final List<TemplateReference> templateReferences = new ArrayList<>();
@@ -119,61 +87,8 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         this.environment = environment;
     }
 
-    public void init() {
-        buttons.clear();
-        buttons.add(Button.builder(Component.literal(CustomFont.CAMERA), b -> openAddCameraScreen())
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .tooltip(Tooltip.create(Translation.message("screen.camera_angle_editor.add_camera")))
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.CHARACTER), b -> openCharacterPicker())
-                .tooltip(Tooltip.create(Translation.message("screen.camera_angle_editor.add_character")))
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.CHARACTER_TEMPLATE), b -> openTemplatePicker())
-                .tooltip(Tooltip.create(Translation.message("screen.camera_angle_editor.add_template")))
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.BURGER_MENU), b -> openMenu())
-                .tooltip(Tooltip.create(Translation.message("screen.camera_angle_editor.open_menu")))
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.CROSS), b -> openQuitConfirm())
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.SAVE), b -> save())
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-
-        buttons.add(Button.builder(Translation.message("screen.camera_angle_editor.leave_preview"), b -> exitPreview())
-                .bounds(0, 0, 100, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(
-                        Translation.message("screen.camera_angle_editor.edit_position"), b -> editCameraPosition())
-                .bounds(0, 0, 100, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.CHECK), b -> acceptNewCameraPosition())
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-        buttons.add(Button.builder(Component.literal(CustomFont.UNDO), b -> stopNewCameraPosition())
-                .bounds(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT)
-                .build());
-
-        buttons.add(Button.builder(Component.literal(CustomFont.DIALOG), button -> {
-                    if (previewMode == PreviewMode.CAMERA) {
-                        enterDialogMode();
-                    } else {
-                        exitDialogMode();
-                    }
-                })
-                .bounds(0, 0, 20, 20)
-                .build());
-
-        // Make template character button not active if on main screen editor
-        buttons.get(2).active = cameraAngle.getScene() != null;
-        if (cameraAngle.getScene() == null) {
-            buttons.get(2).setTooltip(Tooltip.create(Translation.message("screen.main_screen.disabled_template")));
-        }
-    }
+    @Override
+    public void init() {}
 
     @Override
     public void close() {
@@ -181,6 +96,7 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         minecraft.gui.setScreen(null);
     }
 
+    @Override
     public void tick() {
         if (previewCameraView != null && !editingCameraViewPosition) {
             LocalPlayer player = minecraft.player;
@@ -197,7 +113,6 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
             UtilsClient.setHudHidden(true);
             minecraft.setCameraEntity(minecraft.player);
         }
-        advancedPanel.tick();
     }
 
     @Override
@@ -237,20 +152,7 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         }
     }
 
-    private void openAddCameraScreen() {
-        if (cameraAngle.getScene() != null) {
-            minecraft.gui.setScreen(new CameraAngleCameraNameScreen(
-                    Translation.message("screen.camera_angle_editor.camera_name_prompt"),
-                    "",
-                    null,
-                    this::createCameraFromPlayer,
-                    minecraft.gui.screen()));
-        } else {
-            createCameraFromPlayer("main");
-        }
-    }
-
-    private void createCameraFromPlayer(String name) {
+    public void createCameraFromPlayer(String name) {
         if (minecraft.player == null) return;
         if (cameraExists(name)) {
             UtilsClient.sendToast(
@@ -323,26 +225,16 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         }
     }
 
-    private void openCharacterPicker() {
-        minecraft.gui.setScreen(
-                new CameraAngleCharacterPickerScreen(cameraAngle.getScene(), minecraft.gui.screen(), pick -> {
-                    if (cameraAngle.getScene() != null) {
-                        Services.PACKET.sendToServer(new C2SCameraAngleCaptureCharacter(
-                                cameraAngle.getScene().getChapter().getId(),
-                                cameraAngle.getScene().getId(),
-                                cameraAngle.getId(),
-                                pick.characterId()));
-                    } else {
-                        Services.PACKET.sendToServer(new C2SMainScreenCaptureCharacter(pick.characterId()));
-                    }
-                }));
-    }
-
-    private void openTemplatePicker() {
-        minecraft.gui.setScreen(
-                new CameraAngleTemplatePickerScreen(cameraAngle.getScene(), minecraft.gui.screen(), pick -> {
-                    addTemplateReference(pick.sourceType(), pick.refId(), pick.displayName());
-                }));
+    public void captureCharacter(UUID characterId) {
+        if (cameraAngle.getScene() != null) {
+            Services.PACKET.sendToServer(new C2SCameraAngleCaptureCharacter(
+                    cameraAngle.getScene().getChapter().getId(),
+                    cameraAngle.getScene().getId(),
+                    cameraAngle.getId(),
+                    characterId));
+        } else {
+            Services.PACKET.sendToServer(new C2SMainScreenCaptureCharacter(characterId));
+        }
     }
 
     public void addTemplateReference(TemplateSourceType sourceType, UUID refId, String displayName) {
@@ -351,24 +243,14 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         Services.PACKET.sendToServer(new C2SCameraAngleAddTemplateReference(cameraAngle, reference));
     }
 
-    public void openMenu() {
-        minecraft.gui.setScreen(new CameraAngleEditorMenuScreen(this, minecraft.gui.screen()));
+    public void quit(boolean saveBeforeQuit) {
+        if (saveBeforeQuit) {
+            save();
+        }
+        playerSession.requestEditorClose();
     }
 
-    private void openQuitConfirm() {
-        ConfirmScreen confirmScreen = new ConfirmScreen(
-                b -> {
-                    if (b) {
-                        save();
-                    }
-                    playerSession.requestEditorClose();
-                },
-                Translation.message("screen.confirm.title"),
-                Translation.message("screen.confirm.save"));
-        minecraft.gui.setScreen(confirmScreen);
-    }
-
-    private void save() {
+    public void save() {
         cameraAngle.getCharacterPlacements().clear();
         cameraAngle.getCharacterPlacements().addAll(characterPlacements);
 
@@ -400,10 +282,6 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         minecraft.setCameraEntity(minecraft.player);
         playerSession.setCameraView(cameraView);
         UtilsClient.teleportPlayerTo(cameraView.getPosition(), cameraView.getRotation());
-        rollWidget.setValue(cameraView.getRoll());
-        rollWidget.setVisible(true);
-        fovWidget.setValue(cameraView.getFov());
-        fovWidget.setVisible(true);
     }
 
     public void exitPreview() {
@@ -411,22 +289,18 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         previewMode = PreviewMode.CAMERA;
         this.previewCameraView = null;
         playerSession.setCameraView(null);
-        rollWidget.setVisible(false);
-        fovWidget.setVisible(false);
         UtilsClient.setHudHidden(false);
     }
 
     public void enterDialogMode() {
         if (previewCameraView == null) return;
         previewMode = PreviewMode.DIALOG;
-        rollWidget.setVisible(false);
-        fovWidget.setVisible(false);
         for (DialogRenderer3D renderer : new ArrayList<>(stoppingRenderers)) {
             playerSession.removeDialog3D(renderer);
         }
         stoppingRenderers.clear();
         DialogData global = NarrativeCraftMod.getInstance().getGlobalDialogData();
-        List<DialogPreviewEntry> entries = new ArrayList<>();
+        dialogPreviewEntries.clear();
         for (CameraViewDialogSetup setup : previewCameraView.getDialogSetups()) {
             Entity entity = getEntityForPlacement(setup.getCharacterPlacementId());
             if (entity == null) continue;
@@ -442,11 +316,10 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
             String label = resolvePlacementLabel(setup.getCharacterPlacementId());
             DialogPreviewEntry entry = new DialogPreviewEntry(label, data, renderer);
             entry.setPreviewText(setup.getPreviewText());
-            entries.add(entry);
+            dialogPreviewEntries.add(entry);
         }
-        dialogPreviewPanel.setEntries(entries);
-        if (!entries.isEmpty()) {
-            startDialogEntry(entries.get(0));
+        if (!dialogPreviewEntries.isEmpty()) {
+            startDialogEntry(dialogPreviewEntries.get(0));
         }
     }
 
@@ -467,7 +340,7 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         activeDialogRenderer = null;
     }
 
-    private void onDialogSelectionChanged(DialogPreviewEntry newEntry) {
+    public void selectDialogPreviewEntry(DialogPreviewEntry newEntry) {
         if (newEntry.getRenderer() == activeDialogRenderer) return;
         stopActiveDialogRenderer();
         startDialogEntry(newEntry);
@@ -476,11 +349,6 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
     public void exitDialogMode() {
         previewMode = PreviewMode.CAMERA;
         stopActiveDialogRenderer();
-        if (previewCameraView != null) {
-            rollWidget.setVisible(true);
-            fovWidget.setVisible(true);
-        }
-        advancedPanel.setVisible(false);
     }
 
     public void registerPlacementEntityId(UUID placementId, int entityId) {
@@ -509,28 +377,6 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         return null;
     }
 
-    public void openAdvancedPanel(DialogData data) {
-        advancedPanel.setData(data);
-        advancedPanel.setVisible(true);
-    }
-
-    public boolean advancedPanelVisible() {
-        return advancedPanel.isVisible();
-    }
-
-    public void toggleAdvancedPanel(DialogData data) {
-        if (advancedPanel.isVisible()) {
-            advancedPanel.setVisible(false);
-        } else {
-            advancedPanel.setData(data);
-            advancedPanel.setVisible(true);
-        }
-    }
-
-    public void closeAdvancedPanel() {
-        advancedPanel.setVisible(false);
-    }
-
     private DialogData resolveCharacterDialogData(UUID placementId) {
         for (CharacterPlacement placement : characterPlacements) {
             if (placement.getId().equals(placementId) && placement.getCharacterStory() != null) {
@@ -549,12 +395,12 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         return placementId.toString().substring(0, 8);
     }
 
-    private void editCameraPosition() {
+    public void editCameraPosition() {
         editingCameraViewPosition = true;
         minecraft.gui.setScreen(null);
     }
 
-    private void acceptNewCameraPosition() {
+    public void acceptNewCameraPosition() {
         LocalPlayer player = minecraft.player;
         Vec3 position = player.position().add(0, player.getEyeHeight(), 0);
         Vec3 rotation = new Vec3(player.getXRot(), player.getYRot(), previewCameraView.getRoll());
@@ -563,7 +409,7 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         editingCameraViewPosition = false;
     }
 
-    private void stopNewCameraPosition() {
+    public void stopNewCameraPosition() {
         editingCameraViewPosition = false;
     }
 
@@ -571,187 +417,8 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
         return previewCameraView;
     }
 
-    public void renderAnchorPoint(SubmitNodeCollector collector, PoseStack poseStack) {
-        if (previewCameraView == null || previewMode != PreviewMode.DIALOG) return;
-        dialogPreviewPanel.renderAnchorPoint(collector, poseStack);
-    }
-
-    @Override
-    public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (previewCameraView != null) {
-            previewCameraView.setRoll(rollWidget.getValue());
-            previewCameraView.setFov(fovWidget.getValue());
-        }
-        if (!renderingHud) return;
-
-        int[] mousePos = UtilsClient.getScaledMousePos();
-        int screenWidth = minecraft.getWindow().getGuiScaledWidth();
-        int screenHeight = minecraft.getWindow().getGuiScaledHeight();
-
-        Button quitButton = buttons.get(4);
-        Button saveButton = buttons.get(5);
-        Button leavePreviewButton = buttons.get(6);
-        Button editPositionButton = buttons.get(7);
-        Button acceptPositionButton = buttons.get(8);
-        Button stopPositionButton = buttons.get(9);
-
-        quitButton.setPosition(5, 5);
-        saveButton.setPosition(quitButton.getX() + quitButton.getWidth() + 5, 5);
-
-        boolean inPreview = previewCameraView != null;
-
-        if (!inPreview) {
-            int totalWidth = 4 * BUTTON_WIDTH + 3 * BUTTON_GAP;
-            int startX = screenWidth / 2 - totalWidth / 2;
-            int y = screenHeight - BUTTON_HEIGHT - 30;
-            for (int i = 0; i < 4; i++) {
-                Button b = buttons.get(i);
-                b.setPosition(startX + i * (BUTTON_WIDTH + BUTTON_GAP), y);
-                b.extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-            }
-            quitButton.extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-            saveButton.extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-        } else if (!editingCameraViewPosition) {
-            leavePreviewButton.setPosition(5, 5);
-            editPositionButton.setPosition(leavePreviewButton.getX() + leavePreviewButton.getWidth() + 5, 5);
-
-            leavePreviewButton.extractRenderState(
-                    graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-            editPositionButton.extractRenderState(
-                    graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-
-            if (previewMode == PreviewMode.DIALOG) {
-                dialogPreviewPanel.render(graphics, screenWidth, screenHeight, mousePos[0], mousePos[1]);
-            }
-
-            buttons.get(10).setPosition(screenWidth - 25, 5);
-            buttons.get(10).setWidth(20);
-            buttons.get(10)
-                    .extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-        } else {
-            acceptPositionButton.setPosition(5, 5);
-            acceptPositionButton.extractRenderState(
-                    graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-
-            stopPositionButton.setPosition(acceptPositionButton.getX() + acceptPositionButton.getWidth() + 5, 5);
-            stopPositionButton.extractRenderState(
-                    graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-        }
-
-        if (previewMode == PreviewMode.CAMERA) {
-            rollWidget.render(graphics, screenWidth, screenHeight, mousePos[0], mousePos[1]);
-            fovWidget.render(graphics, screenWidth, screenHeight, mousePos[0], mousePos[1]);
-        }
-
-        if (previewMode == PreviewMode.DIALOG) {
-            advancedPanel.render(graphics, mousePos[0], mousePos[1]);
-        }
-    }
-
-    @Override
-    public void mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (!renderingHud || !clearScreenOpened()) return;
-        if (advancedPanel.mouseClicked(event)) {
-            dialogPreviewPanel.unfocusAll();
-            return;
-        }
-        if (rollWidget.mouseClicked(event)) return;
-        if (fovWidget.mouseClicked(event)) return;
-
-        boolean inPreview = previewCameraView != null;
-
-        if (!inPreview) {
-            for (int i = 0; i < 6; i++) {
-                buttons.get(i).mouseClicked(event, isDoubleClick);
-            }
-        } else if (!editingCameraViewPosition) {
-            buttons.get(6).mouseClicked(event, isDoubleClick);
-            buttons.get(7).mouseClicked(event, isDoubleClick);
-            if (previewMode == PreviewMode.DIALOG) {
-                if (dialogPreviewPanel.mouseClicked(event)) {
-                    advancedPanel.unfocusAll();
-                }
-            }
-        } else {
-            buttons.get(8).mouseClicked(event, isDoubleClick);
-            buttons.get(9).mouseClicked(event, isDoubleClick);
-        }
-
-        buttons.get(10).mouseClicked(event, isDoubleClick);
-    }
-
-    @Override
-    public void mouseReleased(MouseButtonEvent event) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (!renderingHud || !clearScreenOpened()) return;
-        rollWidget.mouseReleased();
-        fovWidget.mouseReleased();
-        if (previewMode == PreviewMode.DIALOG) dialogPreviewPanel.mouseReleased();
-    }
-
-    public void mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (!renderingHud || !clearScreenOpened()) return;
-        if (previewMode == PreviewMode.DIALOG) {
-            if (dialogPreviewPanel.mouseDragged(event.y())) return;
-        }
-        if (rollWidget.mouseDragged(event.y())) return;
-        fovWidget.mouseDragged(event.y());
-    }
-
-    public void mouseScrolled(double deltaX, double deltaY) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (!renderingHud || !clearScreenOpened()) return;
-        if (previewCameraView == null || editingCameraViewPosition || previewMode != PreviewMode.DIALOG) return;
-        int[] mousePos = UtilsClient.getScaledMousePos();
-        dialogPreviewPanel.mouseScrolled(deltaY, mousePos[0], mousePos[1]);
-    }
-
-    private boolean clearScreenOpened() {
-        return minecraft.gui.screen() != null && minecraft.gui.screen() instanceof ClearScreen;
-    }
-
-    @Override
-    public void keyPressed(KeyEvent event) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (previewMode == PreviewMode.DIALOG) {
-            dialogPreviewPanel.keyPressed(event);
-            if (dialogPreviewPanel.isAnyBoxFocused()) return;
-        }
-        if (advancedPanel.isVisible()) {
-            advancedPanel.keyPressed(event);
-            if (advancedPanel.isAnyBoxFocused()) return;
-        }
-        if (previewCameraView != null
-                && !editingCameraViewPosition
-                && event.key()
-                        == ModKeys.TOGGLE_DIALOG_MODE_CAMERA_ANGLE
-                                .getDefaultKey()
-                                .getValue()
-                && cameraAngle.getScene() != null) {
-            if (previewMode == PreviewMode.CAMERA) {
-                enterDialogMode();
-            } else {
-                exitDialogMode();
-            }
-        }
-    }
-
     public void toggleHud() {
         renderingHud = !renderingHud;
-    }
-
-    @Override
-    public void charTyped(CharacterEvent event) {
-        if (environment != NarrativeEnvironment.DEVELOPMENT) return;
-        if (previewMode == PreviewMode.DIALOG) {
-            dialogPreviewPanel.charTyped(event);
-        }
-        if (advancedPanel.isVisible()) {
-            advancedPanel.charTyped(event);
-        }
     }
 
     public CameraAngle getCameraAngle() {
@@ -776,6 +443,10 @@ public class ClientCameraAngleMakerEditorMaker implements EditorMaker {
 
     public PreviewMode getPreviewMode() {
         return previewMode;
+    }
+
+    public List<DialogPreviewEntry> getDialogPreviewEntries() {
+        return dialogPreviewEntries;
     }
 
     public List<TemplateReference> getTemplateReferences() {

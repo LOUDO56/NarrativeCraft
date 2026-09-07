@@ -24,33 +24,16 @@
 package fr.loudo.narrativecraft.events.client;
 
 import fr.loudo.narrativecraft.client.ClientNarrativeCraftMod;
-import fr.loudo.narrativecraft.client.editors.cameraangle.ClientCameraAngleMakerEditorMaker;
-import fr.loudo.narrativecraft.client.screens.narrative.cameraangle.EntityPosePickerScreen;
 import fr.loudo.narrativecraft.client.signals.SignalPlayerRightClickEntity;
-import fr.loudo.narrativecraft.narrative.NarrativeEnvironment;
-import fr.loudo.narrativecraft.narrative.cameraangle.CharacterPlacement;
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.Entity;
 
 public class OnEntityRightClick {
 
     public static void entityRightClick(Entity clickedEntity) {
         handleSignal(clickedEntity);
-        handleEditor(clickedEntity);
     }
 
     private static void handleSignal(Entity clickedEntity) {
         ClientNarrativeCraftMod.getInstance().getSignalEmitter().emit(new SignalPlayerRightClickEntity(clickedEntity));
-    }
-
-    private static void handleEditor(Entity clickedEntity) {
-        ClientCameraAngleMakerEditorMaker editor =
-                ClientNarrativeCraftMod.getInstance().getCameraAngleMakerEditor();
-        if (editor == null) return;
-        if (ClientNarrativeCraftMod.getInstance().getPlayerSession().isInStory()) return;
-        if (editor.getEnvironment() == NarrativeEnvironment.PRODUCTION) return;
-        CharacterPlacement characterPlacement = editor.getPlacementByEntityId(clickedEntity.getId());
-        if (characterPlacement == null) return;
-        Minecraft.getInstance().gui.setScreen(new EntityPosePickerScreen(characterPlacement));
     }
 }

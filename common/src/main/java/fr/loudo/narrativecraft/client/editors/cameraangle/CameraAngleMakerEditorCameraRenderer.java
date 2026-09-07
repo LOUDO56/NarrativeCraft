@@ -46,8 +46,6 @@ public class CameraAngleMakerEditorCameraRenderer {
                 ClientNarrativeCraftMod.getInstance().getPlayerSession().getEditor();
         if (!(editorMaker instanceof ClientCameraAngleMakerEditorMaker cameraAngleEditor)) return;
 
-        cameraAngleEditor.renderAnchorPoint(collector, poseStack);
-
         if (cameraAngleEditor.getPreviewCamera() != null) return;
 
         Minecraft minecraft = Minecraft.getInstance();

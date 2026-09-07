@@ -31,7 +31,6 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.subscene.SubscenePayload;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -54,8 +53,6 @@ public class ClientSubsceneEditor implements ClientNarrativeEntryEditor<Subscene
                 .toList();
         Subscene subscene = new Subscene(entryId, payload.getName(), payload.getDescription(), scene, animations);
         scene.getSubsceneManager().add(subscene);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -70,8 +67,6 @@ public class ClientSubsceneEditor implements ClientNarrativeEntryEditor<Subscene
         subscene.setName(payload.getName());
         subscene.setDescription(payload.getDescription());
         subscene.setAnimations(animations);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -86,8 +81,6 @@ public class ClientSubsceneEditor implements ClientNarrativeEntryEditor<Subscene
         if (subscene == null) return;
 
         scene.getSubsceneManager().remove(subscene);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override

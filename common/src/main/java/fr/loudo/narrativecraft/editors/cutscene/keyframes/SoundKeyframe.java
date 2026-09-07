@@ -24,9 +24,7 @@
 package fr.loudo.narrativecraft.editors.cutscene.keyframes;
 
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
-import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.KeyframeMenu;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
-import fr.loudo.narrativecraft.client.editors.cutscene.menu.SoundKeyframeMenu;
 
 public class SoundKeyframe extends Keyframe {
 
@@ -36,11 +34,6 @@ public class SoundKeyframe extends Keyframe {
 
     public SoundKeyframe(CutsceneLayer layer, int tick) {
         super(layer, tick);
-    }
-
-    @Override
-    public KeyframeMenu<SoundKeyframe> createMenu() {
-        return new SoundKeyframeMenu(this);
     }
 
     public String getSoundId() {

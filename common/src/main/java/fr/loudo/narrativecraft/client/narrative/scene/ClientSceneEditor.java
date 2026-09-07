@@ -29,7 +29,6 @@ import fr.loudo.narrativecraft.managers.ChapterManager;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import fr.loudo.narrativecraft.narrative.scene.ScenePayload;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 
 public class ClientSceneEditor implements ClientNarrativeEntryEditor<ScenePayload, Scene> {
@@ -51,7 +50,6 @@ public class ClientSceneEditor implements ClientNarrativeEntryEditor<ScenePayloa
         Scene scene = new Scene(entryId, payload.getName(), payload.getDescription(), chapter, payload.getRank());
 
         scene.getChapter().getSceneManager().add(scene);
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -67,8 +65,6 @@ public class ClientSceneEditor implements ClientNarrativeEntryEditor<ScenePayloa
         if (oldRank != payload.getRank()) {
             scene.getChapter().getSceneManager().forceSort();
         }
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -77,6 +73,5 @@ public class ClientSceneEditor implements ClientNarrativeEntryEditor<ScenePayloa
         if (scene == null) return;
 
         scene.getChapter().getSceneManager().remove(scene);
-        UtilsClient.reloadListScreen();
     }
 }

@@ -121,7 +121,7 @@ public class CutsceneMakerEditorShortcuts {
     }
 
     private void save() {
-        String layersJson = CutsceneSerializer.serializeLayers(editor.getEditorLayers());
+        String layersJson = CutsceneSerializer.serializeLayers(editor.getLayers());
         Services.PACKET.sendToServer(new C2SCutsceneSave(editor.getCutscene(), layersJson));
     }
 

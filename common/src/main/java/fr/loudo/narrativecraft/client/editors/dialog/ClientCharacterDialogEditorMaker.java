@@ -25,30 +25,14 @@ package fr.loudo.narrativecraft.client.editors.dialog;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.client.ClientNarrativeCraftMod;
-import fr.loudo.narrativecraft.client.editors.widgets.DialogFieldSet;
 import fr.loudo.narrativecraft.client.editors.widgets.DialogPreviewEntry;
-import fr.loudo.narrativecraft.client.editors.widgets.DialogPreviewPanel;
-import fr.loudo.narrativecraft.client.editors.widgets.DialogSetupAdvancedPanel;
-import fr.loudo.narrativecraft.client.screens.ClearScreen;
 import fr.loudo.narrativecraft.client.session.ClientPlayerSession;
 import fr.loudo.narrativecraft.dialog.DialogData;
 import fr.loudo.narrativecraft.dialog.DialogRenderer3D;
 import fr.loudo.narrativecraft.editors.EditorMaker;
 import fr.loudo.narrativecraft.narrative.NarrativeEnvironment;
 import fr.loudo.narrativecraft.narrative.character.ICharacterStory;
-import fr.loudo.narrativecraft.utils.CustomFont;
-import fr.loudo.narrativecraft.utils.Translation;
-import fr.loudo.narrativecraft.utils.UtilsClient;
-import java.util.List;
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.ConfirmScreen;
-import net.minecraft.client.input.CharacterEvent;
-import net.minecraft.client.input.KeyEvent;
-import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 
 public class ClientCharacterDialogEditorMaker implements EditorMaker {
@@ -64,11 +48,8 @@ public class ClientCharacterDialogEditorMaker implements EditorMaker {
 
     private DialogRenderer3D renderer;
     private DialogData rendererData;
-    private Button closeButton;
-    private Button saveButton;
-
-    private final DialogPreviewPanel previewPanel = new DialogPreviewPanel(this::toggleAdvancedPanel, DEFAULT_TEXT);
-    private final DialogSetupAdvancedPanel advancedPanel = new DialogSetupAdvancedPanel(previewPanel);
+    private DialogPreviewEntry previewEntry;
+    private boolean stopping = false;
 
     public ClientCharacterDialogEditorMaker(ICharacterStory character, Runnable onSave) {
         this.character = character;
@@ -77,17 +58,7 @@ public class ClientCharacterDialogEditorMaker implements EditorMaker {
     }
 
     @Override
-    public void init() {
-        closeButton = Button.builder(Component.literal(CustomFont.CROSS), b -> openCloseConfirm())
-                .bounds(5, 5, 20, 20)
-                .build();
-        saveButton = Button.builder(Component.literal(CustomFont.SAVE), b -> save())
-                .bounds(30, 5, 20, 20)
-                .build();
-        previewPanel.setFieldSet(DialogFieldSet.CHARACTER);
-        advancedPanel.setFieldSet(DialogFieldSet.CHARACTER);
-        advancedPanel.setData(working);
-    }
+    public void init() {}
 
     public void registerEntityId(int entityId) {
         if (minecraft.level == null) return;
@@ -99,10 +70,8 @@ public class ClientCharacterDialogEditorMaker implements EditorMaker {
         renderer.onStopped(() -> playerSession.removeDialog3D(renderer));
         renderer.start(DEFAULT_TEXT);
         playerSession.addDialog3D(renderer);
-        previewPanel.setEntries(List.of(new DialogPreviewEntry(character.getName(), working, renderer)));
+        previewEntry = new DialogPreviewEntry(character.getName(), working, renderer);
     }
-
-    private boolean stopping = false;
 
     @Override
     public void close() {
@@ -118,7 +87,10 @@ public class ClientCharacterDialogEditorMaker implements EditorMaker {
 
     @Override
     public void tick() {
-        advancedPanel.tick();
+        if (rendererData != null) {
+            rendererData.copyFrom(
+                    DialogData.from(NarrativeCraftMod.getInstance().getGlobalDialogData(), working));
+        }
     }
 
     @Override
@@ -129,96 +101,27 @@ public class ClientCharacterDialogEditorMaker implements EditorMaker {
         return NarrativeEnvironment.DEVELOPMENT;
     }
 
-    private void save() {
+    public void save() {
         character.setDialogData(working);
         onSave.run();
     }
 
-    private void openCloseConfirm() {
-        ConfirmScreen confirmScreen = new ConfirmScreen(
-                accepted -> {
-                    if (accepted) save();
-                    playerSession.requestEditorClose();
-                },
-                Translation.message("screen.confirm.title"),
-                Translation.message("screen.confirm.save"));
-        minecraft.gui.setScreen(confirmScreen);
-    }
-
-    private void toggleAdvancedPanel(DialogData data) {
-        if (advancedPanel.isVisible()) {
-            advancedPanel.setVisible(false);
-        } else {
-            advancedPanel.setData(data);
-            advancedPanel.setVisible(true);
+    public void quit(boolean saveBeforeQuit) {
+        if (saveBeforeQuit) {
+            save();
         }
+        playerSession.requestEditorClose();
     }
 
-    @Override
-    public void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
-        if (rendererData != null) {
-            rendererData.copyFrom(
-                    DialogData.from(NarrativeCraftMod.getInstance().getGlobalDialogData(), working));
-        }
-        int[] mousePos = UtilsClient.getScaledMousePos();
-        int screenWidth = minecraft.getWindow().getGuiScaledWidth();
-        int screenHeight = minecraft.getWindow().getGuiScaledHeight();
-
-        closeButton.setPosition(5, 5);
-        saveButton.setPosition(closeButton.getX() + closeButton.getWidth() + 5, 5);
-
-        closeButton.extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-        saveButton.extractRenderState(graphics, mousePos[0], mousePos[1], deltaTracker.getGameTimeDeltaTicks());
-
-        previewPanel.render(graphics, screenWidth, screenHeight, mousePos[0], mousePos[1]);
-        if (advancedPanel.isVisible()) {
-            advancedPanel.render(graphics, mousePos[0], mousePos[1]);
-        }
+    public ICharacterStory getCharacter() {
+        return character;
     }
 
-    @Override
-    public void mouseClicked(MouseButtonEvent event, boolean isDoubleClick) {
-        if (!clearScreenOpened()) return;
-        if (advancedPanel.isVisible() && advancedPanel.mouseClicked(event)) {
-            previewPanel.unfocusAll();
-            return;
-        }
-        if (closeButton.mouseClicked(event, isDoubleClick)) return;
-        if (saveButton.mouseClicked(event, isDoubleClick)) return;
-        if (previewPanel.mouseClicked(event)) {
-            advancedPanel.unfocusAll();
-        }
+    public DialogData getWorking() {
+        return working;
     }
 
-    @Override
-    public void mouseReleased(MouseButtonEvent event) {
-        if (!clearScreenOpened()) return;
-        previewPanel.mouseReleased();
-    }
-
-    public void mouseDragged(MouseButtonEvent event, double dragX, double dragY) {
-        if (!clearScreenOpened()) return;
-        previewPanel.mouseDragged(event.y());
-    }
-
-    @Override
-    public void keyPressed(KeyEvent event) {
-        previewPanel.keyPressed(event);
-        if (previewPanel.isAnyBoxFocused()) return;
-        if (advancedPanel.isVisible()) {
-            advancedPanel.keyPressed(event);
-        }
-    }
-
-    @Override
-    public void charTyped(CharacterEvent event) {
-        previewPanel.charTyped(event);
-        if (advancedPanel.isVisible()) {
-            advancedPanel.charTyped(event);
-        }
-    }
-
-    private boolean clearScreenOpened() {
-        return minecraft.gui.screen() instanceof ClearScreen;
+    public DialogPreviewEntry getPreviewEntry() {
+        return previewEntry;
     }
 }

@@ -25,9 +25,7 @@ package fr.loudo.narrativecraft.editors.cutscene.keyframes;
 
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.EasingType;
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
-import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.KeyframeMenu;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
-import fr.loudo.narrativecraft.client.editors.cutscene.menu.FovKeyframeMenu;
 
 public class FovKeyframe extends Keyframe {
 
@@ -37,11 +35,6 @@ public class FovKeyframe extends Keyframe {
     public FovKeyframe(CutsceneLayer layer, int tick, float fov) {
         super(layer, tick);
         this.fov = fov;
-    }
-
-    @Override
-    public KeyframeMenu<FovKeyframe> createMenu() {
-        return new FovKeyframeMenu(this);
     }
 
     public float getFov() {

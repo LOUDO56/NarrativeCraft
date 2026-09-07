@@ -32,7 +32,6 @@ import com.google.gson.JsonSerializer;
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.ICutsceneLayerType;
-import fr.loudo.narrativecraft.client.editors.cutscene.CutsceneMakerEditorLayer;
 import fr.loudo.narrativecraft.narrative.animation.Animation;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import java.lang.reflect.Type;
@@ -65,9 +64,9 @@ public class CutsceneSerializer implements JsonSerializer<Cutscene> {
         json.addProperty("manualMaxTick", src.getManualMaxTick());
 
         JsonArray layers = new JsonArray();
-        if (src.getEditorLayers() != null) {
-            for (CutsceneMakerEditorLayer editorLayer : src.getEditorLayers()) {
-                layers.add(serializeLayer(editorLayer.getLayer()));
+        if (src.getLayers() != null) {
+            for (CutsceneLayer layer : src.getLayers()) {
+                layers.add(serializeLayer(layer));
             }
         }
         json.add("layers", layers);
@@ -75,10 +74,10 @@ public class CutsceneSerializer implements JsonSerializer<Cutscene> {
         return json;
     }
 
-    public static String serializeLayers(List<CutsceneMakerEditorLayer> editorLayers) {
+    public static String serializeLayers(List<CutsceneLayer> cutsceneLayers) {
         JsonArray layers = new JsonArray();
-        for (CutsceneMakerEditorLayer editorLayer : editorLayers) {
-            layers.add(serializeLayer(editorLayer.getLayer()));
+        for (CutsceneLayer layer : cutsceneLayers) {
+            layers.add(serializeLayer(layer));
         }
         return new Gson().toJson(layers);
     }

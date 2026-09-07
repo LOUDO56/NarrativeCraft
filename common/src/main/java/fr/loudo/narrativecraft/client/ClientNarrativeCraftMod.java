@@ -30,7 +30,6 @@ import fr.loudo.narrativecraft.client.editors.cutscene.ClientCutsceneMakerEditor
 import fr.loudo.narrativecraft.client.editors.interaction.ClientInteractionMakerEditorMaker;
 import fr.loudo.narrativecraft.client.inkTag.ClientInkActionRegister;
 import fr.loudo.narrativecraft.client.narrative.ClientNarrativeEditorsRegister;
-import fr.loudo.narrativecraft.client.narrative.ui.ClientNarrativeUIActionRegister;
 import fr.loudo.narrativecraft.client.session.ClientPlayerSession;
 import fr.loudo.narrativecraft.client.signals.ClientPlayerStateSignalWatcher;
 import fr.loudo.narrativecraft.client.signals.ClientSignalEmitterImpl;
@@ -58,7 +57,6 @@ public class ClientNarrativeCraftMod {
     public static void commonInit() {
         ClientAPISetup.init(getInstance());
         ClientNarrativeEditorsRegister.register();
-        ClientNarrativeUIActionRegister.register();
         ClientInkActionRegister.register();
         ClientSignalRegistryRegister.register();
     }

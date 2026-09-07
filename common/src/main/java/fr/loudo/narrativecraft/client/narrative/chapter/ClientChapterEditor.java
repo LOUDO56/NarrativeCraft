@@ -28,7 +28,6 @@ import fr.loudo.narrativecraft.client.narrative.ClientNarrativeEntryEditor;
 import fr.loudo.narrativecraft.managers.ChapterManager;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.chapter.ChapterPayload;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 
 public class ClientChapterEditor implements ClientNarrativeEntryEditor<ChapterPayload, Chapter> {
@@ -45,7 +44,6 @@ public class ClientChapterEditor implements ClientNarrativeEntryEditor<ChapterPa
         Chapter chapter = new Chapter(entryId, payload.getName(), payload.getDescription(), payload.getChapterIndex());
 
         chapterManager.add(chapter);
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -58,13 +56,11 @@ public class ClientChapterEditor implements ClientNarrativeEntryEditor<ChapterPa
         if (oldIndex != payload.getChapterIndex()) {
             chapterManager.forceSort();
         }
-        UtilsClient.reloadListScreen();
     }
 
     @Override
     public void delete(UUID entryId, ChapterPayload payload) {
         Chapter chapter = resolve(entryId, payload);
         chapterManager.remove(chapter);
-        UtilsClient.reloadListScreen();
     }
 }

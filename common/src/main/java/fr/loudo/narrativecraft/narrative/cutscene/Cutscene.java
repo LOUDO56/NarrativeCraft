@@ -24,8 +24,8 @@
 package fr.loudo.narrativecraft.narrative.cutscene;
 
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
+import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.api.narrative.cutscene.ICutscene;
-import fr.loudo.narrativecraft.client.editors.cutscene.CutsceneMakerEditorLayer;
 import fr.loudo.narrativecraft.editors.cutscene.keyframes.CameraKeyframe;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.animation.Animation;
@@ -40,7 +40,7 @@ public class Cutscene extends NarrativeEntry<CutscenePayload> implements ICutsce
     private final Scene scene;
     private List<Animation> animations;
     private List<Subscene> subscenes;
-    private List<CutsceneMakerEditorLayer> editorLayers;
+    private List<CutsceneLayer> layers;
     private int manualMaxTick = 0;
 
     public Cutscene(
@@ -85,9 +85,9 @@ public class Cutscene extends NarrativeEntry<CutscenePayload> implements ICutsce
 
     public int getLastTick() {
         int maxTick = 0;
-        if (editorLayers != null) {
-            for (CutsceneMakerEditorLayer editorLayer : editorLayers) {
-                for (Keyframe keyframe : editorLayer.getLayer().getKeyframes()) {
+        if (layers != null) {
+            for (CutsceneLayer layer : layers) {
+                for (Keyframe keyframe : layer.getKeyframes()) {
                     if (keyframe.getTick() > maxTick) {
                         maxTick = keyframe.getTick();
                     }
@@ -98,10 +98,10 @@ public class Cutscene extends NarrativeEntry<CutscenePayload> implements ICutsce
     }
 
     public int getFirstCameraTick() {
-        if (editorLayers == null) return 0;
+        if (layers == null) return 0;
         int firstTick = Integer.MAX_VALUE;
-        for (CutsceneMakerEditorLayer editorLayer : editorLayers) {
-            for (Keyframe keyframe : editorLayer.getLayer().getKeyframes()) {
+        for (CutsceneLayer layer : layers) {
+            for (Keyframe keyframe : layer.getKeyframes()) {
                 if (keyframe instanceof CameraKeyframe && keyframe.getTick() < firstTick) {
                     firstTick = keyframe.getTick();
                 }
@@ -138,12 +138,12 @@ public class Cutscene extends NarrativeEntry<CutscenePayload> implements ICutsce
         this.subscenes = new ArrayList<>(subscenes);
     }
 
-    public List<CutsceneMakerEditorLayer> getEditorLayers() {
-        return editorLayers;
+    public List<CutsceneLayer> getLayers() {
+        return layers;
     }
 
-    public void setEditorLayers(List<CutsceneMakerEditorLayer> editorLayers) {
-        this.editorLayers = editorLayers;
+    public void setLayers(List<CutsceneLayer> layers) {
+        this.layers = layers;
     }
 
     @Override

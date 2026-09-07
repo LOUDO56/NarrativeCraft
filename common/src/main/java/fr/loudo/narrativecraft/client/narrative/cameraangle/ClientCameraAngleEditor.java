@@ -30,7 +30,6 @@ import fr.loudo.narrativecraft.narrative.cameraangle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.cameraangle.CameraAnglePayload;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 
 public class ClientCameraAngleEditor implements ClientNarrativeEntryEditor<CameraAnglePayload, CameraAngle> {
@@ -47,8 +46,6 @@ public class ClientCameraAngleEditor implements ClientNarrativeEntryEditor<Camer
 
         CameraAngle cameraAngle = new CameraAngle(entryId, payload.getName(), payload.getDescription(), scene);
         scene.getCameraAngleManager().add(cameraAngle);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -58,8 +55,6 @@ public class ClientCameraAngleEditor implements ClientNarrativeEntryEditor<Camer
 
         cameraAngle.setName(payload.getName());
         cameraAngle.setDescription(payload.getDescription());
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -74,8 +69,6 @@ public class ClientCameraAngleEditor implements ClientNarrativeEntryEditor<Camer
         if (cameraAngle == null) return;
 
         scene.getCameraAngleManager().remove(cameraAngle);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override

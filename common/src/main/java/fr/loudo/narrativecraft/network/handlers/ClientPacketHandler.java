@@ -229,7 +229,7 @@ public class ClientPacketHandler {
         if (!(session.getEditor() instanceof ClientCutsceneMakerEditorMaker editor)) return;
 
         if (editor.getTotalTick() > 0 && packet.tick() >= editor.getTotalTick()) {
-            editor.getControl().pause();
+            editor.pausePlayback();
         }
     }
 

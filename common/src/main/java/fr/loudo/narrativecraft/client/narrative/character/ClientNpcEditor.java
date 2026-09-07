@@ -35,7 +35,6 @@ import fr.loudo.narrativecraft.narrative.npc.Npc;
 import fr.loudo.narrativecraft.narrative.npc.NpcPayload;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import fr.loudo.narrativecraft.utils.Utils;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
@@ -57,8 +56,6 @@ public class ClientNpcEditor implements ClientNarrativeEntryEditor<NpcPayload, N
 
         Npc npc = buildFromPayload(entryId, payload, scene);
         scene.getNpcManager().add(npc);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -80,8 +77,6 @@ public class ClientNpcEditor implements ClientNarrativeEntryEditor<NpcPayload, N
             }
         }
         npc.setCustomNbt(payload.getCustomNbt());
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -96,8 +91,6 @@ public class ClientNpcEditor implements ClientNarrativeEntryEditor<NpcPayload, N
         if (npc == null) return;
 
         scene.getNpcManager().remove(npc);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override

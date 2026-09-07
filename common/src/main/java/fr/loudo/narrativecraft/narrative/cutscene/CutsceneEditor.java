@@ -24,7 +24,7 @@
 package fr.loudo.narrativecraft.narrative.cutscene;
 
 import fr.loudo.narrativecraft.NarrativeCraftMod;
-import fr.loudo.narrativecraft.client.editors.cutscene.CutsceneMakerEditorLayer;
+import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileRegistry;
 import fr.loudo.narrativecraft.managers.ChapterManager;
@@ -93,11 +93,11 @@ public class CutsceneEditor implements NarrativeEntryEditor<CutscenePayload, Cut
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
-        List<CutsceneMakerEditorLayer> editorLayers = oldCutscene.getEditorLayers();
+        List<CutsceneLayer> layers = oldCutscene.getLayers();
 
         Cutscene newCutscene = new Cutscene(
                 entryId, payload.getName(), payload.getDescription(), oldCutscene.getScene(), animations, subscenes);
-        newCutscene.setEditorLayers(editorLayers);
+        newCutscene.setLayers(layers);
         int result = NarrativeCraftFileRegistry.getInstance().edit(newCutscene);
 
         if (result == NarrativeCraftFileEditor.OPERATION_FAILED) {
@@ -110,7 +110,7 @@ public class CutsceneEditor implements NarrativeEntryEditor<CutscenePayload, Cut
         oldCutscene.setDescription(payload.getDescription());
         oldCutscene.setAnimations(animations);
         oldCutscene.setSubscenes(subscenes);
-        oldCutscene.setEditorLayers(editorLayers);
+        oldCutscene.setLayers(layers);
 
         UtilsServer.broadcastPacket(BiSyncNarrativeEntryPacket.edit(entryId, payload));
     }

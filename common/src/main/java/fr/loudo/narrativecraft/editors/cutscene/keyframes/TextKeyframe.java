@@ -24,9 +24,7 @@
 package fr.loudo.narrativecraft.editors.cutscene.keyframes;
 
 import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.Keyframe;
-import fr.loudo.narrativecraft.api.editors.cutscene.keyframes.KeyframeMenu;
 import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
-import fr.loudo.narrativecraft.client.editors.cutscene.menu.TextKeyframeMenu;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +34,6 @@ public class TextKeyframe extends Keyframe {
 
     public TextKeyframe(CutsceneLayer layer, int tick) {
         super(layer, tick);
-    }
-
-    @Override
-    public KeyframeMenu<TextKeyframe> createMenu() {
-        return new TextKeyframeMenu(this);
     }
 
     public List<String> getTags() {

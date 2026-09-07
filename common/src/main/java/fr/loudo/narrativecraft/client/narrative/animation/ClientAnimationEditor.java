@@ -32,7 +32,6 @@ import fr.loudo.narrativecraft.narrative.animation.AnimationPayload;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.ICharacterStory;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 
 public class ClientAnimationEditor implements ClientNarrativeEntryEditor<AnimationPayload, Animation> {
@@ -53,8 +52,6 @@ public class ClientAnimationEditor implements ClientNarrativeEntryEditor<Animati
                 .resolveCharacter(payload.getCharacterId(), scene);
         Animation animation = new Animation(entryId, payload.getName(), scene, payload.getTotalTick(), characterStory);
         scene.getAnimationManager().add(animation);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -68,8 +65,6 @@ public class ClientAnimationEditor implements ClientNarrativeEntryEditor<Animati
                 .resolveCharacter(payload.getCharacterId(), animation.getScene());
         animation.setName(payload.getName());
         animation.setCharacterStory(characterStory);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -86,8 +81,6 @@ public class ClientAnimationEditor implements ClientNarrativeEntryEditor<Animati
         if (animation == null) return;
 
         scene.getAnimationManager().remove(animation);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override

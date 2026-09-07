@@ -24,6 +24,7 @@
 package fr.loudo.narrativecraft.client.editors.cutscene;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import fr.loudo.narrativecraft.api.editors.cutscene.layers.CutsceneLayer;
 import fr.loudo.narrativecraft.client.ClientNarrativeCraftMod;
 import fr.loudo.narrativecraft.client.editors.cutscene.layers.camera.CameraLayer;
 import fr.loudo.narrativecraft.client.editors.rendering.CameraWireframeRenderer;
@@ -48,8 +49,8 @@ public class CutsceneMakerEditorCameraRenderer {
         float tick = editor.getTick();
 
         collector.submitCustomGeometry(poseStack, RenderTypes.lines(), (pose, vertexConsumer) -> {
-            for (CutsceneMakerEditorLayer editorLayer : editor.getEditorLayers()) {
-                if (!(editorLayer.getLayer() instanceof CameraLayer cameraLayer)) continue;
+            for (CutsceneLayer layer : editor.getLayers()) {
+                if (!(layer instanceof CameraLayer cameraLayer)) continue;
 
                 KeyframePosition keyframePosition = cameraLayer.getInterpolatedPosition(tick);
                 if (keyframePosition == null) continue;

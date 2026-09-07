@@ -24,7 +24,6 @@
 package fr.loudo.narrativecraft.utils;
 
 import com.mojang.blaze3d.platform.Window;
-import fr.loudo.narrativecraft.client.screens.NarrativeEntryListScreen;
 import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Hud;
@@ -41,13 +40,6 @@ public class UtilsClient {
     public static final float REFERENCE_WINDOW_HEIGHT = 1080f;
 
     private static final Minecraft minecraft = Minecraft.getInstance();
-
-    public static void reloadListScreen() {
-        // Reload list for player if a new NarrativeEntry element was added
-        if (minecraft.gui.screen() instanceof NarrativeEntryListScreen<?> screen) {
-            screen.reload();
-        }
-    }
 
     public static String getScreenId(Screen screen) {
         String screenName = screen.getClass().getSimpleName();

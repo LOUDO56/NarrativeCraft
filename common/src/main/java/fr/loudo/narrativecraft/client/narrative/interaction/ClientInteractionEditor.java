@@ -30,7 +30,6 @@ import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.interaction.Interaction;
 import fr.loudo.narrativecraft.narrative.interaction.InteractionPayload;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.UUID;
 
 public class ClientInteractionEditor implements ClientNarrativeEntryEditor<InteractionPayload, Interaction> {
@@ -47,8 +46,6 @@ public class ClientInteractionEditor implements ClientNarrativeEntryEditor<Inter
 
         Interaction interaction = new Interaction(entryId, payload.getName(), payload.getDescription(), scene);
         scene.getInteractionManager().add(interaction);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -58,8 +55,6 @@ public class ClientInteractionEditor implements ClientNarrativeEntryEditor<Inter
 
         interaction.setName(payload.getName());
         interaction.setDescription(payload.getDescription());
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -74,8 +69,6 @@ public class ClientInteractionEditor implements ClientNarrativeEntryEditor<Inter
         if (interaction == null) return;
 
         scene.getInteractionManager().remove(interaction);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override

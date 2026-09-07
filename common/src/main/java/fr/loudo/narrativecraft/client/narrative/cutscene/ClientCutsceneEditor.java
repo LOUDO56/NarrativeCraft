@@ -32,7 +32,6 @@ import fr.loudo.narrativecraft.narrative.cutscene.Cutscene;
 import fr.loudo.narrativecraft.narrative.cutscene.CutscenePayload;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
-import fr.loudo.narrativecraft.utils.UtilsClient;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -60,8 +59,6 @@ public class ClientCutsceneEditor implements ClientNarrativeEntryEditor<Cutscene
         Cutscene cutscene =
                 new Cutscene(entryId, payload.getName(), payload.getDescription(), scene, animations, subscenes);
         scene.getCutsceneManager().add(cutscene);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -81,8 +78,6 @@ public class ClientCutsceneEditor implements ClientNarrativeEntryEditor<Cutscene
         cutscene.setDescription(payload.getDescription());
         cutscene.setAnimations(animations);
         cutscene.setSubscenes(subscenes);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
@@ -97,8 +92,6 @@ public class ClientCutsceneEditor implements ClientNarrativeEntryEditor<Cutscene
         if (cutscene == null) return;
 
         scene.getCutsceneManager().remove(cutscene);
-
-        UtilsClient.reloadListScreen();
     }
 
     @Override
