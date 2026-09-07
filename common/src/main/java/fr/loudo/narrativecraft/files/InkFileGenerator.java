@@ -42,7 +42,7 @@ public class InkFileGenerator {
         File chapterDir = new File(NarrativeCraftFileUtil.getChaptersFolder(), chapter.toFileName());
         File inkFile = new File(chapterDir, chapterInkFileName(chapter));
         try {
-            Files.writeString(inkFile.toPath(), "=== " + chapterKnotName(chapter) + " ===\n");
+            NarrativeCraftFileWriter.writeString(inkFile, "=== " + chapterKnotName(chapter) + " ===\n");
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write chapter ink file for {}", chapter.getName(), e);
         }
@@ -53,7 +53,7 @@ public class InkFileGenerator {
         try {
             String knotName = sceneKnotName(scene);
             String content = "=== " + knotName + " ===\n# on_enter " + knotName + "\n-> END\n";
-            Files.writeString(inkFile.toPath(), content);
+            NarrativeCraftFileWriter.writeString(inkFile, content);
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write scene ink file for {}", scene.getName(), e);
         }
@@ -78,7 +78,7 @@ public class InkFileGenerator {
             // Update the knot name (header and any self-divert) while keeping the user's content
             content = content.replaceAll("\\b" + Pattern.quote(oldKnot) + "\\b", newKnot);
 
-            Files.writeString(newInkFile.toPath(), content);
+            NarrativeCraftFileWriter.writeString(newInkFile, content);
             if (!oldInkFile.equals(newInkFile)) {
                 oldInkFile.delete();
             }
@@ -94,7 +94,7 @@ public class InkFileGenerator {
         }
         File newFile = new File(chapterDir, "chapter_" + newIndex + NarrativeCraftFileDefault.EXTENSION_SCRIPT_FILE);
         try {
-            Files.writeString(newFile.toPath(), "=== chapter_" + newIndex + " ===\n");
+            NarrativeCraftFileWriter.writeString(newFile, "=== chapter_" + newIndex + " ===\n");
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to rename chapter ink file from {} to {}", oldIndex, newIndex, e);
         }
@@ -155,7 +155,7 @@ public class InkFileGenerator {
 
         File mainInkFile = new File(mainDirectory, NarrativeCraftFileInit.MAIN_INK_NAME);
         try {
-            Files.writeString(mainInkFile.toPath(), builder.toString());
+            NarrativeCraftFileWriter.writeString(mainInkFile, builder.toString());
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to regenerate {}", mainInkFile, e);
         }

@@ -68,19 +68,11 @@ public class NarrativeCraftFile {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(CameraAngle.class, new CameraAngleSerializer())
                 .create();
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(mainScreenDataFile))) {
-            gson.toJson(mainScreenData, writer);
-        }
+        NarrativeCraftFileWriter.write(mainScreenDataFile, writer -> gson.toJson(mainScreenData, writer));
     }
 
     public void writeCompiledStory(String compiledStoryJson) throws IOException {
-        File compiledStory = getPrecompiledStoryFile();
-        if (!compiledStory.exists()) {
-            compiledStory.createNewFile();
-        }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(compiledStory))) {
-            writer.write(compiledStoryJson);
-        }
+        NarrativeCraftFileWriter.writeString(getPrecompiledStoryFile(), compiledStoryJson);
     }
 
     public String getCompiledStoryContent() throws IOException {
@@ -108,9 +100,7 @@ public class NarrativeCraftFile {
         File dataFolder = init.getDataDirectory();
         File globalDialogFile = new File(dataFolder, NarrativeCraftFileInit.GLOBAL_DIALOG_DATA_NAME);
         JsonObject json = DialogDataIO.serialize(data, DialogFieldSet.ALL);
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(globalDialogFile))) {
-            new Gson().toJson(json, writer);
-        }
+        NarrativeCraftFileWriter.write(globalDialogFile, writer -> new Gson().toJson(json, writer));
     }
 
     public File getPrecompiledStoryFile() {

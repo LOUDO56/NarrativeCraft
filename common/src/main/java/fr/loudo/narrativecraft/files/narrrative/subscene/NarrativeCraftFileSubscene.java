@@ -29,6 +29,7 @@ import fr.loudo.narrativecraft.files.DeserializationResult;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.narrative.subscene.Subscene;
 import fr.loudo.narrativecraft.narrative.subscene.SubsceneDeserializer;
 import fr.loudo.narrativecraft.narrative.subscene.SubsceneSerializer;
@@ -112,6 +113,7 @@ public class NarrativeCraftFileSubscene extends NarrativeCraftFileDefault
                 if (subsceneFiles == null) continue;
 
                 for (File subsceneFile : subsceneFiles) {
+                    if (NarrativeCraftFileWriter.isTemporary(subsceneFile)) continue;
                     try {
                         String content = Files.readString(subsceneFile.toPath());
                         Subscene subscene = gson.fromJson(content, Subscene.class);
@@ -135,8 +137,8 @@ public class NarrativeCraftFileSubscene extends NarrativeCraftFileDefault
         Gson gson = gsonBuilder
                 .registerTypeAdapter(Subscene.class, new SubsceneSerializer())
                 .create();
-        try (Writer writer = new BufferedWriter(new FileWriter(file))) {
-            gson.toJson(entry, writer);
+        try {
+            NarrativeCraftFileWriter.write(file, writer -> gson.toJson(entry, writer));
             return OPERATION_SUCCESS;
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write subscene data {}", entry.getName(), e);

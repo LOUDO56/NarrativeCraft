@@ -30,6 +30,7 @@ import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.InkFileGenerator;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.inkTag.InkTagDispatcherImpl;
 import fr.loudo.narrativecraft.narrative.inkTag.InkTagHandlerException;
@@ -229,7 +230,7 @@ public class StoryCompilerHandler {
         matcher.appendTail(migrated);
 
         try {
-            Files.writeString(sceneInkFile.toPath(), migrated.toString());
+            NarrativeCraftFileWriter.writeString(sceneInkFile, migrated.toString());
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to migrate the on_enter tag of {}", sceneInkFile, e);
         }

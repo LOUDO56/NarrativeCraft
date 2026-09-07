@@ -29,6 +29,7 @@ import fr.loudo.narrativecraft.files.DeserializationResult;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.managers.CharacterManager;
 import fr.loudo.narrativecraft.narrative.character.CharacterStory;
 import fr.loudo.narrativecraft.narrative.character.CharacterStoryDeserializer;
@@ -76,9 +77,7 @@ public class NarrativeCraftFileCharacter extends NarrativeCraftFileDefault
             Gson gson = gsonBuilder
                     .registerTypeAdapter(CharacterStory.class, new CharacterStorySerializer())
                     .create();
-            try (Writer writer = new BufferedWriter(new FileWriter(dataFile))) {
-                gson.toJson(entry, writer);
-            }
+            NarrativeCraftFileWriter.write(dataFile, writer -> gson.toJson(entry, writer));
 
         } catch (Exception e) {
             NarrativeCraftMod.LOGGER.error("Failed to write character data {}", entry.formattedName(), e);

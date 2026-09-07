@@ -30,15 +30,13 @@ import fr.loudo.narrativecraft.files.InkFileGenerator;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.managers.SceneManager;
 import fr.loudo.narrativecraft.narrative.NarrativeEntryEditorRegistry;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import fr.loudo.narrativecraft.narrative.scene.SceneDeserializer;
 import fr.loudo.narrativecraft.narrative.scene.SceneSerializer;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.Writer;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
@@ -156,9 +154,7 @@ public class NarrativeCraftFileScene extends NarrativeCraftFileDefault implement
             Gson gson = gsonBuilder
                     .registerTypeAdapter(Scene.class, new SceneSerializer())
                     .create();
-            try (Writer writer = new BufferedWriter(new FileWriter(dataFile))) {
-                gson.toJson(entry, writer);
-            }
+            NarrativeCraftFileWriter.write(dataFile, writer -> gson.toJson(entry, writer));
 
             if (oldScene != null) {
                 if (!oldScene.getName()

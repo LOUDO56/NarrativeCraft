@@ -26,16 +26,14 @@ package fr.loudo.narrativecraft.files.narrrative.cameraangle;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.files.narrrative.AbstractNarrativeCraftFileSceneJsonEntry;
 import fr.loudo.narrativecraft.narrative.cameraangle.CameraAngle;
 import fr.loudo.narrativecraft.narrative.cameraangle.CameraAngleDeserializer;
 import fr.loudo.narrativecraft.narrative.cameraangle.CameraAngleSerializer;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 public class NarrativeCraftFileCameraAngle extends AbstractNarrativeCraftFileSceneJsonEntry<CameraAngle> {
 
@@ -69,8 +67,8 @@ public class NarrativeCraftFileCameraAngle extends AbstractNarrativeCraftFileSce
         Gson gson = gsonBuilder
                 .registerTypeAdapter(CameraAngle.class, new CameraAngleSerializer())
                 .create();
-        try (Writer writer = new BufferedWriter(new FileWriter(file))) {
-            gson.toJson(entry, writer);
+        try {
+            NarrativeCraftFileWriter.write(file, writer -> gson.toJson(entry, writer));
             return OPERATION_SUCCESS;
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write camera angle data {}", entry.getName(), e);

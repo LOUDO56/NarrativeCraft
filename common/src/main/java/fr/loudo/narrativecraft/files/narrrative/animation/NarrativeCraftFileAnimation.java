@@ -29,6 +29,7 @@ import fr.loudo.narrativecraft.files.DeserializationResult;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.narrative.animation.Animation;
 import fr.loudo.narrativecraft.narrative.chapter.Chapter;
 import fr.loudo.narrativecraft.narrative.character.ICharacterStory;
@@ -61,30 +62,31 @@ public class NarrativeCraftFileAnimation extends NarrativeCraftFileDefault
             return NarrativeCraftFileEditor.OPERATION_FAILED;
         }
 
-        try (DataOutputStream stream =
-                new DataOutputStream(new FileOutputStream(new File(animationsFolder, entry.toFileName())))) {
-            RecordingWriter writer = new RecordingWriter(stream);
-            writer.writeHeader(
-                    recording.getId(),
-                    entry.getName(),
-                    recording.getEntityTrackedSize(),
-                    recording.getTick(),
-                    entry.getCharacterStory().getId());
-            writer.writeLocalActionsId();
-            for (RecordingEntityData recordingEntityData : recording.getRecordingEntityDataList()) {
-                if (!recordingEntityData.isTracked()) continue;
-                List<AbstractAction> sortedActions =
-                        recordingEntityData.getRecordingData().getActions().entrySet().stream()
-                                .sorted(Map.Entry.comparingByKey())
-                                .flatMap(e -> e.getValue().stream())
-                                .toList();
+        try {
+            NarrativeCraftFileWriter.writeStream(new File(animationsFolder, entry.toFileName()), stream -> {
+                RecordingWriter writer = new RecordingWriter(stream);
+                writer.writeHeader(
+                        recording.getId(),
+                        entry.getName(),
+                        recording.getEntityTrackedSize(),
+                        recording.getTick(),
+                        entry.getCharacterStory().getId());
+                writer.writeLocalActionsId();
+                for (RecordingEntityData recordingEntityData : recording.getRecordingEntityDataList()) {
+                    if (!recordingEntityData.isTracked()) continue;
+                    List<AbstractAction> sortedActions =
+                            recordingEntityData.getRecordingData().getActions().entrySet().stream()
+                                    .sorted(Map.Entry.comparingByKey())
+                                    .flatMap(e -> e.getValue().stream())
+                                    .toList();
 
-                writer.writeEntityHeader(recordingEntityData, sortedActions.size());
+                    writer.writeEntityHeader(recordingEntityData, sortedActions.size());
 
-                for (AbstractAction action : sortedActions) {
-                    writer.writeActionRecord(action);
+                    for (AbstractAction action : sortedActions) {
+                        writer.writeActionRecord(action);
+                    }
                 }
-            }
+            });
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to save animation {}!", entry.getName(), e);
             return NarrativeCraftFileEditor.OPERATION_FAILED;
@@ -120,33 +122,34 @@ public class NarrativeCraftFileAnimation extends NarrativeCraftFileDefault
             return NarrativeCraftFileEditor.OPERATION_FAILED;
         }
 
-        try (DataOutputStream outStream = new DataOutputStream(new FileOutputStream(newFileRecord))) {
-            RecordingWriter writer = new RecordingWriter(outStream);
-            writer.writeHeader(
-                    header.recordingId(),
-                    entry.getName(),
-                    header.entityCount(),
-                    header.totalTick(),
-                    entry.getCharacterStory().getId());
-            writer.writeActionSize((byte) actionsDict.size());
-            for (Map.Entry<Byte, String> actionTypeEntry : actionsDict.entrySet()) {
-                writer.writeActionId(actionTypeEntry.getKey(), actionTypeEntry.getValue());
-            }
-            for (EntityData entityData : entities) {
-                RecordingReader.EntityHeader entityHeader = entityData.header();
-                writer.writeEntityHeader(
-                        entityHeader.entityRecordingId(),
-                        entityHeader.entityType(),
-                        entityHeader.initialNbt(),
-                        entityHeader.spawnTick(),
-                        entityHeader.actionCount());
-                for (AbstractAction action : entityData.actions()) {
-                    writer.writeActionRecord(action);
+        try {
+            NarrativeCraftFileWriter.writeStream(newFileRecord, outStream -> {
+                RecordingWriter writer = new RecordingWriter(outStream);
+                writer.writeHeader(
+                        header.recordingId(),
+                        entry.getName(),
+                        header.entityCount(),
+                        header.totalTick(),
+                        entry.getCharacterStory().getId());
+                writer.writeActionSize((byte) actionsDict.size());
+                for (Map.Entry<Byte, String> actionTypeEntry : actionsDict.entrySet()) {
+                    writer.writeActionId(actionTypeEntry.getKey(), actionTypeEntry.getValue());
                 }
-            }
+                for (EntityData entityData : entities) {
+                    RecordingReader.EntityHeader entityHeader = entityData.header();
+                    writer.writeEntityHeader(
+                            entityHeader.entityRecordingId(),
+                            entityHeader.entityType(),
+                            entityHeader.initialNbt(),
+                            entityHeader.spawnTick(),
+                            entityHeader.actionCount());
+                    for (AbstractAction action : entityData.actions()) {
+                        writer.writeActionRecord(action);
+                    }
+                }
+            });
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write animation {}", entry.getName(), e);
-            newFileRecord.delete();
             return NarrativeCraftFileEditor.OPERATION_FAILED;
         }
 

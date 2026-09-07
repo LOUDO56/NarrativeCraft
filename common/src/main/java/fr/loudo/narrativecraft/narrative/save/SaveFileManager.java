@@ -27,6 +27,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.narrative.story.StoryHandler;
 import fr.loudo.narrativecraft.narrative.story.StoryHandlerDeserializer;
 import fr.loudo.narrativecraft.narrative.story.StoryHandlerSerializer;
@@ -48,8 +49,8 @@ public class SaveFileManager {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(StoryHandler.class, new StoryHandlerSerializer(includeLastPosition))
                 .create();
-        try (Writer writer = new BufferedWriter(new FileWriter(saveFile))) {
-            gson.toJson(storyHandler, writer);
+        try {
+            NarrativeCraftFileWriter.write(saveFile, writer -> gson.toJson(storyHandler, writer));
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error(
                     "Failed to save story state of player {}",

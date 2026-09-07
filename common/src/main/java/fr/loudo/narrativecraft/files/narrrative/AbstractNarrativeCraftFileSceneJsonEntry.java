@@ -30,6 +30,7 @@ import fr.loudo.narrativecraft.files.DeserializationResult;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileDefault;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileEditor;
 import fr.loudo.narrativecraft.files.NarrativeCraftFileUtil;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.narrative.NarrativeEntry;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
 import java.io.File;
@@ -133,6 +134,7 @@ public abstract class AbstractNarrativeCraftFileSceneJsonEntry<T extends Narrati
             if (entryFiles == null) return;
 
             for (File entryFile : entryFiles) {
+                if (NarrativeCraftFileWriter.isTemporary(entryFile)) continue;
                 File dataFile;
                 if (entryHasOwnFolder()) {
                     if (!entryFile.isDirectory()) continue;

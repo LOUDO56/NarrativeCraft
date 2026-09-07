@@ -53,7 +53,8 @@ public class SceneEditor implements NarrativeEntryEditor<ScenePayload, Scene> {
         Chapter chapter = chapterManager.getById(payload.getChapterId());
         if (chapter == null) return;
 
-        Scene scene = new Scene(entryId, payload.getName(), payload.getDescription(), chapter, payload.getRank());
+        int rank = chapter.getSceneManager().size() + 1;
+        Scene scene = new Scene(entryId, payload.getName(), payload.getDescription(), chapter, rank);
         int result = NarrativeCraftFileRegistry.getInstance().create(scene);
 
         if (result == NarrativeCraftFileEditor.OPERATION_FAILED) {
@@ -62,10 +63,11 @@ public class SceneEditor implements NarrativeEntryEditor<ScenePayload, Scene> {
             return;
         }
 
-        scene.getChapter().getSceneManager().add(scene);
-        scene.setRank(chapter.getSceneManager().size());
+        chapter.getSceneManager().add(scene);
 
-        UtilsServer.broadcastPacket(BiSyncNarrativeEntryPacket.add(entryId, payload));
+        ScenePayload syncedPayload =
+                new ScenePayload(payload.getName(), payload.getDescription(), payload.getChapterId(), rank);
+        UtilsServer.broadcastPacket(BiSyncNarrativeEntryPacket.add(entryId, syncedPayload));
     }
 
     @Override

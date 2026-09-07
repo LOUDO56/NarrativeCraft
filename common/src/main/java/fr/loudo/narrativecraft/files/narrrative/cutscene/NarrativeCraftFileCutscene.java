@@ -26,16 +26,14 @@ package fr.loudo.narrativecraft.files.narrrative.cutscene;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fr.loudo.narrativecraft.NarrativeCraftMod;
+import fr.loudo.narrativecraft.files.NarrativeCraftFileWriter;
 import fr.loudo.narrativecraft.files.narrrative.AbstractNarrativeCraftFileSceneJsonEntry;
 import fr.loudo.narrativecraft.narrative.cutscene.Cutscene;
 import fr.loudo.narrativecraft.narrative.cutscene.CutsceneDeserializer;
 import fr.loudo.narrativecraft.narrative.cutscene.CutsceneSerializer;
 import fr.loudo.narrativecraft.narrative.scene.Scene;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 
 public class NarrativeCraftFileCutscene extends AbstractNarrativeCraftFileSceneJsonEntry<Cutscene> {
 
@@ -69,8 +67,8 @@ public class NarrativeCraftFileCutscene extends AbstractNarrativeCraftFileSceneJ
         Gson gson = gsonBuilder
                 .registerTypeAdapter(Cutscene.class, new CutsceneSerializer())
                 .create();
-        try (Writer writer = new BufferedWriter(new FileWriter(file))) {
-            gson.toJson(entry, writer);
+        try {
+            NarrativeCraftFileWriter.write(file, writer -> gson.toJson(entry, writer));
             return OPERATION_SUCCESS;
         } catch (IOException e) {
             NarrativeCraftMod.LOGGER.error("Failed to write cutscene data {}", entry.getName(), e);
