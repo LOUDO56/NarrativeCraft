@@ -27,6 +27,10 @@ artifacts {
     widgetsResources sourceSets.main.resources.sourceDirectories.singleFile
 }
 
+dependencies {
+    implementation "io.github.spair:imgui-java-binding:${imgui_version}"
+}
+
 tasks.register('checkWidgetsVersion') {
     def widgetsVersionSourceFile = file('src/main/java/fr/loudo/narrativecraft/widgets/NarrativeCraftWidgets.java')
     def declaredWidgetsVersion = widgets_version.toString()

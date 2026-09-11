@@ -9,6 +9,10 @@ dependencies {
     include(implementation "com.bladecoder.ink:blade-ink:${blade_ink_version}")
     include(implementation "com.bladecoder.ink:blade-ink-compiler:${blade_ink_version}")
     include(implementation "org.yaml:snakeyaml:${snakeyaml_version}")
+    include(implementation "io.github.spair:imgui-java-binding:${imgui_version}")
+    include(runtimeOnly "io.github.spair:imgui-java-natives-windows:${imgui_version}")
+    include(runtimeOnly "io.github.spair:imgui-java-natives-linux:${imgui_version}")
+    include(runtimeOnly "io.github.spair:imgui-java-natives-macos:${imgui_version}")
     include(implementation project(':api'))
     include(implementation project(':widgets'))
     compileOnly 'com.google.code.findbugs:jsr305:3.0.2'

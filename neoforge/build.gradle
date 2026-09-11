@@ -19,9 +19,30 @@ dependencies {
             prefer "${snakeyaml_version}"
         }
     }
+    jarJar(implementation("io.github.spair:imgui-java-binding")) {
+        version {
+            prefer "${imgui_version}"
+        }
+    }
+    jarJar(runtimeOnly("io.github.spair:imgui-java-natives-windows")) {
+        version {
+            prefer "${imgui_version}"
+        }
+    }
+    jarJar(runtimeOnly("io.github.spair:imgui-java-natives-linux")) {
+        version {
+            prefer "${imgui_version}"
+        }
+    }
+    jarJar(runtimeOnly("io.github.spair:imgui-java-natives-macos")) {
+        version {
+            prefer "${imgui_version}"
+        }
+    }
     implementation "com.bladecoder.ink:blade-ink:${blade_ink_version}"
     implementation "com.bladecoder.ink:blade-ink-compiler:${blade_ink_version}"
     implementation "org.yaml:snakeyaml:${snakeyaml_version}"
+    implementation "io.github.spair:imgui-java-binding:${imgui_version}"
     implementation project(':api')
     implementation project(':widgets')
 }
